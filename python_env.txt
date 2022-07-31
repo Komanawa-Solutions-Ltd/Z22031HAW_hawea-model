@@ -1,0 +1,26 @@
+# todo fill this out as you create the environment
+# environment was primarily used on [Linux|Windows]
+
+# initial env creation
+conda create -c conda-forge --name [name] python [packages]
+conda activate [name]
+pip install git+https://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@github.com/Komanawa-Solutions-Ltd/kslcore.git
+
+# todo save the env and update whenever new packages are added:
+conda list --explicit > [path].txt
+conda env export > [path].yml
+
+# make sure you added these files to the git!
+
+
+########### Typical Packages ###########
+numpy
+pandas
+pytables
+openpyxl
+matplotlib
+scipy
+netcdf4
+psutil
+geopandas
+flopy
