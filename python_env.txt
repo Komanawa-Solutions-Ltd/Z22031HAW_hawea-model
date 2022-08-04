@@ -1,26 +1,16 @@
 # todo fill this out as you create the environment
-# environment was primarily used on [Linux|Windows]
-
+# environment was primarily used on [Linux
 # initial env creation
-conda create -c conda-forge --name [name] python [packages]
-conda activate [name]
+conda create -c conda-forge --name hawea python numpy pandas pytables openpyxl matplotlib scipy netcdf4 psutil geopandas flopy
+conda activate hawea
 pip install git+https://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@github.com/Komanawa-Solutions-Ltd/kslcore.git
 
 # todo save the env and update whenever new packages are added:
-conda list --explicit > [path].txt
-conda env export > [path].yml
+conda list --explicit > /home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/environment.txt
+conda env export > /home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/environment.yml
 
 # make sure you added these files to the git!
 
 
 ########### Typical Packages ###########
-numpy
-pandas
-pytables
-openpyxl
-matplotlib
-scipy
-netcdf4
-psutil
-geopandas
-flopy
+numpy pandas pytables openpyxl matplotlib scipy netcdf4 psutil geopandas flopy
