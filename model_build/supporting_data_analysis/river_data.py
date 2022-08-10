@@ -7,12 +7,7 @@ import pandas as pd
 
 from model_build.project_model_tools import smt, simplify_upper_clutha_dem
 from project_base import base_model_data_dir, processed_model_data_dir
-
-# todo make this happen...
-# stage
-# top
-# location and direction
-# check all three makes sense.
+from model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
 
 default_recalc = False
 hawea_shp_path = base_model_data_dir.joinpath('hawea_river.shp')
@@ -30,13 +25,18 @@ def make_river_loc_data(recalc=default_recalc):
     ibound = smt.get_no_flow(0)
     hawea = smt.io.shape_file_to_model_array(hawea_shp_path, 'dist_top', alltouched=True)
     hawea[ibound < 1] = np.nan
+
+    # make sure hawea r. not in the lake!!!
+    lake_hawea = smt.io.df_to_array(get_lake_hawea_loc(), 'i')
+    hawea[np.isfinite(lake_hawea)] = np.nan
+
     hawea = smt.io.array_to_df(hawea, 'dist')
     clutha = smt.io.shape_file_to_model_array(hawea_shp_path, 'dist_top', alltouched=True)
     clutha[ibound < 1] = np.nan
     clutha = smt.io.array_to_df(clutha, 'dist')
 
     # add top data
-    top = simplify_upper_clutha_dem()  # todo need to run on tuke first
+    top = simplify_upper_clutha_dem()
     hawea.loc[:, 'Rbot'] = top[hawea.loc[:, 'i'], hawea.loc[:, 'j']]
     clutha.loc[:, 'Rbot'] = top[clutha.loc[:, 'i'], clutha.loc[:, 'j']]
 
@@ -44,7 +44,7 @@ def make_river_loc_data(recalc=default_recalc):
     hawea.loc[:, 'rname'] = 'hawea'
     clutha.loc[:, 'rname'] = 'clutha'
     outdata = pd.concat((hawea, clutha))
-    # todo export data to csv
+    outdata.to_csv(riv_loc_data_path)
     return outdata
 
 
@@ -54,7 +54,7 @@ def get_river_stage_data():  # todo
     # along time, so hold constant in model??? # todo discuss with Jens
     # todo where is stage clutha 2200???
     # todo how do I manage the lake stage/top of the hawea river??? discuss with Jens
-
+    # todo need to interpolate the river stage.
     raise NotImplementedError
 
 
@@ -76,13 +76,12 @@ def data_checks():
     import matplotlib.pyplot as plt
     # todo look at riv locations, make sure none of the locations are in the lake!!!
 
-    # todo look at stage through time at our locations( which are???)
+    # look at stage through time at our locations( which are???)
     hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
     print(hawea_data.describe())
     hawea_data.loc[:, 'datetime'] = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
     hawea_data.loc[:, 'month'] = hawea_data.loc[:, 'datetime'].dt.month
     monthly = hawea_data.groupby('month').describe(percentiles=[.05, .25, .5, .75, .95])
-    # todo plot this up
     fig, ax = plt.subplots()
     monthly.LakeLevel_m.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
     ax.set_title('lake level')
@@ -104,8 +103,8 @@ def data_checks():
     raise NotImplementedError
 
 
-def get_river_data(recalc=default_recalc):
-    # todo put it all togeather
+def make_river_data():
+    # todo put it all togeather to drop into modflow.
     raise NotImplementedError
 
 

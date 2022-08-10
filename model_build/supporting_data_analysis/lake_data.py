@@ -2,3 +2,70 @@
 created matt_dumont 
 on: 10/08/22
 """
+import numpy as np
+import pandas as pd
+
+from model_build.project_model_tools import smt
+from project_base import base_model_data_dir, processed_model_data_dir
+
+default_recalc = False
+lakefront_shp_path = base_model_data_dir.joinpath('lakefront.shp')
+lake_shp_path = base_model_data_dir.joinpath('lake_hawea.shp')
+lake_loc_path = processed_model_data_dir.joinpath('lake_hawea_loc.csv')
+
+
+def get_lake_hawea_loc(recalc=default_recalc):
+    if not recalc and lake_loc_path.exists():
+        lake_data = pd.read_csv(lake_loc_path)
+        # todo manage types
+        return lake_data
+
+    lake = smt.io.shape_file_to_model_array(lake_shp_path, 'id', alltouched=True)
+    lake_front = smt.io.shape_file_to_model_array(lakefront_shp_path, 'id', alltouched=True)
+    lake[np.isfinite(lake_front)] = np.nan
+    lake_data = smt.io.array_to_df(lake, 'drop')
+    lake_data.drop(columns='drop', inplace=True)
+    lake_data.to_csv(lake_loc_path)
+    return lake_data
+
+
+def get_lake_conductance(lake_loc_data, optimised):  # todo
+    """
+    get the river conductance values
+    :param lake_loc_data: lake location data output of get_lake_hawea_loc
+    :param optimised: bool if True use the optimised parameters, else use the initial parameters
+    :return:
+    """
+    if optimised:
+        raise NotImplementedError('optimisation not complete')
+    else:
+
+        raise NotImplementedError
+
+
+def lake_checks():  # todo write some checks and look at the data
+    import matplotlib.pyplot as plt
+    hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
+    print(hawea_data.describe())
+    hawea_data.loc[:, 'datetime'] = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
+    hawea_data.loc[:, 'month'] = hawea_data.loc[:, 'datetime'].dt.month
+    monthly = hawea_data.groupby('month').describe(percentiles=[.05, .25, .5, .75, .95])
+    fig, ax = plt.subplots()
+    monthly.LakeLevel_m.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
+    ax.set_title('lake level')
+
+    # todo plot lake locations
+
+    raise NotImplementedError
+
+
+def get_lake_heads(start_date, end_date, frequency='D'):
+    hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
+    hawea_data.loc[:, 'datetime'] = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
+
+    raise NotImplementedError
+
+
+def build_lake_ghb_data():
+    # todo
+    raise NotImplementedError
