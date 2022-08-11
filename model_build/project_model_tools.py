@@ -125,6 +125,6 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 if __name__ == '__main__':
-    # temp_smt.plot.plt_matrix(simplify_upper_clutha_dem(recalc=True), title='upperc', base_map=True) # todo need to run on dicke... more memory
+    temp_smt.plot.plt_matrix(simplify_upper_clutha_dem(recalc=True), title='upperc', base_map=True) # todo need to run on dicke... more memory
 
     temp_smt.plot.show()

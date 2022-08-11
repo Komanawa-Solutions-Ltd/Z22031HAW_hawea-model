@@ -60,12 +60,35 @@ def lake_checks():  # todo write some checks and look at the data
 
 
 def get_lake_heads(start_date, end_date, frequency='D'):
+    """
+    get lake records from start to end dates (inclusive),
+     data is available from 2012-01-01 to 2021-12-31
+    :param start_date: none or dates
+    :param end_date: none or dates
+    :param frequency: pd frequnecy code
+    :return:
+    """
     hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
-    hawea_data.loc[:, 'datetime'] = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
+    hawea_data.loc[:, 'datetime'] = ht = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
+    if start_date is None:
+        start_date = ht.min()
+    if end_date is None:
+        end_date = ht.max()
 
-    raise NotImplementedError
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+    hawea_data.rename(columns={'LakeLevel_m': 'level'}, inplace=True)
+    hawea_data.set_index('datetime', inplace=True)
+    idx = (hawea_data.index >= start_date) & (hawea_data.index <= end_date)
+    outdata = hawea_data.loc[idx, 'lake_stage'].resample(frequency).mean()
+
+    return outdata
 
 
 def build_lake_ghb_data():
     # todo
     raise NotImplementedError
+
+
+if __name__ == '__main__':
+    get_lake_heads('2012', '2013', 'M')

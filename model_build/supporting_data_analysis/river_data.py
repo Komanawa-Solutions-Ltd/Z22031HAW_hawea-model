@@ -47,6 +47,62 @@ def make_river_loc_data(recalc=default_recalc):
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
+def get_river_gage_locs():
+    raise NotImplementedError # todo I need to get these data...
+
+def get_historical_stage_flow(start_date, end_date, frequency='D'):
+    """
+    stages in m, flow in L/s  resample to frequency
+    length of records:
+     lake_stage: 2012-01-01 to 2021-12-31
+     lake_flow: 2012-01-01 to 2021-12-31
+     camphill_stage: 2009-01-01 to 2021-12-31
+     camphill_flow: 2009-01-01 to 2021-12-31
+     clutha2200_stage: 2017-07-06 to 2021-11-09
+
+    :param start_date:
+    :param end_date:
+    :param frequency: pd freq codes
+    :return:
+    """
+    hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
+    hawea_data.loc[:, 'datetime'] = ht = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
+    river_data = pd.read_csv(base_model_data_dir.joinpath('River_Level_Hawea.csv'))
+    river_data.loc[:, 'datetime'] = rt = pd.to_datetime(river_data.loc[:, 'DateTime'], format='%d/%m/%Y')
+    hawea_data.set_index('datetime', inplace=True)
+    river_data.set_index('datetime', inplace=True)
+    mint = min(ht.min(), rt.min())
+    maxt = max(ht.max(), rt.max())
+    if start_date is None:
+        start_date = mint
+    if end_date is None:
+        end_date = maxt
+
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+
+    all_data = pd.DataFrame(index=pd.date_range(mint, maxt, freq='D'))
+
+    temp = {
+        'lake_stage': hawea_data.loc[:, 'LakeLevel_m'].dropna().resample('D').mean(),
+        'lake_flow': hawea_data.loc[:, 'Flow_L_s'].dropna().resample('D').mean(),
+        'camphill_stage': river_data.loc[:, 'Level_Camphill'].dropna().resample('D').mean(),
+        'camphill_flow': river_data.loc[:, 'Flow_Camphill_L_s'].dropna().resample('D').mean(),
+        'clutha2200_stage': river_data.loc[:, 'Stage_Clutha2200'].dropna().resample('D').mean(),
+    }
+    for k, v in temp.items():
+        idx = v.index
+        all_data.loc[idx, k] = v
+    idx = (all_data.index >= start_date) & (all_data.index <= end_date)
+    return all_data.loc[idx].resample(frequency).mean()
+
+
+def _print_flowlengths():
+    data = get_historical_stage_flow(None, None)
+    for k in data.keys():
+        temp = data.loc[:, k].dropna().index
+        print(f'length of record {k}: {temp.min().date()} to {temp.max().date()}')
+
 
 def get_river_stage_data():  # todo
     # the river stage is largely stable
@@ -55,6 +111,8 @@ def get_river_stage_data():  # todo
     # todo where is stage clutha 2200???
     # todo how do I manage the lake stage/top of the hawea river??? discuss with Jens
     # todo need to interpolate the river stage.
+    # todo clutha 2200 is really short if we need to make this part of the model, possibly look at making a statistical
+    # relationship
     raise NotImplementedError
 
 
@@ -109,4 +167,4 @@ def make_river_data():
 
 
 if __name__ == '__main__':
-    data_checks()
+    _print_flowlengths()

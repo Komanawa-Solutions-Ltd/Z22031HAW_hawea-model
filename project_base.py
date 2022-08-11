@@ -5,7 +5,7 @@ on: 22/03/22
 from pathlib import Path
 from kslcore import KslEnv
 
-project_name = ''  # todo fill out
+project_name = 'hawea'
 proj_root = Path(__file__).parent  # base of git repo
 project_dir = KslEnv.shared_gdrive.joinpath('YMULT_small_projects/Z22031HAW_hawea-model')
 unbacked_dir = KslEnv.unbacked.joinpath(project_name)
