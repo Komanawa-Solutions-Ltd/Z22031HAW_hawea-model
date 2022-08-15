@@ -47,8 +47,8 @@ def make_river_loc_data(recalc=default_recalc):
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
-def get_river_gage_locs():
-    raise NotImplementedError # todo I need to get these data...
+def get_river_gage_locs():# todo I need to get these data...
+    raise NotImplementedError
 
 def get_historical_stage_flow(start_date, end_date, frequency='D'):
     """
@@ -165,6 +165,7 @@ def make_river_data():
     # todo put it all togeather to drop into modflow.
     raise NotImplementedError
 
+# todo stage set at damn, 1km from dam there are transient records of stage... calibration dataset or river stage.
 
 if __name__ == '__main__':
-    _print_flowlengths()
+   data_checks()

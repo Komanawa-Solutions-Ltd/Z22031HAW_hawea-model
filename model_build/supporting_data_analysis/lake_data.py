@@ -85,8 +85,7 @@ def get_lake_heads(start_date, end_date, frequency='D'):
     return outdata
 
 
-def build_lake_ghb_data():
-    # todo
+def build_lake_ghb_data(): # todo
     raise NotImplementedError
 
 
