@@ -75,14 +75,15 @@ def simplify_upper_clutha_dem(recalc=False):  # todo need to run on tuke... ran 
     geotransform = f.GetGeoTransform()
     f2 = f.GetRasterBand(1)
     no_data = f2.GetNoDataValue()
-    temp_data = f2.ReadAsArray()
-    f = None
+    temp_data = f2.ReadAsArray().astype(np.float32)
 
+    f = None
+    print('read data')
     if no_data is not None:
         temp_data[np.isclose(temp_data, no_data)] = np.nan
     temp_data[temp_data < 220] = np.nan  # manage weird artifacts in the dem
     null_val = -999999
-
+    print('fixed data')
     output_raster = gdal.GetDriverByName('GTiff').Create(temp_file, temp_data.shape[1], temp_data.shape[0], 1,
                                                          gdal.GDT_Float32)  # Open the file
     output_raster.SetGeoTransform(geotransform)  # Specify its coordinates
@@ -91,6 +92,7 @@ def simplify_upper_clutha_dem(recalc=False):  # todo need to run on tuke... ran 
     output_raster.SetProjection(srs.ExportToWkt())  # Exports the coordinate system
     # to the file
     band = output_raster.GetRasterBand(1)
+    print('set up array')
     band.WriteArray(temp_data)  # Writes my array to the raster
     band.FlushCache()
     band.SetNoDataValue(null_val)
@@ -125,6 +127,9 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 if __name__ == '__main__':
-    temp_smt.plot.plt_matrix(simplify_upper_clutha_dem(recalc=True), title='upperc', base_map=True) # todo need to run on dicke... more memory
+    simplify_hawea_dem(recalc=True)
+    simplify_upper_clutha_dem(recalc=True)
+    # temp_smt.plot.plt_matrix(simplify_upper_clutha_dem(recalc=False), title='upperc',
+    #                          base_map=True)  # todo need to run on dicke... more memory
 
-    temp_smt.plot.show()
+    # temp_smt.plot.show()
