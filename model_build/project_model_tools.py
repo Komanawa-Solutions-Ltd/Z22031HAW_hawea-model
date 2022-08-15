@@ -81,7 +81,13 @@ def simplify_upper_clutha_dem(recalc=False):  # todo need to run on tuke... ran 
     print('read data')
     if no_data is not None:
         temp_data[np.isclose(temp_data, no_data)] = np.nan
-    temp_data[temp_data < 220] = np.nan  # manage weird artifacts in the dem
+    rows = temp_data.shape[1]
+    t = temp_data[0:rows//4]
+    t[t < 260] = np.nan
+    t = temp_data[0:rows//2]
+    t[t < 230] = np.nan
+    t = temp_data[rows//2:]
+    t[t < 220] = np.nan
     null_val = -999999
     print('fixed data')
     output_raster = gdal.GetDriverByName('GTiff').Create(temp_file, temp_data.shape[1], temp_data.shape[0], 1,
@@ -96,8 +102,10 @@ def simplify_upper_clutha_dem(recalc=False):  # todo need to run on tuke... ran 
     band.WriteArray(temp_data)  # Writes my array to the raster
     band.FlushCache()
     band.SetNoDataValue(null_val)
+    output_raster = None
 
     data = temp_smt.io.raster_to_array(temp_file, 'min')
+    data[~np.isfinite(data)] = np.nan
     np.savetxt(outpath, data)
     return data
 
@@ -127,9 +135,11 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 if __name__ == '__main__':
-    simplify_hawea_dem(recalc=True)
-    simplify_upper_clutha_dem(recalc=True)
-    # temp_smt.plot.plt_matrix(simplify_upper_clutha_dem(recalc=False), title='upperc',
-    #                          base_map=True)  # todo need to run on dicke... more memory
-
-    # temp_smt.plot.show()
+    # simplify_hawea_dem(recalc=True)
+    #simplify_upper_clutha_dem(recalc=True)
+    test = simplify_upper_clutha_dem(recalc=False)
+    temp_smt.plot.plt_matrix(test, title='upperc',
+                             base_map=True)  # todo need to run on dicke... more memory
+    val = 250
+    smt.plot.plt_matrix(test < val, base_map=True, title=f'<{val}', no_flow_layer=0)
+    temp_smt.plot.show()
