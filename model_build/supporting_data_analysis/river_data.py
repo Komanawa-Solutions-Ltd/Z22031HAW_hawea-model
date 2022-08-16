@@ -5,7 +5,7 @@ on: 2/08/22
 import numpy as np
 import pandas as pd
 
-from model_build.project_model_tools import smt, simplify_upper_clutha_dem
+from model_build.project_model_tools import smt, simplify_upper_clutha_dem, simplify_hawea_dem, _river_locs
 from project_base import base_model_data_dir, processed_model_data_dir
 from model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
 
@@ -16,39 +16,28 @@ clutha_shp_path = base_model_data_dir.joinpath('lower_clutha.shp')
 riv_loc_data_path = processed_model_data_dir.joinpath('river_loc_data.csv')
 
 
-def make_river_loc_data(recalc=default_recalc):
+def make_river_loc_data(recalc=default_recalc):  # todo add gaging section/targets
     if not recalc and riv_loc_data_path.exists():
         outdata = pd.read_csv(riv_loc_data_path)
-        # todo manage types !!!!
+        dtypes = {
+            'i': 'int64',
+            'j': 'int64',
+            'dist': 'float64',
+            'rbot': 'float64',
+            'rname': 'str',
+        }
+
+        for k, v in dtypes.items():
+            outdata.loc[:, k] = outdata.loc[:, k].astype(v)
         return outdata
-    # read in the shapefiles and save only the data in active model
-    ibound = smt.get_no_flow(0)
-    hawea = smt.io.shape_file_to_model_array(hawea_shp_path, 'dist_top', alltouched=True)
-    hawea[ibound < 1] = np.nan
-
-    # make sure hawea r. not in the lake!!!
-    lake_hawea = smt.io.df_to_array(get_lake_hawea_loc(), 'i')
-    hawea[np.isfinite(lake_hawea)] = np.nan
-
-    hawea = smt.io.array_to_df(hawea, 'dist')
-    clutha = smt.io.shape_file_to_model_array(hawea_shp_path, 'dist_top', alltouched=True)
-    clutha[ibound < 1] = np.nan
-    clutha = smt.io.array_to_df(clutha, 'dist')
-
-    # add top data
-    top = simplify_upper_clutha_dem()
-    hawea.loc[:, 'Rbot'] = top[hawea.loc[:, 'i'], hawea.loc[:, 'j']]
-    clutha.loc[:, 'Rbot'] = top[clutha.loc[:, 'i'], clutha.loc[:, 'j']]
-
-    # label rivers
-    hawea.loc[:, 'rname'] = 'hawea'
-    clutha.loc[:, 'rname'] = 'clutha'
-    outdata = pd.concat((hawea, clutha))
+    outdata = _river_locs()
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
-def get_river_gage_locs():# todo I need to get these data...
+
+def get_river_gage_locs():  # todo I need to get these data...
     raise NotImplementedError
+
 
 def get_historical_stage_flow(start_date, end_date, frequency='D'):
     """
@@ -132,8 +121,40 @@ def get_river_conductance(river_loc_data, optimised):  # todo
 
 def data_checks():
     import matplotlib.pyplot as plt
-    # todo look at riv locations, make sure none of the locations are in the lake!!!
 
+    # look at riv locations, make sure none of the locations are in the lake!!!
+    ibound = smt.get_no_flow(0)
+    hawea = smt.io.shape_file_to_model_array(hawea_shp_path, 'dist_top', alltouched=True)
+    hawea[ibound < 1] = np.nan
+    smt.plot.plt_matrix(hawea, title='hawea', base_map=True)
+    clutha = smt.io.shape_file_to_model_array(clutha_shp_path, 'dist_top', alltouched=True)
+    clutha[ibound < 1] = np.nan
+    smt.plot.plt_matrix(clutha, title='clutha', base_map=True)
+
+    # look at dist vs model top, bot, riv bot, looks good
+    river_locs = make_river_loc_data()
+    tops = smt.get_tops()[0]
+    bottoms = smt.get_bottoms()[0]
+    river_locs.loc[:, 'model_top'] = tops[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
+    river_locs.loc[:, 'model_bot'] = bottoms[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
+    for r in ['clutha', 'hawea', 'both']:
+        if r == 'both':
+            temp_data = river_locs.copy(deep=True)
+            temp_data.loc[temp_data.rname == 'clutha', 'dist'] += temp_data.loc[
+                temp_data.rname == 'hawea', 'dist'].max()
+        else:
+            temp_data = river_locs.loc[river_locs.rname == r]
+        temp_data.sort_values('dist', inplace=True)
+        fig, ax = plt.subplots()
+        ax.set_title(r)
+        ax.plot(temp_data.dist, temp_data.rbot_raw, c='b', label='river_bottom_raw')
+        ax.plot(temp_data.dist, temp_data.rbot, c='y', label='river_bottom_fixed')
+        ax.plot(temp_data.dist, temp_data.model_bot, c='k', label='model_bottom')
+        ax.plot(temp_data.dist, temp_data.model_top, c='r', label='model_top')
+        ax.set_ylabel('elevation')
+        ax.set_xlabel('distance from top of river')
+        ax.legend()
+    smt.plot.show()
     # look at stage through time at our locations( which are???)
     hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
     print(hawea_data.describe())
@@ -165,7 +186,12 @@ def make_river_data():
     # todo put it all togeather to drop into modflow.
     raise NotImplementedError
 
-# todo stage set at damn, 1km from dam there are transient records of stage... calibration dataset or river stage.
 
+# todo stage set at damn, 1km from dam there are transient records of stage... calibration dataset
+#
 if __name__ == '__main__':
-   data_checks()
+    smt.get_elv_db(recalc=True)
+    smt.plot.plt_matrix(smt.get_bottoms()[0], base_map=True, title='bottoms', no_flow_layer=0)
+    simplify_hawea_dem(True)
+    make_river_loc_data(True)
+    data_checks()

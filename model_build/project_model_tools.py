@@ -6,6 +6,7 @@ from model_tools.regular_modeltools import ModelTools_RegularGrid
 from project_base import modelling_dir, unbacked_dir, base_model_data_dir  # from project_base.py file in the project
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 
 # todo clone the 'modflow_tools' repo and make a new branch for this model, don't forget to merge
 # when finished
@@ -32,7 +33,7 @@ rows = int(abs(uly - lry) // grid_space) + 1
 layers = 1
 nper = 1  # todo dummy
 steady = np.repeat([False], (nper,))  # todo dbl check
-# todo other period data
+# todo other period data? naw pass other data to model build
 layer_type = [1]
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
@@ -53,12 +54,12 @@ def simplify_hawea_dem(recalc=False):
     if outpath.exists() and not recalc:
         data = np.loadtxt(outpath)
         return data
-    data = temp_smt.io.raster_to_array(dem_path, 'average')
+    data = temp_smt.io.raster_to_array(dem_path, 'med')
     np.savetxt(outpath, data)
     return data
 
 
-def simplify_upper_clutha_dem(recalc=False):  # todo need to run on tuke... ran out of memory
+def simplify_upper_clutha_dem(recalc=False):
     """
     take the min of the upper clutha dem to use for the model
     run once from project filestore
@@ -82,11 +83,11 @@ def simplify_upper_clutha_dem(recalc=False):  # todo need to run on tuke... ran 
     if no_data is not None:
         temp_data[np.isclose(temp_data, no_data)] = np.nan
     rows = temp_data.shape[1]
-    t = temp_data[0:rows//4]
+    t = temp_data[0:rows // 4]
     t[t < 260] = np.nan
-    t = temp_data[0:rows//2]
+    t = temp_data[0:rows // 2]
     t[t < 230] = np.nan
-    t = temp_data[rows//2:]
+    t = temp_data[rows // 2:]
     t[t < 220] = np.nan
     null_val = -999999
     print('fixed data')
@@ -113,15 +114,105 @@ def simplify_upper_clutha_dem(recalc=False):  # todo need to run on tuke... ran 
 def no_flow():
     ibound = temp_smt.get_model_zeros(_3d=True)
     active = temp_smt.io.shape_file_to_model_array(boundary_path, 'fid', alltouched=True)
+    # remove camphill and the camphill moraine from the model
+    camphill = temp_smt.io.shape_file_to_model_array(base_model_data_dir.joinpath('camp_hill_moraine.shp'), 'id',
+                                                     alltouched=True)
     assert temp_smt.layers == 1
     ibound[0][np.isfinite(active)] = 1
+    ibound[0][np.isfinite(camphill)] = 0
     return ibound
+
+
+def _lake_locs():
+    lakefront_shp_path = base_model_data_dir.joinpath('lakefront.shp')
+    lake_shp_path = base_model_data_dir.joinpath('lake_hawea.shp')
+    lake = temp_smt.io.shape_file_to_model_array(lake_shp_path, 'id', alltouched=True)
+    lake_front = temp_smt.io.shape_file_to_model_array(lakefront_shp_path, 'id', alltouched=True)
+    lake[np.isfinite(lake_front)] = np.nan
+    lake_data = temp_smt.io.array_to_df(lake, 'drop')
+    lake_data.drop(columns='drop', inplace=True)
+    return lake_data
+
+
+def _river_locs():
+    hawea_shp_path = base_model_data_dir.joinpath('hawea_river.shp')
+    clutha_shp_path = base_model_data_dir.joinpath('lower_clutha.shp')
+
+    # read in the shapefiles and save only the data in active model
+    ibound = no_flow()[0]
+    hawea = temp_smt.io.shape_file_to_model_array(hawea_shp_path, 'dist_top', alltouched=True)
+    hawea[ibound < 1] = np.nan
+
+    # make sure hawea r. not in the lake!!!
+    lake_hawea = temp_smt.io.df_to_array(_lake_locs(), 'i')
+    hawea[np.isfinite(lake_hawea)] = np.nan
+
+    hawea = temp_smt.io.array_to_df(hawea, 'dist').sort_values('dist')
+
+    clutha = temp_smt.io.shape_file_to_model_array(clutha_shp_path, 'dist_top', alltouched=True)
+    clutha[ibound < 1] = np.nan
+    clutha = temp_smt.io.array_to_df(clutha, 'dist').sort_values('dist')
+
+    # add top data
+    top = simplify_upper_clutha_dem()
+    hawea.loc[:, 'rbot'] = top[hawea.loc[:, 'i'], hawea.loc[:, 'j']]
+    hawea.loc[0, 'rbot'] = hawea.loc[1, 'rbot']  # first segment dem is nan, so set first to second
+    hawea.loc[:, 'rbot_raw'] = hawea.loc[:, 'rbot']
+    clutha.loc[:, 'rbot'] = top[clutha.loc[:, 'i'], clutha.loc[:, 'j']]
+    clutha.loc[:, 'rbot_raw'] = clutha.loc[:, 'rbot']
+
+    # fix weird things in the DEM
+    val = -1
+    idx = hawea.rbot.diff(-1) <= val
+    for d in [-2]:
+        idx = idx | (hawea.rbot.diff(d) <= val)
+    hawea.loc[idx, 'rbot'] = np.nan
+
+    hawea.loc[idx, 'rbot'] = hawea.loc[:, 'rbot'].rolling(5, min_periods=1, center=True).mean().loc[idx]
+
+    val = -1
+    idx = clutha.rbot.diff(-1) <= val
+    for d in [-2]:
+        idx = idx | (clutha.rbot.diff(d) <= val)
+    clutha.loc[idx, 'rbot'] = np.nan
+
+    clutha.loc[idx, 'rbot'] = clutha.loc[:, 'rbot'].rolling(5, min_periods=1, center=True).mean().loc[idx]
+
+    # label rivers
+    hawea.loc[:, 'rname'] = 'hawea'
+    clutha.loc[:, 'rname'] = 'clutha'
+    outdata = pd.concat((hawea, clutha))
+    outdata.reset_index(inplace=True, drop=True)
+    return outdata
 
 
 def elv_calc():
     bot_path = base_model_data_dir.joinpath('Model_bot.tif')
     top = simplify_hawea_dem()
-    bot = temp_smt.io.raster_to_array(bot_path, 'average')
+    top[top > 600] = 600  # for easy viewing of noflow area
+    bot = temp_smt.io.raster_to_array(bot_path, 'min')
+    # fill missing bottoms with neibours
+    assert np.isnan(bot[:, 0]).all()
+    assert np.isnan(bot[:, -7:]).all()
+    bot[:, 0] = bot[:, 1]
+    bot[:, -7:] = bot[:, -8][:, np.newaxis]
+
+    # adjust bottom so that the clutha is not below bottom
+    river = _river_locs()
+    temp = bot[river.loc[:, 'i'], river.loc[:, 'j']]
+    rbots = river.loc[:, 'rbot'].values
+    idx = temp >= rbots
+    temp[idx] = rbots[idx] - 0.5  # set model bottoms to below river level.
+    bot[river.loc[:, 'i'], river.loc[:, 'j']] = temp
+
+    # adjust top so it is above rbot
+    temp = top[river.loc[:, 'i'], river.loc[:, 'j']]
+    idx = temp <= rbots
+    temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
+    top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
+
+    assert np.isfinite(top).all()
+    assert np.isfinite(bot).all()
     thick = top - bot
     bot[thick < 2] = top[thick < 2] - 2  # set min thickness to 2m
 
@@ -134,12 +225,37 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              no_flow_calc=no_flow, elv_calculator=elv_calc,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
+
+def data_checks():
+    contour_levels = range(200, 460, 10)
+    smt.recalc_all_pickles()
+    tops = smt.get_tops()[0]
+    bots = smt.get_bottoms()[0]
+    ibound = smt.get_no_flow(0)
+    smt.plot.plt_matrix(bots, base_map=True, title='bottom_raw', contour=True, label_contours=True,
+                        contour_levels=contour_levels)
+    tops[ibound < 1] = np.nan
+    bots[ibound < 1] = np.nan
+    smt.plot.plt_matrix(tops, base_map=True, title='top', contour=True, label_contours=True,
+                        contour_levels=contour_levels, no_flow_layer=0)
+    smt.plot.plt_matrix(bots, base_map=True, title='bottom', contour=True, label_contours=True,
+                        contour_levels=contour_levels, no_flow_layer=0)
+
+    # N-S cross sections
+    cols = range(0, smt.cols, 20)
+    for c in cols:
+        smt.plot.plt_slice(np.zeros(smt.model_array_shape) * np.nan, x_coords=c, y_coords=None, coords_in_row_col=True,
+                           plot_locator=True, )
+
+    # E-W cross sections
+    rows = range(0, smt.rows, 20)
+    for r in rows:
+        smt.plot.plt_slice(np.zeros(smt.model_array_shape) * np.nan, x_coords=None, y_coords=r, coords_in_row_col=True,
+                           plot_locator=True)
+    smt.plot.show()
+
+    # happy with this setup
+
+
 if __name__ == '__main__':
-    # simplify_hawea_dem(recalc=True)
-    #simplify_upper_clutha_dem(recalc=True)
-    test = simplify_upper_clutha_dem(recalc=False)
-    temp_smt.plot.plt_matrix(test, title='upperc',
-                             base_map=True)  # todo need to run on dicke... more memory
-    val = 250
-    smt.plot.plt_matrix(test < val, base_map=True, title=f'<{val}', no_flow_layer=0)
-    temp_smt.plot.show()
+    data_checks()

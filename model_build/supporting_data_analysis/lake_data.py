@@ -5,7 +5,7 @@ on: 10/08/22
 import numpy as np
 import pandas as pd
 
-from model_build.project_model_tools import smt
+from model_build.project_model_tools import smt, _lake_locs
 from project_base import base_model_data_dir, processed_model_data_dir
 
 default_recalc = False
@@ -20,11 +20,7 @@ def get_lake_hawea_loc(recalc=default_recalc):
         # todo manage types
         return lake_data
 
-    lake = smt.io.shape_file_to_model_array(lake_shp_path, 'id', alltouched=True)
-    lake_front = smt.io.shape_file_to_model_array(lakefront_shp_path, 'id', alltouched=True)
-    lake[np.isfinite(lake_front)] = np.nan
-    lake_data = smt.io.array_to_df(lake, 'drop')
-    lake_data.drop(columns='drop', inplace=True)
+    lake_data = _lake_locs()
     lake_data.to_csv(lake_loc_path)
     return lake_data
 
