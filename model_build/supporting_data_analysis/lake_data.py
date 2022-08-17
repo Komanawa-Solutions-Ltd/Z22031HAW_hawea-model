@@ -16,8 +16,7 @@ lake_loc_path = processed_model_data_dir.joinpath('lake_hawea_loc.csv')
 
 def get_lake_hawea_loc(recalc=default_recalc):
     if not recalc and lake_loc_path.exists():
-        lake_data = pd.read_csv(lake_loc_path)
-        # todo manage types
+        lake_data = pd.read_csv(lake_loc_path,dtype=int)
         return lake_data
 
     lake_data = _lake_locs()
@@ -25,7 +24,7 @@ def get_lake_hawea_loc(recalc=default_recalc):
     return lake_data
 
 
-def get_lake_conductance(lake_loc_data, optimised):  # todo
+def get_lake_conductance(lake_loc_data, optimised):  # todo change to pass conductance,
     """
     get the river conductance values
     :param lake_loc_data: lake location data output of get_lake_hawea_loc
@@ -39,7 +38,7 @@ def get_lake_conductance(lake_loc_data, optimised):  # todo
         raise NotImplementedError
 
 
-def lake_checks():  # todo write some checks and look at the data
+def lake_checks():
     import matplotlib.pyplot as plt
     hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
     print(hawea_data.describe())
@@ -50,9 +49,8 @@ def lake_checks():  # todo write some checks and look at the data
     monthly.LakeLevel_m.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
     ax.set_title('lake level')
 
-    # todo plot lake locations
-
-    raise NotImplementedError
+    smt.plot.plt_matrix(smt.io.df_to_array(get_lake_hawea_loc(),'i'),base_map=True, no_flow_layer=0,title='lake locs')
+    smt.plot.show()
 
 
 def get_lake_heads(start_date, end_date, frequency='D'):
@@ -86,4 +84,4 @@ def build_lake_ghb_data(): # todo
 
 
 if __name__ == '__main__':
-    get_lake_heads('2012', '2013', 'M')
+    lake_checks()

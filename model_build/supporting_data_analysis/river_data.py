@@ -5,18 +5,18 @@ on: 2/08/22
 import numpy as np
 import pandas as pd
 
-from model_build.project_model_tools import smt, simplify_upper_clutha_dem, simplify_hawea_dem, _river_locs
+from model_build.project_model_tools import smt, simplify_hawea_dem, _river_locs
 from project_base import base_model_data_dir, processed_model_data_dir
-from model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
 
 default_recalc = False
 hawea_shp_path = base_model_data_dir.joinpath('hawea_river.shp')
 clutha_shp_path = base_model_data_dir.joinpath('lower_clutha.shp')
+gageing_path = base_model_data_dir.joinpath('Hawea River - ORC Gaugings for Gain & Loss Estimation.xlsx')
 
 riv_loc_data_path = processed_model_data_dir.joinpath('river_loc_data.csv')
 
 
-def make_river_loc_data(recalc=default_recalc):  # todo add gaging section/targets
+def make_river_loc_data(recalc=default_recalc):
     if not recalc and riv_loc_data_path.exists():
         outdata = pd.read_csv(riv_loc_data_path)
         dtypes = {
@@ -25,19 +25,36 @@ def make_river_loc_data(recalc=default_recalc):  # todo add gaging section/targe
             'dist': 'float64',
             'rbot': 'float64',
             'rname': 'str',
+            'gage': 'int64'
         }
 
         for k, v in dtypes.items():
             outdata.loc[:, k] = outdata.loc[:, k].astype(v)
         return outdata
     outdata = _river_locs()
+    outdata = get_river_gage_locs(outdata)
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
 
-def get_river_gage_locs():  # todo I need to get these data...
-    raise NotImplementedError
+def get_river_gage_locs(riv_data):
+    loc_data = pd.read_excel(gageing_path, 'locs').set_index('site')
+    temp = riv_data.copy(deep=True)
+    temp = smt.io.add_mxmy_to_df(temp)
 
+    loc_data.loc['Below Control', 'dist'] = 0
+    loc_data.loc['Below Control', 'rname'] = 'hawea'
+    all_sites = ['Below Control', 'Camp Hill', 'Below Camphill', 'Campground']
+    for s in ['Camp Hill', 'Below Camphill', 'Campground']:
+        t = ((temp.mx - loc_data.loc[s, 'x']) ** 2 + (temp.my - loc_data.loc[s, 'y']) ** 2)
+        loc_data.loc[s, 'dist'] = temp.loc[t.argmin(), 'dist']
+        loc_data.loc[s, 'rname'] = temp.loc[t.argmin(), 'rname']
+    for i,(s1, s2) in enumerate(zip(all_sites[0:-1], all_sites[1:])):
+        assert (loc_data.loc[[s1, s2], 'rname'] == 'hawea').all()
+        dist1, dist2 = loc_data.loc[[s1, s2], 'dist']
+        idx = (riv_data.rname=='hawea') & (riv_data.dist>=dist1) & (riv_data.dist<=dist2)
+        riv_data.loc[idx, 'gage'] = i+1
+    return riv_data
 
 def get_historical_stage_flow(start_date, end_date, frequency='D'):
     """
@@ -102,10 +119,12 @@ def get_river_stage_data():  # todo
     # todo need to interpolate the river stage.
     # todo clutha 2200 is really short if we need to make this part of the model, possibly look at making a statistical
     # relationship
+    # todo as we only have 1 data point on each river, maybe just set stage to n meters above river bottom as defined by
+    # todo the recorders for both the clutha and hawea rivers
     raise NotImplementedError
 
 
-def get_river_conductance(river_loc_data, optimised):  # todo
+def get_river_conductance(river_loc_data, optimised):  # todo switch to passing conductance
     """
     get the river conductance values
     :param river_loc_data: river location data output of make_river_loc_data
@@ -154,7 +173,6 @@ def data_checks():
         ax.set_ylabel('elevation')
         ax.set_xlabel('distance from top of river')
         ax.legend()
-    smt.plot.show()
     # look at stage through time at our locations( which are???)
     hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
     print(hawea_data.describe())
@@ -176,6 +194,10 @@ def data_checks():
     fig, ax = plt.subplots()
     monthly.Stage_Clutha2200.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
     ax.set_title('clutha 2200 stage')
+
+    # look at gaging sites
+    temp = smt.io.df_to_array(river_locs, 'gage')
+    smt.plot.plt_matrix(temp, base_map=True, title='gaging locs')
     plt.show()
 
     # todo look at dist vs model top, bot, riv bot along each river. include min, 5th, 25th, 50th, 75th, 95th, max temporal stage
