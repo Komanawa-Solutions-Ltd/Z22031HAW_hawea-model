@@ -71,7 +71,7 @@ def get_lake_heads(start_date, end_date, frequency='D'):
 
     start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
-    hawea_data.rename(columns={'LakeLevel_m': 'level'}, inplace=True)
+    hawea_data.rename(columns={'LakeLevel_m': 'lake_stage'}, inplace=True)
     hawea_data.set_index('datetime', inplace=True)
     idx = (hawea_data.index >= start_date) & (hawea_data.index <= end_date)
     outdata = hawea_data.loc[idx, 'lake_stage'].resample(frequency).mean()

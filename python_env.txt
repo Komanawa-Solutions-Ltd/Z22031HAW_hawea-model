@@ -1,7 +1,7 @@
 # todo fill this out as you create the environment
 # environment was primarily used on [Linux
 # initial env creation
-conda create -c conda-forge --name hawea python numpy pandas pytables openpyxl matplotlib scipy netcdf4 psutil geopandas flopy
+conda create -c conda-forge --name hawea python numpy pandas pytables openpyxl matplotlib scipy netcdf4 psutil geopandas flopy pysheds
 conda activate hawea
 pip install git+https://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@github.com/Komanawa-Solutions-Ltd/kslcore.git
 

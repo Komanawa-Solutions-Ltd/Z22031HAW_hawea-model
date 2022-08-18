@@ -258,4 +258,9 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    # below run once
+    # ibound = smt.get_no_flow(0)
+    # ibound[ibound<=0] = np.nan
+    # smt.io.polygonize_array('/home/matt_dumont/google_mount_point/YMULT_small_projects/Z22031HAW_hawea-model/Modelling/input_data/boundary_18-08-22.shp',
+    #                         ibound,None)
     data_checks()

@@ -113,12 +113,12 @@ def _print_flowlengths():
 def get_river_stage_data():  # todo
     # the river stage is largely stable
     # hawea 310-313, median 311
-    # along time, so hold constant in model??? # todo discuss with Jens
     # todo where is stage clutha 2200???
     # todo how do I manage the lake stage/top of the hawea river??? discuss with Jens
     # todo need to interpolate the river stage.
     # todo clutha 2200 is really short if we need to make this part of the model, possibly look at making a statistical
     # relationship
+    # todo stage set at damn, 1km from dam there are transient records of stage... calibration dataset
     # todo as we only have 1 data point on each river, maybe just set stage to n meters above river bottom as defined by
     # todo the recorders for both the clutha and hawea rivers
     raise NotImplementedError
@@ -209,8 +209,6 @@ def make_river_data():
     raise NotImplementedError
 
 
-# todo stage set at damn, 1km from dam there are transient records of stage... calibration dataset
-#
 if __name__ == '__main__':
     smt.get_elv_db(recalc=True)
     smt.plot.plt_matrix(smt.get_bottoms()[0], base_map=True, title='bottoms', no_flow_layer=0)
