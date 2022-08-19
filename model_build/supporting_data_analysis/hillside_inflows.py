@@ -4,9 +4,11 @@ on: 2/08/22
 """
 import pandas as pd
 import numpy as np
-from project_base import base_model_data_dir, processed_model_data_dir, modelling_dir,unbacked_dir
+from project_base import base_model_data_dir, processed_model_data_dir, modelling_dir, unbacked_dir
+from model_build.supporting_data_analysis.recharge_model import get_met_data
 from model_build.project_model_tools import smt
 import geopandas as gpd
+import datetime
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from copy import deepcopy
@@ -121,20 +123,60 @@ def _write_shapefile(outpath, grid, catch_view):
             i += 1
 
 
-def get_historical_flows():
+def get_historical_flows(start_date, end_date, frequency='D'):
+    outdata = pd.DataFrame(index=pd.date_range('1950-01-01', '2022-01-01', freq='D') + datetime.timedelta(hours=12))
+    outdata.index.name = 'datetime'
+    paths = [
+        'streamflow_Lindis at Lindis Peak_data.csv',
+        'streamflow_Luggate Creek at SH6 Bridge_data.csv',
+        'streamflow_Grandview Creek at Lake Hawea Station_data.csv',
+        'streamflow_Lagoon Creek at Mount Grand Station_data.csv',
+    ]
+    names = [
+        'Lindis',
+        'Luggate',
+        'Grandview',
+        'Lagoon',
+    ]
+
+    for p, n in zip(paths, names):
+        df = pd.read_csv(base_model_data_dir.joinpath(p), skiprows=1)
+        df.loc[:, 'datetime'] = pd.to_datetime(df.time)
+        df.set_index('datetime', inplace=True)
+        df.rename(columns={'streamflow': n}, inplace=True)
+
+        outdata = pd.merge(outdata, df.loc[:,[n]], how='outer', left_index=True, right_index=True)
+
+    outdata = outdata.dropna(how='all')
+
+    ht = outdata.index
+    if start_date is None:
+        start_date = ht.min()
+    if end_date is None:
+        end_date = ht.max()
+
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+    idx = (outdata.index >= start_date) & (outdata.index <= end_date)
+    outdata = outdata.loc[idx].resample(frequency).mean()
+    return outdata
+
+def compair_lindus_correlations():
+    raise NotImplementedError # todo! start here
+
+def get_hillside_inflows_specific_discharge():  # todo try to get from lindis at lindis peak
     raise NotImplementedError
 
-def get_hillside_inflows_specific_discharge():
-    raise NotImplementedError
 
 def get_hillside_inflows_rain_pet_predict():
+    metdata = get_met_data(None, None)
     # todo this might be useful for scenarios.
     raise NotImplementedError
 
-# todo check the shapefiles and areas!!... also check overlaps, I think I have sorted most of these, but need to check v2
+
 # # todo use specific discharge of catchments?
 # todo make relative to rainfall/pet/etc.?
 # todo check with team
 
 if __name__ == '__main__':
-    get_catchment_areas(show_plot=False, recalc=True)
+    get_historical_flows(None, None)
