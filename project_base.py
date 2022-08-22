@@ -17,3 +17,6 @@ unbacked_dir.mkdir(exist_ok=True)
 modelling_dir = project_dir.joinpath('Modelling')
 base_model_data_dir = proj_root.joinpath('model_build/base_data')
 processed_model_data_dir = proj_root.joinpath('model_build/processed_input_data')
+
+# todo check the ability to run this model without access to modelling_dir by setting modelling_dir=None
+# todo label all things that need the external datasets via docstring

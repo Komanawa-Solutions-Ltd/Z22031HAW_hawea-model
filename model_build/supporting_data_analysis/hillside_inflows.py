@@ -19,7 +19,6 @@ pour_points_path = base_model_data_dir.joinpath('hillflow_inputs.shp')
 catchment_area_path = processed_model_data_dir.joinpath('catchment_areas.csv')
 luggate_catch_area_path = processed_model_data_dir.joinpath('luggate_catchment_area.csv')
 
-
 def get_catchment_areas(show_plot=False, recalc=False):
     if catchment_area_path.exists() and not recalc:
         data = pd.read_csv(catchment_area_path, index_col=0)
