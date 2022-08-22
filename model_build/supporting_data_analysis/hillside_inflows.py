@@ -17,11 +17,12 @@ from copy import deepcopy
 
 pour_points_path = base_model_data_dir.joinpath('hillflow_inputs.shp')
 catchment_area_path = processed_model_data_dir.joinpath('catchment_areas.csv')
+luggate_catch_area_path = processed_model_data_dir.joinpath('luggate_catchment_area.csv')
 
 
 def get_catchment_areas(show_plot=False, recalc=False):
     if catchment_area_path.exists() and not recalc:
-        data = pd.read_csv(catchment_area_path)
+        data = pd.read_csv(catchment_area_path, index_col=0)
         return data
 
     dem_path = modelling_dir.joinpath('input_data/southi_15mdem_Hawea.tif')
@@ -123,6 +124,87 @@ def _write_shapefile(outpath, grid, catch_view):
             i += 1
 
 
+def get_luggate_catchment_area(recalc=False):
+    # did not work DEM is too coarse to easily create.
+    if luggate_catch_area_path.exists() and not recalc:
+        data = pd.read_csv(luggate_catch_area_path, index_col=0)
+        return data
+
+    dem_path = modelling_dir.joinpath('input_data/larger_area/8m_dem_luggate.tif')
+    catchment_shapefile_dir = unbacked_dir.joinpath('input_data/lindis_luggate_catchments')
+    catchment_shapefile_dir.mkdir(exist_ok=True, parents=True)
+    from pysheds.grid import Grid
+    grid = Grid.from_raster(str(dem_path))
+    dem = grid.read_raster(str(dem_path))
+    # Fill pits in DEM
+    pit_filled_dem = grid.fill_pits(dem)
+
+    # Fill depressions in DEM
+    flooded_dem = grid.fill_depressions(pit_filled_dem)
+
+    # Resolve flats in DEM
+    inflated_dem = grid.resolve_flats(flooded_dem)
+    print('dem conditioned')
+
+    # Compute flow directions (d8)
+    dirmap = (1, 2, 3, 4, 5, 6, 7, 8)
+    fdir = grid.flowdir(inflated_dem, dirmap=dirmap)
+
+    # Calculate flow accumulation
+    acc = grid.accumulation(fdir, dirmap=dirmap)
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    fig.patch.set_alpha(0)
+    plt.grid('on', zorder=0)
+    im = ax.imshow(acc, extent=grid.extent, zorder=2,
+                   cmap='cubehelix',
+                   norm=LogNorm(1, acc.max()),
+                   interpolation='bilinear')
+
+    plt.colorbar(im, ax=ax, label='Upstream Cells')
+    plt.title('Flow Accumulation', size=14)
+    plt.xlabel('NZTMX')
+    plt.ylabel('NZTMY')
+    plt.tight_layout()
+    plt.show()
+
+    outdata = pd.DataFrame(columns=['raster_area', 'shp_area', 'px', 'py'])
+    # Delineate a catchment
+    # ---------------------
+    # Specify pour point
+    y, x = 5038214.22, 1304519.88  # todo luggate to se if it works
+    name = 'luggate_at_sh6'
+    print(name)
+    outdata.loc[name, 'px'] = x
+    outdata.loc[name, 'py'] = y
+
+    # Snap pour point to high accumulation cell
+    x_snap, y_snap = grid.snap_to_mask(acc > 1000, (x, y))
+
+    # Delineate the catchment
+    catch = grid.catchment(x=x_snap, y=y_snap, fdir=fdir, dirmap=dirmap,
+                           xytype='coordinate')
+    # calculate area
+    cell_area = 8 * 8  # m2 from 8m dem
+    catch_area = catch.sum() * cell_area
+    outdata.loc[name, 'raster_area'] = catch_area
+
+    # export shapefile to check
+    grid2 = deepcopy(grid)
+    grid2.clip_to(catch)
+    catch_view = grid2.view(catch)
+    _write_shapefile(outpath=catchment_shapefile_dir.joinpath(f'{name}.shp'), grid=grid2, catch_view=catch_view)
+    t = gpd.read_file(catchment_shapefile_dir.joinpath(f'{name}.shp'))
+    outdata.loc[name, 'shp_area'] = t.area.sum()
+
+    outdata.to_csv(luggate_catch_area_path)
+
+
+def get_lindis_area():
+    t = gpd.read_file(processed_model_data_dir.joinpath('lindis_area_right.shp'))
+    return t.area.sum()
+
+
 def get_historical_flows(start_date, end_date, frequency='D'):
     outdata = pd.DataFrame(index=pd.date_range('1950-01-01', '2022-01-01', freq='D') + datetime.timedelta(hours=12))
     outdata.index.name = 'datetime'
@@ -145,7 +227,7 @@ def get_historical_flows(start_date, end_date, frequency='D'):
         df.set_index('datetime', inplace=True)
         df.rename(columns={'streamflow': n}, inplace=True)
 
-        outdata = pd.merge(outdata, df.loc[:,[n]], how='outer', left_index=True, right_index=True)
+        outdata = pd.merge(outdata, df.loc[:, [n]], how='outer', left_index=True, right_index=True)
 
     outdata = outdata.dropna(how='all')
 
@@ -161,22 +243,239 @@ def get_historical_flows(start_date, end_date, frequency='D'):
     outdata = outdata.loc[idx].resample(frequency).mean()
     return outdata
 
+
 def compair_lindus_correlations():
-    raise NotImplementedError # todo! start here
+    from sklearn.linear_model import LinearRegression
+    data = get_historical_flows(None, None, 'M')
+    catchments = get_catchment_areas()
+    all_catchments = {
+        'Luggate': get_luggate_catchment_area().loc['luggate_at_sh6', 'shp_area'],
+        'Grandview': catchments.loc['Grandview Creek', 'shp_area'],
+        'Lagoon': catchments.loc['Lagoon Creek', 'shp_area'],
+        'Lindis': get_lindis_area()
+    }
+    for k, v in all_catchments.items():
+        data.loc[:, 'k'] *= 1 / v
+
+    data.loc[:, 'month'] = data.index.month
+    data.loc[np.in1d(data.month, [12, 1, 2]), 'season'] = 1  # summer
+    data.loc[np.in1d(data.month, [3, 4, 5]), 'season'] = 2  # atumn
+    data.loc[np.in1d(data.month, [6, 7, 8]), 'season'] = 3  # spring
+    data.loc[np.in1d(data.month, [9, 10, 11]), 'season'] = 4  # winter
+
+    stat_data = []
+    predicted_rivers = [
+        # 'Luggate',
+        'Grandview',
+        'Lagoon']
+    predicted_colors = [
+        # 'orange',
+        'g',
+        'r']
+    for k in predicted_rivers:
+        temp = data.loc[:, ['Lindis', 'month', 'season']]
+        temp.loc[:, 'river'] = k
+        temp.loc[:, 'catchment_area'] = all_catchments[k]
+        temp.loc[:, 'flow'] = data.loc[:, k]
+        stat_data.append(temp)
+    stat_data = pd.concat(stat_data)
+
+    fig, ax = plt.subplots()
+    data.drop(columns=['month', 'season']).plot(ax=ax)
+    fig, ax = plt.subplots()
+    ax.scatter(data.loc[:, 'Lindis'], data.loc[:, 'Lagoon'], c='g', label='lagoon', s=data.loc[:, 'season'])
+    ax.scatter(data.loc[:, 'Lindis'], data.loc[:, 'Luggate'], c='orange', label='luggate', s=data.loc[:, 'season'])
+    ax.scatter(data.loc[:, 'Lindis'], data.loc[:, 'Grandview'], c='b', label='granview', s=data.loc[:, 'season'])
+    ax.legend()
+
+    fig, ax = plt.subplots()
+    ax.set_title('catchment_area')
+    ax.scatter(stat_data.loc[:, 'catchment_area'], stat_data.loc[:, 'flow'])
+    fig, ax = plt.subplots()
+    ax.scatter(stat_data.loc[:, 'season'], stat_data.loc[:, 'flow'])
+
+    # todo look at multilinear regression for catchment size, lindis flow, possibly season.
+
+    stat_data = stat_data.dropna(how='any')
+    regr = LinearRegression()
+    x = stat_data.loc[:, ['Lindis', 'catchment_area']]
+    y = stat_data.loc[:, 'flow']
+    regr.fit(x, y)
+    print(regr.score(x, y))
+    stat_data.loc[:, 'predict'] = regr.predict(x)
+    fig, ax = plt.subplots()
+    all_data = []
+    for k, c in zip(predicted_rivers, predicted_colors):
+        idx = stat_data.river == k
+        x = stat_data.loc[idx, 'flow']
+        y = stat_data.loc[idx, 'predict']
+        ax.scatter(x, y, c=c, label=k)
+        all_data.extend(x)
+        all_data.extend(y)
+    ax.plot([0, 1], [0, 1], c='k', ls=':')
+    ax.legend()
+    ax.set_ylim(min(all_data), max(all_data))
+    ax.set_xlim(min(all_data), max(all_data))
+    ax.set_aspect('equal')
+
+    for k in predicted_rivers:
+        temp = data.loc[:, ['Lindis']]
+        temp.loc[:, 'catchment_area'] = all_catchments[k]
+        data.loc[:, f'p_{k}'] = regr.predict(temp.loc[:, ['Lindis', 'catchment_area']])
+    fig, ax = plt.subplots()
+    ax.plot(data.index, data.Lindis, c='b', label='Lindis')
+    for k, c in zip(predicted_rivers, predicted_colors):
+        ax.plot(data.index, data.loc[:, k], c=c, label=k)
+        ax.plot(data.index, data.loc[:, f'p_{k}'], c=c, label=f'p_{k}', ls='--')
+    ax.legend()
+    plt.show()
+
+    # todo then look at actual vs synthetic!
+    # todo other options.
+    raise NotImplementedError  # todo! start here
+
+
+def calc_alf(data, key='flow'):
+    data = data.copy(deep=True)
+    data.loc[:, 'water_year'] = (data.index + pd.DateOffset(months=-6)).year
+    data.loc[:, 'alf'] = data.loc[:, key].rolling(7).mean()
+    out = data.groupby(['water_year']).min()
+
+    return out
+
+
+def lindis_correlation_with_malf():
+    from sklearn.linear_model import LinearRegression
+    data = get_historical_flows(None, None, 'M')
+    catchments = get_catchment_areas()
+    all_catchments = {
+        'Luggate': get_luggate_catchment_area().loc['luggate_at_sh6', 'shp_area'],
+        'Grandview': catchments.loc['Grandview Creek', 'shp_area'],
+        'Lagoon': catchments.loc['Lagoon Creek', 'shp_area'],
+        'Lindis': get_lindis_area()
+    }
+    colors = {
+        'Luggate': 'orange',
+        'Grandview': 'g',
+        'Lagoon': 'r',
+        'Lindis': 'b'
+    }
+    for k, v in all_catchments.items():
+        data.loc[:, k] *= 1 / v
+
+    fig, ax = plt.subplots()
+    for k in all_catchments:
+        c = colors[k]
+        ax.plot(data.index, data.loc[:, k], c=c, label=k)
+    ax.legend()
+    ax.set_title('per catchment area')
+
+    catchment_malfs = pd.DataFrame(columns=['malf', 'catchment_area'], dtype=float)
+    catchment_malfs.loc['zero', 'malf'] = 0
+    catchment_malfs.loc['zero', 'catchment_area'] = 1
+    for k, v in all_catchments.items():
+        if k == 'Luggate':
+            continue
+        temp = calc_alf(data, k)
+        catchment_malfs.loc[k, 'malf'] = temp.loc[:, 'alf'].mean()
+        catchment_malfs.loc[k, 'catchment_area'] = v
+
+    x = np.log(catchment_malfs.loc[:, 'catchment_area']).values[:, np.newaxis]
+    y = catchment_malfs.loc[:, 'malf'].values
+    regr_malf = LinearRegression()
+    regr_malf.fit(x, y)
+    print(regr_malf.score(x, y))
+    xs = np.linspace(0, np.log(catchment_malfs.catchment_area).max(), 100)[:, np.newaxis]
+    ys = regr_malf.predict(xs)
+    xs2 = np.log(catchments.loc[:, 'shp_area'])[:, np.newaxis]
+    ys2 = regr_malf.predict(xs2)
+
+    fig, ax = plt.subplots()
+    for k in all_catchments:
+        if k == 'Luggate':
+            continue
+        ax.scatter(catchment_malfs.loc[k, 'catchment_area'], catchment_malfs.loc[k, 'malf'], label=k,
+                   c=colors[k])
+    ax.scatter([1], [0], label='standard', c='k')
+    ax.plot(np.e ** xs, ys, ls=':', c='k')
+    ax.scatter(np.e ** xs2, ys2, c='pink')
+    ax.legend()
+
+    stat_data = []
+    predicted_rivers = [
+        # 'Luggate',
+        'Grandview',
+        'Lagoon']
+    predicted_colors = [
+        # 'orange',
+        'g',
+        'r']
+    for k in predicted_rivers:
+        temp = data.loc[:, ['Lindis']]
+        temp.loc[:, 'river'] = k
+        temp.loc[:, 'catchment_area'] = c = all_catchments[k]
+        temp.loc[:, 'malf'] = regr_malf.predict(np.log([c])[:, np.newaxis])[0]
+        temp.loc[:, 'flow'] = data.loc[:, k]
+        stat_data.append(temp)
+    stat_data = pd.concat(stat_data)
+
+    stat_data = stat_data.dropna(how='any')
+    regr = LinearRegression()
+    x = stat_data.loc[:, ['Lindis', 'malf']]
+    y = stat_data.loc[:, 'flow']
+    regr.fit(x, y)
+    print(regr.score(x, y))
+    stat_data.loc[:, 'predict'] = regr.predict(x)
+    fig, ax = plt.subplots()
+    all_data = []
+    for k in predicted_rivers:
+        c = colors[k]
+        idx = stat_data.river == k
+        x = stat_data.loc[idx, 'flow']
+        y = stat_data.loc[idx, 'predict']
+        ax.scatter(x, y, c=c, label=k)
+        all_data.extend(x)
+        all_data.extend(y)
+    ax.plot([0, 1], [0, 1], c='k', ls=':')
+    ax.legend()
+    ax.set_ylim(min(all_data), max(all_data))
+    ax.set_xlim(min(all_data), max(all_data))
+    ax.set_aspect('equal')
+
+    for k in all_catchments:
+        temp = data.loc[:, ['Lindis']]
+        temp.loc[:, 'malf'] = regr_malf.predict(np.log([[all_catchments[k]]]))[0]
+        data.loc[:, f'p_{k}'] = regr.predict(temp.loc[:, ['Lindis', 'malf']])
+
+    fig, ax = plt.subplots()
+    for k in all_catchments:
+        c = colors[k]
+        ax.plot(data.index, data.loc[:, k], c=c, label=k)
+        ax.plot(data.index, data.loc[:, f'p_{k}'], c=c, label=f'p_{k}', ls='--')
+    ax.legend()
+    ax.set_title('per catchment area')
+
+
+    for k, v in all_catchments.items():
+        data.loc[:, k] *= v
+        data.loc[:, f'p_{k}'] *= v
+
+    fig, ax = plt.subplots()
+    for k in all_catchments:
+        c = colors[k]
+        ax.plot(data.index, data.loc[:, k], c=c, label=k)
+        ax.plot(data.index, data.loc[:, f'p_{k}'], c=c, label=f'p_{k}', ls='--')
+    ax.legend()
+    ax.set_title('flow')
+    plt.show()
 
 def get_hillside_inflows_specific_discharge():  # todo try to get from lindis at lindis peak
     raise NotImplementedError
 
 
-def get_hillside_inflows_rain_pet_predict():
-    metdata = get_met_data(None, None)
-    # todo this might be useful for scenarios.
-    raise NotImplementedError
-
-
-# # todo use specific discharge of catchments?
-# todo make relative to rainfall/pet/etc.?
-# todo check with team
-
 if __name__ == '__main__':
-    get_historical_flows(None, None)
+    lindis_correlation_with_malf()
+    # todo talk with Jens about this, but generally I think this makes sense
+    # todo make the predictions for full record and all streams, discuss with Jens.
+    # todo make some zones and sum inflows by zone!
+    # todo go over eveything with Jens and then implment

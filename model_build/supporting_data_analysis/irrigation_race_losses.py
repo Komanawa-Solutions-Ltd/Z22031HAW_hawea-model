@@ -13,7 +13,7 @@ race_loc_data_path = processed_model_data_dir.joinpath('race_loc_data.csv')
 
 
 def get_race_locs(recalc=default_recalc):
-    # todo do I need to manage luggate-tarras road races
+    # do I need to manage luggate-tarras road races, nope
     # exclude lagoon creek races instead manage as additional points of well inflow
     if not recalc and race_loc_data_path.exists():
         outdata = pd.read_csv(race_loc_data_path)
