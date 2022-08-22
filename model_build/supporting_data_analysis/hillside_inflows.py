@@ -19,6 +19,63 @@ pour_points_path = base_model_data_dir.joinpath('hillflow_inputs.shp')
 catchment_area_path = processed_model_data_dir.joinpath('catchment_areas.csv')
 luggate_catch_area_path = processed_model_data_dir.joinpath('luggate_catchment_area.csv')
 
+catchment_loc_path = processed_model_data_dir.joinpath('catchment_locs.csv')
+
+
+def get_catchment_locs(recalc=False):  # todo finalize with discussion with Jens
+    if not recalc and catchment_loc_path.exists():
+        outdata = pd.read_csv(catchment_loc_path, dtype=int)
+        dtypes = {
+            'i': 'int64',
+            'j': 'int64',
+            'px': float,
+            'py': float,
+            'mx': float,
+            'my': float,
+        }
+
+        for k, v in dtypes.items():
+            outdata.loc[:, k] = outdata.loc[:, k].astype(v)
+        return outdata
+    catchments = get_catchment_areas()
+    ibound = smt.get_no_flow(0)
+    outdata = catchments.loc[:, ['px', 'py', 'group']]
+    i, j = smt.convert_coords_to_matix(lons=outdata.loc[:, 'px'], lats=outdata.loc[:, 'py'])
+    outdata.loc[:, 'i'] = i
+    outdata.loc[:, 'j'] = j
+
+    move_direction = {
+        'maungawera': ('i', 1),
+        'flat_west': ('j', 1),
+        'flat_east': ('j', -1),
+        'terrace_east': ('j', -1),
+        'south_east': ('j', -1),
+        'mt_brown': ('j', 1),
+    }
+    temp = (ibound[outdata.loc[:, 'i'], outdata.loc[:, 'j']]) == 0
+    while temp.any():
+        if smt.matrix_out_bounds(i=outdata.loc[:, 'i'], j=outdata.loc[:, 'j']).any():
+            raise ValueError('went out of bounds')
+        for g, (k, v) in move_direction.items():
+            idx = temp & (outdata.group == g)
+            outdata.loc[idx, k] += v
+
+        temp = (ibound[outdata.loc[:, 'i'], outdata.loc[:, 'j']]) == 0
+    outdata = smt.io.add_mxmy_to_df(outdata)
+    fig, ax = smt.plot.plt_matrix(smt.get_model_zeros() * np.nan, no_flow_layer=0, base_map=True, title='moved points')
+    ax.scatter(outdata.px, outdata.py, c='r', label='first')
+    ax.scatter(outdata.mx, outdata.my, c='b', label='new')
+    for mx, px, my, py in outdata.loc[:, ['mx', 'px', 'my', 'py']].itertuples(False, None):
+        ax.plot([mx, px], [my, py], c='k')
+    smt.plot.show()
+    # todo spread out to other nearby cells, also plot up orignial and new points,
+    # todo If I want to move over cells I could move all points over 1 more and then use get all adjacent cells
+
+    outdata.reset_index()
+    outdata.to_csv(catchment_loc_path)
+    return outdata
+
+
 def get_catchment_areas(show_plot=False, recalc=False):
     if catchment_area_path.exists() and not recalc:
         data = pd.read_csv(catchment_area_path, index_col=0)
@@ -72,9 +129,11 @@ def get_catchment_areas(show_plot=False, recalc=False):
         x = pp.geometry.x
         y = pp.geometry.y
         name = pp.River_name
+        group = pp.group
         print(name)
         outdata.loc[name, 'px'] = x
         outdata.loc[name, 'py'] = y
+        outdata.loc[name, 'group'] = group
 
         # Snap pour point to high accumulation cell
         x_snap, y_snap = grid.snap_to_mask(acc > 1000, (x, y))
@@ -171,7 +230,7 @@ def get_luggate_catchment_area(recalc=False):
     # Delineate a catchment
     # ---------------------
     # Specify pour point
-    y, x = 5038214.22, 1304519.88  # todo luggate to se if it works
+    y, x = 5038214.22, 1304519.88  # luggate location
     name = 'luggate_at_sh6'
     print(name)
     outdata.loc[name, 'px'] = x
@@ -293,8 +352,6 @@ def compair_lindus_correlations():
     fig, ax = plt.subplots()
     ax.scatter(stat_data.loc[:, 'season'], stat_data.loc[:, 'flow'])
 
-    # todo look at multilinear regression for catchment size, lindis flow, possibly season.
-
     stat_data = stat_data.dropna(how='any')
     regr = LinearRegression()
     x = stat_data.loc[:, ['Lindis', 'catchment_area']]
@@ -368,10 +425,10 @@ def lindis_correlation_with_malf():
         ax.plot(data.index, data.loc[:, k], c=c, label=k)
     ax.legend()
     ax.set_title('per catchment area')
+    ax.set_ylabel('flow m3/s/catchment area')
+    ax.set_xlabel('time')
 
     catchment_malfs = pd.DataFrame(columns=['malf', 'catchment_area'], dtype=float)
-    catchment_malfs.loc['zero', 'malf'] = 0
-    catchment_malfs.loc['zero', 'catchment_area'] = 1
     for k, v in all_catchments.items():
         if k == 'Luggate':
             continue
@@ -395,10 +452,11 @@ def lindis_correlation_with_malf():
             continue
         ax.scatter(catchment_malfs.loc[k, 'catchment_area'], catchment_malfs.loc[k, 'malf'], label=k,
                    c=colors[k])
-    ax.scatter([1], [0], label='standard', c='k')
     ax.plot(np.e ** xs, ys, ls=':', c='k')
     ax.scatter(np.e ** xs2, ys2, c='pink')
     ax.legend()
+    ax.set_ylabel('MALF (m3/day/catchment area)')
+    ax.set_xlabel('catchment area')
 
     stat_data = []
     predicted_rivers = [
@@ -435,11 +493,13 @@ def lindis_correlation_with_malf():
         ax.scatter(x, y, c=c, label=k)
         all_data.extend(x)
         all_data.extend(y)
-    ax.plot([0, 1], [0, 1], c='k', ls=':')
+    ax.plot([0, 1], [0, 1], c='k', ls=':', label='1:1 line')
     ax.legend()
     ax.set_ylim(min(all_data), max(all_data))
     ax.set_xlim(min(all_data), max(all_data))
     ax.set_aspect('equal')
+    ax.set_ylabel('predicted (flow/catchment area)')
+    ax.set_xlabel('observed (flow/catchment area)')
 
     for k in all_catchments:
         temp = data.loc[:, ['Lindis']]
@@ -453,8 +513,10 @@ def lindis_correlation_with_malf():
         ax.plot(data.index, data.loc[:, f'p_{k}'], c=c, label=f'p_{k}', ls='--')
     ax.legend()
     ax.set_title('per catchment area')
+    ax.set_ylabel('flow m3/s / catchment area')
+    ax.set_xlabel('time')
 
-
+    predictor = data.loc[:, ['Lindis']]
     for k, v in all_catchments.items():
         data.loc[:, k] *= v
         data.loc[:, f'p_{k}'] *= v
@@ -466,15 +528,55 @@ def lindis_correlation_with_malf():
         ax.plot(data.index, data.loc[:, f'p_{k}'], c=c, label=f'p_{k}', ls='--')
     ax.legend()
     ax.set_title('flow')
+    ax.set_ylabel('flow m3/s')
+    ax.set_xlabel('time')
+
+    outdata = pd.DataFrame(index=data.index, columns=catchments.index)
+    for c in catchments.index:
+        ca = catchments.loc[c, 'shp_area']
+        temp = predictor.copy(deep=True)
+        temp.loc[:, 'malf'] = regr_malf.predict(np.log([[ca]]))[0]
+        outdata.loc[:, c] = regr.predict(temp.loc[:, ['Lindis', 'malf']]) * ca
+    assert np.isclose(outdata.loc[:, 'Grandview Creek'], data.loc[:, 'p_Grandview']).all()
+    outdata[outdata < 0] = 0  # get rid of predicted negative values
+    outdata *= 86400  # convert from m3/s to m3/d
+
+    grouped_data = pd.DataFrame(index=outdata.index)
+    for g in catchments.loc[:, 'group'].unique():
+        idxs = catchments.loc[catchments.group == g].index
+        grouped_data.loc[:, g] = outdata.loc[:, idxs].sum(axis=1)
+    fig, ax = plt.subplots()
+    grouped_data.plot(ax=ax)
+    ax.set_ylabel('flow m3/day')
+    ax.set_xlabel('time')
+
+    fig, ax = plt.subplots()
+    (grouped_data / 86400).plot(ax=ax)
+    ax.set_ylabel('flow m3/s')
+    ax.set_xlabel('time')
+
+    fig, ax = plt.subplots()
+    (grouped_data / 86400 * 1000).plot(ax=ax)
+    ax.set_ylabel('flow L/s')
+    ax.set_xlabel('time')
+
+    # todo should I set a smaller cutoff value (e.g. greater than 0)
+    # todo should I produce a larger cutoff (e.g. above such values go to flood., note that this is already monthly data)
+    # todo discuss with Jens
+
+    pass
     plt.show()
+
+    # todo calculate full record for all and save out as recalc and return
+
 
 def get_hillside_inflows_specific_discharge():  # todo try to get from lindis at lindis peak
     raise NotImplementedError
 
 
 if __name__ == '__main__':
+    get_catchment_locs(recalc=True)
     lindis_correlation_with_malf()
     # todo talk with Jens about this, but generally I think this makes sense
     # todo make the predictions for full record and all streams, discuss with Jens.
-    # todo make some zones and sum inflows by zone!
     # todo go over eveything with Jens and then implment
