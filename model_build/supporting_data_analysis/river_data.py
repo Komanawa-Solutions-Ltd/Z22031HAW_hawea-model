@@ -33,6 +33,7 @@ def make_river_loc_data(recalc=default_recalc):
         return outdata
     outdata = _river_locs()
     outdata = get_river_gage_locs(outdata)
+    outdata = get_stage_locs(outdata)
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
@@ -49,14 +50,36 @@ def get_river_gage_locs(riv_data):
         t = ((temp.mx - loc_data.loc[s, 'x']) ** 2 + (temp.my - loc_data.loc[s, 'y']) ** 2)
         loc_data.loc[s, 'dist'] = temp.loc[t.argmin(), 'dist']
         loc_data.loc[s, 'rname'] = temp.loc[t.argmin(), 'rname']
-    for i,(s1, s2) in enumerate(zip(all_sites[0:-1], all_sites[1:])):
+    for i, (s1, s2) in enumerate(zip(all_sites[0:-1], all_sites[1:])):
         assert (loc_data.loc[[s1, s2], 'rname'] == 'hawea').all()
         dist1, dist2 = loc_data.loc[[s1, s2], 'dist']
-        idx = (riv_data.rname=='hawea') & (riv_data.dist>=dist1) & (riv_data.dist<=dist2)
-        riv_data.loc[idx, 'gage'] = i+1
+        idx = (riv_data.rname == 'hawea') & (riv_data.dist >= dist1) & (riv_data.dist <= dist2)
+        riv_data.loc[idx, 'gage'] = i + 1
     return riv_data
 
-def get_historical_stage_flow(start_date, end_date, frequency='D'):
+
+def get_stage_locs(riv_data):
+    loc_data = pd.read_excel(gageing_path, 'locs').set_index('site')
+    temp = riv_data.copy(deep=True)
+    temp = smt.io.add_mxmy_to_df(temp)
+    t = ((temp.mx - loc_data.loc['Camp Hill', 'x']) ** 2 + (temp.my - loc_data.loc['Camp Hill', 'y']) ** 2)
+    riv_data.loc[t.argmin(), 'stage'] = 'hawea_camphill'
+
+    x, y = 1307859, 5038569
+    t = ((temp.mx - x) ** 2 + (temp.my - y) ** 2)
+    riv_data.loc[t.argmin(), 'stage'] = 'clutha_luggate'
+
+    temp = smt.get_model_zeros() * np.nan
+    temp[riv_data['i'], riv_data['j']] = 1
+    fig, ax = smt.plot.plt_matrix(temp, title='river_locs', base_map=True)
+    ax.scatter(x, y, c='r', label='clutha_luggate')
+    ax.scatter(loc_data.loc['Camp Hill', 'x'], loc_data.loc['Camp Hill', 'y'], c='b', label='hawea_camphill')
+    smt.plot.show() # todo check locations with Jens
+
+    return riv_data
+
+
+def get_historical_stage_flow(start_date, end_date, frequency='D'):  # todo get historical data (as much as we can)
     """
     stages in m, flow in L/s  resample to frequency
     length of records:
@@ -94,7 +117,7 @@ def get_historical_stage_flow(start_date, end_date, frequency='D'):
         'lake_flow': hawea_data.loc[:, 'Flow_L_s'].dropna().resample('D').mean(),
         'camphill_stage': river_data.loc[:, 'Level_Camphill'].dropna().resample('D').mean(),
         'camphill_flow': river_data.loc[:, 'Flow_Camphill_L_s'].dropna().resample('D').mean(),
-        'clutha2200_stage': river_data.loc[:, 'Stage_Clutha2200'].dropna().resample('D').mean(),
+        'clutha_luggate': river_data.loc[:, 'Stage_Clutha2200'].dropna().resample('D').mean(),
     }
     for k, v in temp.items():
         idx = v.index
@@ -196,8 +219,8 @@ def data_checks():
     ax.set_title('clutha 2200 stage')
 
     # look at gaging sites
-    temp = smt.io.df_to_array(river_locs, 'gage')
-    smt.plot.plt_matrix(temp, base_map=True, title='gaging locs')
+    temp2 = smt.io.df_to_array(river_locs, 'gage')
+    smt.plot.plt_matrix(temp2, base_map=True, title='gaging locs')
     plt.show()
 
     # todo look at dist vs model top, bot, riv bot along each river. include min, 5th, 25th, 50th, 75th, 95th, max temporal stage
@@ -210,8 +233,8 @@ def make_river_data():
 
 
 if __name__ == '__main__':
+    make_river_loc_data(True)
     smt.get_elv_db(recalc=True)
     smt.plot.plt_matrix(smt.get_bottoms()[0], base_map=True, title='bottoms', no_flow_layer=0)
     simplify_hawea_dem(True)
-    make_river_loc_data(True)
     data_checks()
