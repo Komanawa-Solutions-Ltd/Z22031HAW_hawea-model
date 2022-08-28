@@ -560,6 +560,23 @@ def lindis_correlation_with_malf():
     ax.set_ylabel('flow L/s')
     ax.set_xlabel('time')
 
+    fig, ax = plt.subplots()
+    all_data = []
+    for k in predicted_rivers:
+        c = colors[k]
+        x = data.loc[:, k]
+        y = data.loc[:, f'p_{k}']
+        ax.scatter(x, y, c=c, label=k)
+        all_data.extend(x)
+        all_data.extend(y)
+    ax.plot([0, 1], [0, 1], c='k', ls=':', label='1:1 line')
+    ax.legend()
+    ax.set_ylim(np.nanmin(all_data), np.nanmax(all_data))
+    ax.set_xlim(np.nanmin(all_data), np.nanmax(all_data))
+    ax.set_aspect('equal')
+    ax.set_ylabel('predicted (flow)')
+    ax.set_xlabel('observed (flow)')
+
     # todo should I set a smaller cutoff value (e.g. greater than 0)
     # todo should I produce a larger cutoff (e.g. above such values go to flood., note that this is already monthly data)
     # todo discuss with Jens
