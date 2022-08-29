@@ -714,7 +714,7 @@ dfRiver_Level.reset_index(inplace=True)
 
 # Construct river dictionary data for RIV package
 rivDic = {}
-# TODO: I need to interpolate the river stages from Hawea river to at 2200m downstream
+# TOD: I need to interpolate the river stages from Hawea river to at 2200m downstream
 nRivList = len(rivList)
 if bSteady:
     # i = 0
