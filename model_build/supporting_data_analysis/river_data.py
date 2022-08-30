@@ -16,7 +16,7 @@ gageing_path = base_model_data_dir.joinpath('Hawea River - ORC Gaugings for Gain
 riv_loc_data_path = processed_model_data_dir.joinpath('river_loc_data.csv')
 
 
-def make_river_loc_data(recalc=default_recalc):
+def get_river_loc_data(recalc=default_recalc):
     if not recalc and riv_loc_data_path.exists():
         outdata = pd.read_csv(riv_loc_data_path)
         dtypes = {
@@ -74,7 +74,7 @@ def get_stage_locs(riv_data):
     fig, ax = smt.plot.plt_matrix(temp, title='river_locs', base_map=True)
     ax.scatter(x, y, c='r', label='clutha_luggate')
     ax.scatter(loc_data.loc['Camp Hill', 'x'], loc_data.loc['Camp Hill', 'y'], c='b', label='hawea_camphill')
-    smt.plot.show() # todo check locations with Jens
+    smt.plot.show()
 
     return riv_data
 
@@ -133,7 +133,7 @@ def _print_flowlengths():
         print(f'length of record {k}: {temp.min().date()} to {temp.max().date()}')
 
 
-def get_river_stage_data():  # todo
+def get_river_stage_data(start_date, end_date, frequency='D'):  # todo
     # the river stage is largely stable
     # hawea 310-313, median 311
     # todo where is stage clutha 2200???
@@ -145,20 +145,6 @@ def get_river_stage_data():  # todo
     # todo as we only have 1 data point on each river, maybe just set stage to n meters above river bottom as defined by
     # todo the recorders for both the clutha and hawea rivers
     raise NotImplementedError
-
-
-def get_river_conductance(river_loc_data, optimised):  # todo switch to passing conductance
-    """
-    get the river conductance values
-    :param river_loc_data: river location data output of make_river_loc_data
-    :param optimised: bool if True use the optimised parameters, else use the initial parameters
-    :return:
-    """
-    if optimised:
-        raise NotImplementedError('optimisation not complete')
-    else:
-
-        raise NotImplementedError
 
 
 def data_checks():
@@ -174,7 +160,7 @@ def data_checks():
     smt.plot.plt_matrix(clutha, title='clutha', base_map=True)
 
     # look at dist vs model top, bot, riv bot, looks good
-    river_locs = make_river_loc_data()
+    river_locs = get_river_loc_data()
     tops = smt.get_tops()[0]
     bottoms = smt.get_bottoms()[0]
     river_locs.loc[:, 'model_top'] = tops[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
@@ -227,13 +213,8 @@ def data_checks():
     raise NotImplementedError
 
 
-def make_river_data():
-    # todo put it all togeather to drop into modflow.
-    raise NotImplementedError
-
-
 if __name__ == '__main__':
-    make_river_loc_data(True)
+    get_river_loc_data(True)
     smt.get_elv_db(recalc=True)
     smt.plot.plt_matrix(smt.get_bottoms()[0], base_map=True, title='bottoms', no_flow_layer=0)
     simplify_hawea_dem(True)

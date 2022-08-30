@@ -5,7 +5,6 @@ on: 2/08/22
 import pandas as pd
 import numpy as np
 from project_base import base_model_data_dir, processed_model_data_dir, modelling_dir, unbacked_dir
-from model_build.supporting_data_analysis.recharge_model import get_met_data
 from model_build.project_model_tools import smt
 import geopandas as gpd
 import datetime
@@ -15,14 +14,16 @@ from copy import deepcopy
 
 # exclude lagoon creek races instead manage as additional points of well inflow
 
+
 pour_points_path = base_model_data_dir.joinpath('hillflow_inputs.shp')
 catchment_area_path = processed_model_data_dir.joinpath('catchment_areas.csv')
 luggate_catch_area_path = processed_model_data_dir.joinpath('luggate_catchment_area.csv')
 
 catchment_loc_path = processed_model_data_dir.joinpath('catchment_locs.csv')
+flow_data_path = processed_model_data_dir.joinpath('hillside_flows.csv')
 
 
-def get_catchment_locs(recalc=False):  # todo finalize with discussion with Jens
+def get_hillside_catchment_locs(recalc=False):
     if not recalc and catchment_loc_path.exists():
         outdata = pd.read_csv(catchment_loc_path, dtype=int)
         dtypes = {
@@ -68,10 +69,9 @@ def get_catchment_locs(recalc=False):  # todo finalize with discussion with Jens
     for mx, px, my, py in outdata.loc[:, ['mx', 'px', 'my', 'py']].itertuples(False, None):
         ax.plot([mx, px], [my, py], c='k')
     smt.plot.show()
-    # todo spread out to other nearby cells, also plot up orignial and new points,
-    # todo If I want to move over cells I could move all points over 1 more and then use get all adjacent cells
 
     outdata.reset_index()
+    outdata = outdata.drop(index='ss22')
     outdata.to_csv(catchment_loc_path)
     return outdata
 
@@ -401,8 +401,17 @@ def calc_alf(data, key='flow'):
 
 
 def lindis_correlation_with_malf():
+    """
+    this is the correct one for the hillslope data
+    :param recalc:
+    :return:
+    """
+
     from sklearn.linear_model import LinearRegression
-    data = get_historical_flows(None, None, 'M')
+    data = get_historical_flows(None, None, 'D')
+    data.loc[:, 'Lindis'] = data.loc[:, 'Lindis'].fillna(method='ffill')
+
+    # data = data.resample('M').mean()
     catchments = get_catchment_areas()
     all_catchments = {
         'Luggate': get_luggate_catchment_area().loc['luggate_at_sh6', 'shp_area'],
@@ -429,10 +438,13 @@ def lindis_correlation_with_malf():
     ax.set_xlabel('time')
 
     catchment_malfs = pd.DataFrame(columns=['malf', 'catchment_area'], dtype=float)
+    alf_data = get_historical_flows(None, None)
+    for k, v in all_catchments.items():
+        alf_data.loc[:, k] *= 1 / v
     for k, v in all_catchments.items():
         if k == 'Luggate':
             continue
-        temp = calc_alf(data, k)
+        temp = calc_alf(alf_data, k)
         catchment_malfs.loc[k, 'malf'] = temp.loc[:, 'alf'].mean()
         catchment_malfs.loc[k, 'catchment_area'] = v
 
@@ -538,7 +550,14 @@ def lindis_correlation_with_malf():
         temp.loc[:, 'malf'] = regr_malf.predict(np.log([[ca]]))[0]
         outdata.loc[:, c] = regr.predict(temp.loc[:, ['Lindis', 'malf']]) * ca
     assert np.isclose(outdata.loc[:, 'Grandview Creek'], data.loc[:, 'p_Grandview']).all()
+
+    # cull top flows
     outdata[outdata < 0] = 0  # get rid of predicted negative values
+    temp = outdata.describe([0.9, 0.95, 0.97, 0.98, 0.99])
+    print(temp)
+    per = '98%'
+    for k in outdata.keys():
+        outdata.loc[outdata.loc[:, k] > temp.loc[per, k]] = temp.loc[per, k]
     outdata *= 86400  # convert from m3/s to m3/d
 
     grouped_data = pd.DataFrame(index=outdata.index)
@@ -560,6 +579,7 @@ def lindis_correlation_with_malf():
     ax.set_ylabel('flow L/s')
     ax.set_xlabel('time')
 
+    data = data.resample('M').mean()
     fig, ax = plt.subplots()
     all_data = []
     for k in predicted_rivers:
@@ -576,24 +596,47 @@ def lindis_correlation_with_malf():
     ax.set_aspect('equal')
     ax.set_ylabel('predicted (flow)')
     ax.set_xlabel('observed (flow)')
+    grouped_data.loc[:, 'year'] = grouped_data.index.year
+    print(grouped_data.groupby('year').mean() / 365)
 
-    # todo should I set a smaller cutoff value (e.g. greater than 0)
-    # todo should I produce a larger cutoff (e.g. above such values go to flood., note that this is already monthly data)
-    # todo discuss with Jens
+    print(grouped_data.mean())
 
     pass
     plt.show()
+    # drop mt_brown
+    outdata.drop(columns='ss22', inplace=True)
+    return outdata
 
-    # todo calculate full record for all and save out as recalc and return
 
+def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
+    """
+    get hillside flow records from start to end dates (inclusive),
+     data is available from 2012-01-01 to 2021-12-31
+    :param start_date: none or dates
+    :param end_date: none or dates
+    :param frequency: pd frequnecy code
+    :return:
+    """
+    if flow_data_path.exists() and not recalc:
+        data = pd.read_csv(flow_data_path)
+        data.loc[:, 'datetime'] = pd.to_datetime(data.loc[:, 'datetime'])
+        data.set_index('datetime', inplace=True)
+        data = data.astype(float)
+    else:
+        data = lindis_correlation_with_malf()
+        data.to_csv(flow_data_path)
+    if start_date is None:
+        start_date = data.index.min()
+    if end_date is None:
+        end_date = data.index.max()
 
-def get_hillside_inflows_specific_discharge():  # todo try to get from lindis at lindis peak
-    raise NotImplementedError
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+    idx = (data.index >= start_date) & (data.index <= end_date)
+    outdata = data.loc[idx].resample(frequency).mean()
+    return outdata
 
 
 if __name__ == '__main__':
-    get_catchment_locs(recalc=True)
-    lindis_correlation_with_malf()
-    # todo talk with Jens about this, but generally I think this makes sense
-    # todo make the predictions for full record and all streams, discuss with Jens.
-    # todo go over eveything with Jens and then implment
+    get_hillside_flows(None, None, recalc=True)
+    get_hillside_catchment_locs(recalc=True)

@@ -2,3 +2,12 @@
 created matt_dumont 
 on: 2/08/22
 """
+from hillside_inflows import get_hillside_catchment_locs, get_hillside_flows  # Finished
+from lake_data import get_lake_hawea_loc, get_lake_heads  # Finished
+from river_data import get_river_loc_data, get_river_stage_data  # todo not finished
+from irrigation_race_losses import get_race_locs, get_race_well_losses  # todo not finished
+from recharge_model import get_rch  # todo not finished
+from get_pumping_data import get_well_flows, get_pumping_locs  # todo not finished
+
+
+# todo make sure functions are in consistent fashion.

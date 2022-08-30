@@ -68,5 +68,8 @@ def data_checks():
     raise NotImplementedError
 
 
+def get_well_flows(start_date, end_date, frequency='D'):
+    raise NotImplementedError
+
 if __name__ == '__main__':
     data_checks()

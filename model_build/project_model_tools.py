@@ -23,6 +23,7 @@ uly = np.ceil(temp.bounds.loc[0, 'maxy'])
 
 lrx = np.ceil(temp.bounds.loc[0, 'maxx'])
 lry = np.floor(temp.bounds.loc[0, 'miny'])
+# todo get better basemap
 base_map_path = base_model_data_dir.joinpath('nz-topo50-maps.tif')
 model_version_name = 'v1'
 

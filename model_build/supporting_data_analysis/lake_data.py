@@ -23,21 +23,6 @@ def get_lake_hawea_loc(recalc=default_recalc):
     lake_data.to_csv(lake_loc_path)
     return lake_data
 
-
-def get_lake_conductance(lake_loc_data, optimised):  # todo change to pass conductance,
-    """
-    get the river conductance values
-    :param lake_loc_data: lake location data output of get_lake_hawea_loc
-    :param optimised: bool if True use the optimised parameters, else use the initial parameters
-    :return:
-    """
-    if optimised:
-        raise NotImplementedError('optimisation not complete')
-    else:
-
-        raise NotImplementedError
-
-
 def lake_checks():
     import matplotlib.pyplot as plt
     hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
@@ -77,11 +62,6 @@ def get_lake_heads(start_date, end_date, frequency='D'):
     outdata = hawea_data.loc[idx, 'lake_stage'].resample(frequency).mean()
 
     return outdata
-
-
-def build_lake_ghb_data(): # todo
-    raise NotImplementedError
-
 
 if __name__ == '__main__':
     lake_checks()

@@ -58,7 +58,8 @@ def get_race_inflows(start_date, end_date, frequency='D'):
     return outdata
 
 
-def get_race_well_data(race_inflows):
+def get_race_well_losses(start_date, end_date, frequency='D'):
+
     # 10% race losses
     # todo do I need to mange the differnt pumped races or just assume that the inflows are evenly distributed?
     raise NotImplementedError
