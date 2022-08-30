@@ -303,6 +303,10 @@ def get_historical_flows(start_date, end_date, frequency='D'):
 
 
 def compair_lindus_correlations():
+    """
+    did not use, moved to malf based approach
+    :return:
+    """
     from sklearn.linear_model import LinearRegression
     data = get_historical_flows(None, None, 'M')
     catchments = get_catchment_areas()
@@ -385,10 +389,6 @@ def compair_lindus_correlations():
         ax.plot(data.index, data.loc[:, f'p_{k}'], c=c, label=f'p_{k}', ls='--')
     ax.legend()
     plt.show()
-
-    # todo then look at actual vs synthetic!
-    # todo other options.
-    raise NotImplementedError  # todo! start here
 
 
 def calc_alf(data, key='flow'):
