@@ -4,8 +4,10 @@ on: 2/08/22
 """
 import numpy as np
 import pandas as pd
-
-from model_build.project_model_tools import smt, simplify_hawea_dem, _river_locs
+import matplotlib.pyplot as plt
+from model_build.utils import select_resample
+from matplotlib.cm import get_cmap
+from model_build.project_model_tools import smt, _river_locs
 from project_base import base_model_data_dir, processed_model_data_dir
 
 default_recalc = False
@@ -14,18 +16,18 @@ clutha_shp_path = base_model_data_dir.joinpath('lower_clutha.shp')
 gageing_path = base_model_data_dir.joinpath('Hawea River - ORC Gaugings for Gain & Loss Estimation.xlsx')
 
 riv_loc_data_path = processed_model_data_dir.joinpath('river_loc_data.csv')
+riv_stage_data_path = processed_model_data_dir.joinpath('river_stage_data.csv')
 
 
 def get_river_loc_data(recalc=default_recalc):
     if not recalc and riv_loc_data_path.exists():
-        outdata = pd.read_csv(riv_loc_data_path)
+        outdata = pd.read_csv(riv_loc_data_path, index_col=0)
         dtypes = {
             'i': 'int64',
             'j': 'int64',
             'dist': 'float64',
             'rbot': 'float64',
             'rname': 'str',
-            'gage': 'int64'
         }
 
         for k, v in dtypes.items():
@@ -34,6 +36,9 @@ def get_river_loc_data(recalc=default_recalc):
     outdata = _river_locs()
     outdata = get_river_gage_locs(outdata)
     outdata = get_stage_locs(outdata)
+    outdata.loc[:, 'seg_name'] = [f'{r}_{int(d):05d}' for r, d
+                                  in outdata.loc[:, ['rname', 'dist']].itertuples(index=False, name=None)]
+    outdata.set_index('seg_name', inplace=True)
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
@@ -79,7 +84,7 @@ def get_stage_locs(riv_data):
     return riv_data
 
 
-def get_historical_stage_flow(start_date, end_date, frequency='D'):  # todo get historical data (as much as we can)
+def get_historical_stage_flow(start_date, end_date, frequency='D'):  # todo get longer historical data (as much as we can)
     """
     stages in m, flow in L/s  resample to frequency
     length of records:
@@ -122,8 +127,8 @@ def get_historical_stage_flow(start_date, end_date, frequency='D'):  # todo get 
     for k, v in temp.items():
         idx = v.index
         all_data.loc[idx, k] = v
-    idx = (all_data.index >= start_date) & (all_data.index <= end_date)
-    return all_data.loc[idx].resample(frequency).mean()
+
+    return select_resample(all_data, start_date, end_date, frequency, 'mean')
 
 
 def _print_flowlengths():
@@ -133,18 +138,105 @@ def _print_flowlengths():
         print(f'length of record {k}: {temp.min().date()} to {temp.max().date()}')
 
 
-def get_river_stage_data(start_date, end_date, frequency='D'):  # todo
-    # the river stage is largely stable
-    # hawea 310-313, median 311
-    # todo where is stage clutha 2200???
-    # todo how do I manage the lake stage/top of the hawea river??? discuss with Jens
-    # todo need to interpolate the river stage.
-    # todo clutha 2200 is really short if we need to make this part of the model, possibly look at making a statistical
-    # relationship
-    # todo stage set at damn, 1km from dam there are transient records of stage... calibration dataset
-    # todo as we only have 1 data point on each river, maybe just set stage to n meters above river bottom as defined by
-    # todo the recorders for both the clutha and hawea rivers
-    raise NotImplementedError
+def get_river_stage_data(start_date, end_date, frequency='D', recalc=False):
+
+    if riv_stage_data_path.exists() and not recalc:
+        outdata = pd.read_csv(riv_stage_data_path, index_col=0).astype(float)
+        return select_resample(outdata, start_date, end_date, frequency, 'mean')
+
+    loc_data = get_river_loc_data()
+    stage_data = get_historical_stage_flow(None, None)
+    stage_data.loc[:, 'month'] = stage_data.index.month
+    # todo lengthen clutha at luggate stage data
+
+    fig, ax = plt.subplots()
+    ax.scatter(stage_data.loc[:, 'camphill_stage'], stage_data.loc[:, 'clutha_luggate'])
+    ax.set_xlabel('hawea_camphill')
+    ax.set_ylabel('clutha luggate')
+
+    fig, ax = plt.subplots()
+    ax.boxplot([stage_data.loc[stage_data.month == m, 'clutha_luggate'].dropna() for m in range(1, 13)],
+               positions=range(1, 13))
+    ax.set_xlabel('month')
+    ax.set_ylabel('clutha luggate')
+
+    # initialize the dataframe
+    hawea_keys = loc_data.index[loc_data.loc[:, 'rname'] == 'hawea']
+    clutha_keys = loc_data.index[loc_data.loc[:, 'rname'] == 'clutha']
+    outdata = pd.DataFrame(index=stage_data.index, columns=loc_data.index, dtype=float)
+
+    # set hawea_stage
+    elv_at_camphill = loc_data.loc[loc_data.stage == 'hawea_camphill', 'rbot'][0]
+    delta_at_camphill = (stage_data.loc[:, 'camphill_stage'] - elv_at_camphill).values
+    t = (loc_data.loc[hawea_keys, 'rbot'].values[np.newaxis, :]
+         + delta_at_camphill[:, np.newaxis])
+    outdata.loc[:, hawea_keys] = t
+
+    # set clutha stage, feather in the deltas at luggate to the deltas at clutha so there is no step change.
+    elv_at_luggate = loc_data.loc[loc_data.stage == 'clutha_luggate', 'rbot'][0]
+    delta_at_luggate = (stage_data.loc[:, 'clutha_luggate'] - elv_at_luggate).values
+    clutha_dist = loc_data.loc[loc_data.loc[:, 'rname'] == 'clutha', 'dist']
+    luggate_idx = np.where(loc_data.loc[loc_data.loc[:, 'rname'] == 'clutha', 'stage'].notna())[0][0]
+
+    clutha_deltas = np.zeros((len(delta_at_luggate), len(clutha_keys))) * np.nan
+    clutha_deltas[:, 0] = delta_at_camphill
+    clutha_deltas[:, luggate_idx:] = delta_at_luggate[:, np.newaxis]
+
+    clutha_deltas[:, 0:luggate_idx] = np.array(
+        [delta_at_camphill * ((clutha_dist[luggate_idx] - d) / clutha_dist[luggate_idx])
+         + delta_at_luggate * (d / clutha_dist[luggate_idx])
+         for d in clutha_dist[0:luggate_idx]]).transpose()
+
+    t = (loc_data.loc[clutha_keys, 'rbot'].values + clutha_deltas)
+    outdata.loc[:, clutha_keys] = t
+
+    assert (outdata.min() >= loc_data.loc[:, 'rbot']).all(), 'some stages are below rbot, address this'
+
+
+    plt_stg_data = outdata.dropna().describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
+    k_cs = ['min', '5%', '25%', '50%', '75%', '95%', 'max', ]
+    colors = get_colors(k_cs, cmap_name='winter')
+
+    temp_data = loc_data.copy(deep=True)
+    tops = smt.get_tops()[0]
+    bottoms = smt.get_bottoms()[0]
+    temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
+    temp_data.loc[:, 'model_bot'] = bottoms[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
+    hawea_clutha_divide = temp_data.loc[temp_data.rname == 'hawea', 'dist'].max()
+    temp_data.loc[temp_data.rname == 'clutha', 'dist'] += hawea_clutha_divide
+    temp_data.sort_values('dist', inplace=True)
+    fig, ax = plt.subplots()
+    ax.set_title('both rivers')
+    ax.plot(temp_data.dist, temp_data.rbot, c='y', label='river_bottom_fixed')
+    ax.plot(temp_data.dist, temp_data.model_bot, c='firebrick', label='model_bottom')
+    ax.plot(temp_data.dist, temp_data.model_top, c='r', label='model_top')
+    for k, c in zip(k_cs, colors):
+        ax.plot(temp_data.dist, plt_stg_data.loc[k].values.transpose(), c=c)
+    ax.axvline(hawea_clutha_divide, ls=':', c='k')
+    ax.set_ylabel('elevation')
+    ax.set_xlabel('distance from top of river')
+    ax.legend()
+
+    plt.show()
+    outdata.to_csv(riv_stage_data_path)
+    return select_resample(outdata, start_date, end_date, frequency, 'mean')
+
+
+def get_colors(vals, cmap_name='tab10'):
+    n_scens = len(vals)
+    if n_scens < 20:
+        cmap = get_cmap(cmap_name)
+        colors = [cmap(e / (n_scens + 1)) for e in range(n_scens)]
+    else:
+        colors = []
+        i = 0
+        cmap = get_cmap(cmap_name)
+        for v in vals:
+            colors.append(cmap(i / 20))
+            i += 1
+            if i == 20:
+                i = 0
+    return colors
 
 
 def data_checks():
@@ -209,13 +301,10 @@ def data_checks():
     smt.plot.plt_matrix(temp2, base_map=True, title='gaging locs')
     plt.show()
 
-    # todo look at dist vs model top, bot, riv bot along each river. include min, 5th, 25th, 50th, 75th, 95th, max temporal stage
-    raise NotImplementedError
 
 
 if __name__ == '__main__':
     get_river_loc_data(True)
     smt.get_elv_db(recalc=True)
-    smt.plot.plt_matrix(smt.get_bottoms()[0], base_map=True, title='bottoms', no_flow_layer=0)
-    simplify_hawea_dem(True)
+    get_river_stage_data(None, None)
     data_checks()

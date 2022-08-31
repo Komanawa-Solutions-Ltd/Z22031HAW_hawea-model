@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from project_base import base_model_data_dir, processed_model_data_dir, modelling_dir, unbacked_dir
 from model_build.project_model_tools import smt
+from model_build.utils import select_resample
 import geopandas as gpd
 import datetime
 import matplotlib.pyplot as plt
@@ -289,17 +290,7 @@ def get_historical_flows(start_date, end_date, frequency='D'):
 
     outdata = outdata.dropna(how='all')
 
-    ht = outdata.index
-    if start_date is None:
-        start_date = ht.min()
-    if end_date is None:
-        end_date = ht.max()
-
-    start_date = pd.to_datetime(start_date)
-    end_date = pd.to_datetime(end_date)
-    idx = (outdata.index >= start_date) & (outdata.index <= end_date)
-    outdata = outdata.loc[idx].resample(frequency).mean()
-    return outdata
+    return select_resample(outdata, start_date, end_date, frequency, 'mean')
 
 
 def compair_lindus_correlations():
@@ -625,16 +616,8 @@ def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
     else:
         data = lindis_correlation_with_malf()
         data.to_csv(flow_data_path)
-    if start_date is None:
-        start_date = data.index.min()
-    if end_date is None:
-        end_date = data.index.max()
 
-    start_date = pd.to_datetime(start_date)
-    end_date = pd.to_datetime(end_date)
-    idx = (data.index >= start_date) & (data.index <= end_date)
-    outdata = data.loc[idx].resample(frequency).mean()
-    return outdata
+    return select_resample(data, start_date, end_date, frequency, 'mean')
 
 
 if __name__ == '__main__':

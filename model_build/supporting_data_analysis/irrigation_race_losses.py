@@ -5,6 +5,7 @@ on: 15/08/22
 import pandas as pd
 from project_base import base_model_data_dir, processed_model_data_dir
 from model_build.project_model_tools import smt
+from model_build.utils import select_resample
 
 default_recalc = False
 race_shp_path = base_model_data_dir.joinpath('races.shp')
@@ -44,26 +45,18 @@ def get_race_inflows(start_date, end_date, frequency='D'):
     """
     data = pd.read_csv(inflow_path)
     data.loc[:, 'datetime'] = ht = pd.to_datetime(data.loc[:, 'Date'], format='%d/%m/%Y')
-    if start_date is None:
-        start_date = ht.min()
-    if end_date is None:
-        end_date = ht.max()
-
-    start_date = pd.to_datetime(start_date)
-    end_date = pd.to_datetime(end_date)
     data.rename(columns={'Combined': 'flow'}, inplace=True)  # in m3/day
     data.set_index('datetime', inplace=True)
-    idx = (data.index >= start_date) & (data.index <= end_date)
-    outdata = data.loc[idx, 'flow'].resample(frequency).mean()
-    return outdata
+    return select_resample(data, start_date, end_date, frequency, 'mean')
 
 
 def get_race_well_losses(start_date, end_date, frequency='D'):
+    race_locs = get_race_locs()
+    data = get_race_inflows(start_date, end_date, frequency).flow * 0.1/len(race_locs)
+    return data
 
-    # 10% race losses
-    # todo do I need to mange the differnt pumped races or just assume that the inflows are evenly distributed?
-    raise NotImplementedError
 
 
 if __name__ == '__main__':
-    get_race_inflows(None, None)
+    t = get_race_inflows(None, None, 'M')
+    pass

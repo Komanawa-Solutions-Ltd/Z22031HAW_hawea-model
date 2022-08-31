@@ -3,7 +3,7 @@ created matt_dumont
 on: 19/07/22
 """
 from model_tools.regular_modeltools import ModelTools_RegularGrid
-from project_base import modelling_dir, unbacked_dir, base_model_data_dir  # from project_base.py file in the project
+from project_base import modelling_dir, unbacked_dir, base_model_data_dir, processed_model_data_dir
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -121,6 +121,7 @@ def no_flow():
     assert temp_smt.layers == 1
     ibound[0][np.isfinite(active)] = 1
     ibound[0][np.isfinite(camphill)] = 0
+    np.savetxt(processed_model_data_dir.joinpath('ibound.txt'), ibound)
     return ibound
 
 
@@ -160,6 +161,7 @@ def _river_locs():
     hawea.loc[0, 'rbot'] = hawea.loc[1, 'rbot']  # first segment dem is nan, so set first to second
     hawea.loc[:, 'rbot_raw'] = hawea.loc[:, 'rbot']
     clutha.loc[:, 'rbot'] = top[clutha.loc[:, 'i'], clutha.loc[:, 'j']]
+    clutha.loc[0, 'rbot'] = hawea.loc[:, 'rbot'].iloc[-1]
     clutha.loc[:, 'rbot_raw'] = clutha.loc[:, 'rbot']
 
     # fix weird things in the DEM
@@ -182,7 +184,13 @@ def _river_locs():
     # label rivers
     hawea.loc[:, 'rname'] = 'hawea'
     clutha.loc[:, 'rname'] = 'clutha'
+    hawea.sort_values('dist', inplace=True)
+    clutha.sort_values('dist', inplace=True)
     outdata = pd.concat((hawea, clutha))
+
+    # set the river river bottoms 3 m below top so that the stage is always higher than river bottom # todo review
+    outdata.loc[:, 'rbot'] += -2.5
+
     outdata.reset_index(inplace=True, drop=True)
     return outdata
 
@@ -217,7 +225,9 @@ def elv_calc():
     thick = top - bot
     bot[thick < 2] = top[thick < 2] - 2  # set min thickness to 2m
 
-    return np.concatenate((top[np.newaxis], bot[np.newaxis]))
+    out = np.concatenate((top[np.newaxis], bot[np.newaxis]))
+    np.savetxt(processed_model_data_dir.joinpath('elv_db.txt'), out)
+    return out
 
 
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,

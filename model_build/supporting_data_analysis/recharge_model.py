@@ -3,15 +3,13 @@ created matt_dumont
 on: 2/08/22
 """
 import warnings
-
 import geopandas as gpd
-# todo use https://github.com/mullenkamp/lsrm-archive
-# todo that LSR model is really set up for Ecan's context..., perhaps program in rushton...
 import numpy as np
 import pandas as pd
 import netCDF4 as nc
 from project_base import base_model_data_dir, processed_model_data_dir, modelling_dir
 from model_build.project_model_tools import smt
+from model_build.utils import select_resample
 
 irrigated_area_dir = base_model_data_dir.joinpath('irrigated_area')
 irrigated_area_dir.mkdir(exist_ok=True)
@@ -26,7 +24,7 @@ irrigation_record_dir = processed_model_data_dir.joinpath('rch_historical_record
 irrigation_record_dir.mkdir(exist_ok=True)
 
 
-def get_met_data(start_date, end_date, frequency='D'):
+def get_met_data(start_date, end_date, frequency='D'): # todo get a longer record either from ORC or ERA5-land
     data = pd.read_csv(base_model_data_dir.joinpath('Rainfall_Hawea.csv'))
     data.loc[:, 'datetime'] = dt = pd.to_datetime(data.loc[:, 'Date'], format='%d/%m/%Y')
     data.drop(columns='Date', inplace=True)
@@ -110,7 +108,6 @@ def get_historical_rch_model_results(recalc=False):
         data = []
         dates = []
         for f in files:
-            # todo add dates!!!
             with nc.Dataset(f, mode='r') as ncd:
                 t = nc.num2date(np.array(ncd.variables['time']), ncd.variables['time'].units,
                                 only_use_python_datetimes=True, only_use_cftime_datetimes=False)
@@ -217,8 +214,17 @@ def get_historical_rch_model_results(recalc=False):
     return dates, data
 
 
-def get_rch(start_date, end_date, frequency='D'):
-    raise NotImplementedError  # todo from above
+def get_rch(start_date, end_date, frequency='D', recalc=False):
+    dates, rch = get_historical_rch_model_results(recalc=recalc)
+
+    temp = pd.DataFrame(index=dates,
+                        data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
+                        )
+
+    temp = select_resample(temp, start_date, end_date, frequency, 'mean')
+    out_rch = temp.values.reshape(rch.shape)
+    assert np.isclose(out_rch.mean(axis=0), rch.mean(axis=0)).all()
+    return dates, out_rch
 
 
 if __name__ == '__main__':

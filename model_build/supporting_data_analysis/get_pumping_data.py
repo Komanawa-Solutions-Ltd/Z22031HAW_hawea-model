@@ -7,8 +7,11 @@ on: 2/08/22
 import pandas as pd
 import numpy as np
 from project_base import base_model_data_dir, processed_model_data_dir
+from model_build.utils import select_resample
+from model_build.project_model_tools import smt
 
 default_recalc = False
+
 
 # todo how does MNwell handle 2 feature in the same cell.
 
@@ -36,6 +39,7 @@ def get_historical_pumping_data(start_date, end_date, frequency='D'):
     keep_cols = ['permit_id', 'water_meter_no', 'gw_allo_usage_est']
     # todo I need to run a groupby here...
     use_data = pumping_data.loc[idx].resample(frequency)  # todo how to run different aggs...
+    # todo select_resample(outdata, start_date, end_date, frequency, 'mean')
     raise NotImplementedError
 
 
@@ -70,6 +74,7 @@ def data_checks():
 
 def get_well_flows(start_date, end_date, frequency='D'):
     raise NotImplementedError
+
 
 if __name__ == '__main__':
     data_checks()
