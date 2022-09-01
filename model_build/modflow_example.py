@@ -10,15 +10,17 @@ import pandas as pd
 import numpy as np
 from copy import copy
 from model_tools.regular_modeltools import ModelTools_RegularGrid
+from model_tools.time_discretization import TimeDis
 
 
-def build_calibration_model(smt, exe_name, model_name, model_ws, hk, vka, layer_avg, chani, constant_heads, rch=None,
+def build_calibration_model(smt, tdis, exe_name, model_name, model_ws, hk, vka, layer_avg, chani, constant_heads, rch=None,
                             options='COMPLEX',
                             drn_spd=None, well_spd=None, mnwell_data=None, nwt_kwargs={},
-                            hani=None, ss=0, sy=0, mfv='mfnwt', run_model=False, perlen=1):
+                            hani=None, ss=0, sy=0, mfv='mfnwt', run_model=False):
     """
     build modflow model
     :param smt: instance of ModelTools
+    :param tdis: time discritisation object for the model
     :param exe_name: path to the exe file for modflow
     :param model_name: model_name
     :param model_ws: model working directory
@@ -72,6 +74,7 @@ def build_calibration_model(smt, exe_name, model_name, model_ws, hk, vka, layer_
     :return: 'model: {}, converged: {}'.format(model_name, boolean) (run_model=False) or m (run_model=False)
     """
     assert isinstance(smt, ModelTools_RegularGrid)
+    assert isinstance(tdis, TimeDis)
     if not os.path.exists(model_ws):
         os.makedirs(model_ws)
 
@@ -83,7 +86,7 @@ def build_calibration_model(smt, exe_name, model_name, model_ws, hk, vka, layer_
                                  external_path=None,
                                  verbose=False, )
 
-    _create_dis_package(m, smt, perlen=perlen)
+    _create_dis_package(m, smt, tdis)
     _create_bas_package(m, smt, constant_heads)
     _create_lay_prop_package(m, smt, hk, vka, layer_avg, chani, hani=hani, ss=ss, sy=sy, mfv=mfv)
     _create_nwt_package(m, options=options, **nwt_kwargs)
@@ -114,28 +117,29 @@ def build_calibration_model(smt, exe_name, model_name, model_ws, hk, vka, layer_
         return m
 
 
-def _create_dis_package(m, smt, perlen):
+def _create_dis_package(m, smt, tdis):
     """
     create and add the dis package
     :param m: a flopy model instance
     :return:
     """
+    assert isinstance(tdis, TimeDis)
     elv_db = smt.get_elv_db()
     dis = flopy.modflow.mfdis.ModflowDis(m,
                                          nlay=smt.layers,
                                          nrow=smt.rows,
                                          ncol=smt.cols,
-                                         nper=smt.nper,
+                                         nper=tdis.nper, # todo pull out of smt
                                          delr=smt.grid_space,
                                          delc=smt.grid_space,
                                          laycbd=0,  # no quasi confining bed
                                          top=elv_db[0],
                                          botm=elv_db[1:],
-                                         perlen=perlen,
-                                         nstp=1,
-                                         tsmult=1,
-                                         steady=smt.steady,
-                                         itmuni=4,  # days
+                                         perlen=tdis.perlen,
+                                         nstp=tdis.nstp,
+                                         tsmult=tdis.tsmult,
+                                         steady=tdis.steady, # todo pull out to smt
+                                         itmuni=tdis.mftunit,  # days
                                          lenuni=2,  # meters
                                          unitnumber=719,
                                          xul=smt.ulx,
@@ -401,7 +405,7 @@ def _create_mnwell_package(m, mnwell_data):
                                     aux=[],
                                     node_data=node_data,
                                     mnw=None,
-                                    stress_period_data={0:spd},
+                                    stress_period_data={0: spd},
                                     itmp=[len(mnwell_data['spd'])],
                                     extension="mnw2",
                                     unitnumber=None,

@@ -3,7 +3,7 @@ created matt_dumont
 on: 19/07/22
 """
 from model_tools.regular_modeltools import ModelTools_RegularGrid
-from project_base import modelling_dir, unbacked_dir, base_model_data_dir, processed_model_data_dir
+from project_base import modelling_dir, unbacked_dir, base_model_build_data_dir, processed_model_build_data_dir
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -16,7 +16,7 @@ temp_file_dir.mkdir(exist_ok=True)
 sdp = unbacked_dir.joinpath('sdp')
 sdp.mkdir(exist_ok=True)
 
-boundary_path = base_model_data_dir.joinpath('model_boundary.shp')
+boundary_path = base_model_build_data_dir.joinpath('model_boundary.shp')
 temp = gpd.read_file(boundary_path)
 ulx = np.floor(temp.bounds.loc[0, 'minx'])
 uly = np.ceil(temp.bounds.loc[0, 'maxy'])
@@ -24,7 +24,7 @@ uly = np.ceil(temp.bounds.loc[0, 'maxy'])
 lrx = np.ceil(temp.bounds.loc[0, 'maxx'])
 lry = np.floor(temp.bounds.loc[0, 'miny'])
 # todo get better basemap
-base_map_path = base_model_data_dir.joinpath('nz-topo50-maps.tif')
+base_map_path = base_model_build_data_dir.joinpath('nz-topo50-maps.tif')
 model_version_name = 'v1'
 
 grid_space = 100  #
@@ -32,14 +32,11 @@ cols = int(abs(ulx - lrx) // grid_space) + 1
 rows = int(abs(uly - lry) // grid_space) + 1
 
 layers = 1
-nper = 1  # todo dummy
-steady = np.repeat([False], (nper,))  # todo dbl check
-# todo other period data? naw pass other data to model build
 layer_type = [1]
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp, temp_file_dir,
-                                  rotation=0, nper=nper, layer_type=layer_type, steady=steady,
+                                  rotation=0, layer_type=layer_type,
                                   no_flow_calc=None, elv_calculator=None,
                                   base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
@@ -51,7 +48,7 @@ def simplify_hawea_dem(recalc=False):
     :return:
     """
     dem_path = modelling_dir.joinpath('input_data/southi_15mdem_Hawea.tif')
-    outpath = base_model_data_dir.joinpath('raw_mean_dem_top.txt')
+    outpath = base_model_build_data_dir.joinpath('raw_mean_dem_top.txt')
     if outpath.exists() and not recalc:
         data = np.loadtxt(outpath)
         return data
@@ -67,7 +64,7 @@ def simplify_upper_clutha_dem(recalc=False):
     :return:
     """
     dem_path = modelling_dir.joinpath('input_data/UpperClutha_DEM_1m.tif')
-    outpath = base_model_data_dir.joinpath('raw_min_dem.txt')
+    outpath = base_model_build_data_dir.joinpath('raw_min_dem.txt')
     if outpath.exists() and not recalc:
         data = np.loadtxt(outpath)
         return data
@@ -116,18 +113,18 @@ def no_flow():
     ibound = temp_smt.get_model_zeros(_3d=True)
     active = temp_smt.io.shape_file_to_model_array(boundary_path, 'fid', alltouched=True)
     # remove camphill and the camphill moraine from the model
-    camphill = temp_smt.io.shape_file_to_model_array(base_model_data_dir.joinpath('camp_hill_moraine.shp'), 'id',
+    camphill = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('camp_hill_moraine.shp'), 'id',
                                                      alltouched=True)
     assert temp_smt.layers == 1
     ibound[0][np.isfinite(active)] = 1
     ibound[0][np.isfinite(camphill)] = 0
-    np.savetxt(processed_model_data_dir.joinpath('ibound.txt'), ibound)
+    np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound)
     return ibound
 
 
 def _lake_locs():
-    lakefront_shp_path = base_model_data_dir.joinpath('lakefront.shp')
-    lake_shp_path = base_model_data_dir.joinpath('lake_hawea.shp')
+    lakefront_shp_path = base_model_build_data_dir.joinpath('lakefront.shp')
+    lake_shp_path = base_model_build_data_dir.joinpath('lake_hawea.shp')
     lake = temp_smt.io.shape_file_to_model_array(lake_shp_path, 'id', alltouched=True)
     lake_front = temp_smt.io.shape_file_to_model_array(lakefront_shp_path, 'id', alltouched=True)
     lake[np.isfinite(lake_front)] = np.nan
@@ -137,8 +134,8 @@ def _lake_locs():
 
 
 def _river_locs():
-    hawea_shp_path = base_model_data_dir.joinpath('hawea_river.shp')
-    clutha_shp_path = base_model_data_dir.joinpath('lower_clutha.shp')
+    hawea_shp_path = base_model_build_data_dir.joinpath('hawea_river.shp')
+    clutha_shp_path = base_model_build_data_dir.joinpath('lower_clutha.shp')
 
     # read in the shapefiles and save only the data in active model
     ibound = no_flow()[0]
@@ -196,7 +193,7 @@ def _river_locs():
 
 
 def elv_calc():
-    bot_path = base_model_data_dir.joinpath('Model_bot.tif')
+    bot_path = base_model_build_data_dir.joinpath('Model_bot.tif')
     top = simplify_hawea_dem()
     top[top > 600] = 600  # for easy viewing of noflow area
     bot = temp_smt.io.raster_to_array(bot_path, 'min')
@@ -226,13 +223,13 @@ def elv_calc():
     bot[thick < 2] = top[thick < 2] - 2  # set min thickness to 2m
 
     out = np.concatenate((top[np.newaxis], bot[np.newaxis]))
-    np.savetxt(processed_model_data_dir.joinpath('elv_db.txt'), out)
+    np.savetxt(processed_model_build_data_dir.joinpath('elv_db.txt'), out)
     return out
 
 
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              model_version_name, sdp, temp_file_dir,
-                             rotation=0, nper=nper, layer_type=layer_type, steady=steady,
+                             rotation=0, layer_type=layer_type,
                              no_flow_calc=no_flow, elv_calculator=elv_calc,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
