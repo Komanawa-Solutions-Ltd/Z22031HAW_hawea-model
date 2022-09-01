@@ -47,7 +47,7 @@ Category: Georeferenced Maps
 
 CRS: NZGD2000 / New Zealand Transverse Mercator 2000
 
-Resolution: 33.8664m
+Resolution: 8.4666m
 
 ------------------------------------------------------------------------
  Processing steps applied by LINZ Data Service
@@ -55,9 +55,9 @@ Resolution: 33.8664m
 
 - imported to LINZ Data Service in GeoTIFF format on 16 Feb 2012
 - updated with new data on 04 May 2022
-- resolution reduced by a factor of 8x from 4.2333m to 33.8664m
-- clipped to (44.580°S 169.122°E)-(44.847°S 169.443°E)
-- converted by LINZ Data Service to GeoTIFF on 09 Aug 2022 (reference #2586006)
+- resolution reduced by a factor of 2x from 4.2333m to 8.4666m
+- clipped to (44.545°S 169.119°E)-(44.871°S 169.482°E)
+- converted by LINZ Data Service to GeoJPEG on 01 Sep 2022 (reference #2613289)
 
 ------------------------------------------------------------------------
  LICENSE: Creative Commons Attribution 4.0 International

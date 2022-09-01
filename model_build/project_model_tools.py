@@ -23,8 +23,7 @@ uly = np.ceil(temp.bounds.loc[0, 'maxy'])
 
 lrx = np.ceil(temp.bounds.loc[0, 'maxx'])
 lry = np.floor(temp.bounds.loc[0, 'miny'])
-# todo get better basemap
-base_map_path = base_model_build_data_dir.joinpath('nz-topo50-maps.tif')
+base_map_path = base_model_build_data_dir.joinpath('nz-topo50-maps.jpg')
 model_version_name = 'v1'
 
 grid_space = 100  #
@@ -266,6 +265,8 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    smt.plot.plt_matrix(smt.get_model_zeros(), base_map=True)
+    smt.plot.show()
     # below run once
     # ibound = smt.get_no_flow(0)
     # ibound[ibound<=0] = np.nan

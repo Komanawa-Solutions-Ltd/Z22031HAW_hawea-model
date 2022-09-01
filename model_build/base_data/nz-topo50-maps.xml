@@ -1,4 +1,4 @@
-<gmd:MD_Metadata xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns="http://www.isotc211.org/2005/gmd">
+<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns="http://www.isotc211.org/2005/gmd">
   <gmd:fileIdentifier>
     <gco:CharacterString>dfcf7458-9bb8-6ce0-0015-fc7fafa31b31</gco:CharacterString>
   </gmd:fileIdentifier>
