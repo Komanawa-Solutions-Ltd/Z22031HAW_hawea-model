@@ -7,11 +7,11 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import netCDF4 as nc
-from project_base import base_model_data_dir, processed_model_data_dir, modelling_dir
+from project_base import base_model_build_data_dir, processed_model_build_data_dir, modelling_dir
 from model_build.project_model_tools import smt
 from model_build.utils import select_resample
 
-irrigated_area_dir = base_model_data_dir.joinpath('irrigated_area')
+irrigated_area_dir = base_model_build_data_dir.joinpath('irrigated_area')
 irrigated_area_dir.mkdir(exist_ok=True)
 
 irrigated_area_codes = {
@@ -20,12 +20,12 @@ irrigated_area_codes = {
 
 irrigation_effciency = {}  # todo!!
 
-irrigation_record_dir = processed_model_data_dir.joinpath('rch_historical_record')
+irrigation_record_dir = processed_model_build_data_dir.joinpath('rch_historical_record')
 irrigation_record_dir.mkdir(exist_ok=True)
 
 
 def get_met_data(start_date, end_date, frequency='D'): # todo get a longer record either from ORC or ERA5-land
-    data = pd.read_csv(base_model_data_dir.joinpath('Rainfall_Hawea.csv'))
+    data = pd.read_csv(base_model_build_data_dir.joinpath('Rainfall_Hawea.csv'))
     data.loc[:, 'datetime'] = dt = pd.to_datetime(data.loc[:, 'Date'], format='%d/%m/%Y')
     data.drop(columns='Date', inplace=True)
     data.set_index('datetime', inplace=True)
@@ -82,7 +82,7 @@ def data_checks():
 
 
 def get_soil_paw_taw(fix_nan=True):
-    soil_paw = smt.io.shape_file_to_model_array(base_model_data_dir.joinpath('soils_with_paw.shp'),
+    soil_paw = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('soils_with_paw.shp'),
                                                 'PAW', alltouched=True)
     if fix_nan:
         soil_paw[np.isnan(soil_paw)] = np.nanmin(soil_paw)
@@ -140,17 +140,17 @@ def get_historical_rch_model_results(recalc=False):
         # get irrigation codes (note the shapefiles are additive/overwrite)
         irrig_codes = smt.get_model_zeros().astype(int) - 1
         if y < 2020:
-            irrig_path = base_model_data_dir.joinpath('irrigated_area/ia_2015.shp')
+            irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2015.shp')
             temp = smt.io.shape_file_to_model_array(irrig_path, 'type_code', alltouched=True)
             irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
 
         if y == 2020:
-            irrig_path = base_model_data_dir.joinpath('irrigated_area/ia_2020.shp')
+            irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2020.shp')
             temp = smt.io.shape_file_to_model_array(irrig_path, 'type_code', alltouched=True)
             irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
 
         if y >= 2021:
-            irrig_path = base_model_data_dir.joinpath('irrigated_area/ia_2021.shp')
+            irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2021.shp')
             temp = smt.io.shape_file_to_model_array(irrig_path, 'type_code', alltouched=True)
             irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
 

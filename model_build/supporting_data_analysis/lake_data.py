@@ -7,12 +7,12 @@ import pandas as pd
 
 from model_build.project_model_tools import smt, _lake_locs
 from model_build.utils import select_resample
-from project_base import base_model_data_dir, processed_model_data_dir
+from project_base import base_model_build_data_dir, processed_model_build_data_dir
 
 default_recalc = False
-lakefront_shp_path = base_model_data_dir.joinpath('lakefront.shp')
-lake_shp_path = base_model_data_dir.joinpath('lake_hawea.shp')
-lake_loc_path = processed_model_data_dir.joinpath('lake_hawea_loc.csv')
+lakefront_shp_path = base_model_build_data_dir.joinpath('lakefront.shp')
+lake_shp_path = base_model_build_data_dir.joinpath('lake_hawea.shp')
+lake_loc_path = processed_model_build_data_dir.joinpath('lake_hawea_loc.csv')
 
 
 def get_lake_hawea_loc(recalc=default_recalc):
@@ -27,7 +27,7 @@ def get_lake_hawea_loc(recalc=default_recalc):
 
 def lake_checks():
     import matplotlib.pyplot as plt
-    hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
+    hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Lake_Hawea.csv'))
     print(hawea_data.describe())
     hawea_data.loc[:, 'datetime'] = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
     hawea_data.loc[:, 'month'] = hawea_data.loc[:, 'datetime'].dt.month
@@ -50,7 +50,7 @@ def get_lake_heads(start_date, end_date, frequency='D'): # todo longer record pl
     :param frequency: pd frequnecy code
     :return:
     """
-    hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
+    hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Lake_Hawea.csv'))
     hawea_data.loc[:, 'datetime'] = ht = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
     hawea_data.rename(columns={'LakeLevel_m': 'lake_stage'}, inplace=True)
     hawea_data.set_index('datetime', inplace=True)

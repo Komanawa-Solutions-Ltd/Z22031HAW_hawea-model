@@ -8,15 +8,15 @@ import matplotlib.pyplot as plt
 from model_build.utils import select_resample
 from matplotlib.cm import get_cmap
 from model_build.project_model_tools import smt, _river_locs
-from project_base import base_model_data_dir, processed_model_data_dir
+from project_base import base_model_build_data_dir, processed_model_build_data_dir
 
 default_recalc = False
-hawea_shp_path = base_model_data_dir.joinpath('hawea_river.shp')
-clutha_shp_path = base_model_data_dir.joinpath('lower_clutha.shp')
-gageing_path = base_model_data_dir.joinpath('Hawea River - ORC Gaugings for Gain & Loss Estimation.xlsx')
+hawea_shp_path = base_model_build_data_dir.joinpath('hawea_river.shp')
+clutha_shp_path = base_model_build_data_dir.joinpath('lower_clutha.shp')
+gageing_path = base_model_build_data_dir.joinpath('Hawea River - ORC Gaugings for Gain & Loss Estimation.xlsx')
 
-riv_loc_data_path = processed_model_data_dir.joinpath('river_loc_data.csv')
-riv_stage_data_path = processed_model_data_dir.joinpath('river_stage_data.csv')
+riv_loc_data_path = processed_model_build_data_dir.joinpath('river_loc_data.csv')
+riv_stage_data_path = processed_model_build_data_dir.joinpath('river_stage_data.csv')
 
 
 def get_river_loc_data(recalc=default_recalc):
@@ -99,9 +99,9 @@ def get_historical_stage_flow(start_date, end_date, frequency='D'):  # todo get 
     :param frequency: pd freq codes
     :return:
     """
-    hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
+    hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Lake_Hawea.csv'))
     hawea_data.loc[:, 'datetime'] = ht = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
-    river_data = pd.read_csv(base_model_data_dir.joinpath('River_Level_Hawea.csv'))
+    river_data = pd.read_csv(base_model_build_data_dir.joinpath('River_Level_Hawea.csv'))
     river_data.loc[:, 'datetime'] = rt = pd.to_datetime(river_data.loc[:, 'DateTime'], format='%d/%m/%Y')
     hawea_data.set_index('datetime', inplace=True)
     river_data.set_index('datetime', inplace=True)
@@ -275,7 +275,7 @@ def data_checks():
         ax.set_xlabel('distance from top of river')
         ax.legend()
     # look at stage through time at our locations( which are???)
-    hawea_data = pd.read_csv(base_model_data_dir.joinpath('Lake_Hawea.csv'))
+    hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Lake_Hawea.csv'))
     print(hawea_data.describe())
     hawea_data.loc[:, 'datetime'] = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
     hawea_data.loc[:, 'month'] = hawea_data.loc[:, 'datetime'].dt.month
@@ -284,7 +284,7 @@ def data_checks():
     monthly.LakeLevel_m.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
     ax.set_title('lake level')
 
-    river_data = pd.read_csv(base_model_data_dir.joinpath('River_Level_Hawea.csv'))
+    river_data = pd.read_csv(base_model_build_data_dir.joinpath('River_Level_Hawea.csv'))
     print(river_data.describe())
     river_data.loc[:, 'datetime'] = pd.to_datetime(river_data.loc[:, 'DateTime'], format='%d/%m/%Y')
     river_data.loc[:, 'month'] = river_data.loc[:, 'datetime'].dt.month

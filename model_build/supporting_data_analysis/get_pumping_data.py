@@ -6,7 +6,7 @@ on: 2/08/22
 # todo get the data and make some diagnostic plots to check the data.
 import pandas as pd
 import numpy as np
-from project_base import base_model_data_dir, processed_model_data_dir
+from project_base import base_model_build_data_dir, processed_model_build_data_dir
 from model_build.utils import select_resample
 from model_build.project_model_tools import smt
 
@@ -23,7 +23,7 @@ def get_historical_pumping_data(start_date, end_date, frequency='D'):
     :param frequency: pd freq codes
     :return:
     """
-    pumping_data = pd.read_csv(base_model_data_dir.joinpath('water_permit_meter_results_2022-07-20',
+    pumping_data = pd.read_csv(base_model_build_data_dir.joinpath('water_permit_meter_results_2022-07-20',
                                                             'water_permit_meter_daily_data_2022-07-20.csv'),
                                low_memory=False)
     pumping_data.loc[:, 'datetime'] = dt = pd.to_datetime(pumping_data.loc[:, 'date'])
@@ -53,14 +53,14 @@ def get_pumping_locs(recalc=default_recalc):
 
 
 def data_checks():
-    pumping_data = pd.read_csv(base_model_data_dir.joinpath('water_permit_meter_results_2022-07-20',
+    pumping_data = pd.read_csv(base_model_build_data_dir.joinpath('water_permit_meter_results_2022-07-20',
                                                             'water_permit_meter_daily_data_2022-07-20.csv'),
                                low_memory=False)
     pumping_data.loc[:, 'datetime'] = dt = pd.to_datetime(pumping_data.loc[:, 'date'])
     pumping_data.drop(columns='date', inplace=True)
     pumping_data.set_index('datetime', inplace=True)
 
-    metadata = pd.read_csv(base_model_data_dir.joinpath('PumpsHawea.csv'), encoding='ISO-8859-1')
+    metadata = pd.read_csv(base_model_build_data_dir.joinpath('PumpsHawea.csv'), encoding='ISO-8859-1')
     # water meters are unique in this dataset
 
     # todo do we have all of the location data???, nope missing 72 of 119 in the pumping data...

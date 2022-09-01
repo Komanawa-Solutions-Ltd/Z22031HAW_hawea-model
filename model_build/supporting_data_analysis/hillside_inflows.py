@@ -4,7 +4,7 @@ on: 2/08/22
 """
 import pandas as pd
 import numpy as np
-from project_base import base_model_data_dir, processed_model_data_dir, modelling_dir, unbacked_dir
+from project_base import base_model_build_data_dir, processed_model_build_data_dir, modelling_dir, unbacked_dir
 from model_build.project_model_tools import smt
 from model_build.utils import select_resample
 import geopandas as gpd
@@ -16,12 +16,12 @@ from copy import deepcopy
 # exclude lagoon creek races instead manage as additional points of well inflow
 
 
-pour_points_path = base_model_data_dir.joinpath('hillflow_inputs.shp')
-catchment_area_path = processed_model_data_dir.joinpath('catchment_areas.csv')
-luggate_catch_area_path = processed_model_data_dir.joinpath('luggate_catchment_area.csv')
+pour_points_path = base_model_build_data_dir.joinpath('hillflow_inputs.shp')
+catchment_area_path = processed_model_build_data_dir.joinpath('catchment_areas.csv')
+luggate_catch_area_path = processed_model_build_data_dir.joinpath('luggate_catchment_area.csv')
 
-catchment_loc_path = processed_model_data_dir.joinpath('catchment_locs.csv')
-flow_data_path = processed_model_data_dir.joinpath('hillside_flows.csv')
+catchment_loc_path = processed_model_build_data_dir.joinpath('catchment_locs.csv')
+flow_data_path = processed_model_build_data_dir.joinpath('hillside_flows.csv')
 
 
 def get_hillside_catchment_locs(recalc=False):
@@ -260,7 +260,7 @@ def get_luggate_catchment_area(recalc=False):
 
 
 def get_lindis_area():
-    t = gpd.read_file(processed_model_data_dir.joinpath('lindis_area_right.shp'))
+    t = gpd.read_file(processed_model_build_data_dir.joinpath('lindis_area_right.shp'))
     return t.area.sum()
 
 
@@ -281,7 +281,7 @@ def get_historical_flows(start_date, end_date, frequency='D'):
     ]
 
     for p, n in zip(paths, names):
-        df = pd.read_csv(base_model_data_dir.joinpath(p), skiprows=1)
+        df = pd.read_csv(base_model_build_data_dir.joinpath(p), skiprows=1)
         df.loc[:, 'datetime'] = pd.to_datetime(df.time)
         df.set_index('datetime', inplace=True)
         df.rename(columns={'streamflow': n}, inplace=True)
