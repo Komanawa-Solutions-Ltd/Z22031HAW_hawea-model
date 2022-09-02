@@ -2,7 +2,7 @@
 created matt_dumont 
 on: 31/08/22
 """
-from model_build.project_model_tools import smt, simplify_hawea_dem, simplify_upper_clutha_dem
+from model_build.project_model_tools import smt, simplify_hawea_dem, simplify_upper_clutha_dem, no_flow, elv_calc
 from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
 from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results
 from model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
@@ -25,8 +25,11 @@ if __name__ == '__main__':
         simplify_upper_clutha_dem(True)
         simplify_hawea_dem(True)
 
-    get_river_loc_data(True)
+    no_flow()
+    elv_calc()
     smt.recalc_all_pickles()
+
+    get_river_loc_data(True)
     get_river_stage_data(None, None, recalc=True)
 
     get_historical_rch_model_results(recalc=True)
