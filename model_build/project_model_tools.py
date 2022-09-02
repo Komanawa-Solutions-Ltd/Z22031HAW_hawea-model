@@ -117,7 +117,7 @@ def no_flow():
     assert temp_smt.layers == 1
     ibound[0][np.isfinite(active)] = 1
     ibound[0][np.isfinite(camphill)] = 0
-    np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound)
+    np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound[0])
     return ibound
 
 
@@ -222,7 +222,10 @@ def elv_calc():
     bot[thick < 2] = top[thick < 2] - 2  # set min thickness to 2m
 
     out = np.concatenate((top[np.newaxis], bot[np.newaxis]))
-    np.savetxt(processed_model_build_data_dir.joinpath('elv_db.txt'), out)
+    np.save(processed_model_build_data_dir.joinpath('elv_db.npy'), out)
+    np.savetxt(processed_model_build_data_dir.joinpath('elv_db_top.txt'), out[0])
+    np.savetxt(processed_model_build_data_dir.joinpath('elv_db_bot.txt'), out[1])
+
     return out
 
 
@@ -265,6 +268,7 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    elv_calc()
     smt.plot.plt_matrix(smt.get_model_zeros(), base_map=True)
     smt.plot.show()
     # below run once

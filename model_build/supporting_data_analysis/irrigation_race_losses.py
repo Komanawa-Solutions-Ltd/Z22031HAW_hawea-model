@@ -29,6 +29,8 @@ def get_race_locs(recalc=default_recalc):
 
     outdata = smt.io.array_to_df(smt.io.shape_file_to_model_array(race_shp_path, 'OBJECTID', alltouched=True),
                                  'dummy')
+    outdata.loc[:, 'param'] = 'all'
+    outdata.drop(columns='dummy', inplace=True)
     outdata.to_csv(race_loc_data_path)
 
     return outdata
@@ -52,11 +54,11 @@ def get_race_inflows(start_date, end_date, frequency='D'):
 
 def get_race_well_losses(start_date, end_date, frequency='D'):
     race_locs = get_race_locs()
-    data = get_race_inflows(start_date, end_date, frequency).flow * 0.1/len(race_locs)
+    data = get_race_inflows(start_date, end_date, frequency).flow * 0.1 / len(race_locs)
     return data
 
 
-
 if __name__ == '__main__':
+    t = get_race_locs(recalc=True)
     t = get_race_inflows(None, None, 'M')
     pass

@@ -72,7 +72,12 @@ def get_hillside_catchment_locs(recalc=False):
     smt.plot.show()
 
     outdata.reset_index()
+    outdata.loc[np.in1d(outdata.group, ['south_east']), 'param'] = 'south_east'
+    outdata.loc[np.in1d(outdata.group, ('flat_east', 'terrace_east', 'flat_west')), 'param'] = 'main'
+    outdata.loc[np.in1d(outdata.group, ['maungawera']), 'param'] = 'maungawera'
+
     outdata = outdata.drop(index='ss22')
+
     outdata.to_csv(catchment_loc_path)
     return outdata
 
@@ -621,5 +626,5 @@ def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
 
 
 if __name__ == '__main__':
+    t = get_hillside_catchment_locs(recalc=True)
     get_hillside_flows(None, None, recalc=True)
-    get_hillside_catchment_locs(recalc=True)

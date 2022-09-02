@@ -18,13 +18,11 @@ irrigated_area_codes = {
     0: 'Gun', 1: 'Borderdyke', 2: 'Pivot', 3: 'Solid-set', 4: 'K-line/Long lateral',
     5: 'Unknown', 6: 'Drip/micro', 7: 'Rotorainer', 8: 'Wild flooding', 9: 'Linear boom'}
 
-irrigation_effciency = {}  # todo!!
-
 irrigation_record_dir = processed_model_build_data_dir.joinpath('rch_historical_record')
 irrigation_record_dir.mkdir(exist_ok=True)
 
 
-def get_met_data(start_date, end_date, frequency='D'): # todo get a longer record either from ORC or ERA5-land
+def get_met_data(start_date, end_date, frequency='D'):  # todo get a longer record either from ORC or ERA5-land
     data = pd.read_csv(base_model_build_data_dir.joinpath('Rainfall_Hawea.csv'))
     data.loc[:, 'datetime'] = dt = pd.to_datetime(data.loc[:, 'Date'], format='%d/%m/%Y')
     data.drop(columns='Date', inplace=True)
@@ -66,8 +64,11 @@ def data_checks():
         smt.plot.plt_matrix(temp, base_map=True, title=f.name)
 
     # plot soil paw
-    soil_paw = get_soil_paw_taw(fix_nan=False)
-    smt.plot.plt_matrix(soil_paw, title='PAW', base_map=True)
+    soil_paw = get_soil_classes(fix_nan=False)
+    smt.plot.plt_matrix(soil_paw, title='soil_clases', base_map=True)
+    for k in ['scs_curve', 'frac_store', 'paw', 'raw_p', 'soil_retention']:
+        smt.plot.plt_matrix(_map_from_soil_class(soil_paw, k), title=k, base_map=True)
+
     print('number of soil PAWs', len(np.unique(soil_paw)))
     print('soil paws', np.unique(soil_paw))
     ibound = smt.get_no_flow(0)
@@ -78,22 +79,77 @@ def data_checks():
 
     smt.plot.show()
 
-    # todo more....
+    # todo look at recharge stats.....
 
 
-def get_soil_paw_taw(fix_nan=True):
-    soil_paw = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('soils_with_paw.shp'),
-                                                'PAW', alltouched=True)
-    if fix_nan:
-        soil_paw[np.isnan(soil_paw)] = np.nanmin(soil_paw)
+def get_soil_classes(recalc=False):
+    soil_classes_path = processed_model_build_data_dir.joinpath('soil_classes.txt')
+    if soil_classes_path.exists() and not recalc:
+        return np.loadtxt(soil_classes_path)
+
+    soil_classes = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('soils_with_paw.shp'),
+                                                    'Jens_soil', alltouched=True)
 
     # todo the soil PAW has null values that are being burned as 0...
     # todo I may need ather soil data...
-    return soil_paw
+    raise NotImplementedError
+    np.savetxt(soil_classes_path, soil_classes)
+    return soil_classes
 
 
 def _map_from_code(irrig_codes, key):  # todo
     raise NotImplementedError
+
+
+def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
+    # data from Jens Rekker soil classes and his analysis.
+    out = np.zeros(soil_classes.shape).astype(type)
+    assert np.issubdtype(soil_classes.dtype, np.integer)
+    data = {
+        'scs_curve': {
+            0: np.nan,  # todo set default value
+            1: 45,
+            2: 49,
+            3: 57,
+            4: 60,
+        },
+        'frac_store': {
+            0: np.nan,  # todo set default value
+            1: 0.2,
+            2: 0.35,
+            3: 0.3,
+            4: 0.3,
+        },
+        'paw': {
+            0: np.nan,  # todo set default value
+            1: 55.,
+            2: 90.,
+            3: 120.,
+            4: 160.,
+        },
+        'raw_p': {
+            0: np.nan,  # todo set default value
+            1: 0.87,
+            2: 0.56,
+            3: 0.58,
+            4: 0.6,
+        },
+        'soil_retention': {
+            0: np.nan,  # todo set default value
+            1: 310.4,
+            2: 264.4,
+            3: 195.6,
+            4: 169.3,
+        },
+
+    }
+    use_mapper = data[key]
+    for k, v in use_mapper.items():
+        if np.isnan(v):
+            raise NotImplementedError(f'default value for {k} not set')
+        out[soil_classes == k] = v
+
+    return out
 
 
 def get_historical_rch_model_results(recalc=False):
@@ -121,13 +177,13 @@ def get_historical_rch_model_results(recalc=False):
     from rushton_model.rushton import Rushton
     dates, data = [], []
 
-    # todo make static datasets
+    # make static datasets
     irrig_max_store = 50  # todo how much storage per area!!!, might be iterative to set
 
-    static_taw = get_soil_paw_taw(True)  # todo, not finished
-    warnings.warn('TAW is not finished!!!!!!')
-    fracstore = None  # todo 2d
-    raw_p = None  # todo 2d
+    soil_classes = get_soil_classes()
+    static_taw = _map_from_soil_class(soil_classes, 'taw')
+    fracstore = _map_from_soil_class(soil_classes, 'fracstore')
+    raw_p = _map_from_soil_class(soil_classes, 'raw_p')
 
     # make semi static data, reset after each model run
     init_near_surface_storage = smt.get_model_zeros()
@@ -154,16 +210,16 @@ def get_historical_rch_model_results(recalc=False):
             temp = smt.io.shape_file_to_model_array(irrig_path, 'type_code', alltouched=True)
             irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
 
-        max_irrig_apply = _map_from_code(irrig_codes, 'max_irrig_apply')  # todo 2d, map from codes!
-        min_irrig_return = _map_from_code(irrig_codes, 'min_irrig_return')  # todo 2d
-        irrig_effic = _map_from_code(irrig_codes, 'irrig_effic')  # todo 2d
+        max_irrig_apply = _map_from_code(irrig_codes, 'max_irrig_apply')
+        min_irrig_return = _map_from_code(irrig_codes, 'min_irrig_return')
+        irrig_effic = _map_from_code(irrig_codes, 'irrig_effic')
 
         # todo tricky ones (3d)
         irrig_aval = None  # todo 3d, pull from pumping and irrigation race data!, pumping by zones?
         irrig_trig = None  # todo 3d, static or variable?
         irrig_targ = None  # todo 3d, static or variable?
 
-        rush = Rushton(
+        rush = Rushton( # todo do I need to reset storage??? need to allow
             dates=temp_data.index,
             # 3d arrays in
             rainfall=np.repeat(temp_data.Rainfall.values[:, np.newaxis], np.prod(smt.model_array_shape[1:]),

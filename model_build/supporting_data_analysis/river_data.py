@@ -39,6 +39,10 @@ def get_river_loc_data(recalc=default_recalc):
     outdata.loc[:, 'seg_name'] = [f'{r}_{int(d):05d}' for r, d
                                   in outdata.loc[:, ['rname', 'dist']].itertuples(index=False, name=None)]
     outdata.set_index('seg_name', inplace=True)
+    outdata.loc[outdata.rname == 'hawea', 'param'] = 'h3'
+    outdata.loc[outdata.rname == 'clutha', 'param'] = 'c1'
+    for g in range(1, 4):
+        outdata.loc[outdata.gage == g, 'param'] = f'h{g}'
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
@@ -84,7 +88,8 @@ def get_stage_locs(riv_data):
     return riv_data
 
 
-def get_historical_stage_flow(start_date, end_date, frequency='D'):  # todo get longer historical data (as much as we can)
+def get_historical_stage_flow(start_date, end_date,
+                              frequency='D'):  # todo get longer historical data (as much as we can)
     """
     stages in m, flow in L/s  resample to frequency
     length of records:
@@ -139,7 +144,6 @@ def _print_flowlengths():
 
 
 def get_river_stage_data(start_date, end_date, frequency='D', recalc=False):
-
     if riv_stage_data_path.exists() and not recalc:
         outdata = pd.read_csv(riv_stage_data_path, index_col=0).astype(float)
         return select_resample(outdata, start_date, end_date, frequency, 'mean')
@@ -191,7 +195,6 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False):
     outdata.loc[:, clutha_keys] = t
 
     assert (outdata.min() >= loc_data.loc[:, 'rbot']).all(), 'some stages are below rbot, address this'
-
 
     plt_stg_data = outdata.dropna().describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
     k_cs = ['min', '5%', '25%', '50%', '75%', '95%', 'max', ]
@@ -302,9 +305,8 @@ def data_checks():
     plt.show()
 
 
-
 if __name__ == '__main__':
-    get_river_loc_data(True)
+    t = get_river_loc_data(True)
     smt.get_elv_db(recalc=True)
     get_river_stage_data(None, None)
     data_checks()

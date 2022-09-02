@@ -1,0 +1,14 @@
+LIST 7 gv10.lst
+BAS6  1 gv10.bas
+DIS  11 gv10.dis
+UPW 13 gv10.upw
+WEL 12 gv10.wel
+RIV 14 gv10.riv
+RCH 18 gv10.rch
+OC  22 gv10.oc
+NWT 19 gv10.nwt
+DATA(BINARY) 54 gv10.cbw
+DATA(BINARY) 51 gv10.crc
+DATA(BINARY) 52 gv10.crv
+DATA(BINARY) 30 gv10.hds
+DATA(BINARY) 31 gv10.ddn

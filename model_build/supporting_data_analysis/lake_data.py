@@ -27,13 +27,11 @@ def get_lake_hawea_loc(recalc=default_recalc):
 
 def lake_checks():
     import matplotlib.pyplot as plt
-    hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Lake_Hawea.csv'))
-    print(hawea_data.describe())
-    hawea_data.loc[:, 'datetime'] = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
-    hawea_data.loc[:, 'month'] = hawea_data.loc[:, 'datetime'].dt.month
+    hawea_data = _read_lake_level()
+    hawea_data.loc[:, 'month'] = hawea_data.index.month
     monthly = hawea_data.groupby('month').describe(percentiles=[.05, .25, .5, .75, .95])
     fig, ax = plt.subplots()
-    monthly.LakeLevel_m.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
+    monthly.lake_stage.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
     ax.set_title('lake level')
 
     smt.plot.plt_matrix(smt.io.df_to_array(get_lake_hawea_loc(), 'i'), base_map=True, no_flow_layer=0,
@@ -41,7 +39,16 @@ def lake_checks():
     smt.plot.show()
 
 
-def get_lake_heads(start_date, end_date, frequency='D'): # todo longer record please!!!
+def _read_lake_level():
+    hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Amalgamated Lake Hawea Levels (weekly & daily).csv'))
+    hawea_data.loc[0:864, 'datetime'] = pd.to_datetime(hawea_data.loc[0:864, 'date'], format='%d/%m/%y')
+    hawea_data.loc[865:, 'datetime'] = pd.to_datetime(hawea_data.loc[865:, 'date'], format='%d/%m/%Y')
+    hawea_data.rename(columns={'Lake Hawea Elevation (m AMSL)': 'lake_stage'}, inplace=True)
+    hawea_data.set_index('datetime', inplace=True)
+    return hawea_data
+
+
+def get_lake_heads(start_date, end_date, frequency='D'):
     """
     get lake records from start to end dates (inclusive),
      data is available from 2012-01-01 to 2021-12-31
@@ -50,13 +57,12 @@ def get_lake_heads(start_date, end_date, frequency='D'): # todo longer record pl
     :param frequency: pd frequnecy code
     :return:
     """
-    hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Lake_Hawea.csv'))
-    hawea_data.loc[:, 'datetime'] = ht = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
-    hawea_data.rename(columns={'LakeLevel_m': 'lake_stage'}, inplace=True)
-    hawea_data.set_index('datetime', inplace=True)
+    hawea_data = _read_lake_level()
+    hawea_data = hawea_data.resample('D').interpolate()
 
-    return select_resample(hawea_data.loc['lake_stage'], start_date, end_date, frequency, 'mean')
+    return select_resample(hawea_data.loc[:, 'lake_stage'], start_date, end_date, frequency, 'mean')
 
 
 if __name__ == '__main__':
+    t = get_lake_heads(None, None)
     lake_checks()
