@@ -18,8 +18,9 @@ def get_all_wells(recalc=False):
     well_data = pd.read_excel(base_well_path, 'HaweaBox')
     well_data.loc[:,'well_name'] = well_data.loc[:,'WellNumber'].str.replace('/','-')
     well_data.set_index('well_name', inplace=True)
+    well_data.dropna(subset='Depth', inplace=True)
 
-    # DO NOT USE A FOR LOOP!
+    # DO NOT USE A FOR LOOP! # todo EC
 
     # todo set qual code 1 for no elv data, 2 for with elv data
 
@@ -28,7 +29,7 @@ def get_all_wells(recalc=False):
     raster = rasterio.open(dem_path)
     raster.sample()
 
-    # todo convert depth to elevation (ground RL)
+    # todo convert depth to elevation (use ground RL if present)
 
     # todo fill missing screen data
 
