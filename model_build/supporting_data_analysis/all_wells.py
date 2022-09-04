@@ -11,12 +11,13 @@ base_well_path = base_model_build_data_dir.joinpath('Hawea Wellsdata request ZEB
 processed_well_path = processed_model_build_data_dir.joinpath('all_well_locs.csv')
 dem_path = modelling_dir.joinpath('input_data/southi_15mdem_Hawea.tif')
 
+
 def get_all_wells(recalc=False):
     if processed_well_path.exists() and not recalc:
         raise NotImplementedError
 
     well_data = pd.read_excel(base_well_path, 'HaweaBox')
-    well_data.loc[:,'well_name'] = well_data.loc[:,'WellNumber'].str.replace('/','-')
+    well_data.loc[:, 'well_name'] = well_data.loc[:, 'WellNumber'].str.replace('/', '-')
     well_data.set_index('well_name', inplace=True)
     well_data.dropna(subset='Depth', inplace=True)
 
@@ -44,4 +45,3 @@ def get_all_wells(recalc=False):
 
     # todo save to:  as csv
     processed_well_path
-
