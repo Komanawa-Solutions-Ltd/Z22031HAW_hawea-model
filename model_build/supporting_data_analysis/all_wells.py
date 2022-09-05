@@ -20,7 +20,7 @@ def get_all_wells(recalc=False):
     well_data = pd.read_excel(base_well_path, 'HaweaBox')
     well_data.loc[:, 'well_name'] = well_data.loc[:, 'WellNumber'].str.replace('/', '-')
     well_data.set_index('well_name', inplace=True)
-    well_data.dropna(subset='Depth', inplace=True)
+    well_data.dropna(subset=['Depth', 'DepthToWater'], how='all', inplace=True)
 
 
     # DO NOT USE A FOR LOOP! # todo EC
@@ -31,7 +31,8 @@ def get_all_wells(recalc=False):
     well_data.loc[:, 'quality_code'] = 2
     well_data.loc[idx, 'quality_code'] = 1
 
-    # todo get elevation from DEM where missing
+
+    # getting elevation from DEM where it is missing
 
     # missing elevation data is where quality_code = 1, e.g same as idx
     # use rasterio and raster.sample
@@ -41,13 +42,20 @@ def get_all_wells(recalc=False):
     t = np.array(list(t)).flatten()
     well_data.loc[idx, 'Elevation'] = t
 
-    # todo convert depth to elevation (use ground RL if present)
+    # changing depth to elevation
+    # first filling all the NaNs in Ground_RL with zero
+    well_data['Ground_RL'] = well_data['Ground_RL'].fillna(0)
+    # Converting depth to elevation
+    well_data['Depth_elevation'] = (well_data['Ground_RL'] + well_data['Elevation']) - well_data['Depth']
 
     # todo fill missing screen data
-
+    # first creating an index which subsets all the screen values with no value
+    screen_idx = well_data[["ScreenFrom", "ScreenTo"]].isnull()
+    well_data.loc[screen_idx, 'ScreenFrom'] = well_data["Depth"] - 3
+    well_data.loc[screen_idx, 'ScreenTo'] = well_data['Depth']
     # todo calculate mid screen elv
 
-    # todo translate screen date from depth to elv
+    # todo translate screen data from depth to elv
 
     # todo correctly format depth to water and drill_date
 
