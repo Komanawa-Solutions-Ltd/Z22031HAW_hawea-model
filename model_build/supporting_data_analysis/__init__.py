@@ -8,6 +8,7 @@ from .river_data import get_river_loc_data, get_river_stage_data  # todo not fin
 from .irrigation_race_losses import get_race_locs, get_race_well_losses  # todo not finished
 from .recharge_model import get_rch  # todo not finished
 from .get_pumping_data import get_well_flows, get_pumping_locs  # todo not finished
+from .all_wells import get_all_wells
 
 
 # todo make sure functions are in consistent fashion.

@@ -11,14 +11,15 @@ from model_build.project_model_tools import smt
 
 
 def get_riv_target_locs(recalc=False):
-    # todo add clutha targets???
+    # todo add clutha targets???, probably not
     river_targets = range(1, 4)
+    river_target_path = processed_target_dir.joinpath(f'river_target_locs.txt')
 
-    if all([processed_target_dir.joinpath(f'river_target_S{n}_locs.txt')] for n in river_targets) and not recalc:
+    if river_target_path.exists() and not recalc:
         out = {}
+        temp = np.loadtxt(river_target_path).astype(int)
         for n in river_targets:
-            river_target_path = processed_target_dir.joinpath(f'river_target_S{n}_locs.txt')
-            out[n] = np.loadtxt(river_target_path).astype(bool)
+            out[n] = temp == n
         return out
 
     river_loc_data = get_river_loc_data(False)
@@ -26,11 +27,12 @@ def get_riv_target_locs(recalc=False):
     river_loc_data[np.isnan(river_loc_data)] = -1
     river_loc_data = river_loc_data.astype(int)
     out = {}
+    save_out = smt.get_model_zeros()
     for n in river_targets:
-        river_target_path = processed_target_dir.joinpath(f'river_target_S{n}_locs.txt')
         temp = river_loc_data == n
+        save_out[temp] = n
         out[n] = temp
-        np.savetxt(river_target_path, temp.astype(int))
+    np.savetxt(river_target_path, save_out.astype(int), fmt='%d')
 
     return out
 
