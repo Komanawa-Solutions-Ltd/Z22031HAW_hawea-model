@@ -48,22 +48,36 @@ def get_all_wells(recalc=False):
     # Converting depth to elevation
     well_data['Depth_elevation'] = (well_data['Ground_RL'] + well_data['Elevation']) - well_data['Depth']
 
-    # todo fill missing screen data
+    # filling in where there are no screen values
     # first creating an index which subsets all the screen values with no value
-    screen_idx = well_data[["ScreenFrom", "ScreenTo"]].isnull()
-    well_data.loc[screen_idx, 'ScreenFrom'] = well_data["Depth"] - 3
+    # using when there are no ScreenTo values, because usually both values are present or none
+    # A few times there have been ScreenFrom but not ScreenTo so using
+    # ScreenTo to capture all the NaNs
+    screen_idx = well_data['ScreenTo'].isnull()
+    # assuming the default is that the last 3 m of the well are screened
+    well_data.loc[screen_idx, 'ScreenFrom'] = well_data['Depth'] - 3
     well_data.loc[screen_idx, 'ScreenTo'] = well_data['Depth']
-    # todo calculate mid screen elv
 
-    # todo translate screen data from depth to elv
+    # changing screen data from depth to elevation
+    well_data["ScreenFrom_Elv"] = (well_data['Ground_RL'] + well_data['Elevation']) - well_data['ScreenFrom']
+    well_data['ScreenTo_Elv'] = (well_data['Ground_RL'] + well_data['Elevation']) - well_data['ScreenTo']
 
-    # todo correctly format depth to water and drill_date
+    # calculating mid screen elevation
+    # taking the mean of the screen from elv and screen to elv
+    well_data['MidScreen_Elv'] = (well_data["ScreenFrom_Elv"] + well_data["ScreenTo_Elv"])/2
+
+    # formatting depth to water as elevation
+    well_data['DepthToWater_Elv'] = (well_data['Ground_RL'] + well_data['Elevation']) - well_data['DepthToWater']
+
+    # formatting drill_date as datetime
+    well_data['DrillDate'] = pd.to_datetime(well_data['DrillDate'])
+
+    print(well_data['DrillDate'])
 
     # todo calculate layer, row, col
     # leave this
-    smt.convert_coords_to_matix()
+    # smt.convert_coords_to_matix()
 
-    # todo save to:  as csv
-    processed_well_path
+    well_data.to_csv(processed_well_path)
 
 get_all_wells()
