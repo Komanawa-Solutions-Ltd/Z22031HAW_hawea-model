@@ -5,6 +5,7 @@ conda create -c conda-forge --name hawea python numpy pandas pytables openpyxl m
 
 conda activate hawea
 pip install git+https://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@github.com/Komanawa-Solutions-Ltd/kslcore.git
+pip install pyemu
 
 # todo save the env and update whenever new packages are added:
 conda list --explicit > /home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/environment.txt
