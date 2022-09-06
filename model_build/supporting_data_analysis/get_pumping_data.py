@@ -11,7 +11,7 @@ from model_build.utils import select_resample
 from model_build.project_model_tools import smt
 
 default_recalc = False
-
+# keynote why is it so hard to link well numbers to flow meter number...
 
 # todo how does MNwell handle 2 feature in the same cell.
 
