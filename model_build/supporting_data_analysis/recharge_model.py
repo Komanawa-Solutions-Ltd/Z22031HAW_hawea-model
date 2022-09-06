@@ -18,6 +18,89 @@ irrigated_area_codes = {
     0: 'Gun', 1: 'Borderdyke', 2: 'Pivot', 3: 'Solid-set', 4: 'K-line/Long lateral',
     5: 'Unknown', 6: 'Drip/micro', 7: 'Rotorainer', 8: 'Wild flooding', 9: 'Linear boom'}
 
+irrig_max_store = 50  # todo how much storage per area!!!, might be iterative to set, discuss with Jens
+
+irrig_targets = {
+    'Borderdyke': 1.,
+    'Wild flooding': 1.,  # once every 8 days
+
+    'Rotorainer': 1.,  # once every 3 days
+    'K-line/Long lateral': 1.,
+    'Gun': 1.,
+    'Unknown': 1.,
+
+    'Solid-set': 0.90,
+    'Linear boom': 0.90,
+    'Pivot': 0.90,
+    'Drip/micro': 0.90,
+
+}
+
+irrig_trigs = {
+    'Borderdyke': 0.50,
+    'Wild flooding': 0.50,
+
+    'Rotorainer': 0.75,
+    'Gun': 0.75,
+    'Unknown': 0.75,
+
+    'Solid-set': 0.75,
+    'K-line/Long lateral': 0.75,
+    'Linear boom': 0.75,
+    'Pivot': 0.75,
+
+    'Drip/micro': 0.80,
+
+}
+
+irrig_eff = {
+    'Borderdyke': 0.50,
+    'Wild flooding': 0.50,
+
+    'Rotorainer': 0.75,
+    'Gun': 0.75,
+    'Unknown': 0.75,
+
+    'Solid-set': 0.85,
+    'K-line/Long lateral': 0.85,
+    'Linear boom': 0.85,
+    'Pivot': 0.85,
+
+    'Drip/micro': 0.90,
+}
+
+irrig_max_irrig_apply = {
+    'Borderdyke': 80,
+    'Wild flooding': 80,  # todo target full soil moisture profile
+
+    'Rotorainer': 15,  # todo target full soil moisture
+    'Gun': 15,  # todo target full soil moisture
+    'K-line/Long lateral': 15,  # todo target full soil moisture
+    'Unknown': 15,  # todo target full soil moisture
+
+    'Solid-set': 8,
+    'Linear boom': 8,
+    'Pivot': 8,
+
+    'Drip/micro': 5,
+}
+
+irrig_min_irrig_return = {
+    'Borderdyke': 7,
+    'Wild flooding': 7,  # once every 8 days
+
+    'Rotorainer': 2,  # once every 3 days
+    'K-line/Long lateral': 2,
+    'Gun': 2,
+    'Unknown': 2,
+
+    'Solid-set': 0,
+    'Linear boom': 0,
+    'Pivot': 0,
+
+    'Drip/micro': 0,
+}
+
 irrigation_record_dir = processed_model_build_data_dir.joinpath('rch_historical_record')
 irrigation_record_dir.mkdir(exist_ok=True)
 
@@ -97,8 +180,36 @@ def get_soil_classes(recalc=False):
     return soil_classes
 
 
-def _map_from_code(irrig_codes, key):  # todo
-    raise NotImplementedError
+def _map_from_irrig_code(irrig_codes, key):
+    out = np.zeros(irrig_codes.shape) * np.nan
+    gen_dicts = {
+        'max_irrig_apply': irrig_max_irrig_apply,
+        'min_irrig_return': irrig_min_irrig_return,
+        'irrig_effic': irrig_eff,
+        'irrig_trig': irrig_trigs,
+        'irrig_targ': irrig_targets,
+    }
+    nan_values = {
+        'max_irrig_apply': 0.,
+        'min_irrig_return': 0,
+        'irrig_effic': 0.0,
+        'irrig_trig': 0.0,
+        'irrig_targ': 1.,
+    }
+    dict_to_use = gen_dicts[key]
+
+    for v in np.unique(irrig_codes):
+        if np.isnan(v):
+            continue
+        map_value = dict_to_use[irrigated_area_codes[v]]
+        out[np.isclose(irrig_codes, v)] = map_value
+
+    out[np.isnan(out)] = nan_values[key]
+
+    if key == 'min_irrig_return':
+        out = out.astype(int)
+
+    return out
 
 
 def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
@@ -107,35 +218,35 @@ def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
     assert np.issubdtype(soil_classes.dtype, np.integer)
     data = {
         'scs_curve': {
-            0: np.nan,  # todo set default value
+            0: 57,
             1: 45,
             2: 49,
             3: 57,
             4: 60,
         },
         'frac_store': {
-            0: np.nan,  # todo set default value
+            0: 0.3,
             1: 0.2,
             2: 0.35,
             3: 0.3,
             4: 0.3,
         },
         'paw': {
-            0: np.nan,  # todo set default value
+            0: 100,  # default set high as this increases holding and reduces recharge
             1: 55.,
             2: 90.,
             3: 120.,
             4: 160.,
         },
         'raw_p': {
-            0: np.nan,  # todo set default value
+            0: 0.58,
             1: 0.87,
             2: 0.56,
             3: 0.58,
             4: 0.6,
         },
         'soil_retention': {
-            0: np.nan,  # todo set default value
+            0: 200,
             1: 310.4,
             2: 264.4,
             3: 195.6,
@@ -150,6 +261,13 @@ def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
         out[soil_classes == k] = v
 
     return out
+
+
+def get_irrig_avaliblity(dates):
+    # todo 3d, pull from pumping and irrigation race data!, pumping by zones? this is where I set reset if not at
+    # todo water year
+    # todo do I need to reset storage???
+    raise NotImplementedError
 
 
 def get_historical_rch_model_results(recalc=False):
@@ -178,8 +296,6 @@ def get_historical_rch_model_results(recalc=False):
     dates, data = [], []
 
     # make static datasets
-    irrig_max_store = 50  # todo how much storage per area!!!, might be iterative to set
-
     soil_classes = get_soil_classes()
     static_taw = _map_from_soil_class(soil_classes, 'taw')
     fracstore = _map_from_soil_class(soil_classes, 'fracstore')
@@ -210,16 +326,18 @@ def get_historical_rch_model_results(recalc=False):
             temp = smt.io.shape_file_to_model_array(irrig_path, 'type_code', alltouched=True)
             irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
 
-        max_irrig_apply = _map_from_code(irrig_codes, 'max_irrig_apply')
-        min_irrig_return = _map_from_code(irrig_codes, 'min_irrig_return')
-        irrig_effic = _map_from_code(irrig_codes, 'irrig_effic')
+        max_irrig_apply = _map_from_irrig_code(irrig_codes, 'max_irrig_apply')
+        min_irrig_return = _map_from_irrig_code(irrig_codes, 'min_irrig_return')
+        irrig_effic = _map_from_irrig_code(irrig_codes, 'irrig_effic')
 
-        # todo tricky ones (3d)
-        irrig_aval = None  # todo 3d, pull from pumping and irrigation race data!, pumping by zones?
-        irrig_trig = None  # todo 3d, static or variable?
-        irrig_targ = None  # todo 3d, static or variable?
+        irrig_aval = get_irrig_avaliblity(dates=temp_data.index)
 
-        rush = Rushton( # todo do I need to reset storage??? need to allow
+        irrig_trig = np.repeat(_map_from_irrig_code(irrig_codes, 'irrig_trig')[np.newaxis:, ],
+                               len(temp_data), axis=0)  # 3d, static
+        irrig_targ = np.repeat(_map_from_irrig_code(irrig_codes, 'irrig_targ')[np.newaxis:, ],
+                               len(temp_data), axis=0)
+
+        rush = Rushton(
             dates=temp_data.index,
             # 3d arrays in
             rainfall=np.repeat(temp_data.Rainfall.values[:, np.newaxis], np.prod(smt.model_array_shape[1:]),
@@ -260,7 +378,9 @@ def get_historical_rch_model_results(recalc=False):
                        description=f'best estimate recharge for Hawea model made with {__file__}',
                        xs=xs, ys=ys, proj_attrs=rush.get_nztm_nc_coords())
         init_near_surface_storage = rush.near_surface_storage[-1]
-        irrig_init_store = rush.irrig_store[-1]
+
+        # explicitly reset irrigation storage 0 at the water year break.
+        irrig_init_store = np.zeros(smt.model_array_shape[1:])
 
         dates.append(rush.dates)
         data.append(rush.recharge)
@@ -282,6 +402,9 @@ def get_rch(start_date, end_date, frequency='D', recalc=False):
     assert np.isclose(out_rch.mean(axis=0), rch.mean(axis=0)).all()
     return dates, out_rch
 
+
+# todo compare histoical recharge to lysimiter:
+#  "G:\Shared drives\YMULT_small_projects\Z22031HAW_hawea-model\Data\Hawea lysimeter data processing - June 2014.xlsx"
 
 if __name__ == '__main__':
     get_historical_rch_model_results()
