@@ -28,7 +28,6 @@ def get_single_head_targets():
 def get_2011_piezo_survey():  # todo get these data
     # piezo survey conducted 21-sept-2011
     data_path = base_target_dir.joinpath('Peizo Survey 20Sept2011.xlsx')
-    # todo set indicative times! how do I want to do this
     data = pd.read_excel(data_path, 'Appendix Table')
     data.rename(columns={'Easting': 'nztmx', 'Northing': 'nztmy', 'Water level elevation': 'head'}, inplace=True)
     row, col = smt.convert_coords_to_matix(data.nztmx, data.nztmy, coords_out_domain='coerce')
@@ -39,6 +38,7 @@ def get_2011_piezo_survey():  # todo get these data
     data.loc[:, 'ibound'] = ibound[data.i, data.j]
     data = data.loc[data.ibound > 0]
 
+    # todo set indicative times! how do I want to do this
     warnings.warn('not finished, still need to set indicative times')
     return data
 
