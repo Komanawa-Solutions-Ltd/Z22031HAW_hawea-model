@@ -99,7 +99,7 @@ def get_all_wells(recalc=False):
     row, col = smt.convert_coords_to_matix(well_data.nztmx, well_data.nztmy, coords_out_domain='coerce')
     well_data.loc[:, 'i'] = row
     well_data.loc[:, 'j'] = col
-    well_data = well_data.loc[well_data.i>=0]
+    well_data = well_data.loc[well_data.i >= 0]
     ibound = smt.get_no_flow(0)
     well_data.loc[:, 'ibound'] = ibound[well_data.i, well_data.j]
 
@@ -119,5 +119,5 @@ def plot_wells():
 
 
 if __name__ == '__main__':
-    get_all_wells(recalc=True)
+    t = get_all_wells(recalc=True)
     plot_wells()

@@ -88,12 +88,11 @@ def get_stage_locs(riv_data):
     return riv_data
 
 
-def get_historical_stage_flow(start_date, end_date,
-                              frequency='D'):  # todo get longer historical data (as much as we can)
+def get_historical_stage_flow(start_date, end_date, frequency='D'):
     """
     stages in m, flow in L/s  resample to frequency
     length of records:
-     lake_stage: 2012-01-01 to 2021-12-31
+     lake_stage: 2012-01-01 to 2021-12-31  # note we have longer records here
      lake_flow: 2012-01-01 to 2021-12-31
      camphill_stage: 2009-01-01 to 2021-12-31
      camphill_flow: 2009-01-01 to 2021-12-31
@@ -151,7 +150,6 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False):
     loc_data = get_river_loc_data()
     stage_data = get_historical_stage_flow(None, None)
     stage_data.loc[:, 'month'] = stage_data.index.month
-    # todo lengthen clutha at luggate stage data
 
     fig, ax = plt.subplots()
     ax.scatter(stage_data.loc[:, 'camphill_stage'], stage_data.loc[:, 'clutha_luggate'])
@@ -306,7 +304,8 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    _print_flowlengths()
     t = get_river_loc_data(True)
     smt.get_elv_db(recalc=True)
-    get_river_stage_data(None, None)
+    t = get_river_stage_data(None, None)
     data_checks()

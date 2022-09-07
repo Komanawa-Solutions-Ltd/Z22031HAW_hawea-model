@@ -267,13 +267,17 @@ def data_checks():
     # happy with this setup
 
 
+def export_model_boundary():
+    outpath = processed_model_build_data_dir.joinpath('model_boundary.shp')
+    ibound = smt.get_no_flow(0)
+    ibound[ibound <= 0] = np.nan
+    smt.io.polygonize_array(outpath,
+                            ibound, None)
+
+
 if __name__ == '__main__':
+    export_model_boundary()
     elv_calc()
     smt.plot.plt_matrix(smt.get_model_zeros(), base_map=True)
     smt.plot.show()
-    # below run once
-    # ibound = smt.get_no_flow(0)
-    # ibound[ibound<=0] = np.nan
-    # smt.io.polygonize_array('/home/matt_dumont/google_mount_point/YMULT_small_projects/Z22031HAW_hawea-model/Modelling/input_data/boundary_18-08-22.shp',
-    #                         ibound,None)
     data_checks()
