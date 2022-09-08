@@ -8,7 +8,7 @@ from model_build.supporting_data_analysis.all_wells import get_all_wells
 from project_base import base_model_build_data_dir
 
 flow_meter_data_path = base_model_build_data_dir.joinpath('water_permit_meter_results_2022-07-20',
-                                                   'water_permit_meter_yearly_data_2022-07-20.csv')
+                                                          'water_permit_meter_yearly_data_2022-07-20.csv')
 
 
 # todo this should have all of the data in hawea.
@@ -37,25 +37,48 @@ def map_from_jens_data():
     # finding the common numbers using np.in1d
     # doing on the two columns
     # consent number
-    common_consent_numbers = np.in1d(unique_flow_data_df['permit_id'], jens_data['ConsentNumber'])
+    common_consent_nos = np.in1d(unique_flow_data_df['permit_id'], jens_data['ConsentNumber'])
     # flow_meter_no
     # first adjusting Jens' data
     jens_data['WM#1'] = jens_data["WM#1"].str.replace('WM', '')
     # checking Jens' against Mike's to see which are missing
-    common_flow_meters_ = np.in1d(unique_flow_data_df['water_meter_no'], jens_data['WM#1'])
+    common_flow_meters = np.in1d(unique_flow_data_df['water_meter_no'], jens_data['WM#1'])
 
-    # todo provide overviews
-    # todo how many missing present
-    # todo lists of missing and present
+    # overviews
 
+    # overview of consent nos
+    # changing to dataframe to make easier
+    common_consent_nos_df = pd.DataFrame(common_consent_nos)
+    # changing column name
+    common_consent_nos_df.columns = ['present']
+    consents_present = common_consent_nos_df[common_consent_nos_df['present'] == True]
+    count_consents_present = consents_present.count()
+    # missing
+    consents_missing = common_consent_nos_df[common_consent_nos_df['present'] == False]
+    count_consents_missing = consents_missing.count()
 
-    #jens_data['permit_id'] = jens_data['ConsentNumber']
-    #print(flow_meter_data)
-    # finding the common consent conditions between both data sets
-    #common = flow_meter_data.merge(jens_data, on='permit_id')
-    #print(common)
+    # overview of flow meters
+    # changing to df to make easier
+    common_flow_meters_df = pd.DataFrame(common_flow_meters)
+    # changing column name
+    common_flow_meters_df.columns = ['present']
+    # those present
+    flow_meters_present = common_flow_meters_df[common_flow_meters_df['present'] == True]
+    count_flow_meters_present = flow_meters_present.count()
+    # those missing
+    flow_meters_missing = common_flow_meters_df[common_flow_meters_df['present'] == False]
+    count_flow_meters_missing = flow_meters_missing.count()
 
+    # lists of missing and present
 
+    # consent no
+    # testing indexing to get the lists of present and missing
+    list_consent_nos_present = unique_flow_data_df[common_consent_nos_df['present'] == True]['permit_id']
+    list_consent_nos_missing = unique_flow_data_df[common_consent_nos_df['present'] == False]['permit_id']
+
+    # water meters
+    list_water_meters_present = unique_flow_data_df[common_flow_meters_df['present'] == True]['water_meter_no']
+    list_water_meters_missing = unique_flow_data_df[common_flow_meters_df['present'] == False]['water_meter_no']
 
     raise NotImplementedError
 
@@ -63,7 +86,7 @@ def map_from_jens_data():
 def map_from_wells_db():
     all_wells = get_all_wells()
 
-    #todo take the flow meter data (RCs in this data)
+    # todo take the flow meter data (RCs in this data)
     # todo see what wells are associated with what RC
     # todo how many RCs are missing well etc
 
@@ -72,6 +95,7 @@ def from_consents_database():
     consents_data_path = base_model_build_data_dir.joinpath('consent_database_from_Mike_kitterage.csv')
     # todo only if many consents are missing!!!, will need to get data from Jens
     raise NotImplementedError
+
 
 if __name__ == '__main__':
     map_from_jens_data()
