@@ -80,6 +80,7 @@ def map_from_jens_data():
     list_water_meters_present = unique_flow_data_df[common_flow_meters_df['present'] == True]['water_meter_no']
     list_water_meters_missing = unique_flow_data_df[common_flow_meters_df['present'] == False]['water_meter_no']
 
+
     raise NotImplementedError
 
 
@@ -90,6 +91,31 @@ def map_from_wells_db():
     # todo see what wells are associated with what RC
     # todo how many RCs are missing well etc
 
+    # in allwells data consent number is called BoreConsentNumber
+    # compare Mike K's flow data to the all wells data to see what RCs are present
+    # and therefore what wells are associated
+    # do the same as above and then get list of wells associated with RCs
+
+    flow_meter_data = pd.read_csv(flow_meter_data_path)
+
+    # sorting Mike's data so that only the unique RC and flow meter combos are left
+    unique_flow_data = flow_meter_data[['permit_id', 'water_meter_no']].value_counts()
+    # a series. Could turn this into a df and just subset the first two columns
+
+    df1 = pd.DataFrame(unique_flow_data).reset_index()
+    # this is a dataframe containing only the unique permit_id and water_meter_no pairs
+    # from Mike K's data. 120 of them
+    unique_flow_data_df = df1[['permit_id', 'water_meter_no']]
+
+    common_consent_nos = np.in1d(unique_flow_data_df['permit_id'], all_wells['boreconsentnumber'])
+
+
+    print(unique_flow_data_df.to_string(columns=['permit_id']))
+    print(all_wells.to_string(columns=['boreconsentnumber']))
+
+
+
+
 
 def from_consents_database():
     consents_data_path = base_model_build_data_dir.joinpath('consent_database_from_Mike_kitterage.csv')
@@ -97,5 +123,10 @@ def from_consents_database():
     raise NotImplementedError
 
 
+
 if __name__ == '__main__':
-    map_from_jens_data()
+    map_from_wells_db()
+
+
+
+
