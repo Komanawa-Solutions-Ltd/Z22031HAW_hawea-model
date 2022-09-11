@@ -71,10 +71,15 @@ def plot_ibound():
 
 def plot_hk():
     m = get_full_scott_model()
-    smt_scott.plot.plt_matrix(convert_scott_array_to_reg_grid(m.upw.hk.array[0]), base_map=True,
+    t = convert_scott_array_to_reg_grid(m.upw.hk.array[0])
+    print('hk describe')
+    print(pd.Series(t.flatten()).describe())
+    smt_scott.plot.plt_matrix(t, base_map=True,
                               title='hk')
-    smt_scott.plot.plt_matrix(np.log10(convert_scott_array_to_reg_grid(m.upw.hk.array[0])), base_map=True,
+    print('log hk describe')
+    smt_scott.plot.plt_matrix(np.log10(t), base_map=True,
                               title='log hk')
+    print(pd.Series(np.log10(t).flatten()).describe())
 
 
 def plot_riv_conductances():

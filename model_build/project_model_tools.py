@@ -117,16 +117,37 @@ def no_flow():
     assert temp_smt.layers == 1
     ibound[0][np.isfinite(active)] = 1
     ibound[0][np.isfinite(camphill)] = 0
+    # remove cameron hill
+    cameron = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('cameron_hill.shp'), 'id',
+                                                    alltouched=True)
+    ibound[0][np.isfinite(cameron)] = 0
     np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound[0])
     return ibound
 
 
-def _lake_locs():
+def get_lake_array(recalc=False):
+    save_path = processed_model_build_data_dir.joinpath('lake_array.txt')
+    if save_path.exists() and not recalc:
+        lake = np.loadtxt(save_path)
+        lake = lake.astype(float)
+        lake[lake < 0] = np.nan
+        return lake
+
     lakefront_shp_path = base_model_build_data_dir.joinpath('lakefront.shp')
     lake_shp_path = base_model_build_data_dir.joinpath('lake_hawea.shp')
     lake = temp_smt.io.shape_file_to_model_array(lake_shp_path, 'id', alltouched=True)
     lake_front = temp_smt.io.shape_file_to_model_array(lakefront_shp_path, 'id', alltouched=True)
-    lake[np.isfinite(lake_front)] = np.nan
+    lake[np.isfinite(lake_front)] = -1
+    lake = lake.astype(int)
+    np.savetxt(save_path, lake, fmt='%d')
+    lake = lake.astype(float)
+    lake[lake < 0] = np.nan
+
+    return lake
+
+
+def _lake_locs():
+    lake = get_lake_array(True)
     lake_data = temp_smt.io.array_to_df(lake, 'drop')
     lake_data.drop(columns='drop', inplace=True)
     return lake_data

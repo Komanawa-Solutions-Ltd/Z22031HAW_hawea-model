@@ -3,9 +3,13 @@ created matt_dumont
 on: 1/09/22
 """
 
-
 # todo get initals and bounds
 # todo param key in loc data or riv and well
+
+lake_kh = 0  # todo set.
+lake_sy = None  # todo set.
+
+
 def get_initial_riv_conductance():
     # these parameters are massively compensatory
     params = {
@@ -30,10 +34,12 @@ def get_inital_vka():
     # todo how does this get used in a single layer model, todo just set to 1
     raise NotImplementedError
 
+
 def get_ss():
-     # todo only water overheight would cause ss to be grabbed, so set to SY or set SS to super small,
-     # todo set in model build
+    # todo only water overheight would cause ss to be grabbed, so set to SY or set SS to super small,
+    # todo set in model build
     raise NotImplementedError
+
 
 def get_inital_sy():
     # todo o or set SS to super small

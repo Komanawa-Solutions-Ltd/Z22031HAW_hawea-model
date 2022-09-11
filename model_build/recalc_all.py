@@ -10,6 +10,8 @@ from model_build.supporting_data_analysis.irrigation_race_losses import get_race
 from model_build.supporting_data_analysis.hillside_inflows import get_hillside_catchment_locs, get_catchment_areas, \
     get_luggate_catchment_area, get_hillside_flows
 from model_build.supporting_data_analysis.get_pumping_data import get_pumping_locs
+from model_build.supporting_data_analysis.all_wells import get_all_wells
+
 # todo any others from get_pumping_data?
 
 if __name__ == '__main__':
@@ -31,8 +33,7 @@ if __name__ == '__main__':
 
     get_river_loc_data(True)
     get_river_stage_data(None, None, recalc=True)
-
-    get_historical_rch_model_results(recalc=True)
+    get_all_wells(recalc=True)
     get_lake_hawea_loc(recalc=True)
     get_race_locs(recalc=True)
     get_hillside_catchment_locs(recalc=True)
@@ -40,3 +41,4 @@ if __name__ == '__main__':
     get_luggate_catchment_area(recalc=True)
     get_hillside_flows(None, None, recalc=True)
     get_pumping_locs(recalc=True)
+    get_historical_rch_model_results(recalc=True)
