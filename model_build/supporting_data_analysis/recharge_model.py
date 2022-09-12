@@ -121,6 +121,26 @@ def get_met_data(start_date, end_date, frequency='D'):  # todo get a longer reco
     return use_data
 
 
+def get_era5_land():
+    file_paths = ['era5_potential_et.nc',
+                  'era5_precipitation.nc',
+                  'era5_reference_et.nc', ]
+    base_dir = base_model_build_data_dir.joinpath('era5_data')
+    outdata = {}
+    for f in file_paths:
+        var = f.replace('era5_', '').replace('.nc', '')
+        with nc.Dataset(base_dir.joinpath(f)) as ncd:
+            t = np.array(
+                nc.num2date(ncd.variables['time'][:], ncd.variables['time'].units, only_use_cftime_datetimes=False,
+                            only_use_python_datetimes=True))
+            t = pd.to_datetime(t)
+            data = np.array(ncd.variables[var]).mean(axis=(1, 2))
+            outdata[var] = pd.Series(data=data, index=t)
+
+    outdata = pd.DataFrame(outdata)
+    return outdata
+
+
 def _process_irrigated_area():
     # Keynote irrigated area is additive (e.g. no/minial overlap)
     data = gpd.read_file(modelling_dir.joinpath('input_data/otago_irrigated_area_26oct2021_model_extent.shp'))
