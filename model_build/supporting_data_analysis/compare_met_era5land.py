@@ -8,19 +8,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 
+
 from project_base import base_model_build_data_dir
 from model_build.supporting_data_analysis.recharge_model import get_met_data, get_era5_land
 
 def comp_plot_era5_v_measured():
     met = get_met_data(None, None)
     era5 = get_era5_land()
-    # todo EC can you make some plots and summary statistics of the difference between the ERA5 land data and the
-    # todo historical (met) data where these data overlap
+    # EC can you make some plots and summary statistics of the difference between the ERA5 land data and the
+    # historical (met) data where these data overlap
 
     # in met, two columns rainfall and PET, with index as datetime
     # in era5 three columns, potential_et (PET), precipitation (rainfall) & reference_et, datetime as index
     # changing the name of the era5 index so it is the same as met index
     era5.index.names = ['datetime']
+    # todo change the units of era5 PET
+
+    # todo change the names of the columns to make it easier to identify?
+
 
     # need to first subset for when the data overlap
     # using an inner join
@@ -46,23 +51,69 @@ def comp_plot_era5_v_measured():
     # comparing weekly mean
     # attempting to get weekly mean
     merged_df = merged_df.reset_index()
-    weekly_data = merged_df.resample('W-Sun', label='right', closed='right', on='datetime').mean()
-
+    weekly_pet_mean = merged_df[['datetime', 'potential_et', 'PET']].resample('W-Sun', label='right', closed='right', on='datetime').mean()
+    weekly_precip_sum = merged_df[['datetime', 'precipitation', 'Rainfall']].resample('W-Sun', label='right', closed='right', on='datetime').sum()
 
     # comparing monthly mean
     # attempting to get monthly mean
-    monthly_data = merged_df.resample('M', label='right', closed='right', on='datetime').mean()
+    monthly_pet_mean = merged_df[['datetime', 'potential_et', 'PET']].resample('M', label='right', closed='right', on='datetime').mean()
+    monthly_precip_sum = merged_df[['datetime', 'precipitation', 'Rainfall']].resample('M', label='right', closed='right', on='datetime').sum()
 
 
 
-    # todo plot the two datasets comparing precip (over time)
+    # plot the two datasets comparing precip (over time)
+    merged_df.plot(x='datetime', y=['precipitation', 'Rainfall'], kind='line')
+    plt.ylabel('Precipitation (mm)')
+    plt.show()
 
-    # todo plot the two datasets comparing PET (over time)
+    # plot the two datasets comparing PET (over time)
+    merged_df.plot(x='datetime', y=['potential_et', 'PET'], kind='line')
+    plt.ylabel('PET ??')
+    plt.show()
 
-    # todo plots for the same above but with monthly means?
+    #  plots for the same above but with monthly means
+    monthly_precip_sum.plot(use_index=True, y=['precipitation', 'Rainfall'], kind='line')
+    plt.ylabel('Precipitation (mm)')
+    plt.show()
 
-    # todo ask Matt what else he wants done
+    monthly_pet_mean.plot(use_index=True, y=['potential_et', 'PET'], kind='line')
+    plt.ylabel('PET ??')
+    plt.show()
 
+    # comparison of the diffs e.g era5 on y met on x
+    # daily precip diffs
+    merged_df.plot(x='Rainfall', y='precipitation', kind='scatter')
+    plt.xlabel('Met precip data (mm)')
+    plt.ylabel('Era5 precip data (mm)')
+    plt.show()
+    # weekly precip diffs
+    weekly_precip_sum.plot(x='Rainfall', y='precipitation', kind='scatter')
+    plt.xlabel('Met precip data (mm)')
+    plt.ylabel('Era5 precip data (mm)')
+    plt.show()
+    # monthly precip diffs
+    monthly_precip_sum.plot(x='Rainfall', y='precipitation', kind='scatter')
+    plt.xlabel('Met precip data (mm)')
+    plt.ylabel('Era5 precip data (mm)')
+    plt.show()
+
+    # daily PET diffs
+    merged_df.plot(x='PET', y='potential_et', kind='scatter')
+    plt.xlabel('Met PET data (?)')
+    plt.ylabel('Era5 PET data (?)')
+    plt.show()
+    # weekly PET diffs
+    weekly_pet_mean.plot(x='PET', y='potential_et', kind='scatter')
+    plt.xlabel('Met PET data (?)')
+    plt.ylabel('Era5 PET data (?)')
+    plt.show()
+    # monthly PET diffs
+    monthly_pet_mean.plot(x='PET', y='potential_et', kind='scatter')
+    plt.xlabel('Met PET data (?)')
+    plt.ylabel('Era5 PET data (?)')
+    plt.show()
+
+    # todo one to one line
 
 
     raise NotImplementedError
