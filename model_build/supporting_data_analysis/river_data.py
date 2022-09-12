@@ -307,5 +307,5 @@ if __name__ == '__main__':
     _print_flowlengths()
     t = get_river_loc_data(True)
     smt.get_elv_db(recalc=True)
-    t = get_river_stage_data(None, None)
+    t = get_river_stage_data(None, None, recalc=True)
     data_checks()

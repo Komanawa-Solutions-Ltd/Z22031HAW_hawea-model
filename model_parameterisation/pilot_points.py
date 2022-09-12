@@ -12,7 +12,7 @@ from model_build.zones import get_param_zones
 import geopandas as gpd
 
 
-# todo use zones for mangawera and sandy point aquifer systems, but use pilot points for main portion of the model
+# keynote use zones for mangawera and sandy point aquifer systems, but use pilot points for main portion of the model
 
 def get_pilot_point_locations(recalc=False):
     data_path = base_param_dir.joinpath('pilot_points.shp')
@@ -45,10 +45,10 @@ def get_pilot_point_locations(recalc=False):
 
 
 def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='multiquadric'):
+    # keynote interpolate on log values!
     kh = smt.get_model_zeros() * np.nan
 
     # set pilot point values
-    # todo interpolate on log values!
 
     pilot_locs = get_pilot_point_locations()
     pilot_locs.loc[:, 'value'] = [kh_data.get(n) for n in pilot_locs.index]
@@ -61,11 +61,8 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     i, j = smt.get_model_index_grid()
     idx = ibound == 1
 
-    # todo what interpolation technique
-    # I'm choosing to avoid kriging as we don't really have the data to support it.
-
     if method == 'rbf':
-        # todo Radial basis function techniques, which kernal???
+        # Radial basis function techniques, which kernal
         # thinplate spline has too much possibility for radically creating extremes,
         # both multiquadric and linear do not provide too much contorition and extreme values.
         # my preference is mutiquadric as it has more curvature about the point
@@ -81,6 +78,7 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
         # linear
         # krigging???
         # can always look into PLPROC (though I would prefer not to.)
+        # I chose to simply use RBF methods
         raise ValueError(f'unexpected method: {method}')
 
     # set lake values
@@ -100,16 +98,71 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     return kh
 
 
-def interpolate_sy_pilot_points():
-    raise NotImplementedError
+def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='multiquadric'):
+    # keynote do not interpolate on log values
+    sy = smt.get_model_zeros() * np.nan
+
+    # set pilot point values
+
+    pilot_locs = get_pilot_point_locations()
+    pilot_locs.loc[:, 'value'] = [sy_data.get(n) for n in pilot_locs.index]
+    for k in ['sandyhill', 'mangawera']:
+        pilot_locs.loc[pilot_locs.group == k, 'value'] = sy_data[k]
+    assert pilot_locs.loc[:, 'value'].notnull().all()
+
+    # interpolate kh
+    ibound = smt.get_no_flow(layer=0)
+    i, j = smt.get_model_index_grid()
+    idx = ibound == 1
+
+    if method == 'rbf':
+        # Radial basis function techniques, which kernal
+        # thinplate spline has too much possibility for radically creating extremes,
+        # both multiquadric and linear do not provide too much contorition and extreme values.
+        # my preference is mutiquadric as it has more curvature about the point
+
+        rbf = RBFInterpolator(pilot_locs.loc[:, ['i', 'j']].values, pilot_locs['value'].values, kernel=kernal,
+                              epsilon=1)
+        sy[idx] = rbf(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
+
+    else:
+        # other options include:
+        # https://docs.scipy.org/doc/scipy/tutorial/interpolate.html, look at gridded data options.
+        # IDW
+        # linear
+        # krigging???
+        # can always look into PLPROC (though I would prefer not to.)
+        # I chose to simply use RBF methods
+        raise ValueError(f'unexpected method: {method}')
+
+    # set lake values
+    lake_array = get_lake_array()
+    sy[np.isfinite(lake_array)] = lake_sy
+
+    # set sandy point & mangawera zones
+    zones = get_param_zones()
+    # zone 1 = Sandy point, zone 2 = mangawera valley
+    sy[zones == 1] = sy_data['sandyhill']
+    sy[zones == 2] = sy_data['mangawera']
+    sy[~idx] = 0
+    assert np.isfinite(sy).all()
+    min_v = min(sy_data.values)
+    sy[sy < min_v] = min_v
+    sy[~idx] = 0
+    sy = sy[np.newaxis]
+    if return_df:
+        return sy, pilot_locs
+    return sy
 
 
-def exampine_interpolation():
+
+def exampine_kh_interpolation():
     import matplotlib.pyplot as plt
     pps = get_pilot_point_locations()
+    options = [10, 50, 100, 200, 300, 500]
     kh_data = {
-        'sandyhill': np.random.choice([10, 50, 100, 200, 300, 500]),
-        'mangawera': np.random.choice([10, 50, 100, 200, 300, 500]),
+        'sandyhill': np.random.choice(options),
+        'mangawera': np.random.choice(options),
     }
 
     ncols = 3
@@ -117,7 +170,6 @@ def exampine_interpolation():
     fig1, axs1 = plt.subplots(ncols=ncols, figsize=(16, 9))
     fig2, axs2 = plt.subplots(ncols=ncols, figsize=(16, 9))
     fig3, axs3 = plt.subplots(ncols=ncols, figsize=(16, 9))
-    options = [10, 50, 100, 200, 300, 500]
     randoms = np.random.choice(options, len(pps))
     for i, r in zip(pps.index, randoms):
         kh_data[i] = r
@@ -142,7 +194,54 @@ def exampine_interpolation():
     smt.plot.show()
 
 
+def examine_sy_interpolation(log_before=False):
+    import matplotlib.pyplot as plt
+    choices = [0.02, 0.05, 0.1, 0.2, 0.3]
+    pps = get_pilot_point_locations()
+    sy_data = {
+        'sandyhill': np.random.choice(choices),
+        'mangawera': np.random.choice(choices),
+    }
+
+    ncols = 1
+    interpolation_techniques = ['multiquadric']
+    fig1, axs1 = plt.subplots(ncols=ncols, figsize=(16, 9))
+    fig3, axs3 = plt.subplots(ncols=ncols, figsize=(16, 9))
+    randoms = np.random.choice(choices, len(pps))
+    for i, r in zip(pps.index, randoms):
+        sy_data[i] = r
+
+    if log_before:
+        for k, v in sy_data.items():
+            sy_data[k] = np.log10(v)
+
+    for i, kernal in enumerate(interpolation_techniques):
+        sy, df = interpolate_kh_pilot_points(sy_data, return_df=True, kernal=kernal)
+        if log_before:
+            smt.plot.plt_matrix(10 ** sy[0], base_map=True, no_flow_layer=0, title=f'real {kernal}', ax=axs1, )
+            smt.plot.plt_matrix(10 ** sy[0], base_map=True, no_flow_layer=0, title=f'real {kernal}', ax=axs3,
+                                vmin=max(choices))
+            fig2, axs2 = plt.subplots(ncols=ncols, figsize=(16, 9))
+            smt.plot.plt_matrix(sy[0], base_map=True, no_flow_layer=0, title=f'log10 {kernal}', ax=axs2)
+
+        else:
+            smt.plot.plt_matrix(sy[0], base_map=True, no_flow_layer=0, title=f'real {kernal}', ax=axs1, )
+            smt.plot.plt_matrix(sy[0], base_map=True, no_flow_layer=0, title=f'real {kernal}', ax=axs3,
+                                vmin=max(choices))
+
+    fig, ax = smt.plot.plt_matrix(sy[0] * np.nan, base_map=True, no_flow_layer=0, title='data', )
+    ax.scatter(df.x, df.y)
+    for x, y, s in df.loc[:, ['x', 'y', 'value']].itertuples(False, None):
+        ax.text(x, y, str(round(s, 2)))
+    fig1.tight_layout()
+    if log_before:
+        fig2.tight_layout()
+    fig3.tight_layout()
+    smt.plot.show()
+
+
 if __name__ == '__main__':
     t = get_pilot_point_locations(recalc=True)
-    exampine_interpolation()
+    examine_sy_interpolation()
+    exampine_kh_interpolation()
     pass

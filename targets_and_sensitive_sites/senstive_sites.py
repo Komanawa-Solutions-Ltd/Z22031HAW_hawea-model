@@ -9,8 +9,6 @@ from model_build.project_model_tools import smt
 import geopandas as gpd
 
 
-# todo wetland and water supply bores, anything else?
-
 def get_wetlands(recalc=False):
     wetland_path = base_target_dir.joinpath('Hawea_Updated_RSWetlands.shp')
     processed_path = processed_target_dir.joinpath('wetlands.txt')

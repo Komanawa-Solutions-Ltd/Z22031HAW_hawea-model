@@ -8,6 +8,7 @@ pip install git+https://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@github.com/Koma
 pip install pyemu
 
 # todo save the env and update whenever new packages are added:
+# todo at end of project remake the env and check!
 conda list --explicit > /home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/environment.txt
 conda env export > /home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/environment.yml
 

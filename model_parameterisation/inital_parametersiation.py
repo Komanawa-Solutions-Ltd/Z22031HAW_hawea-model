@@ -2,12 +2,16 @@
 created matt_dumont 
 on: 1/09/22
 """
+from .pilot_points import get_pilot_point_locations
 
 # todo get initals and bounds
 # todo param key in loc data or riv and well
 
-lake_kh = 0  # todo set.
-lake_sy = None  # todo set.
+# keynote lake sy & model ss and lake kh are set to be so small and large, respectively, so as not to impact the model.
+#  lake fluxes are entirely dependent on the GHB conductance
+lake_kh = 1e8  # todo check and discuss
+lake_sy = ss = 1e-8  # todo check and discuss
+vka = 1  # todo check and discuss
 
 
 def get_initial_riv_conductance():
@@ -21,29 +25,42 @@ def get_initial_riv_conductance():
 
 
 def get_inital_lake_conductance():
-    # todo how to manage conductance on the lake vs hk in the model... could set hk super high for the lake area
-    # then just use lake conctance as the parameter
-    raise NotImplementedError
+    # keynote lake sy & model ss and lake kh are set to be so small and large, respectively, so as not to impact the model.
+    #  lake fluxes are entirely dependent on the GHB conductance
+    lake_cond = {'all': (None, None, None)}  # todo set
+    return lake_cond
 
 
 def get_inital_kh():
-    raise NotImplementedError
+    # keynote one value for the whole model
+    # keynote use log values
+    start_val = (None, None, None)  # todo set start and limits
+    pps = get_pilot_point_locations()
+    kh_data = {
+        'sandyhill': start_val,
+        'mangawera': start_val,
+    }
 
+    for i in pps.index:
+        kh_data[i] = start_val
 
-def get_inital_vka():
-    # todo how does this get used in a single layer model, todo just set to 1
-    raise NotImplementedError
-
-
-def get_ss():
-    # todo only water overheight would cause ss to be grabbed, so set to SY or set SS to super small,
-    # todo set in model build
-    raise NotImplementedError
+    return kh_data
 
 
 def get_inital_sy():
-    # todo o or set SS to super small
-    raise NotImplementedError
+    # keynote do not use log values
+    # keynote one value for the whole model
+    start_val = (0.02, 0.001, 0.3)  # todo discuss with Jens
+    pps = get_pilot_point_locations()
+    sy_data = {
+        'sandyhill': start_val,
+        'mangawera': start_val,
+    }
+
+    for i in pps.index:
+        sy_data[i] = start_val
+
+    return sy_data
 
 
 def get_hillslope_multiplier():

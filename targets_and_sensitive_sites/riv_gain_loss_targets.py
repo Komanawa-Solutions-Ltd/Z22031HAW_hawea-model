@@ -11,7 +11,6 @@ from model_build.project_model_tools import smt
 
 
 def get_riv_target_locs(recalc=False):
-    # todo add clutha targets???, probably not
     river_targets = range(1, 4)
     river_target_path = processed_target_dir.joinpath(f'river_target_locs.txt')
 

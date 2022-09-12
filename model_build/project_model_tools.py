@@ -205,7 +205,7 @@ def _river_locs():
     clutha.sort_values('dist', inplace=True)
     outdata = pd.concat((hawea, clutha))
 
-    # set the river river bottoms 3 m below top so that the stage is always higher than river bottom # todo review
+    # set the river river bottoms 3 m below top so that the stage is always higher than river bottom
     outdata.loc[:, 'rbot'] += -2.5
 
     outdata.reset_index(inplace=True, drop=True)

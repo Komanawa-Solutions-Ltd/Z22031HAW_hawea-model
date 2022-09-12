@@ -129,7 +129,7 @@ def _create_dis_package(m, smt, tdis):
                                          nlay=smt.layers,
                                          nrow=smt.rows,
                                          ncol=smt.cols,
-                                         nper=tdis.nper, # todo pull out of smt
+                                         nper=tdis.nper,
                                          delr=smt.grid_space,
                                          delc=smt.grid_space,
                                          laycbd=0,  # no quasi confining bed
@@ -138,7 +138,7 @@ def _create_dis_package(m, smt, tdis):
                                          perlen=tdis.perlen,
                                          nstp=tdis.nstp,
                                          tsmult=tdis.tsmult,
-                                         steady=tdis.steady, # todo pull out to smt
+                                         steady=tdis.steady,
                                          itmuni=tdis.mftunit,  # days
                                          lenuni=2,  # meters
                                          unitnumber=719,

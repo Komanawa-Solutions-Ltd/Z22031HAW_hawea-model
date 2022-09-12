@@ -71,12 +71,12 @@ irrig_eff = {
 
 irrig_max_irrig_apply = {
     'Borderdyke': 80,
-    'Wild flooding': 80,  # todo target full soil moisture profile
+    'Wild flooding': 80,
 
-    'Rotorainer': 15,  # todo target full soil moisture
-    'Gun': 15,  # todo target full soil moisture
-    'K-line/Long lateral': 15,  # todo target full soil moisture
-    'Unknown': 15,  # todo target full soil moisture
+    'Rotorainer': 15,
+    'Gun': 15,
+    'K-line/Long lateral': 15,
+    'Unknown': 15,
 
     'Solid-set': 8,
     'Linear boom': 8,
@@ -264,9 +264,8 @@ def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
 
 
 def get_irrig_avaliblity(dates):
-    # todo 3d, pull from pumping and irrigation race data!, pumping by zones? this is where I set reset if not at
-    # todo water year
-    # todo do I need to reset storage???
+    # keynote storage is reset each water year
+    # todo 3d, pull from pumping and irrigation race data!, pumping by zones?
     raise NotImplementedError
 
 

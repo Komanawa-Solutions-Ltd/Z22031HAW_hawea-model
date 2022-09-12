@@ -26,7 +26,7 @@ cols = 60 - 8
 rows = 92 - 20
 #  lower left corner 1296250mE 5032250mN, Upper right corner 1312670mE 5059750mN
 ulx = 1296250 + np.sum([500., 500., 660., 490., 350., ])
-uly = 5059750 - np.sum([500., 500., 500., 500., 500., 500., 660., 490., 350.])  # todo get from Jens
+uly = 5059750 - np.sum([500., 500., 500., 500., 500., 500., 660., 490., 350.])
 
 layers = 1
 layer_type = [1]
