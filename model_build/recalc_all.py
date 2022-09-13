@@ -9,10 +9,9 @@ from model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
 from model_build.supporting_data_analysis.irrigation_race_losses import get_race_locs
 from model_build.supporting_data_analysis.hillside_inflows import get_hillside_catchment_locs, get_catchment_areas, \
     get_luggate_catchment_area, get_hillside_flows
-from model_build.supporting_data_analysis.get_pumping_data import get_pumping_locs
+from model_build.supporting_data_analysis.get_pumping_data import get_historical_pumping_data
+from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
 from model_build.supporting_data_analysis.all_wells import get_all_wells
-
-# todo any others from get_pumping_data?
 
 if __name__ == '__main__':
     # recalculate all saved data in model_build
@@ -40,5 +39,6 @@ if __name__ == '__main__':
     get_catchment_areas(recalc=True)
     get_luggate_catchment_area(recalc=True)
     get_hillside_flows(None, None, recalc=True)
-    get_pumping_locs(recalc=True)
+    get_well_flowmeter_mapper(recalc=True)
+    get_historical_pumping_data(None, None, recalc=True)
     get_historical_rch_model_results(recalc=True)

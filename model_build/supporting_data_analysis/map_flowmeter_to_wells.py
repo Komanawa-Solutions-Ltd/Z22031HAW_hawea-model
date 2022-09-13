@@ -5,128 +5,143 @@ on: 8/09/22
 import pandas as pd
 import numpy as np
 from model_build.supporting_data_analysis.all_wells import get_all_wells
-from project_base import base_model_build_data_dir
+from project_base import base_model_build_data_dir, processed_model_build_data_dir
+from model_build.project_model_tools import smt
 
 flow_meter_data_path = base_model_build_data_dir.joinpath('water_permit_meter_results_2022-07-20',
                                                           'water_permit_meter_yearly_data_2022-07-20.csv')
 
 
-# todo this should have all of the data in hawea.
+def get_well_flowmeter_mapper(recalc=False):
+    processed_path = processed_model_build_data_dir.joinpath('flowmeter_loc_mapper.csv')
 
+    if processed_path.exists() and not recalc:
+        outdata = pd.read_csv(processed_path, index_col=0)
+        outdata.loc[:, 'i'] = outdata.loc[:, 'i'].astype(int)
+        outdata.loc[:, 'j'] = outdata.loc[:, 'j'].astype(int)
+        outdata.loc[:, 'k'] = outdata.loc[:, 'k'].astype(int)
+        return outdata
 
-def map_from_jens_data():
-    # todo see how much data is missing, which consents missing (from flow meter data)
-    # todo compare both consents and well meter ids
-    # separately?
-    # in Jens, consent number - ConsentNumber, well meter = ?
-    # in Mike K's consent number - permit_id, well meter = water_meter_no
-
-    data_path = base_model_build_data_dir.joinpath('Estimate of Current indiv gw take consents and meters.xlsx')
-    jens_data = pd.read_excel(data_path, 'Amalgated take data')
-    flow_meter_data = pd.read_csv(flow_meter_data_path)
-
-    # sorting Mike's data so that only the unique RC and flow meter combos are left
-    unique_flow_data = flow_meter_data[['permit_id', 'water_meter_no']].value_counts()
-    # a series. Could turn this into a df and just subset the first two columns
-
-    df1 = pd.DataFrame(unique_flow_data).reset_index()
-    # this is a dataframe containing only the unique permit_id and water_meter_no pairs
-    # from Mike K's data. 120 of them
-    unique_flow_data_df = df1[['permit_id', 'water_meter_no']]
-
-    # finding the common numbers using np.in1d
-    # doing on the two columns
-    # consent number
-    common_consent_nos = np.in1d(unique_flow_data_df['permit_id'], jens_data['ConsentNumber'])
-    # flow_meter_no
-    # first adjusting Jens' data
-    jens_data['WM#1'] = jens_data["WM#1"].str.replace('WM', '')
-    # checking Jens' against Mike's to see which are missing
-    common_flow_meters = np.in1d(unique_flow_data_df['water_meter_no'], jens_data['WM#1'])
-
-    # overviews
-
-    # overview of consent nos
-    # changing to dataframe to make easier
-    common_consent_nos_df = pd.DataFrame(common_consent_nos)
-    # changing column name
-    common_consent_nos_df.columns = ['present']
-    consents_present = common_consent_nos_df[common_consent_nos_df['present'] == True]
-    count_consents_present = consents_present.count()
-    # missing
-    consents_missing = common_consent_nos_df[common_consent_nos_df['present'] == False]
-    count_consents_missing = consents_missing.count()
-
-    # overview of flow meters
-    # changing to df to make easier
-    common_flow_meters_df = pd.DataFrame(common_flow_meters)
-    # changing column name
-    common_flow_meters_df.columns = ['present']
-    # those present
-    flow_meters_present = common_flow_meters_df[common_flow_meters_df['present'] == True]
-    count_flow_meters_present = flow_meters_present.count()
-    # those missing
-    flow_meters_missing = common_flow_meters_df[common_flow_meters_df['present'] == False]
-    count_flow_meters_missing = flow_meters_missing.count()
-
-    # lists of missing and present
-
-    # consent no
-    # testing indexing to get the lists of present and missing
-    list_consent_nos_present = unique_flow_data_df[common_consent_nos_df['present'] == True]['permit_id']
-    list_consent_nos_missing = unique_flow_data_df[common_consent_nos_df['present'] == False]['permit_id']
-
-    # water meters
-    list_water_meters_present = unique_flow_data_df[common_flow_meters_df['present'] == True]['water_meter_no']
-    list_water_meters_missing = unique_flow_data_df[common_flow_meters_df['present'] == False]['water_meter_no']
-
-
-    raise NotImplementedError
-
-
-def map_from_wells_db():
-    all_wells = get_all_wells()
-
-    # todo take the flow meter data (RCs in this data)
-    # todo see what wells are associated with what RC
-    # todo how many RCs are missing well etc
-
-    # in allwells data consent number is called BoreConsentNumber
-    # compare Mike K's flow data to the all wells data to see what RCs are present
-    # and therefore what wells are associated
-    # do the same as above and then get list of wells associated with RCs
-
-    flow_meter_data = pd.read_csv(flow_meter_data_path)
-
-    # sorting Mike's data so that only the unique RC and flow meter combos are left
-    unique_flow_data = flow_meter_data[['permit_id', 'water_meter_no']].value_counts()
-    # a series. Could turn this into a df and just subset the first two columns
-
-    df1 = pd.DataFrame(unique_flow_data).reset_index()
-    # this is a dataframe containing only the unique permit_id and water_meter_no pairs
-    # from Mike K's data. 120 of them
-    unique_flow_data_df = df1[['permit_id', 'water_meter_no']]
-
-    common_consent_nos = np.in1d(unique_flow_data_df['permit_id'], all_wells['boreconsentnumber'])
-
-
-    print(unique_flow_data_df.to_string(columns=['permit_id']))
-    print(all_wells.to_string(columns=['boreconsentnumber']))
-
-
-
-
-
-def from_consents_database():
     consents_data_path = base_model_build_data_dir.joinpath('consent_database_from_Mike_kitterage.csv')
-    # todo only if many consents are missing!!!, will need to get data from Jens
-    raise NotImplementedError
+    consents = pd.read_csv(consents_data_path)
 
+    flow_meter_data = pd.read_csv(flow_meter_data_path)
+    flow_meter_data = flow_meter_data.loc[flow_meter_data.gw_allo > 0]
+    unique_flow_data = flow_meter_data[['permit_id', 'water_meter_no']].value_counts()
+    unique_flow_data = unique_flow_data.reset_index().drop(columns=0)
+    unique_flow_consents = unique_flow_data.loc[:, 'permit_id'].unique()
+    use_consents = consents.loc[np.in1d(consents.ConsentID, unique_flow_consents)]
+    num_waps = unique_flow_data.groupby('permit_id').count()
+    print(num_waps)
+    print(num_waps.describe())
+    print('num consents with more than 1 wap:', len(num_waps[num_waps.water_meter_no > 1]))
+
+    all_wells = get_all_wells()
+    all_well_consents = np.unique(all_wells.loc[:, 'takeconsent'].dropna())
+
+    print('number of flow data consents in consents database:', np.in1d(unique_flow_consents, consents.ConsentID).sum(),
+          f'of {len(unique_flow_consents)}')
+    print('number of flow data consents missing in consents database:',
+          (~np.in1d(unique_flow_consents, consents.ConsentID)).sum(), f'of {len(unique_flow_consents)}')
+
+    print('number of flow data consents in wells database:', np.in1d(unique_flow_consents, all_well_consents).sum(),
+          f'of {len(unique_flow_consents)}')
+    print('number of flow data consents missing in wells database',
+          (~np.in1d(unique_flow_consents, all_well_consents)).sum(), f'of {len(unique_flow_consents)}')
+
+    use_consents.rename(columns={
+        'B1_X_COORD': 'consent_b_x', 'B1_Y_COORD': 'consent_b_y', 'EastingTM': 'consent_x',
+        'NorthingTM': 'consent_y'
+    }, inplace=True)
+    consent_transfer_keys = ['WellNumber', 'consent_b_x',
+                             'consent_b_y', 'consent_x', 'consent_y']
+    unique_well_consents = use_consents[['ConsentID'] + consent_transfer_keys].value_counts()
+    unique_well_consents = unique_well_consents.reset_index().drop(columns=0)
+
+    num_waps_from_consents = unique_well_consents.groupby('ConsentID').count()
+
+    # based on this there are 9 individuaal causes where the number of flow meters does not = the number of wells,
+    # two of these simply do not have well numbers associated with them.  This is a manageable set
+    num_waps.loc[num_waps_from_consents.index, 'consent_count'] = num_waps_from_consents.WellNumber
+
+    # the consents that have the same number of wells as flow meters, can directly map these
+    matching_single_consents = num_waps.index[(num_waps.water_meter_no == num_waps.consent_count) &
+                                              (num_waps.water_meter_no == 1)]
+    matching_mult_consents = num_waps.index[(num_waps.water_meter_no == num_waps.consent_count) &
+                                            (num_waps.water_meter_no > 1)]
+    missmatch_consents = num_waps.index[
+        (num_waps.water_meter_no != num_waps.consent_count) & num_waps.consent_count.notna()]
+
+    missing_consents = num_waps.index[num_waps.consent_count.isna()]
+
+    outdata = unique_flow_data.copy(deep=True)
+    outdata = pd.merge(outdata,
+                       unique_well_consents.loc[np.in1d(unique_well_consents.ConsentID, matching_single_consents)],
+                       how='left', left_on='permit_id', right_on='ConsentID')
+    outdata.drop(columns='ConsentID', inplace=True)
+
+    for cid in missing_consents:
+        outdata.loc[np.in1d(outdata.permit_id, [cid]), consent_transfer_keys] = use_consents.loc[
+            np.in1d(use_consents.ConsentID, [cid]), consent_transfer_keys].values
+
+    # matching_multi_consents
+    for cid in matching_mult_consents:
+        outdata.loc[np.in1d(outdata.permit_id, [cid]), consent_transfer_keys] = unique_well_consents.loc[
+            np.in1d(unique_well_consents.ConsentID, [cid]), consent_transfer_keys].values
+
+    # mismatch consents
+    for cid in missmatch_consents:
+        nwm, ncons = num_waps.loc[cid]
+        if ncons == 1:
+            outdata.loc[np.in1d(outdata.permit_id, [cid]),
+                        consent_transfer_keys] = unique_well_consents.loc[
+                np.in1d(unique_well_consents.ConsentID, [cid]), consent_transfer_keys].values
+        else:
+            # where there are multiple wells but they don't match to the number of consents
+            # include multiple runs for all of the data in outdata
+            temp = outdata.loc[np.in1d(outdata.permit_id, [cid])]
+            outdata = outdata.loc[~np.in1d(outdata.permit_id, [cid])]
+            temp_outdata = []
+            for permit, meter in temp.loc[:, ['permit_id', 'water_meter_no']].itertuples(False, None):
+                t = unique_well_consents.loc[np.in1d(unique_well_consents.ConsentID, [cid]), consent_transfer_keys]
+                t.loc[:, 'permit_id'] = permit
+                t.loc[:, 'water_meter_no'] = meter
+                temp_outdata.append(t)
+            temp_outdata = pd.concat(temp_outdata)
+            outdata = pd.concat([outdata, temp_outdata])
+
+    # check all flow meters and consents are included
+    assert (set(unique_flow_data.itertuples(False, None))
+            == set(outdata.loc[:, ['permit_id', 'water_meter_no']].itertuples(False, None)))
+
+    # add well xy
+    outdata.loc[:, 'well_name'] = outdata.loc[:, 'WellNumber'].str.replace('/', '_').str.lower()
+    idx = outdata.well_name.notna()
+    missing_wells = set(np.unique(outdata.well_name[idx])) - set(all_wells.index)
+    idx = idx & ~np.in1d(outdata.well_name, list(missing_wells))
+    outdata.loc[idx, 'well_x'] = all_wells.loc[outdata.well_name[idx], 'nztmx'].values
+    outdata.loc[idx, 'well_y'] = all_wells.loc[outdata.well_name[idx], 'nztmy'].values
+
+    # create usex usey
+    for k in ['consent_b', 'consent', 'well']:
+        idx = outdata.loc[:, f'{k}_x'].notna()
+        outdata.loc[idx, 'use_x'] = outdata.loc[idx, f'{k}_x']
+        outdata.loc[idx, 'use_y'] = outdata.loc[idx, f'{k}_y']
+    assert outdata.use_x.notna().all() and outdata.use_y.notna().all()
+
+    # add row, col... layer isn't going to happen.
+    i, j = smt.convert_coords_to_matix(outdata.use_x, outdata.use_y)
+    outdata.loc[:, 'i'] = i
+    outdata.loc[:, 'j'] = j
+    outdata.loc[:, 'k'] = 0
+
+    outdata = outdata.reset_index(drop=True)
+    outdata.loc[:, 'name'] = [f'w_{e:03d}' for e in outdata.index]
+    outdata.set_index('name', inplace=True)
+    outdata.to_csv(processed_path)
+
+    return outdata
 
 
 if __name__ == '__main__':
-    map_from_wells_db()
-
-
-
-
+    get_well_flowmeter_mapper(recalc=True)
