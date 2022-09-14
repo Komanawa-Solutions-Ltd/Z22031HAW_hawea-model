@@ -10,17 +10,21 @@ import netCDF4 as nc
 from project_base import base_model_build_data_dir, processed_model_build_data_dir, modelling_dir
 from model_build.project_model_tools import smt
 from model_build.utils import select_resample
+from copy import deepcopy
+import gc
 
 irrigated_area_dir = base_model_build_data_dir.joinpath('irrigated_area')
 irrigated_area_dir.mkdir(exist_ok=True)
 
 irrigated_area_codes = {
+    -1: 'no_irrig',
     0: 'Gun', 1: 'Borderdyke', 2: 'Pivot', 3: 'Solid-set', 4: 'K-line/Long lateral',
     5: 'Unknown', 6: 'Drip/micro', 7: 'Rotorainer', 8: 'Wild flooding', 9: 'Linear boom'}
 
-irrig_max_store = 50  # todo how much storage per area!!!, might be iterative to set, discuss with Jens
+irrig_max_store = 50.  # todo how much storage per area!!!, might be iterative to set, discuss with Jens
 
 irrig_targets = {
+    'no_irrig': 1.,
     'Borderdyke': 1.,
     'Wild flooding': 1.,  # once every 8 days
 
@@ -37,6 +41,7 @@ irrig_targets = {
 }
 
 irrig_trigs = {
+    'no_irrig': 1.,
     'Borderdyke': 0.50,
     'Wild flooding': 0.50,
 
@@ -54,6 +59,7 @@ irrig_trigs = {
 }
 
 irrig_eff = {
+    'no_irrig': 1.,
     'Borderdyke': 0.50,
     'Wild flooding': 0.50,
 
@@ -70,6 +76,7 @@ irrig_eff = {
 }
 
 irrig_max_irrig_apply = {
+    'no_irrig': 0,
     'Borderdyke': 80,
     'Wild flooding': 80,
 
@@ -86,6 +93,7 @@ irrig_max_irrig_apply = {
 }
 
 irrig_min_irrig_return = {
+    'no_irrig': 999999,
     'Borderdyke': 7,
     'Wild flooding': 7,  # once every 8 days
 
@@ -100,9 +108,6 @@ irrig_min_irrig_return = {
 
     'Drip/micro': 0,
 }
-
-irrigation_record_dir = processed_model_build_data_dir.joinpath('rch_historical_record')
-irrigation_record_dir.mkdir(exist_ok=True)
 
 
 def get_met_data(start_date, end_date, frequency='D'):  # todo get a longer record either from ORC or ERA5-land
@@ -188,15 +193,14 @@ def data_checks():
 def get_soil_classes(recalc=False):
     soil_classes_path = processed_model_build_data_dir.joinpath('soil_classes.txt')
     if soil_classes_path.exists() and not recalc:
-        return np.loadtxt(soil_classes_path)
+        return np.loadtxt(soil_classes_path).astype(int)
 
     soil_classes = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('soils_with_paw.shp'),
                                                     'Jens_soil', alltouched=True)
-
-    # todo the soil PAW has null values that are being burned as 0...
-    # todo I may need ather soil data...
-    raise NotImplementedError
-    np.savetxt(soil_classes_path, soil_classes)
+    soil_classes[np.isnan(soil_classes)] = 0
+    smt.plot.plt_matrix(soil_classes, base_map=True, no_flow_layer=0, cmap='tab10')
+    smt.plot.show()
+    np.savetxt(soil_classes_path, soil_classes, fmt='%d')
     return soil_classes
 
 
@@ -244,14 +248,14 @@ def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
             3: 57,
             4: 60,
         },
-        'frac_store': {
+        'fracstore': {
             0: 0.3,
             1: 0.2,
             2: 0.35,
             3: 0.3,
             4: 0.3,
         },
-        'paw': {
+        'taw': {
             0: 100,  # default set high as this increases holding and reduces recharge
             1: 55.,
             2: 90.,
@@ -289,7 +293,44 @@ def get_irrig_avaliblity(dates):
     raise NotImplementedError
 
 
-def get_historical_rch_model_results(recalc=False):
+def get_irrigation_code(y, recalc=False):
+    if y < 2020:
+        processed_path = processed_model_build_data_dir.joinpath('irrig_code_pre_2020.txt')
+    elif y == 2020:
+        processed_path = processed_model_build_data_dir.joinpath('irrig_code_2020.txt')
+    else:
+        processed_path = processed_model_build_data_dir.joinpath('irrig_code_2021_on.txt')
+
+    if processed_path.exists() and not recalc:
+        out = np.loadtxt(processed_path)
+        return out.astype(int)
+
+    irrig_codes = smt.get_model_zeros().astype(int) - 1
+    if y < 2020:
+        irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2015.shp')
+        temp = smt.io.shape_file_to_model_array(irrig_path, 'itype_code', alltouched=True)
+        irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
+
+    if y == 2020:
+        irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2020.shp')
+        temp = smt.io.shape_file_to_model_array(irrig_path, 'itype_code', alltouched=True)
+        irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
+
+    if y >= 2021:
+        irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2021.shp')
+        temp = smt.io.shape_file_to_model_array(irrig_path, 'itype_code', alltouched=True)
+        irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
+    np.savetxt(processed_path, irrig_codes, fmt='%d')
+    return irrig_codes
+
+
+def get_historical_rch_model_results(limited_irrigation, recalc=False):
+    if limited_irrigation:
+        irrigation_record_dir = processed_model_build_data_dir.joinpath('rch_historical_record_limited')
+    else:
+        irrigation_record_dir = processed_model_build_data_dir.joinpath('rch_historical_record_unlimited')
+    irrigation_record_dir.mkdir(exist_ok=True)
+
     # get met data
     data = get_met_data('2012-07-01', None)
     data.loc[:, 'water_year'] = (data.index + pd.DateOffset(months=-6)).year
@@ -312,7 +353,7 @@ def get_historical_rch_model_results(recalc=False):
         return dates, data
 
     from rushton_model.rushton import Rushton
-    dates, data = [], []
+    dates, outdata = [], []
 
     # make static datasets
     soil_classes = get_soil_classes()
@@ -326,34 +367,24 @@ def get_historical_rch_model_results(recalc=False):
     irrig_init_store = smt.get_model_zeros()
 
     for y in water_years:
+        print(f'starting to run year: {y}')
         temp_data = data.loc[data.water_year == y]
 
         # get irrigation codes (note the shapefiles are additive/overwrite)
-        irrig_codes = smt.get_model_zeros().astype(int) - 1
-        if y < 2020:
-            irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2015.shp')
-            temp = smt.io.shape_file_to_model_array(irrig_path, 'type_code', alltouched=True)
-            irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
-
-        if y == 2020:
-            irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2020.shp')
-            temp = smt.io.shape_file_to_model_array(irrig_path, 'type_code', alltouched=True)
-            irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
-
-        if y >= 2021:
-            irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2021.shp')
-            temp = smt.io.shape_file_to_model_array(irrig_path, 'type_code', alltouched=True)
-            irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
+        irrig_codes = get_irrigation_code(y)
 
         max_irrig_apply = _map_from_irrig_code(irrig_codes, 'max_irrig_apply')
         min_irrig_return = _map_from_irrig_code(irrig_codes, 'min_irrig_return')
         irrig_effic = _map_from_irrig_code(irrig_codes, 'irrig_effic')
 
-        irrig_aval = get_irrig_avaliblity(dates=temp_data.index)
+        if limited_irrigation:
+            irrig_aval = get_irrig_avaliblity(dates=temp_data.index)
+        else:
+            irrig_aval = np.full((len(temp_data), *smt.model_array_shape[1:]), np.inf)
 
-        irrig_trig = np.repeat(_map_from_irrig_code(irrig_codes, 'irrig_trig')[np.newaxis:, ],
+        irrig_trig = np.repeat(_map_from_irrig_code(irrig_codes, 'irrig_trig')[np.newaxis, :],
                                len(temp_data), axis=0)  # 3d, static
-        irrig_targ = np.repeat(_map_from_irrig_code(irrig_codes, 'irrig_targ')[np.newaxis:, ],
+        irrig_targ = np.repeat(_map_from_irrig_code(irrig_codes, 'irrig_targ')[np.newaxis, :],
                                len(temp_data), axis=0)
 
         rush = Rushton(
@@ -387,30 +418,33 @@ def get_historical_rch_model_results(recalc=False):
             # 2d array or None
             max_irrig_apply=max_irrig_apply,
             min_irrig_return=min_irrig_return,
-            irrig_max_store=np.full((len(temp_data), *smt.model_array_shape[1:]), irrig_max_store),
+            irrig_max_store=np.full(smt.model_array_shape[1:], irrig_max_store),
             irrig_init_store=irrig_init_store,
             irrig_effic=irrig_effic
         )
 
-        xs, ys = smt.get_model_x_y(grid=False)
-        rush.to_netcdf(irrigation_record_dir.joinpath(f'{y}.nc'),
-                       description=f'best estimate recharge for Hawea model made with {__file__}',
-                       xs=xs, ys=ys, proj_attrs=rush.get_nztm_nc_coords())
-        init_near_surface_storage = rush.near_surface_storage[-1]
+        xs, ys = smt.get_model_x_y(grid=True)
+        print('saving rushton')
+        # rush.to_netcdf(irrigation_record_dir.joinpath(f'{y}.nc'),
+        #                description=f'best estimate recharge for Hawea model made with {__file__}',
+        #                xs=xs, ys=ys, proj_attrs=rush.get_nztm_nc_coords())
+        init_near_surface_storage = deepcopy(rush.near_surface_storage[-1])
 
         # explicitly reset irrigation storage 0 at the water year break.
         irrig_init_store = np.zeros(smt.model_array_shape[1:])
 
-        dates.append(rush.dates)
-        data.append(rush.recharge)
+        dates.append(deepcopy(rush.dates))
+        outdata.append(deepcopy(rush.recharge))
+        rush = None
+        gc.collect()
 
-    data = np.concatenate(data, axis=0)
-    dates = np.concatenate(dates, axis=0)
-    return dates, data
+    outdata = np.concatenate(outdata, axis=0)
+    dates = np.concatenate(outdata, axis=0)
+    return dates, outdata
 
 
-def get_rch(start_date, end_date, frequency='D', recalc=False):
-    dates, rch = get_historical_rch_model_results(recalc=recalc)
+def get_rch(start_date, end_date, frequency='D', limited_irrigation=True, recalc=False):
+    dates, rch = get_historical_rch_model_results(limited_irrigation=limited_irrigation)
 
     temp = pd.DataFrame(index=dates,
                         data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
@@ -426,5 +460,6 @@ def get_rch(start_date, end_date, frequency='D', recalc=False):
 #  "G:\Shared drives\YMULT_small_projects\Z22031HAW_hawea-model\Data\Hawea lysimeter data processing - June 2014.xlsx"
 
 if __name__ == '__main__':
-    get_historical_rch_model_results()
+    get_historical_rch_model_results(limited_irrigation=False)
+    raise NotImplementedError
     data_checks()

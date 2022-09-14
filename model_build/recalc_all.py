@@ -5,7 +5,7 @@ on: 31/08/22
 from model_build.project_model_tools import smt, simplify_hawea_dem, simplify_upper_clutha_dem, no_flow, elv_calc, \
     get_lake_array
 from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
-from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results
+from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes
 from model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
 from model_build.supporting_data_analysis.irrigation_race_losses import get_race_locs
 from model_build.supporting_data_analysis.hillside_inflows import get_hillside_catchment_locs, get_catchment_areas, \
@@ -47,4 +47,5 @@ if __name__ == '__main__':
     get_hillside_flows(None, None, recalc=True)
     get_well_flowmeter_mapper(recalc=True)
     get_historical_pumping_data(None, None, recalc=True)
+    get_soil_classes(recalc=True)
     get_historical_rch_model_results(recalc=True)

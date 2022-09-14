@@ -38,7 +38,7 @@ def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=Fals
         data.set_index('date', inplace=True)
         return select_resample(data, start_date, end_date, frequency, func=func)
 
-    pumping_key = 'gw_allo_usage_est'  # todo correct key???
+    pumping_key = 'gw_allo_usage_est'
     pumping_data = _load_usage_data()
     pumping_data.loc[:, 'uname'] = pumping_data.loc[:, 'permit_id'] + '_' + pumping_data.loc[:, 'water_meter_no']
     well_names = get_well_flowmeter_mapper()
