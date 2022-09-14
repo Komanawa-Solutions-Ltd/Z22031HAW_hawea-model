@@ -135,6 +135,9 @@ def get_well_flowmeter_mapper(recalc=False):
     outdata.loc[:, 'j'] = j
     outdata.loc[:, 'k'] = 0
 
+    ibound = smt.get_no_flow(0)
+    outdata.loc[:, 'ibound'] = ibound[outdata.i, outdata.j]
+
     outdata = outdata.reset_index(drop=True)
     outdata.loc[:, 'name'] = [f'w_{e:03d}' for e in outdata.index]
     outdata.set_index('name', inplace=True)

@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.interpolate import RBFInterpolator
 from project_base import base_param_dir, processed_param_dir
 from model_build.project_model_tools import smt, get_lake_array
-from model_parameterisation.inital_parametersiation import lake_sy, lake_kh
+from model_parameterisation.static_params import lake_sy, lake_kh
 from model_build.zones import get_param_zones
 import geopandas as gpd
 

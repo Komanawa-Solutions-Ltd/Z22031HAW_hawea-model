@@ -2,16 +2,11 @@
 created matt_dumont 
 on: 1/09/22
 """
-from .pilot_points import get_pilot_point_locations
+from model_parameterisation.pilot_points import get_pilot_point_locations
+import numpy as np
 
-# todo get initals and bounds
-# todo param key in loc data or riv and well
-
-# keynote lake sy & model ss and lake kh are set to be so small and large, respectively, so as not to impact the model.
-#  lake fluxes are entirely dependent on the GHB conductance
-lake_kh = 1e8  # todo check and discuss
-lake_sy = ss = 1e-8  # todo check and discuss
-vka = 1  # todo check and discuss
+# keynote these set initials and bounds
+# keynote param key in loc data or riv and well
 
 
 def get_initial_riv_conductance():
@@ -36,6 +31,7 @@ def get_inital_kh():
     # keynote use log values
     start_val = (None, None, None)  # todo set start and limits
     pps = get_pilot_point_locations()
+    pps = pps.loc[~np.in1d(pps.group, ['sandyhill', 'mangawera'])]
     kh_data = {
         'sandyhill': start_val,
         'mangawera': start_val,
@@ -52,6 +48,7 @@ def get_inital_sy():
     # keynote one value for the whole model
     start_val = (0.02, 0.001, 0.3)  # todo discuss with Jens
     pps = get_pilot_point_locations()
+    pps = pps.loc[~np.in1d(pps.group, ['sandyhill', 'mangawera'])]
     sy_data = {
         'sandyhill': start_val,
         'mangawera': start_val,
@@ -84,3 +81,6 @@ def get_race_multiplier():
         'all': (1, (0.9, 1.1)),
     }
     return params
+
+if __name__ == '__main__':
+    get_inital_kh()

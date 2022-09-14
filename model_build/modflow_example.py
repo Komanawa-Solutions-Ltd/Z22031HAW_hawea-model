@@ -15,7 +15,7 @@ from model_tools.time_discretization import TimeDis
 
 def build_calibration_model(smt, tdis, exe_name, model_name, model_ws, hk, vka, layer_avg, chani, constant_heads, rch=None,
                             options='COMPLEX',
-                            drn_spd=None, well_spd=None, mnwell_data=None, nwt_kwargs={},
+                            drn_spd=None, well_spd=None, nwt_kwargs={},
                             hani=None, ss=0, sy=0, mfv='mfnwt', run_model=False):
     """
     build modflow model
@@ -55,11 +55,6 @@ def build_calibration_model(smt, tdis, exe_name, model_name, model_ws, hk, vka, 
                     https://water.usgs.gov/ogw/modflow-nwt/MODFLOW-NWT-Guide/index.html?nwt_newton_solver.htm
     :param drn_spd: dictionary of drain stress period values
     :param well_spd: dictionary of well stress period values
-    :param mnwell_data: data to pass to the package dictionary:
-                        node data : node data, note at present the pump location is 1 indexed while the node location
-                                    is zero indexed. # todo pull request, and check
-                        spd: stress period data
-                        see flopy.modflow.ModflowMnw2 for more details
     :param nwt_kwargs: additonal kwargs for _create_nwt_package()
     :param hani: HANI is the ratio of hydraulic conductivity along columns to hydraulic conductivity
                  along rows, where HK of item 9 specifies the hydraulic conductivity along rows. Thus, the
@@ -96,12 +91,8 @@ def build_calibration_model(smt, tdis, exe_name, model_name, model_ws, hk, vka, 
         assert isinstance(drn_spd, dict), 'drain spd needs to be a dictionary'
         _create_drn_package(m, drn_spd)
     if well_spd is not None:
-        assert mnwell_data is None, 'cannot have both well and multi node well packages'
         assert isinstance(well_spd, dict), 'well spd needs to be a dictionary'
         _create_wel_package(m, well_spd)
-    if mnwell_data is not None:
-        assert well_spd is None, 'cannot have both well and multi node well packages'
-        _create_mnwell_package(m, mnwell_data)
 
     flopy.modflow.ModflowOc(m, stress_period_data={(0, 0): ['save head', 'save budget']})
 
@@ -375,39 +366,3 @@ def _create_wel_package(m, well_spd):
                                          ipakcb=740,  # save budget
                                          stress_period_data=well_spd,
                                          unitnumber=709)
-
-
-def _create_mnwell_package(m, mnwell_data):
-    """
-    create a multi node well package
-    :param m: model
-    :param mnwell_data: data to pass to the package dictionary:
-                        node data : node data, note at present the pump location is 1 indexed while the node location
-                                    is zero indexed. # todo pull request
-                        spd: stress period data
-                        see flopy.modflow.ModflowMnw2 for more details
-    :return:
-    """
-    assert isinstance(mnwell_data, dict)
-
-    # todo write data checks!
-    # data dimensions
-    node_data = mnwell_data['node_data']
-    node_data = node_data.to_records(index=False)
-    spd = mnwell_data['spd']
-    spd = spd.to_records(index=False)
-
-    wel = flopy.modflow.ModflowMnw2(m,
-                                    mnwmax=-len(mnwell_data['spd']),
-                                    nodtot=len(mnwell_data['node_data']),
-                                    ipakcb=740,  # requires separate cbc? 740 is the cbc file
-                                    mnwprnt=0,
-                                    aux=[],
-                                    node_data=node_data,
-                                    mnw=None,
-                                    stress_period_data={0: spd},
-                                    itmp=[len(mnwell_data['spd'])],
-                                    extension="mnw2",
-                                    unitnumber=None,
-                                    filenames=None,
-                                    gwt=False, )

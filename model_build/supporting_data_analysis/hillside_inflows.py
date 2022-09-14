@@ -14,7 +14,7 @@ from matplotlib.colors import LogNorm
 from copy import deepcopy
 
 # exclude lagoon creek races instead manage as additional points of well inflow
-
+# keynote I wish there were more concurant gaguings of these streams
 
 pour_points_path = base_model_build_data_dir.joinpath('hillflow_inputs.shp')
 catchment_area_path = processed_model_build_data_dir.joinpath('catchment_areas.csv')

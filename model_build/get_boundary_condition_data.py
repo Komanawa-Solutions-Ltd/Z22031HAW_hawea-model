@@ -2,9 +2,8 @@
 created matt_dumont 
 on: 1/08/22
 """
-from model_build.supporting_data_analysis.hillside_inflows import get_hillside_inflows
 
-
+# todo needed, how
 def get_mnwell_data(hill_data, pumping_data):
     """
 
@@ -28,5 +27,5 @@ def get_ghb_data():
 
     raise NotImplementedError
 
-def get_stream_data(): # todo stream data?
+def get_stream_data():
     raise NotImplementedError

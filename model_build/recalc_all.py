@@ -2,7 +2,8 @@
 created matt_dumont 
 on: 31/08/22
 """
-from model_build.project_model_tools import smt, simplify_hawea_dem, simplify_upper_clutha_dem, no_flow, elv_calc
+from model_build.project_model_tools import smt, simplify_hawea_dem, simplify_upper_clutha_dem, no_flow, elv_calc, \
+    get_lake_array
 from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
 from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results
 from model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
@@ -12,6 +13,7 @@ from model_build.supporting_data_analysis.hillside_inflows import get_hillside_c
 from model_build.supporting_data_analysis.get_pumping_data import get_historical_pumping_data
 from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
 from model_build.supporting_data_analysis.all_wells import get_all_wells
+from model_build.zones import get_param_zones, get_model_zones
 
 if __name__ == '__main__':
     # recalculate all saved data in model_build
@@ -29,6 +31,10 @@ if __name__ == '__main__':
     no_flow()
     elv_calc()
     smt.recalc_all_pickles()
+
+    get_param_zones(recalc=True)
+    get_lake_array(recalc=True)
+    get_model_zones(recalc=True)
 
     get_river_loc_data(True)
     get_river_stage_data(None, None, recalc=True)
