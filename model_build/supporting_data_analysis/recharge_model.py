@@ -292,6 +292,8 @@ def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
 
 
 def get_irrig_avaliblity(dates, plot=False):
+    # todo below keynotes are not correct
+
     # keynote storage is reset each water year
     # keynote looking at the data we miss many consents, so that's tricky, but we see on average
     #  10 mm a day/m2, which mostly exceeds the water limits and return period limits that are specified for
@@ -358,12 +360,12 @@ def get_irrigation_code(y, recalc=False):
         return out.astype(int)
 
     irrig_codes = smt.get_model_zeros().astype(int) - 1
-    if y < 2020:
-        irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2015.shp')
-        temp = smt.io.shape_file_to_model_array(irrig_path, 'itype_code', alltouched=True)
-        irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
 
-    if y == 2020:
+    irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2015.shp')
+    temp = smt.io.shape_file_to_model_array(irrig_path, 'itype_code', alltouched=True)
+    irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
+
+    if y >= 2020:
         irrig_path = base_model_build_data_dir.joinpath('irrigated_area/ia_2020.shp')
         temp = smt.io.shape_file_to_model_array(irrig_path, 'itype_code', alltouched=True)
         irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
@@ -373,7 +375,7 @@ def get_irrigation_code(y, recalc=False):
         temp = smt.io.shape_file_to_model_array(irrig_path, 'itype_code', alltouched=True)
         irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
     np.savetxt(processed_path, irrig_codes, fmt='%d')
-    return irrig_codes
+    return irrig_codes # todo check I think this is WRONG!!!!!
 
 
 def get_historical_rch_model_results(limited_irrigation, recalc=False):
@@ -519,5 +521,10 @@ def get_rch(start_date, end_date, frequency='D', limited_irrigation=True, recalc
 #  "G:\Shared drives\YMULT_small_projects\Z22031HAW_hawea-model\Data\Hawea lysimeter data processing - June 2014.xlsx"
 
 if __name__ == '__main__':
+    # for y in [2015, 2020, 2021]:
+    #     t = get_irrigation_code(y, recalc=True)
+    #     smt.plot.plt_matrix(t,title=y)
+    # smt.plot.show()
+    get_irrig_avaliblity(1, plot=True)
     get_historical_rch_model_results(limited_irrigation=False, recalc=False)
     data_checks()
