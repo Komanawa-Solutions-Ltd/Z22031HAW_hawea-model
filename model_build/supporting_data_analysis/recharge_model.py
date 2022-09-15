@@ -4,12 +4,16 @@ on: 2/08/22
 """
 import warnings
 import geopandas as gpd
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import netCDF4 as nc
 from project_base import base_model_build_data_dir, processed_model_build_data_dir, modelling_dir
-from model_build.project_model_tools import smt
-from model_build.utils import select_resample
+from model_build.project_model_tools import smt, grid_space
+from model_build.utils import select_resample, get_colors
+from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
+from model_build.supporting_data_analysis.get_pumping_data import _load_usage_data
+from model_build.zones import get_model_zones
 from copy import deepcopy
 import gc
 
@@ -21,7 +25,7 @@ irrigated_area_codes = {
     0: 'Gun', 1: 'Borderdyke', 2: 'Pivot', 3: 'Solid-set', 4: 'K-line/Long lateral',
     5: 'Unknown', 6: 'Drip/micro', 7: 'Rotorainer', 8: 'Wild flooding', 9: 'Linear boom'}
 
-irrig_max_store = 50.  # todo how much storage per area!!!, might be iterative to set, discuss with Jens
+irrig_max_store = 50.  # storage is not really used as I am allowing an infinite avalibility.
 
 irrig_targets = {
     'no_irrig': 1.,
@@ -287,9 +291,57 @@ def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
     return out
 
 
-def get_irrig_avaliblity(dates):
+def get_irrig_avaliblity(dates, plot=False):
     # keynote storage is reset each water year
-    # todo 3d, pull from pumping and irrigation race data!, pumping by zones?
+    # keynote looking at the data we miss many consents, so that's tricky, but we see on average
+    #  10 mm a day/m2, which mostly exceeds the water limits and return period limits that are specified for
+    #  irrigation systems.  Therefore we will not limit irrigation avaliblity, and instead use an infinite avaliblity.
+    locations = get_well_flowmeter_mapper(incl_surface_water=True)
+
+    use_zones = get_model_zones()
+    zone_keys = ['main', 'sandypoint', 'mangawera', 'all']
+    for k in zone_keys:
+        if k == 'all':
+            continue
+        locations.loc[use_zones[k][locations.i, locations.j], 'zone'] = k
+    locations.loc[:, 'uid'] = locations.permit_id + '_' + locations.water_meter_no.astype(str)
+
+    useage_data = _load_usage_data()
+    useage_data.loc[:, 'uid'] = useage_data.permit_id + '_' + useage_data.water_meter_no.astype(str)
+
+    irrig_area = {}
+    for k in zone_keys:
+        if k == 'all':
+            use_k = 'active'
+        else:
+            use_k = k
+        irrig_area[k] = {}
+        for y in [2015, 2020, 2021]:
+            temp = get_irrigation_code(y)
+            irrig_area[k][y] = ((temp > 0) & use_zones[use_k]).sum() * grid_space ** 2
+    data_1d = {}
+    if plot:
+        fig, axs = plt.subplots(4, sharex=True)
+    colors = get_colors(zone_keys)
+    for i, (c, k) in enumerate(zip(colors, zone_keys)):
+        if k == 'all':
+            temp = useage_data.loc[np.in1d(useage_data.uid, locations.loc[locations.zone.notna(), 'uid'])]
+        else:
+            temp = useage_data.loc[np.in1d(useage_data.uid, locations.loc[locations.zone == k, 'uid'])]
+        total = temp.groupby('date').sum().loc[:, 'total_allo']
+        total *= 1000  # convert from m3/day to mm*m2/day
+        total.loc[total.index.year < 2020] *= 1 / irrig_area[k][2015]
+        total.loc[total.index.year == 2020] *= 1 / irrig_area[k][2020]
+        total.loc[total.index.year > 2020] *= 1 / irrig_area[k][2021]
+        data_1d[k] = total
+
+        if plot:
+            axs[i].plot(total.index, total.values, c=c, label=k)
+            axs[i].legend()
+        pass
+
+    if plot:
+        plt.show()
     raise NotImplementedError
 
 
@@ -425,9 +477,16 @@ def get_historical_rch_model_results(limited_irrigation, recalc=False):
 
         xs, ys = smt.get_model_x_y(grid=True)
         print('saving rushton')
-        # rush.to_netcdf(irrigation_record_dir.joinpath(f'{y}.nc'),
-        #                description=f'best estimate recharge for Hawea model made with {__file__}',
-        #                xs=xs, ys=ys, proj_attrs=rush.get_nztm_nc_coords())
+        rush.to_netcdf(irrigation_record_dir.joinpath(f'{y}.nc'),
+                       description=f'best estimate recharge for Hawea model made with {__file__}',
+                       xs=xs, ys=ys, proj_attrs=rush.get_nztm_nc_coords(),
+                       keys=['recharge', 'nat_irrigation_demand', 'remain_irrigation_demand', 'irrigation_applied',
+                             'irrig_store'],
+                       mask=smt.get_no_flow(0) != 1,
+                       invert_x_y_order=True,
+                       compression='zlib',
+                       complevel=4
+                       )
         init_near_surface_storage = deepcopy(rush.near_surface_storage[-1])
 
         # explicitly reset irrigation storage 0 at the water year break.
@@ -456,10 +515,9 @@ def get_rch(start_date, end_date, frequency='D', limited_irrigation=True, recalc
     return dates, out_rch
 
 
-# todo compare histoical recharge to lysimiter:
+# todo compare histoical recharge to lysimiter and look at the data incl zonally
 #  "G:\Shared drives\YMULT_small_projects\Z22031HAW_hawea-model\Data\Hawea lysimeter data processing - June 2014.xlsx"
 
 if __name__ == '__main__':
-    get_historical_rch_model_results(limited_irrigation=False)
-    raise NotImplementedError
+    get_historical_rch_model_results(limited_irrigation=False, recalc=False)
     data_checks()

@@ -10,8 +10,7 @@ from model_build.project_model_tools import smt, get_lake_array
 
 def get_param_zones(recalc=False):
     """
-    zone 1 = Sandy point, zone 2 = mangawera valley
-    rest of the model = -1
+    zone 1 = Sandy point, zone 2 = mangawera valley,  rest of the model = -1
     :param recalc:
     :return:
     """
@@ -36,7 +35,9 @@ zone_keys = {'terrace': 'terrace.shp',
              'east': 'east.shp',
              'near_river': 'near_river.shp',
              'hawea_flat': 'hawea_flat.shp',
-             'hawea_town': 'hawea_town.shp'
+             'hawea_town': 'hawea_town.shp',
+             'main': 'None',  # made from ibound or other zones
+             'active': 'None',  # made from ibound or other zones
              }
 
 
@@ -48,14 +49,20 @@ def _get_other_zones(name, recalc=False):
     if processed_path.exists() and not recalc:
         out = np.loadtxt(processed_path) == 1
         return out
-
-    out = np.isfinite(smt.io.shape_file_to_model_array(base_path, 'id', True))
-    ibound = smt.get_no_flow(0)
-    out[ibound < 1] = False
-    pzones = get_param_zones()
-    out[pzones > 0] = False
-    lake = get_lake_array()
-    out[np.isfinite(lake)] = False
+    if name == 'main':
+        pzones = get_param_zones()
+        ibound = smt.get_no_flow(0)
+        out = (pzones < 0) & (ibound > 0)
+    elif name == 'active':
+        out = smt.get_no_flow(0) > 0
+    else:
+        out = np.isfinite(smt.io.shape_file_to_model_array(base_path, 'id', True))
+        ibound = smt.get_no_flow(0)
+        out[ibound < 1] = False
+        pzones = get_param_zones()
+        out[pzones > 0] = False
+        lake = get_lake_array()
+        out[np.isfinite(lake)] = False
     np.savetxt(processed_path, out.astype(int), fmt='%d')
     return out
 
@@ -74,5 +81,5 @@ def get_model_zones(recalc=False):
 if __name__ == '__main__':
     smt.plot.plt_matrix(get_param_zones(True), base_map=True, no_flow_layer=0)
     for k in zone_keys:
-        smt.plot.plt_matrix(_get_other_zones(k, recalc=True),no_flow_layer=0, title=k, base_map=True)
+        smt.plot.plt_matrix(_get_other_zones(k, recalc=True), no_flow_layer=0, title=k, base_map=True)
     smt.plot.show()

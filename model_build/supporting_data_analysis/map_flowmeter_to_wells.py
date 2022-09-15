@@ -12,8 +12,11 @@ flow_meter_data_path = base_model_build_data_dir.joinpath('water_permit_meter_re
                                                           'water_permit_meter_yearly_data_2022-07-20.csv')
 
 
-def get_well_flowmeter_mapper(recalc=False):
-    processed_path = processed_model_build_data_dir.joinpath('flowmeter_loc_mapper.csv')
+def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
+    if incl_surface_water:
+        processed_path = processed_model_build_data_dir.joinpath('flowmeter_loc_mapper_inc_sw.csv')
+    else:
+        processed_path = processed_model_build_data_dir.joinpath('flowmeter_loc_mapper.csv')
 
     if processed_path.exists() and not recalc:
         outdata = pd.read_csv(processed_path, index_col=0)
@@ -26,7 +29,8 @@ def get_well_flowmeter_mapper(recalc=False):
     consents = pd.read_csv(consents_data_path)
 
     flow_meter_data = pd.read_csv(flow_meter_data_path)
-    flow_meter_data = flow_meter_data.loc[flow_meter_data.gw_allo > 0]
+    if not incl_surface_water:
+        flow_meter_data = flow_meter_data.loc[flow_meter_data.gw_allo > 0]
     unique_flow_data = flow_meter_data[['permit_id', 'water_meter_no']].value_counts()
     unique_flow_data = unique_flow_data.reset_index().drop(columns=0)
     unique_flow_consents = unique_flow_data.loc[:, 'permit_id'].unique()
