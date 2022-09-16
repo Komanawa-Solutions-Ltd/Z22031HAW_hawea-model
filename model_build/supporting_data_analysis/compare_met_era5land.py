@@ -10,7 +10,7 @@ from datetime import datetime
 
 
 from project_base import base_model_build_data_dir
-from model_build.supporting_data_analysis.recharge_model import get_met_data, get_era5_land
+from model_build.supporting_data_analysis.recharge_model import get_met_data, get_era5_land, get_historical_rch_model_results
 
 def comp_plot_era5_v_measured():
     met = get_met_data(None, None)
@@ -64,49 +64,40 @@ def comp_plot_era5_v_measured():
     # plot the two datasets comparing precip (over time)
     merged_df.plot(x='datetime', y=['precipitation', 'Rainfall'], kind='line')
     plt.ylabel('Precipitation (mm)')
-    plt.show()
 
     # plot the two datasets comparing PET (over time)
     merged_df.plot(x='datetime', y=['potential_et', 'PET'], kind='line')
     plt.ylabel('PET ??')
-    plt.show()
 
     #  plots for the same above but with monthly means
     monthly_precip_sum.plot(use_index=True, y=['precipitation', 'Rainfall'], kind='line')
     plt.ylabel('Precipitation (mm)')
-    plt.show()
 
     monthly_pet_mean.plot(use_index=True, y=['potential_et', 'PET'], kind='line')
     plt.ylabel('PET ??')
-    plt.show()
 
     # comparison of the diffs e.g era5 on y met on x
     # daily precip diffs
     merged_df.plot(x='Rainfall', y='precipitation', kind='scatter')
     plt.xlabel('Met precip data (mm)')
     plt.ylabel('Era5 precip data (mm)')
-    plt.show()
     # weekly precip diffs
     weekly_precip_sum.plot(x='Rainfall', y='precipitation', kind='scatter')
     plt.xlabel('Met precip data (mm)')
     plt.ylabel('Era5 precip data (mm)')
-    plt.show()
     # monthly precip diffs
     monthly_precip_sum.plot(x='Rainfall', y='precipitation', kind='scatter')
     plt.xlabel('Met precip data (mm)')
     plt.ylabel('Era5 precip data (mm)')
-    plt.show()
 
     # daily PET diffs
     merged_df.plot(x='PET', y='potential_et', kind='scatter')
     plt.xlabel('Met PET data (?)')
     plt.ylabel('Era5 PET data (?)')
-    plt.show()
     # weekly PET diffs
     weekly_pet_mean.plot(x='PET', y='potential_et', kind='scatter')
     plt.xlabel('Met PET data (?)')
     plt.ylabel('Era5 PET data (?)')
-    plt.show()
     # monthly PET diffs
     monthly_pet_mean.plot(x='PET', y='potential_et', kind='scatter')
     plt.xlabel('Met PET data (?)')
@@ -118,6 +109,8 @@ def comp_plot_era5_v_measured():
 
     raise NotImplementedError
 
+def compare_era5_hist_rch():  # todo
+    raise NotImplementedError
 
 if __name__ == '__main__':
     comp_plot_era5_v_measured()

@@ -144,6 +144,7 @@ def get_era5_land():
                             only_use_python_datetimes=True))
             t = pd.to_datetime(t)
             data = np.array(ncd.variables[var]).mean(axis=(1, 2))
+            data[data < 0] = 0
             outdata[var] = pd.Series(data=data, index=t)
 
     outdata = pd.DataFrame(outdata)
@@ -169,16 +170,11 @@ def data_checks():
     ax1.set_title('Rainfall')
     ax2.plot(data.index, data.PET)
     ax2.set_title('PET')
-    # make annual maps of irrigated area...
-    files = list(irrigated_area_dir.glob('*.shp'))
-    for f in files:
-        temp = smt.io.shape_file_to_model_array(f, 'itype_code', alltouched=True)
-        smt.plot.plt_matrix(temp, base_map=True, title=f.name)
 
     # plot soil paw
-    soil_paw = get_soil_classes(fix_nan=False)
+    soil_paw = get_soil_classes()
     smt.plot.plt_matrix(soil_paw, title='soil_clases', base_map=True)
-    for k in ['scs_curve', 'frac_store', 'paw', 'raw_p', 'soil_retention']:
+    for k in ['scs_curve', 'fracstore', 'taw', 'raw_p', 'soil_retention']:
         smt.plot.plt_matrix(_map_from_soil_class(soil_paw, k), title=k, base_map=True)
 
     print('number of soil PAWs', len(np.unique(soil_paw)))
@@ -189,9 +185,60 @@ def data_checks():
 
     smt.plot.plt_matrix(soil_paw == 0, title='soil paw 0', base_map=True)
 
-    smt.plot.show()
+    zones = get_model_zones()
+    for y in [2015, 2020, 2021]:
+        t = get_irrigation_code(y, recalc=True)
+        zones[f'irrigated_{y}'] = t = t >= 0
+        smt.plot.plt_matrix(t, title='irrigated area ' + str(y), base_map=True)
+    annual = {}
+    for v in True, False:
+        if v:
+            k = 'limited'
+        else:
+            k = 'unlimited'
+        a_dates, temp = get_rch(None, None, 'Y', limited_irrigation=v, fun='sum')
+        annual[k] = temp
 
-    # todo look at recharge stats.....
+    for i, d in enumerate(a_dates):
+        d = pd.to_datetime(d)
+        fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=smt.default_figsize)
+
+        smt.plot.plt_matrix(annual['limited'][i], no_flow_layer=0, base_map=True, vmin=0, vmax=500,
+                            title=str(d.year) + ' limited', ax=ax1)
+        smt.plot.plt_matrix(annual['unlimited'][i], no_flow_layer=0, base_map=True, vmin=0, vmax=500,
+                            title=str(d.year) + ' unlimited', ax=ax2)
+        fig.tight_layout()
+
+    for k, z in zones.items():
+        if 'irrigated_2015' not in k:
+            continue
+        fig, ax = plt.subplots()
+        ax.set_title(k)
+        ax.plot(a_dates, annual['limited'][:, z].mean(axis=1), c='r', label='limited', alpha=0.5)
+        ax.plot(a_dates, annual['unlimited'][:, z].mean(axis=1), c='b', label='unlimited', alpha=0.5)
+        ax.legend()
+    fig, ax = plt.subplots()
+    ax.set_title('full model')
+    ax.plot(a_dates, annual['limited'].mean(axis=(1, 2)), c='r', label='limited', alpha=0.5)
+    ax.plot(a_dates, annual['unlimited'].mean(axis=(1, 2)), c='b', label='unlimited', alpha=0.5)
+    ax.legend()
+
+    w_dates, weekly_unlimit = get_rch(None, None, 'W', limited_irrigation=False, fun='sum')
+    w_dates, weekly_limit = get_rch(None, None, 'W', limited_irrigation=True, fun='sum')
+    for k, z in zones.items():
+        if 'irrigated_2015' not in k:
+            continue
+        fig, ax = plt.subplots()
+        ax.set_title(k)
+        ax.plot(w_dates, weekly_limit[:, z].mean(axis=1), c='r', label='limited', alpha=0.5)
+        ax.plot(w_dates, weekly_unlimit[:, z].mean(axis=1), c='b', label='unlimited', alpha=0.5)
+        ax.legend()
+    fig, ax = plt.subplots()
+    ax.set_title('full model')
+    ax.plot(w_dates, weekly_limit.mean(axis=(1, 2)), c='r', label='limited', alpha=0.5)
+    ax.plot(w_dates, weekly_unlimit.mean(axis=(1, 2)), c='b', label='unlimited', alpha=0.5)
+    ax.legend()
+    smt.plot.show()
 
 
 def get_soil_classes(recalc=False):
@@ -291,13 +338,11 @@ def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
     return out
 
 
-def get_irrig_avaliblity(dates, plot=False):
-    # todo below keynotes are not correct
-
-    # keynote storage is reset each water year
-    # keynote looking at the data we miss many consents, so that's tricky, but we see on average
-    #  10 mm a day/m2, which mostly exceeds the water limits and return period limits that are specified for
-    #  irrigation systems.  Therefore we will not limit irrigation avaliblity, and instead use an infinite avaliblity.
+def get_irrig_avaliblity(shape, plot=False):
+    # keynote set avaliblity to mean of full model domain. not much difference between sets
+    # keynote I would suggest using unlimited water as the total recharge is not much different; however local border
+    #  dyke and wild flooding tends to be lower due to the even apportionment across all irrigation types.
+    #  at the end of the day most of the recharge occurs during the winter and shoulder seasons.
     locations = get_well_flowmeter_mapper(incl_surface_water=True)
 
     use_zones = get_model_zones()
@@ -339,12 +384,13 @@ def get_irrig_avaliblity(dates, plot=False):
 
         if plot:
             axs[i].plot(total.index, total.values, c=c, label=k)
+            axs[i].axhline(y=total.mean(), c='k', ls=':')
             axs[i].legend()
         pass
 
     if plot:
         plt.show()
-    raise NotImplementedError
+    return np.full(shape, data_1d['all'].mean())
 
 
 def get_irrigation_code(y, recalc=False):
@@ -375,20 +421,37 @@ def get_irrigation_code(y, recalc=False):
         temp = smt.io.shape_file_to_model_array(irrig_path, 'itype_code', alltouched=True)
         irrig_codes[np.isfinite(temp)] = temp[np.isfinite(temp)]
     np.savetxt(processed_path, irrig_codes, fmt='%d')
-    return irrig_codes # todo check I think this is WRONG!!!!!
+    return irrig_codes
 
 
-def get_historical_rch_model_results(limited_irrigation, recalc=False):
-    if limited_irrigation:
-        irrigation_record_dir = processed_model_build_data_dir.joinpath('rch_historical_record_limited')
+def get_historical_rch_model_results(data_source='historical', limited_irrigation=False, recalc=False,
+                                     from_water_year=None, to_water_year=None):
+    assert data_source in ['historical', 'era5']
+    if from_water_year is None:
+        assert to_water_year is None
     else:
-        irrigation_record_dir = processed_model_build_data_dir.joinpath('rch_historical_record_unlimited')
+        assert to_water_year is not None
+
+    if limited_irrigation:
+        irrigation_record_dir = processed_model_build_data_dir.joinpath(
+            f'rch_historical_record_from_{data_source}_limited')
+    else:
+        irrigation_record_dir = processed_model_build_data_dir.joinpath(
+            f'rch_historical_record_from_{data_source}_unlimited')
     irrigation_record_dir.mkdir(exist_ok=True)
 
     # get met data
-    data = get_met_data('2012-07-01', None)
+    if data_source == 'historical':
+        data = get_met_data('2012-07-01', None)
+    elif data_source == 'era5':
+        data = get_era5_land()
+        data.rename(columns={'precipitation': 'Rainfall', 'potential_et': 'PET'}, inplace=True)
+    else:
+        raise ValueError(f'bad data source: {data_source}')
     data.loc[:, 'water_year'] = (data.index + pd.DateOffset(months=-6)).year
     water_years = data.water_year.unique()
+    if from_water_year is not None:
+        water_years = water_years[(water_years <= to_water_year) & (water_years >= from_water_year)]
 
     files = [irrigation_record_dir.joinpath(f'{y}.nc') for y in water_years]
 
@@ -432,7 +495,7 @@ def get_historical_rch_model_results(limited_irrigation, recalc=False):
         irrig_effic = _map_from_irrig_code(irrig_codes, 'irrig_effic')
 
         if limited_irrigation:
-            irrig_aval = get_irrig_avaliblity(dates=temp_data.index)
+            irrig_aval = get_irrig_avaliblity((len(temp_data), *smt.model_array_shape[1:]))
         else:
             irrig_aval = np.full((len(temp_data), *smt.model_array_shape[1:]), np.inf)
 
@@ -504,27 +567,25 @@ def get_historical_rch_model_results(limited_irrigation, recalc=False):
     return dates, outdata
 
 
-def get_rch(start_date, end_date, frequency='D', limited_irrigation=True, recalc=False):
-    dates, rch = get_historical_rch_model_results(limited_irrigation=limited_irrigation)
+def get_rch(start_date, end_date, frequency='D', limited_irrigation=True, recalc=False, fun='mean'):
+    dates, rch = get_historical_rch_model_results(limited_irrigation=limited_irrigation, recalc=recalc)
 
     temp = pd.DataFrame(index=dates,
                         data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
                         )
 
-    temp = select_resample(temp, start_date, end_date, frequency, 'mean')
-    out_rch = temp.values.reshape(rch.shape)
-    assert np.isclose(out_rch.mean(axis=0), rch.mean(axis=0)).all()
-    return dates, out_rch
-
-
-# todo compare histoical recharge to lysimiter and look at the data incl zonally
-#  "G:\Shared drives\YMULT_small_projects\Z22031HAW_hawea-model\Data\Hawea lysimeter data processing - June 2014.xlsx"
+    temp = select_resample(temp, start_date, end_date, frequency, fun)
+    out_rch = temp.values.reshape((len(temp), *rch.shape[1:]))
+    if fun == 'mean':
+        assert np.isclose(np.nanmean(out_rch, axis=0), np.nanmean(rch, axis=0)).all()
+    elif fun == 'sum':
+        assert np.isclose(np.nansum(out_rch, axis=0), np.nansum(rch, axis=0)).all()
+    return temp.index.values, out_rch
 
 if __name__ == '__main__':
-    # for y in [2015, 2020, 2021]:
-    #     t = get_irrigation_code(y, recalc=True)
-    #     smt.plot.plt_matrix(t,title=y)
-    # smt.plot.show()
-    get_irrig_avaliblity(1, plot=True)
-    get_historical_rch_model_results(limited_irrigation=False, recalc=False)
-    data_checks()
+    for k in [True, False]:
+        get_historical_rch_model_results(data_source='historical', limited_irrigation=k)
+        for startyear in range(1970, 2020, 10):
+            get_historical_rch_model_results(data_source='era5', limited_irrigation=k,
+                                             from_water_year=startyear, to_water_year=startyear + 10)
+    # data_checks()

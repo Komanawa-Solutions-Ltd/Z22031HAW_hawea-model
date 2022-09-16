@@ -77,7 +77,7 @@ def get_pumping_locs():
     return data
 
 
-def data_checks():  # TODO discuss with Jens to make sure this makes sense
+def data_checks():
     import matplotlib.pyplot as plt
     from model_build.project_model_tools import smt
     pumping_y = get_historical_pumping_data(None, None, 'Y')

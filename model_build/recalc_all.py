@@ -48,4 +48,5 @@ if __name__ == '__main__':
     get_well_flowmeter_mapper(recalc=True)
     get_historical_pumping_data(None, None, recalc=True)
     get_soil_classes(recalc=True)
-    get_historical_rch_model_results(recalc=True)
+    get_historical_rch_model_results(recalc=True,limited_irrigation=True)
+    get_historical_rch_model_results(recalc=True,limited_irrigation=False)
