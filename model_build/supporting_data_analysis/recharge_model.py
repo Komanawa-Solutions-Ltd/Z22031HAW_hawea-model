@@ -114,7 +114,7 @@ irrig_min_irrig_return = {
 }
 
 
-def get_met_data(start_date, end_date, frequency='D'):  # todo get a longer record either from ORC or ERA5-land
+def get_met_data(start_date, end_date, frequency='D'):
     data = pd.read_csv(base_model_build_data_dir.joinpath('Rainfall_Hawea.csv'))
     data.loc[:, 'datetime'] = dt = pd.to_datetime(data.loc[:, 'Date'], format='%d/%m/%Y')
     data.drop(columns='Date', inplace=True)
@@ -582,7 +582,7 @@ def get_rch(start_date, end_date, frequency='D', limited_irrigation=True, recalc
         assert np.isclose(np.nansum(out_rch, axis=0), np.nansum(rch, axis=0)).all()
     return temp.index.values, out_rch
 
-if __name__ == '__main__':
+if __name__ == '__main__': # todo check diffs on recharge between era5
     for k in [True, False]:
         get_historical_rch_model_results(data_source='historical', limited_irrigation=k)
         for startyear in range(1970, 2020, 10):
