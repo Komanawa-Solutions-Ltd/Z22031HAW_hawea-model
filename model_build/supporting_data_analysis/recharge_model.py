@@ -2,6 +2,7 @@
 created matt_dumont 
 on: 2/08/22
 """
+import datetime
 import warnings
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -16,6 +17,7 @@ from model_build.supporting_data_analysis.get_pumping_data import _load_usage_da
 from model_build.zones import get_model_zones
 from copy import deepcopy
 import gc
+from scipy.stats import linregress
 
 irrigated_area_dir = base_model_build_data_dir.joinpath('irrigated_area')
 irrigated_area_dir.mkdir(exist_ok=True)
@@ -130,7 +132,7 @@ def get_met_data(start_date, end_date, frequency='D'):
     return use_data
 
 
-def get_era5_land():
+def _get_raw_era5_land():
     file_paths = ['era5_potential_et.nc',
                   'era5_precipitation.nc',
                   'era5_reference_et.nc', ]
@@ -146,9 +148,36 @@ def get_era5_land():
             data = np.array(ncd.variables[var]).mean(axis=(1, 2))
             data[data < 0] = 0
             outdata[var] = pd.Series(data=data, index=t)
-
     outdata = pd.DataFrame(outdata)
     return outdata
+
+
+def get_era5_land(correct_pet=True, recalc=False):
+    if correct_pet:
+        processed_path = processed_model_build_data_dir.joinpath('corrected_era5_data.csv')
+        if processed_path.exists() and not recalc:
+            data = pd.read_csv(processed_path, index_col=0)
+            data.index = pd.to_datetime(data.index)
+            return data
+
+        from sklearn.linear_model import LinearRegression
+        era5 = _get_raw_era5_land()
+        era5.index = pd.to_datetime(era5.index).date
+        met_data = get_met_data(None, None)
+        met_data.index = pd.to_datetime(met_data.index).date
+        use_dates = sorted(list(set(era5.index).intersection(met_data.index)))
+        regr = LinearRegression()
+        x = era5.loc[use_dates, ['potential_et']]
+        y = met_data.loc[use_dates, 'PET']
+        regr.fit(x, y)
+        print(regr.score(x, y))
+        era5.loc[:, 'uncor_potential_et'] = xall = era5.loc[:, 'potential_et']
+        era5.loc[:, 'potential_et'] = regr.predict(xall.values[:,np.newaxis])
+        era5.to_csv(processed_path)
+        era5.index = pd.to_datetime(era5.index)
+        return era5
+    else:
+        return _get_raw_era5_land()
 
 
 def _process_irrigated_area():
@@ -425,12 +454,12 @@ def get_irrigation_code(y, recalc=False):
 
 
 def get_historical_rch_model_results(data_source='historical', limited_irrigation=False, recalc=False,
-                                     from_water_year=None, to_water_year=None):
+                                     from_year=None, to_year=None):
     assert data_source in ['historical', 'era5']
-    if from_water_year is None:
-        assert to_water_year is None
+    if from_year is None:
+        assert to_year is None
     else:
-        assert to_water_year is not None
+        assert to_year is not None
 
     if limited_irrigation:
         irrigation_record_dir = processed_model_build_data_dir.joinpath(
@@ -448,11 +477,11 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
         data.rename(columns={'precipitation': 'Rainfall', 'potential_et': 'PET'}, inplace=True)
     else:
         raise ValueError(f'bad data source: {data_source}')
+    if from_year is not None:
+        data = data.loc[(data.index.year <= to_year) & (data.index.year >= from_year)]
+
     data.loc[:, 'water_year'] = (data.index + pd.DateOffset(months=-6)).year
     water_years = data.water_year.unique()
-    if from_water_year is not None:
-        water_years = water_years[(water_years <= to_water_year) & (water_years >= from_water_year)]
-
     files = [irrigation_record_dir.joinpath(f'{y}.nc') for y in water_years]
 
     if all([e.exists() for e in files]) and not recalc:
@@ -466,6 +495,11 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
                 data.append(np.array(ncd.variables['recharge']))
         data = np.concatenate(data, axis=0)
         dates = np.concatenate(dates, axis=0)
+
+        if from_year is not None:
+            idx = (pd.Series(dates).dt.year >= from_year) & (pd.Series(dates).dt.year <= to_year)
+            dates = dates[idx]
+            data = data[idx]
 
         return dates, data
 
@@ -563,12 +597,54 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
         gc.collect()
 
     outdata = np.concatenate(outdata, axis=0)
-    dates = np.concatenate(outdata, axis=0)
+    dates = np.concatenate(dates, axis=0)
+    if from_year is not None:
+        idx = (pd.Series(dates).dt.year >= from_year) & (pd.Series(dates).dt.year <= to_year)
+        dates = dates[idx]
+        outdata = outdata[idx]
     return dates, outdata
 
 
-def get_rch(start_date, end_date, frequency='D', limited_irrigation=True, recalc=False, fun='mean'):
-    dates, rch = get_historical_rch_model_results(limited_irrigation=limited_irrigation, recalc=recalc)
+def get_weekly_plus_era5_rch(start_date=None, end_date=None, frequency='W', limited_irrigation=False, fun='mean'):
+    if start_date is None:
+        start_date = datetime.date(1950, 1, 1)
+
+    if end_date is None:
+        end_date = datetime.date(2020, 12, 31)
+
+    start_water_year = start_date.year
+    end_water_year = end_date.year
+    outdates, outdata = [], []
+    num_years = 5
+    for sy in range(start_water_year, end_water_year, num_years):
+        dates, rch = get_historical_rch_model_results('era5', limited_irrigation=limited_irrigation,
+                                                      from_year=sy, to_year=sy + num_years)
+
+        temp = pd.DataFrame(index=dates,
+                            data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
+                            )
+
+        temp = select_resample(temp, None, None, frequency, fun)
+        out_rch = temp.values.reshape((len(temp), *rch.shape[1:]))
+        outdata.append(out_rch)
+        outdates.append(temp.index)
+
+    outdates = np.concatenate(outdates)
+    outdata = np.concatenate(outdata, axis=0)
+
+    idx = pd.Series(outdates).duplicated()
+    outdates = outdates[~idx]
+    outdata = outdata[~idx]
+    outdates = pd.to_datetime(outdates)
+    idx = (outdates >= pd.to_datetime(start_date)) & (outdates <= pd.to_datetime(end_date))
+    outdates = outdates[idx]
+    outdata = outdata[idx]
+
+    return outdates, outdata
+
+
+def get_rch(start_date, end_date, frequency='D', limited_irrigation=False, recalc=False, fun='mean'):
+    dates, rch = get_historical_rch_model_results('historical', limited_irrigation=limited_irrigation, recalc=recalc)
 
     temp = pd.DataFrame(index=dates,
                         data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
@@ -576,16 +652,14 @@ def get_rch(start_date, end_date, frequency='D', limited_irrigation=True, recalc
 
     temp = select_resample(temp, start_date, end_date, frequency, fun)
     out_rch = temp.values.reshape((len(temp), *rch.shape[1:]))
-    if fun == 'mean':
-        assert np.isclose(np.nanmean(out_rch, axis=0), np.nanmean(rch, axis=0)).all()
-    elif fun == 'sum':
-        assert np.isclose(np.nansum(out_rch, axis=0), np.nansum(rch, axis=0)).all()
     return temp.index.values, out_rch
 
-if __name__ == '__main__': # todo check diffs on recharge between era5
+
+if __name__ == '__main__':  # todo check diffs on recharge between era5
+    get_era5_land(True, False)
     for k in [True, False]:
         get_historical_rch_model_results(data_source='historical', limited_irrigation=k)
-        for startyear in range(1970, 2020, 10):
+        for startyear in range(1949, 2020, 10):
             get_historical_rch_model_results(data_source='era5', limited_irrigation=k,
-                                             from_water_year=startyear, to_water_year=startyear + 10)
+                                             from_year=startyear, to_year=startyear + 10, recalc=True)
     # data_checks()

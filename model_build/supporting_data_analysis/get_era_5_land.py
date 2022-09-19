@@ -7,6 +7,7 @@ import cdsapi
 from pathlib import Path
 
 if __name__ == '__main__':
+    # keynote used tethys instead
     c = cdsapi.Client()
     y = 1950
     c.retrieve(
@@ -50,5 +51,3 @@ if __name__ == '__main__':
             ],
         },
         Path.home().joinpath('Downloads', f'hawea_{y}.nc'))
-
-    # todo do I need this????
