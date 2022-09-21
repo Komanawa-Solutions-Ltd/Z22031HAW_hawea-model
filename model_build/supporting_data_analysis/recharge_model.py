@@ -11,7 +11,7 @@ import pandas as pd
 import netCDF4 as nc
 from project_base import base_model_build_data_dir, processed_model_build_data_dir, modelling_dir
 from model_build.project_model_tools import smt, grid_space
-from model_build.utils import select_resample, get_colors
+from model_build.utils import select_resample, get_colors, season_mapper, int_season_mapper
 from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
 from model_build.supporting_data_analysis.get_pumping_data import _load_usage_data
 from model_build.zones import get_model_zones
@@ -152,8 +152,8 @@ def _get_raw_era5_land():
     return outdata
 
 
-def get_era5_land(correct_pet=True, recalc=False):
-    if correct_pet:
+def get_era5_land(correct=True, recalc=False):
+    if correct:
         processed_path = processed_model_build_data_dir.joinpath('corrected_era5_data.csv')
         if processed_path.exists() and not recalc:
             data = pd.read_csv(processed_path, index_col=0)
@@ -162,17 +162,44 @@ def get_era5_land(correct_pet=True, recalc=False):
 
         from sklearn.linear_model import LinearRegression
         era5 = _get_raw_era5_land()
+        era5.loc[:, 'season'] = [int_season_mapper[m] for m in era5.index.month]
         era5.index = pd.to_datetime(era5.index).date
         met_data = get_met_data(None, None)
         met_data.index = pd.to_datetime(met_data.index).date
         use_dates = sorted(list(set(era5.index).intersection(met_data.index)))
         regr = LinearRegression()
-        x = era5.loc[use_dates, ['potential_et']]
+        x = era5.loc[use_dates, ['potential_et', 'season']]
         y = met_data.loc[use_dates, 'PET']
         regr.fit(x, y)
+        print('r2 for pet conversion')
         print(regr.score(x, y))
-        era5.loc[:, 'uncor_potential_et'] = xall = era5.loc[:, 'potential_et']
-        era5.loc[:, 'potential_et'] = regr.predict(xall.values[:,np.newaxis])
+        era5.loc[:, 'uncor_potential_et'] = era5.loc[:, 'potential_et']
+        xall = era5.loc[:, ['potential_et', 'season']]
+        era5.loc[:, 'potential_et'] = regr.predict(xall)
+        era5.loc[era5.potential_et < 0, 'potential_et'] = 0
+
+        # correct rainfall
+        met_data.rename(columns={'Rainfall': 'precipitation'}, inplace=True)
+        for df in [era5, met_data]:
+            df.loc[:, 'month'] = [e.month for e in df.index]
+            df.loc[:, 'year'] = [e.year for e in df.index]
+
+        met_data = met_data.loc[use_dates]
+        era5_temp = era5.loc[use_dates]
+        era5_temp.index = pd.to_datetime(era5_temp.index)
+        met_data.index = pd.to_datetime(met_data.index)
+        weekly_era = era5_temp.resample('W').mean()
+        weekly_met = met_data.resample('W').mean()
+        x = weekly_era.loc[:, ['precipitation']]
+        y = weekly_met.loc[:, ['precipitation']]
+        regr = LinearRegression()
+        regr.fit(x, y)
+        print('r2 for precip conversion')
+        print(regr.score(x, y))
+        era5.loc[:, 'uncor_precipitation'] = xall = era5.loc[:, 'precipitation']
+        era5.loc[:, 'precipitation'] = regr.predict(xall.values[:, np.newaxis])
+        era5.loc[era5.precipitation < 0, 'precipitation'] = 0
+
         era5.to_csv(processed_path)
         era5.index = pd.to_datetime(era5.index)
         return era5
@@ -473,15 +500,17 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
     if data_source == 'historical':
         data = get_met_data('2012-07-01', None)
     elif data_source == 'era5':
+        warnings.warn('this data is uncorrected and under estimates recharge significantly')
         data = get_era5_land()
         data.rename(columns={'precipitation': 'Rainfall', 'potential_et': 'PET'}, inplace=True)
     else:
         raise ValueError(f'bad data source: {data_source}')
-    if from_year is not None:
-        data = data.loc[(data.index.year <= to_year) & (data.index.year >= from_year)]
-
     data.loc[:, 'water_year'] = (data.index + pd.DateOffset(months=-6)).year
-    water_years = data.water_year.unique()
+    if from_year is not None:
+        temp_data = data.loc[(data.index.year <= to_year + 1) & (data.index.year >= from_year - 1)]
+    else:
+        temp_data = data
+    water_years = temp_data.water_year.unique()
     files = [irrigation_record_dir.joinpath(f'{y}.nc') for y in water_years]
 
     if all([e.exists() for e in files]) and not recalc:
@@ -620,7 +649,7 @@ def get_weekly_plus_era5_rch(start_date=None, end_date=None, frequency='W', limi
         dates, rch = get_historical_rch_model_results('era5', limited_irrigation=limited_irrigation,
                                                       from_year=sy, to_year=sy + num_years)
 
-        temp = pd.DataFrame(index=dates,
+        temp = pd.DataFrame(index=pd.to_datetime(dates),
                             data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
                             )
 
@@ -643,6 +672,175 @@ def get_weekly_plus_era5_rch(start_date=None, end_date=None, frequency='W', limi
     return outdates, outdata
 
 
+def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limited_irrigation=False,
+                                      frequency='W', fun='mean'):
+    """
+    # keynote corrected recharge is a little low for dryland, but about right for irrigated.
+    :param start_date: None or start date
+    :param end_date: None or end date
+    :param recalc: boolean recaclualte
+    :param limited_irrigation: boolean limit amount of irrigation applied
+    :param frequency: pd freq code (weekly plus)
+    :param fun: function to resample if needed
+    :return:
+    """
+    if frequency == 'D':
+        raise ValueError('must be weekly plus')
+    if limited_irrigation:
+        lm_path = ''
+    else:
+        lm_path = 'un'
+
+    processed_rch_path = processed_model_build_data_dir.joinpath(
+        f'corrected_weekly_historical_era5_rch_{lm_path}limited_irr.npz')
+    processed_dates_path = processed_model_build_data_dir.joinpath(
+        f'corrected_weekly_historical_era5_rch_dates_{lm_path}limited_irr.npz')
+    if processed_dates_path.exists() and processed_rch_path.exists() and not recalc:
+        dates = np.load(processed_dates_path).get('arr_0')
+        rch = np.load(processed_rch_path).get('arr_0')
+
+        temp = pd.DataFrame(index=pd.to_datetime(dates),
+                            data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
+                            )
+
+        temp = select_resample(temp, start_date, end_date, frequency, fun, start_ends_out_bounds='warn')
+        idx = temp.isna().all(axis=1)
+        if any(idx):
+            warnings.warn(f'na values for full model in: {dates[idx]}')
+
+        out_rch = temp.values.reshape((len(temp), *rch.shape[1:]))
+
+        return temp.index, out_rch
+    print(
+        'ignore user warnings re uncorrected data.  correcting uncorrected data so I need to get the uncorrected data')
+    get_weekly_plus_era5_rch()
+    historical_dates, historical_rch = get_rch(None, None, frequency='W', limited_irrigation=False)
+    era5_dates, era5_rch_raw = get_weekly_plus_era5_rch(start_date=datetime.date(2010, 1, 1),
+                                                        end_date=datetime.date(2022, 1, 1),
+                                                        limited_irrigation=False, frequency='W')
+    era5_dates = pd.to_datetime(era5_dates)
+
+    era5_season = np.array([int_season_mapper[e.month] for e in era5_dates])
+    era5_year = np.array([e.year for e in era5_dates])
+
+    historical_dates = pd.to_datetime(historical_dates)
+    hist_year = np.array([e.year for e in historical_dates])
+
+    expected_dates = np.array(sorted(set(era5_dates).intersection(historical_dates)))
+
+    era5_idx = np.array([e in expected_dates for e in era5_dates])
+    hist_idx = np.array([e in expected_dates for e in historical_dates])
+    assert (historical_dates[hist_idx] == era5_dates[era5_idx]).all()
+    ibound = smt.get_no_flow(0)
+    irrigated = {}
+    for y in [2015, 2020, 2021]:
+        t = get_irrigation_code(y, recalc=True)
+        irrigated[y] = (t >= 0) & (ibound == 1)
+
+    irrigated_era5_fit_data = []
+    irrigated_era5_fit_data_season = []
+    irrigated_hist_fit_data = []
+    unirrigated_era5_fit_data = []
+    unirrigated_era5_fit_data_season = []
+    unirrigated_hist_fit_data = []
+    for y in [2015, 2020, 2021]:
+        if y <= 2015:
+            era5_year_idx = (era5_year <= y)
+            hist_year_idx = (hist_year <= y)
+        elif y <= 2020:
+            era5_year_idx = (era5_year <= 2020) & (era5_year > 2015)
+            hist_year_idx = (hist_year <= 2020) & (hist_year > 2015)
+        elif y >= 2021:
+            era5_year_idx = (era5_year >= 2021)
+            hist_year_idx = (hist_year >= 2021)
+        else:
+            raise ValueError('shouldnt get here')
+
+        t = np.nanmean(era5_rch_raw[era5_idx & era5_year_idx][:, irrigated[y]], axis=1)
+        irrigated_era5_fit_data.append(t)
+        irrigated_era5_fit_data_season.append(era5_season[era5_idx & era5_year_idx])
+        t2 = np.nanmean(historical_rch[hist_idx & hist_year_idx][:, irrigated[y]], axis=1)
+        irrigated_hist_fit_data.append(t2)
+
+        # unirrigated_data
+        t = np.nanmean(era5_rch_raw[era5_idx & (era5_year == y)][:, ~irrigated[y] & (ibound == 1)], axis=1)
+        unirrigated_era5_fit_data.append(t)
+        unirrigated_era5_fit_data_season.append(era5_season[era5_idx & (era5_year == y)])
+        t2 = np.nanmean(historical_rch[hist_idx & (hist_year == y)][:, ~irrigated[y] & (ibound == 1)], axis=1)
+        unirrigated_hist_fit_data.append(t2)
+
+    irrigated_era5_fit_data = np.concatenate(irrigated_era5_fit_data)
+    irrigated_era5_fit_data_season = np.concatenate(irrigated_era5_fit_data_season)
+    irrigated_hist_fit_data = np.concatenate(irrigated_hist_fit_data)
+    unirrigated_era5_fit_data = np.concatenate(unirrigated_era5_fit_data)
+    unirrigated_era5_fit_data_season = np.concatenate(unirrigated_era5_fit_data_season)
+    unirrigated_hist_fit_data = np.concatenate(unirrigated_hist_fit_data)
+
+    # make fit
+    from sklearn.linear_model import LinearRegression
+    regr_irrig = LinearRegression()
+    x = np.concatenate((irrigated_era5_fit_data[:, np.newaxis], irrigated_era5_fit_data_season[:, np.newaxis]), axis=1)
+    y = irrigated_hist_fit_data
+    regr_irrig.fit(x, y)
+    print('irrigated r2', regr_irrig.score(x, y))
+
+    regr_unirrig = LinearRegression()
+    x = unirrigated_era5_fit_data[:, np.newaxis]
+    y = unirrigated_hist_fit_data
+    regr_unirrig.fit(x, y)
+    print('unirrigated r2', regr_unirrig.score(x, y))
+
+    # predict new data
+    outdata = np.full(era5_rch_raw.shape, np.nan)
+    for y in [2015, 2020, 2021]:
+        if y <= 2015:
+            era5_year_idx = (era5_year <= y)
+
+        elif y <= 2020:
+            era5_year_idx = (era5_year <= 2020) & (era5_year > 2015)
+        elif y >= 2021:
+            era5_year_idx = (era5_year >= 2021)
+        else:
+            raise ValueError('shouldnt get here')
+        # irrigated
+        data = era5_rch_raw[era5_year_idx][:, irrigated[y]]
+        expect_shape = data.shape
+        seasons = np.repeat(era5_season[era5_year_idx][:, np.newaxis], expect_shape[-1], axis=1)
+        assert data.shape == seasons.shape
+        temp = regr_irrig.predict(np.concatenate((data.flatten()[:, np.newaxis],
+                                                  seasons.flatten()[:, np.newaxis]), axis=1))
+        temp2 = outdata[era5_year_idx]
+        temp2[:, irrigated[y]] = temp.reshape(expect_shape)
+        outdata[era5_year_idx] = temp2
+
+        # unirrigated
+        data = era5_rch_raw[era5_year_idx][:, ~irrigated[y] & (ibound == 1)]
+        expect_shape = data.shape
+        seasons = np.repeat(era5_season[era5_year_idx][:, np.newaxis], expect_shape[-1], axis=1)
+        temp = regr_unirrig.predict(data.flatten()[:, np.newaxis])
+        temp2 = outdata[era5_year_idx]
+        temp2[:, ~irrigated[y] & (ibound == 1)] = temp.reshape(expect_shape)
+        outdata[era5_year_idx] = temp2
+        gc.collect()
+    idx = np.isfinite(outdata[:, ibound == 1]).all(axis=1)
+    assert idx.all(), f'na values for full model in: {era5_dates[idx]}'
+
+    np.savez_compressed(processed_rch_path, outdata)
+    np.savez_compressed(processed_dates_path, era5_dates)
+
+    temp = pd.DataFrame(index=pd.to_datetime(era5_dates),
+                        data=outdata.reshape(outdata.shape[0], np.prod(outdata.shape[1:]))
+                        )
+
+    temp = select_resample(temp, start_date, end_date, frequency, fun)
+    idx = temp.isna().all(axis=1)
+    if any(idx):
+        warnings.warn(f'na values for full model in: {era5_dates[idx]}')
+    out_rch = temp.values.reshape((len(temp), *outdata.shape[1:]))
+
+    return temp.index, out_rch
+
+
 def get_rch(start_date, end_date, frequency='D', limited_irrigation=False, recalc=False, fun='mean'):
     dates, rch = get_historical_rch_model_results('historical', limited_irrigation=limited_irrigation, recalc=recalc)
 
@@ -655,11 +853,17 @@ def get_rch(start_date, end_date, frequency='D', limited_irrigation=False, recal
     return temp.index.values, out_rch
 
 
-if __name__ == '__main__':  # todo check diffs on recharge between era5
-    get_era5_land(True, False)
-    for k in [True, False]:
-        get_historical_rch_model_results(data_source='historical', limited_irrigation=k)
-        for startyear in range(1949, 2020, 10):
-            get_historical_rch_model_results(data_source='era5', limited_irrigation=k,
-                                             from_year=startyear, to_year=startyear + 10, recalc=True)
+if __name__ == '__main__':
+    rerun_rch_model = False
+    if rerun_rch_model:
+        get_era5_land(True, True)
+        get_historical_rch_model_results(data_source='historical', limited_irrigation=False, recalc=True)
+        get_historical_rch_model_results(data_source='historical', limited_irrigation=True, recalc=True)
+        get_historical_rch_model_results(data_source='era5', limited_irrigation=False, recalc=True)
+        get_historical_rch_model_results(data_source='era5', limited_irrigation=True, recalc=True)
+
+    get_corrected_historical_era5_rch(None, None, recalc=True, limited_irrigation=False)
+    get_corrected_historical_era5_rch(None, None, recalc=True, limited_irrigation=True)
+
+    raise NotImplementedError
     # data_checks()
