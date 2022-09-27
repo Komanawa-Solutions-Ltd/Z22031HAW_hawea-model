@@ -29,9 +29,9 @@ def select_resample(data, start_date, end_date, frequency, func='mean', start_en
     else:
         if pd.to_datetime(end_date) > ht.max():
             if start_ends_out_bounds =='raise':
-                raise ValueError(f'start date {start_date} earlier than dataset start date: {ht.min()}')
+                raise ValueError(f'end date {end_date} earlier than dataset start date: {ht.max()}')
             elif start_ends_out_bounds =='warn':
-                warnings.warn(f'start date {start_date} earlier than dataset start date: {ht.min()}')
+                warnings.warn(f'end date {end_date} earlier than dataset start date: {ht.max()}')
             elif start_ends_out_bounds =='pass':
                 pass
             else:

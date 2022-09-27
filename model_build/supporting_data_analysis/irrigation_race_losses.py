@@ -17,10 +17,11 @@ def get_race_locs(recalc=default_recalc):
     # do I need to manage luggate-tarras road races, nope
     # exclude lagoon creek races instead manage as additional points of well inflow
     if not recalc and race_loc_data_path.exists():
-        outdata = pd.read_csv(race_loc_data_path)
+        outdata = pd.read_csv(race_loc_data_path, index_col=0)
         dtypes = {
             'i': 'int64',
             'j': 'int64',
+            'k': 'int64'
         }
 
         for k, v in dtypes.items():
@@ -31,6 +32,7 @@ def get_race_locs(recalc=default_recalc):
                                  'dummy')
     outdata.loc[:, 'param'] = 'all'
     outdata.drop(columns='dummy', inplace=True)
+    outdata.loc[:, 'k'] = 0
     outdata.to_csv(race_loc_data_path)
 
     return outdata

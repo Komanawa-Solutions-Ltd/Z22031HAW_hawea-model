@@ -64,5 +64,6 @@ def get_lake_heads(start_date, end_date, frequency='D'):
 
 
 if __name__ == '__main__':
+    get_lake_hawea_loc(True)
     t = get_lake_heads(None, None)
     lake_checks()

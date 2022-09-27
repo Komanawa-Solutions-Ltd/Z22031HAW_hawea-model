@@ -3,6 +3,7 @@
  Author: Matt Hanson
  Created: 03-Oct-19 8:52 AM
  """
+import time
 
 import flopy
 import os
@@ -13,10 +14,17 @@ from model_tools.regular_modeltools import ModelTools_RegularGrid
 from model_tools.time_discretization import TimeDis
 
 
-def build_calibration_model(smt, tdis, exe_name, model_name, model_ws, hk, vka, layer_avg, chani, constant_heads, rch=None,
-                            options='COMPLEX',
-                            drn_spd=None, well_spd=None, nwt_kwargs={},
-                            hani=None, ss=0, sy=0, mfv='mfnwt', run_model=False):
+def build_model(smt, tdis, exe_name, model_name, model_ws,
+                hk, vka, layer_avg,
+                ss, sy,
+                chani, constant_heads,
+                rch=None,
+                ghb_spd=None,  # todo incorporate
+                riv_spd=None,  # todo incorporate
+                options='COMPLEX',
+                drn_spd=None, well_spd=None, nwt_kwargs={},
+                hani=None, mfv='mfnwt', run_model=False,
+                verbose=False, t=None):
     """
     build modflow model
     :param smt: instance of ModelTools
@@ -68,6 +76,10 @@ def build_calibration_model(smt, tdis, exe_name, model_name, model_ws, hk, vka, 
     :param run_model: boolean, if True run model and return converged string, other wise do not run and return m
     :return: 'model: {}, converged: {}'.format(model_name, boolean) (run_model=False) or m (run_model=False)
     """
+    extra = ''
+    if t is None:
+        t = time.time()
+        extra = ' from build model call'
     assert isinstance(smt, ModelTools_RegularGrid)
     assert isinstance(tdis, TimeDis)
     if not os.path.exists(model_ws):
@@ -93,12 +105,27 @@ def build_calibration_model(smt, tdis, exe_name, model_name, model_ws, hk, vka, 
     if well_spd is not None:
         assert isinstance(well_spd, dict), 'well spd needs to be a dictionary'
         _create_wel_package(m, well_spd)
-
+    if riv_spd is not None:
+        assert isinstance(riv_spd, dict)
+        _create_riv_package(m, riv_data=riv_spd)
+    if ghb_spd is not None:
+        _create_ghb_package(m, ghb_spd)
     flopy.modflow.ModflowOc(m, stress_period_data={(0, 0): ['save head', 'save budget']})
-
+    if verbose:
+        print(f'took {time.time() - t}s to build the model in python{extra}')
+    t = time.time()
     if run_model:
+        if verbose:
+            print('writing_model')
         m.write_input()
+        if verbose:
+            print(f'took {time.time() - t}s to write the model')
+        t = time.time()
+        if verbose:
+            print('running_model')
         m.run_model()
+        if verbose:
+            print(f'took {time.time() - t}s to run the model in modflow')
 
         out = 'model: {}, converged: {}'.format(model_name,
                                                 smt.modelchecks.modflow_converged(
@@ -330,29 +357,42 @@ def _create_nwt_package(m, options, headtol=0.01, fluxtol=500, maxiterout=100, t
                                    )
 
 
+def _create_ghb_package(m, ghb_data):
+    flopy.modflow.ModflowGhb(
+        model=m,
+        ipakcb=740,
+        stress_period_data=ghb_data,
+    )
+
+
 def _create_drn_package(m, drn_spd):
     drn = flopy.modflow.ModflowDrn(m, stress_period_data=drn_spd)
 
 
-def _create_rch_package(m, rch):
+def _create_rch_package(m, rch_data):
     """
     create and add the recharge package
     :param m: a flopy model instance
     :param rch: recharge in m3/day either numeric or array with shape (wai_smt.rows, wai_smt.cols)
     :return:
     """
-    zone_recharge = copy(rch)  # m3/day
-
-    if zone_recharge.max() > 23987 / 365 / 1000:
-        raise ValueError('recharge is more than 1m/year greater than the maximum recorded annual '
-                         'rainfall, check your units')
 
     rch = flopy.modflow.mfrch.ModflowRch(m,
                                          nrchop=3,  # recharege to highest cell
                                          ipakcb=740,  # save budget
-                                         rech=zone_recharge,
+                                         rech=rch_data,
                                          # does this need to be a dictionay?, no which is wierd
                                          unitnumber=716)
+
+
+def _create_riv_package(m, riv_data):
+    riv = flopy.modflow.ModflowRiv(
+        model=m,
+        ipakcb=740,
+        stress_period_data=riv_data,
+        unitnumber=718,
+
+    )
 
 
 def _create_wel_package(m, well_spd):

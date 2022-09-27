@@ -2,30 +2,114 @@
 created matt_dumont 
 on: 1/08/22
 """
+from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
+    get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
+    get_river_loc_data, get_lake_hawea_loc, get_lake_heads
+import flopy
 
-# todo needed, how
-def get_mnwell_data(hill_data, pumping_data):
+
+def get_well_data(tdis, hill_param, race_param, return_unique_spd=False):
     """
 
-    :param hill_data: hillslope input data, see get_hillside_inflows
-    :param pumping_data:  pumping_data input data, see get_pumping_wells()
+    :param tdis: time discritsation object
+    :param hill_param: hill slope multipler
+    :param race_param: race multiplier
+    :param return_unique_spd: bool If False return data to go into model, if True then return dictionary of
+                              different data.
     :return:
     """
+    # race data
+    race_locs = get_race_locs()
+    race_flow = get_race_well_losses(*tdis.date_limits)
+    # add parameter
+    race_flow *= race_param['all']
+    race_spd = tdis.map_data_locations(race_locs, {'flux': race_flow},
+                                       flopy.modflow.ModflowWel.get_default_dtype(),
+                                       apply_to_all=True,
+                                       group_cells=True,
+                                       grouper='sum'
+                                       )
 
-    # transform into mnwell data
+    # hillside data
+    hillside_locs = get_hillside_catchment_locs()
+    hillside_flow = get_hillside_flows(*tdis.date_limits)
+    # add parameter
+    for k, v in hill_param.items():
+        use_keys = hillside_locs.loc[hillside_locs.param == k].index
+        hillside_flow.loc[:, use_keys] *= v
+    hill_spd = tdis.map_data_locations(hillside_locs, {'flux': hillside_flow},
+                                       flopy.modflow.ModflowWel.get_default_dtype(),
+                                       group_cells=True,
+                                       grouper='sum'
+                                       )
 
-    raise NotImplementedError
+    # pumping data
+    pumping_locs = get_pumping_locs()
+    pumping_flow = get_historical_pumping_data(*tdis.date_limits)
+    pumping_flow *= -1
+    pumping_flow.fillna(0, inplace=True)
+    pumping_spd = tdis.map_data_locations(pumping_locs, {'flux': pumping_flow},
+                                          flopy.modflow.ModflowWel.get_default_dtype(),
+                                          group_cells=True,
+                                          grouper='sum'
+                                          )
+    if return_unique_spd:
+        out = {'race': race_spd, 'hill': hill_spd, 'pump': pumping_spd}
+        return out
+    else:
+        out_spd = tdis.merge_spd((race_spd, hill_spd, pumping_spd),
+                                 flopy.modflow.ModflowWel.get_default_dtype(),
+                                 group_cells=True,
+                                 grouper='sum')
+        return out_spd
 
-def get_rch_data():
-    raise NotImplementedError
 
-def get_ghb_data():
+def get_rch_data(tdis):
+    rch_dates, rch_raw = get_rch(*tdis.date_limits, frequency='d')  # tdis manges this
+    rch_raw *= 1 / 1000  # convert from mm/day to m/day
+    rch_data = tdis.map_array_to_spd(rch_dates, rch_raw)
+    return rch_data
+
+
+def get_ghb_data(tdis, lake_params):
+    lake_locs = get_lake_hawea_loc()
+    lake_locs.loc[:, 'cond'] = lake_params['all']
+    lake_hds = get_lake_heads(*tdis.date_limits)
 
     # import lake levels
-
+    flopy.modflow.ModflowGhb.get_default_dtype()
     # transform into GHB data
+    out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
+                                  flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
 
-    raise NotImplementedError
+    return out
 
-def get_stream_data():
-    raise NotImplementedError
+
+def get_riv_data(tdis, riv_params):
+    riv_locs = get_river_loc_data()
+    # add conductance value
+    riv_locs.loc[:, 'cond'] = riv_locs.param.replace(riv_params)
+
+    riv_stage = get_river_stage_data(*tdis.date_limits)
+
+    out = tdis.map_data_locations(riv_locs,
+                                  {'stage': riv_stage},
+                                  flopy.modflow.ModflowRiv.get_default_dtype(),
+                                  )
+    return out
+
+
+if __name__ == '__main__':
+    from optimisation.optimisation_period import tdis
+    from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_inital_lake_conductance
+
+    get_ghb_data(tdis, get_inital_lake_conductance(return_just_start=True))
+
+    get_riv_data(tdis, get_initial_riv_conductance(return_just_start=True))
+    b = get_well_data(tdis, hill_param={
+        # k: (initial, (low, high),
+        'south_east': 1,
+        'main': 1,
+        'maungawera': 1, }
+                      , race_param={'all': 1})
+    b = get_rch_data(tdis)

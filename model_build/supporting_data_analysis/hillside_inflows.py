@@ -26,10 +26,11 @@ flow_data_path = processed_model_build_data_dir.joinpath('hillside_flows.csv')
 
 def get_hillside_catchment_locs(recalc=False):
     if not recalc and catchment_loc_path.exists():
-        outdata = pd.read_csv(catchment_loc_path, dtype=int)
+        outdata = pd.read_csv(catchment_loc_path, index_col=0)
         dtypes = {
             'i': 'int64',
             'j': 'int64',
+            'k': 'int64',
             'px': float,
             'py': float,
             'mx': float,
@@ -78,6 +79,7 @@ def get_hillside_catchment_locs(recalc=False):
 
     outdata = outdata.drop(index='ss22')
 
+    outdata.loc[:, 'k'] = 0
     outdata.to_csv(catchment_loc_path)
     return outdata
 

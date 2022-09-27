@@ -25,6 +25,7 @@ def get_river_loc_data(recalc=default_recalc):
         dtypes = {
             'i': 'int64',
             'j': 'int64',
+            'k': 'int64',
             'dist': 'float64',
             'rbot': 'float64',
             'rname': 'str',
@@ -43,6 +44,7 @@ def get_river_loc_data(recalc=default_recalc):
     outdata.loc[outdata.rname == 'clutha', 'param'] = 'c1'
     for g in range(1, 4):
         outdata.loc[outdata.gage == g, 'param'] = f'h{g}'
+    outdata.loc[:, 'k'] = 0
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
@@ -145,11 +147,18 @@ def _print_flowlengths():
 def get_river_stage_data(start_date, end_date, frequency='D', recalc=False):
     if riv_stage_data_path.exists() and not recalc:
         outdata = pd.read_csv(riv_stage_data_path, index_col=0).astype(float)
+        outdata.index = pd.to_datetime(outdata.index)
         return select_resample(outdata, start_date, end_date, frequency, 'mean')
 
     loc_data = get_river_loc_data()
     stage_data = get_historical_stage_flow(None, None)
     stage_data.loc[:, 'month'] = stage_data.index.month
+    stage_data.loc[:, 'week'] = stage_data.index.isocalendar().week.astype(float)
+
+    # fill missing clutha stage data with week of year mean.
+    temp = stage_data.groupby('week').mean().clutha_luggate.to_dict()
+    idx = stage_data.clutha_luggate.isna()
+    stage_data.loc[idx, 'clutha_luggate'] = stage_data.loc[idx, 'week'].replace(temp)
 
     fig, ax = plt.subplots()
     ax.scatter(stage_data.loc[:, 'camphill_stage'], stage_data.loc[:, 'clutha_luggate'])

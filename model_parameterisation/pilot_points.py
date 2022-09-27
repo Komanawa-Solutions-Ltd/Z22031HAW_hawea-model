@@ -146,7 +146,7 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     sy[zones == 2] = sy_data['mangawera']
     sy[~idx] = 0
     assert np.isfinite(sy).all()
-    min_v = min(sy_data.values)
+    min_v = min(sy_data.values())
     sy[sy < min_v] = min_v
     sy[~idx] = 0
     sy = sy[np.newaxis]

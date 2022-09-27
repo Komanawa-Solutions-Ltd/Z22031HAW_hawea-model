@@ -150,6 +150,7 @@ def _lake_locs():
     lake = get_lake_array(True)
     lake_data = temp_smt.io.array_to_df(lake, 'drop')
     lake_data.drop(columns='drop', inplace=True)
+    lake_data.loc[:, 'k'] = 0
     return lake_data
 
 
@@ -250,6 +251,20 @@ def elv_calc():
     return out
 
 
+def get_top(recalc=False):
+    if recalc:
+        elv_calc()
+    out = np.loadtxt(processed_model_build_data_dir.joinpath('elv_db_top.txt'))
+    return out
+
+
+def get_bottom(recalc=False):
+    if recalc:
+        elv_calc()
+    out = np.loadtxt(processed_model_build_data_dir.joinpath('elv_db_bot.txt'))
+    return out
+
+
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              model_version_name, sdp, temp_file_dir,
                              rotation=0, layer_type=layer_type,
@@ -297,6 +312,7 @@ def export_model_boundary():
 
 
 if __name__ == '__main__':
+
     export_model_boundary()
     elv_calc()
     smt.plot.plt_matrix(smt.get_model_zeros(), base_map=True)
