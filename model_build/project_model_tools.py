@@ -3,7 +3,8 @@ created matt_dumont
 on: 19/07/22
 """
 from model_tools.regular_modeltools import ModelTools_RegularGrid
-from project_base import modelling_dir, unbacked_dir, base_model_build_data_dir, processed_model_build_data_dir
+from project_base import proj_root, modelling_dir, unbacked_dir, base_model_build_data_dir, \
+    processed_model_build_data_dir
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -272,6 +273,19 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 
+def get_starting_heads(recalc=False):  # TODO GET!
+    save_path = processed_model_build_data_dir.joinpath('start_heads.txt')
+    if save_path.exists() and not recalc:
+        return np.loadtxt(save_path)[np.newaxis]
+    strt_hds = smt.get_tops()[0]
+    scott_hds = smt.io.raster_to_array(proj_root.joinpath('scott_model/scott_model_files/scott_hds.tif'),
+                                       'average')
+    idx = scott_hds < strt_hds
+    strt_hds[idx] = scott_hds[idx]
+    np.savetxt(save_path, strt_hds)
+    return strt_hds[np.newaxis]
+
+
 def data_checks():
     contour_levels = range(200, 460, 10)
     smt.recalc_all_pickles()
@@ -312,7 +326,7 @@ def export_model_boundary():
 
 
 if __name__ == '__main__':
-
+    get_starting_heads(True)
     export_model_boundary()
     elv_calc()
     smt.plot.plt_matrix(smt.get_model_zeros(), base_map=True)

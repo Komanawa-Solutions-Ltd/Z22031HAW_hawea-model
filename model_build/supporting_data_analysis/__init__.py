@@ -9,5 +9,3 @@ from .irrigation_race_losses import get_race_locs, get_race_well_losses  # Finis
 from .recharge_model import get_rch  # Finished
 from .get_pumping_data import get_historical_pumping_data, get_pumping_locs  # Finished
 from .all_wells import get_all_wells  # Finished
-
-# todo make sure functions are in consistent fashion.

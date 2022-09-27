@@ -16,8 +16,8 @@ from model_tools.time_discretization import TimeDis
 
 def build_model(smt, tdis, exe_name, model_name, model_ws,
                 hk, vka, layer_avg,
-                ss, sy,
-                chani, constant_heads,
+                ss, sy, strt,
+                chani,
                 rch=None,
                 ghb_spd=None,  # todo incorporate
                 riv_spd=None,  # todo incorporate
@@ -94,7 +94,7 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
                                  verbose=False, )
 
     _create_dis_package(m, smt, tdis)
-    _create_bas_package(m, smt, constant_heads)
+    _create_bas_package(m, smt, strt)
     _create_lay_prop_package(m, smt, hk, vka, layer_avg, chani, hani=hani, ss=ss, sy=sy, mfv=mfv)
     _create_nwt_package(m, options=options, **nwt_kwargs)
     if rch is not None:
@@ -166,7 +166,7 @@ def _create_dis_package(m, smt, tdis):
                                          proj4_str=f'EPSG:{smt.epsg}')
 
 
-def _create_bas_package(m, smt, constant_heads):
+def _create_bas_package(m, smt, strt):
     """
     create and add the bas package
     :param m: a flopy model instance
@@ -175,7 +175,7 @@ def _create_bas_package(m, smt, constant_heads):
 
     bas = flopy.modflow.mfbas.ModflowBas(m,
                                          ibound=smt.get_no_flow(),
-                                         strt=_create_starting_heads(smt, constant_heads),
+                                         strt=strt,
                                          ifrefm=True,
                                          ixsec=False,
                                          ichflg=False,

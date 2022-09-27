@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.interpolate import RBFInterpolator
 from project_base import base_param_dir, processed_param_dir
 from model_build.project_model_tools import smt, get_lake_array
-from model_parameterisation.static_params import lake_sy, lake_kh
+from model_parameterisation.static_params import lake_sy
 from model_build.zones import get_param_zones
 import geopandas as gpd
 
@@ -89,10 +89,12 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
         # I chose to simply use RBF methods
         raise ValueError(f'unexpected method: {method}')
 
+    # undo the log
     kh = 10 ** kh
+    pilot_locs.loc[:, 'value'] = 10 ** (pilot_locs.loc[:, 'value'])
     # set lake values
     lake_array = get_lake_array()
-    kh[np.isfinite(lake_array)] = lake_kh
+    kh[np.isfinite(lake_array)] = kh_data['lake_conductance']
 
     # set sandy point & mangawera zones
     zones = get_param_zones()

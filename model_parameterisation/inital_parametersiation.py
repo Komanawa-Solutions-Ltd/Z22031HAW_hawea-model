@@ -24,30 +24,22 @@ def get_initial_riv_conductance(return_just_start=False):
             params[k] = v[0]
     return params
 
-
-def get_inital_lake_conductance(return_just_start=False):
-    # keynote lake sy & model ss and lake kh are set to be so small and large,
-    #  respectively, so as not to impact the model.
-    #  lake fluxes are entirely dependent on the GHB conductance
-    params = {'all': (1e4, (1e-2, 1e8))}  # todo review
-    if return_just_start:
-        for k, v in params.items():
-            params[k] = v[0]
-    return params
-
-
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model
     # keynote use log values
     start_val = (10, (0.01, 600))  # todo review
+    lake_val = (10, (0.01, 600))  # todo review
+
     # for reference scott's model ha min = 0.09, max = 300, median = 14
     if return_just_start:
         start_val = start_val[0]
+        lake_val = lake_val[0]
     pps = get_pilot_point_locations()
     pps = pps.loc[~np.in1d(pps.group, ['sandyhill', 'mangawera'])]
     kh_data = {
         'sandyhill': start_val,
         'mangawera': start_val,
+        'lake_conductance': lake_val
     }
 
     for i in pps.index:

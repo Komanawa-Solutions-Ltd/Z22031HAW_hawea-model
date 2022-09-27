@@ -62,11 +62,25 @@ def covert_scott_df_to_reg(data: pd.DataFrame):
     idx = (data.i < rows) & (data.i >= 0) & (data.j >= 0) & (data.j < cols)
     return data.loc[idx]
 
+def run_scott():
+    m = get_full_scott_model()
+    m.change_model_ws(base_scott_dir.joinpath('run'))
+    m.exe_name='mfnwt'
+    m.write_input()
+    m.run_model()
 
 def plot_ibound():
     m = get_full_scott_model()
     smt_scott.plot.plt_matrix(convert_scott_array_to_reg_grid(m.bas6.ibound.array[0]), base_map=True)
     smt_scott.plot.show()
+
+def get_scott_hds():
+    hds = flopy.utils.HeadFile(base_scott_dir.joinpath('run/gv10.hds')).get_alldata()[0]
+    hds[hds==999] = np.nan
+    hds = convert_scott_array_to_reg_grid(hds[0])
+    smt_scott.plot.plt_matrix(hds, base_map=True)
+    smt_scott.plot.show()
+    smt_scott.io.array_to_raster(base_scott_dir.joinpath('scott_hds.tif'),hds)
 
 
 def plot_hk():
@@ -91,6 +105,7 @@ def plot_riv_conductances():
 
 
 if __name__ == '__main__':
+    get_scott_hds()
     smt_scott.get_no_flow(recalc=True)
     plot_hk()
     plot_riv_conductances()

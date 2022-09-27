@@ -5,6 +5,7 @@ on: 1/08/22
 from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
     get_river_loc_data, get_lake_hawea_loc, get_lake_heads
+from model_parameterisation.static_params import lake_conduct
 import flopy
 
 
@@ -71,9 +72,9 @@ def get_rch_data(tdis):
     return rch_data
 
 
-def get_ghb_data(tdis, lake_params):
+def get_ghb_data(tdis):
     lake_locs = get_lake_hawea_loc()
-    lake_locs.loc[:, 'cond'] = lake_params['all']
+    lake_locs.loc[:, 'cond'] = lake_conduct
     lake_hds = get_lake_heads(*tdis.date_limits)
 
     # import lake levels
@@ -101,9 +102,9 @@ def get_riv_data(tdis, riv_params):
 
 if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
-    from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_inital_lake_conductance
+    from model_parameterisation.inital_parametersiation import get_initial_riv_conductance
 
-    get_ghb_data(tdis, get_inital_lake_conductance(return_just_start=True))
+    get_ghb_data(tdis)
 
     get_riv_data(tdis, get_initial_riv_conductance(return_just_start=True))
     b = get_well_data(tdis, hill_param={
