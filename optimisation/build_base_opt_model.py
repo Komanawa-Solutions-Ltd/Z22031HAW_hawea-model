@@ -41,7 +41,7 @@ def build_initial_model(model_name, model_ws,
                                        hill_param=get_hillslope_multiplier(True),
                                        race_param=get_race_multiplier(True)),
                 options='COMPLEX',
-                nwt_kwargs={'maxiterout': 1000},
+                nwt_kwargs={'maxiterout': 1000, 'maxitinner': 1000}, # todo just playing
                 hani=None,
                 mfv='mfnwt',
                 run_model=run_model,

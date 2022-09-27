@@ -287,7 +287,8 @@ def _create_lay_prop_package(m, smt, hk, vka, layer_avg, chani, hani=None, ss=0,
         raise ValueError('unexpected modflow version {}'.format(mfv))
 
 
-def _create_nwt_package(m, options, headtol=0.01, fluxtol=500, maxiterout=100, thickfact=1e-05, linmeth=1, iprnwt=1,
+def _create_nwt_package(m, options, headtol=0.01, fluxtol=500, maxiterout=100, maxitinner=60, thickfact=1e-05,
+                        linmeth=1, iprnwt=1,
                         ibotav=0, Continue=False):
     """
     create the nwt solver package
@@ -353,7 +354,8 @@ def _create_nwt_package(m, options, headtol=0.01, fluxtol=500, maxiterout=100, t
                                    iprnwt=iprnwt,
                                    ibotav=ibotav,
                                    options=options,
-                                   Continue=Continue
+                                   Continue=Continue,
+                                   maxitinner=maxitinner
                                    )
 
 
