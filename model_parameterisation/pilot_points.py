@@ -45,7 +45,14 @@ def get_pilot_point_locations(recalc=False):
 
 
 def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='multiquadric'):
-    # keynote interpolate on log values!
+    """
+
+    :param kh_data: real values, it will be logged then unlogged
+    :param method:
+    :param return_df:
+    :param kernal:
+    :return:
+    """
     kh = smt.get_model_zeros() * np.nan
 
     # set pilot point values
@@ -55,7 +62,8 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     for k in ['sandyhill', 'mangawera']:
         pilot_locs.loc[pilot_locs.group == k, 'value'] = kh_data[k]
     assert pilot_locs.loc[:, 'value'].notnull().all()
-
+    # keynote interpolate on log values!
+    pilot_locs.loc[:, 'value'] = np.log10(pilot_locs.loc[:, 'value'])
     # interpolate kh
     ibound = smt.get_no_flow(layer=0)
     i, j = smt.get_model_index_grid()
@@ -81,6 +89,7 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
         # I chose to simply use RBF methods
         raise ValueError(f'unexpected method: {method}')
 
+    kh = 10 ** kh
     # set lake values
     lake_array = get_lake_array()
     kh[np.isfinite(lake_array)] = lake_kh
@@ -153,7 +162,6 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     if return_df:
         return sy, pilot_locs
     return sy
-
 
 
 def exampine_kh_interpolation():
