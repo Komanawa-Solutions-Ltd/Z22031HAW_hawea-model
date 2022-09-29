@@ -20,6 +20,7 @@ from model_parameterisation.inital_parametersiation import *
 from optimisation.optimisation_period import tdis
 from project_base import proj_root, base_model_build_data_dir
 from model_build.supporting_data_analysis import *
+from model_build.zones import get_model_zones
 
 save_path = proj_root.joinpath('optimisation/pre_optimisation_plots')
 save_path.mkdir(exist_ok=True)
@@ -316,13 +317,47 @@ def plot_boundary_locs(save=False):
             fig.savefig(outdir.joinpath(f'{k.replace(" ", "_")}.png'))
 
 
-def plot_steady_state_water_budget():  # todo START HERE
+def plot_steady_state_water_budget(save=False):  # todo check
     outdir = save_path.joinpath('steady_state_water_budget')
     outdir.mkdir(exist_ok=True)
-    # todo plot mean recharge
-    # todo plot pumping/inflows
-    # todo plot hillside inflows
-    raise NotImplementedError  # todo various zones
+    rch = get_rch_data(tdis)
+    rch = rch[0]
+    wel = get_well_data(tdis, get_hillslope_multiplier(True), get_race_multiplier(True), return_unique_spd=True)
+    wel = {k: v[0] for k, v in wel.items()}
+    zones = get_model_zones()
+    labels = []
+    data = {k: [] for k in wel}
+    data['recharge'] = []
+
+    for k, z in zones.items():
+        labels.append(k)
+        data['recharge'].append(np.nansum(rch[z])*smt.grid_space**2)
+        for w, wdata in wel.items():
+            wdata = pd.DataFrame(wdata)
+            wdata = wdata.loc[z[wdata.i, wdata.j]]
+            data[w].append(wdata.flux.sum())
+
+    # get max and min
+    modifer = 1 / 24 / 60 / 60
+    modifer = 1
+    maxv = np.array(list(data.values())).max() * modifer
+    minv = np.array(list(data.values())).min() * modifer
+    x = np.arange(len(labels))
+
+    fig, axs = plt.subplots(nrows=len(data), figsize=(10, 8), sharex=True, sharey=True)
+    for i, (ax, (k, v)) in enumerate(zip(axs, data.items())):
+        ax.bar(x, np.array(v) * modifer, color='grey')
+        ax.vlines(x + 0.5, minv, maxv, ls=':')
+        ax.set_ylabel(f'{k} flux (m3/s)')
+        #ax.set_ylim(minv * 1.05, maxv * 1.05)
+
+    axs[-1].set_xticks(x)
+    axs[-1].set_xticklabels(labels, rotation=-45)
+    axs[-1].set_xlabel('model zone')
+    fig.suptitle('fixed water budget for model zones')
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath('water_budget.png'))
 
 
 def plot_steady_state_water_bud_locs():  # todo
@@ -346,7 +381,8 @@ def plot_targets():
 
 if __name__ == '__main__':
     save = False  # todo save when finally finished.
-
+    plot_steady_state_water_budget()
+    plt.show()
     # checked and finished, but not saved
     plot_boundary_locs(save)
     plot_all_spd(save)
