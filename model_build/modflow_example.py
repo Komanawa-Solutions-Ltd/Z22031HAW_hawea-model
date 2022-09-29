@@ -228,15 +228,15 @@ def _create_lay_prop_package(m, smt, hk, vka, layer_avg, chani, hani=None, ss=0,
     assert isinstance(smt, ModelTools_RegularGrid)
     chani = np.atleast_1d(chani)
     if len(chani) == 1:
-        chani = np.repeat(chani, smt.model_array_shape[0])
-    assert chani.shape == (smt.model_array_shape[0],), ('chani must match number of layers or be a single value '
+        chani = np.repeat(chani, smt.model_shape[0])
+    assert chani.shape == (smt.model_shape[0],), ('chani must match number of layers or be a single value '
                                                         'or length 1')
     if hani is None:
         assert (np.atleast_1d(chani) > 0).all(), 'if hani is not set then chani needs to be >0 for all layers'
         hani = 0
     else:
         assert (np.atleast_1d(chani) <= 0).all(), 'if hani is set then chani needs to be <=0 for all layers'
-        assert np.atleast_1d(hani).shape == smt.model_array_shape, 'hani must match model shape'
+        assert np.atleast_1d(hani).shape == smt.model_shape, 'hani must match model shape'
 
     layer_vka = 1  # sets vertical conductivity (vk) as a ratio of hydralic conductivity (vk)
 

@@ -304,13 +304,13 @@ def data_checks():
     # N-S cross sections
     cols = range(0, smt.cols, 20)
     for c in cols:
-        smt.plot.plt_slice(np.zeros(smt.model_array_shape) * np.nan, x_coords=c, y_coords=None, coords_in_row_col=True,
+        smt.plot.plt_slice(np.zeros(smt.model_shape) * np.nan, x_coords=c, y_coords=None, coords_in_row_col=True,
                            plot_locator=True, )
 
     # E-W cross sections
     rows = range(0, smt.rows, 20)
     for r in rows:
-        smt.plot.plt_slice(np.zeros(smt.model_array_shape) * np.nan, x_coords=None, y_coords=r, coords_in_row_col=True,
+        smt.plot.plt_slice(np.zeros(smt.model_shape) * np.nan, x_coords=None, y_coords=r, coords_in_row_col=True,
                            plot_locator=True)
     smt.plot.show()
 

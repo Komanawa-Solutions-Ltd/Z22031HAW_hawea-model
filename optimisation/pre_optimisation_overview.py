@@ -13,30 +13,83 @@ from model_build.project_model_tools import smt, get_starting_heads
 from model_build.utils import get_colors
 from model_parameterisation.pilot_points import get_pilot_point_locations, interpolate_kh_pilot_points, \
     interpolate_kh_pilot_points, get_param_zones, get_lake_array
+from model_parameterisation.static_params import *
 from model_tools.model_plotting import plot_spd, first, last, FakePath
 from model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_riv_data
 from model_parameterisation.inital_parametersiation import *
 from optimisation.optimisation_period import tdis
-from project_base import proj_root
+from project_base import proj_root, base_model_build_data_dir
+from model_build.supporting_data_analysis import *
 
 save_path = proj_root.joinpath('optimisation/pre_optimisation_plots')
 save_path.mkdir(exist_ok=True)
 
 
-# todo forms write up
-# todo check all of the data going into the model!
-
-def plot_starting_heads():  # todo
-    raise NotImplementedError
-
-
-def plot_parameterisation(save=False):  # todo
+def plot_parameterisation(save=False):
     outdir = save_path.joinpath('parameterisation')
     outdir.mkdir(exist_ok=True)
-    # todo parameter overview
+    # parameter overview
+    parameters = {
+        'Hillside inflow multiplier': ('Wel', get_hillslope_multiplier()),
+        'Race loss multiplier': ('Wel', get_race_multiplier()),
+        'River Conductance': ('Riv', get_initial_riv_conductance()),
+        'Specific Yeild': ('Upw', get_inital_sy()),
+        'Conductivity': ('Upw', get_inital_kh()),
+    }
+    static_params = {
+        'Lake Sy': lake_sy,
+        'SS': ss,
+        'VKA': vka,
+        'Lake Conductance': lake_conduct
+    }
+    param_out = pd.DataFrame(columns=['Parameter type', 'Static', 'Package', 'Name', 'Initial', 'Min', 'Max'])
+    out = []
+    for k, v in static_params.items():
+        temp = param_out.copy()
+        val = (k, 'True', 'Upw', 'all', v, 'na', 'na')
+        temp.loc[1, ['Parameter type', 'Static', 'Package', 'Name', 'Initial', 'Min', 'Max']] = val
+        out.append(temp)
+    for k, (pkg, (params)) in parameters.items():
+        num = len(params)
+        temp = pd.DataFrame(index=range(num),
+                            columns=['Parameter type', 'Static', 'Package', 'Name', 'Initial', 'Min', 'Max'])
+        names = params.keys()
+        print(k)
+        init, minn, maxx = np.array([[i, n, x] for n, (i, x) in params.values()]).transpose()
+        temp.loc[range(num), 'Parameter type'] = k
+        temp.loc[range(num), 'Static'] = False
+        temp.loc[range(num), 'Package'] = pkg
+        temp.loc[range(num), ['Name', 'Initial', 'Min', 'Max']] = list(zip(names, init, minn, maxx))
+        out.append(temp)
+    out = pd.concat(out)
+    if save:
+        out.to_csv(outdir.joinpath('parameter_overview.csv'))
 
-    # todo river conductnace
-
+    # river conductance
+    riv_data = get_river_loc_data()
+    base_names = riv_data.param.unique()
+    riv_data.loc[:, 'map_param'] = riv_data.param.replace({k: i for i, k in enumerate(base_names)})
+    zone_colors = get_colors(base_names)
+    cmap = ListedColormap(zone_colors)
+    fig, (ax1, legendax) = plt.subplots(ncols=2, gridspec_kw={'width_ratios': [5, 1], },
+                                        figsize=(10, 9))
+    smt.plot.plt_matrix(smt.io.df_to_array(riv_data, 'map_param'), no_flow_layer=0, base_map=True,
+                        title='River conductance Zones', cmap=cmap, color_bar=False, ax=ax1, alpha=1)
+    handles, labels = [Patch(facecolor='w')], ['name: (initial, (min, max)']
+    riv = get_initial_riv_conductance()
+    for c, n in zip(zone_colors, base_names):
+        handles.append(Patch(facecolor=c))
+        labels.append(f'{n.capitalize()} River Cond.: {riv[n]}')
+    legendax.legend(handles, labels)
+    legendax.set_xticks([])
+    legendax.set_yticks([])
+    legendax.spines["top"].set_visible(False)
+    legendax.spines["right"].set_visible(False)
+    legendax.spines["left"].set_visible(False)
+    legendax.spines["bottom"].set_visible(False)
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath('river_conductance.png'))
 
     # plot_example_rbf_interp
     pps = get_pilot_point_locations()
@@ -78,7 +131,7 @@ def plot_parameterisation(save=False):  # todo
     khs = get_inital_kh()
     lake = get_lake_array()
     thick = get_starting_heads()[0] - smt.get_bottoms()[0]
-    kh = np.full(smt.model_array_shape[1:], khs['sandyhill'][0])
+    kh = np.full(smt.model_shape[1:], khs['sandyhill'][0])
     kh[np.isfinite(lake)] = khs['lake_conductance'][0]
 
     thick[smt.get_no_flow(0) != 1] = np.nan
@@ -133,26 +186,25 @@ def plot_parameterisation(save=False):  # todo
     fig.tight_layout()
     if save:
         fig.savefig(outdir.joinpath('kh_sy_params.png'))
-    plt.show()
-    raise NotImplementedError
 
 
 def plot_thickness_top_bot(save=False):
-    data = dict(model_tops=smt.get_tops()[0],
-                model_bottoms=smt.get_bottoms()[0],
-                model_thickness=smt.get_thickness()[0])
+    data = {'Model tops': smt.get_tops()[0],
+            'Model bottoms': smt.get_bottoms()[0],
+            'Model thickness': smt.get_thickness()[0]}
 
     for k, v in data.items():
+        dist = 20
+        ibound = smt.get_no_flow(0)
+        v[ibound != 1] = np.nan
+        contours = range(int(np.nanmin(v) // dist * dist), int(np.nanmax(v) // dist * dist), dist)
         fig, ax = smt.plot.plt_matrix(v, title=k, no_flow_layer=0,
-                                      base_map=True, contour=True, label_contours=True)
+                                      base_map=True, contour=True, label_contours=True,
+                                      contour_levels=contours)
         if save:
             outpath = save_path.joinpath('model_structure', f'{k}.png')
             outpath.parent.mkdir(exist_ok=True)
             fig.savefig(outpath)
-
-
-def plot_boundary_locs():  # todo
-    raise NotImplementedError
 
 
 def plot_all_spd(save=False):
@@ -185,28 +237,119 @@ def plot_all_spd(save=False):
              func=last, key='stage', title='last river cell stage',
              outpath=outdir.joinpath('riv_last_cell_time.png'))
 
-    # todo copy over the river height and stage over time plot from river_data.py
+    # river height and stage data
+    plt_stg_data = get_river_stage_data(None, None).dropna().describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
+    k_cs = ['min', '5%', '25%', '50%', '75%', '95%', 'max', ]
+    colors = get_colors(k_cs, cmap_name='winter')
+    temp_data = get_river_loc_data()
+    tops = smt.get_tops()[0]
+    bottoms = smt.get_bottoms()[0]
+    temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
+    temp_data.loc[:, 'model_bot'] = bottoms[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
+    hawea_clutha_divide = temp_data.loc[temp_data.rname == 'hawea', 'dist'].max()
+    temp_data.loc[temp_data.rname == 'clutha', 'dist'] += hawea_clutha_divide
+    temp_data.sort_values('dist', inplace=True)
+    fig, ax = plt.subplots(figsize=(14, 10))
+    ax.set_title('River Profile')
+    ax.plot(temp_data.dist, temp_data.rbot, c='y', label='river_bottom_fixed')
+    ax.plot(temp_data.dist, temp_data.model_bot, c='firebrick', label='model_bottom')
+    ax.plot(temp_data.dist, temp_data.model_top, c='r', label='model_top')
+    for k, c in zip(k_cs, colors):
+        ax.plot(temp_data.dist, plt_stg_data.loc[k].values.transpose(), c=c, label=f'River Stage: {k}')
+    ax.axvline(hawea_clutha_divide, ls=':', c='k', label='Hawea-Clutha Divide')
+    ax.set_ylabel('Elevation')
+    ax.set_xlabel('Distance from top of river')
+    ax.legend()
+    if save:
+        fig.savefig(outdir.joinpath('River_profile.png'))
+
+    # monthly stage data
+    # look at stage through time at our locations( which are???)
+    hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Lake_Hawea.csv'))
+    print(hawea_data.describe())
+    hawea_data.loc[:, 'datetime'] = pd.to_datetime(hawea_data.loc[:, 'DateLake'], format='%d/%m/%Y %H:%M')
+    hawea_data.loc[:, 'Month'] = hawea_data.loc[:, 'datetime'].dt.month
+    monthly = hawea_data.groupby('Month').describe(percentiles=[.05, .25, .5, .75, .95])
+    fig, ax = plt.subplots(figsize=(10, 8))
+    monthly.LakeLevel_m.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
+    ax.set_title('Monthly lake level')
+    ax.set_ylabel('Stage (m)')
+    if save:
+        fig.savefig(outdir.joinpath('Monthly_mean_lake_levels.png'))
+
+    river_data = pd.read_csv(base_model_build_data_dir.joinpath('River_Level_Hawea.csv'))
+    print(river_data.describe())
+    river_data.loc[:, 'datetime'] = pd.to_datetime(river_data.loc[:, 'DateTime'], format='%d/%m/%Y')
+    river_data.loc[:, 'Month'] = river_data.loc[:, 'datetime'].dt.month
+    monthly = river_data.groupby('Month').describe(percentiles=[.05, .25, .5, .75, .95])
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    monthly.Level_Camphill.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
+    ax.set_title('Hawea at Camp Hill stage')
+    ax.set_ylabel('Stage (m)')
+    if save:
+        fig.savefig(outdir.joinpath('Monthly_mean_camphill_levels.png'))
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    monthly.Stage_Clutha2200.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
+    ax.set_title('Clutha at Luggate stage')
+    ax.set_ylabel('Stage (m)')
+    if save:
+        fig.savefig(outdir.joinpath('Monthly_mean_clutha_levels.png'))
 
 
-def plot_steady_state_water_budget():
+def plot_boundary_locs(save=False):
+    outdir = save_path.joinpath('boundary_condition_locations')
+    outdir.mkdir(exist_ok=True)
+    datasets = {'Abstraction': get_pumping_locs(),
+                'Race Losses': get_race_locs(),
+                'River cells': get_river_loc_data(),
+                'Lake cells': get_lake_hawea_loc(),
+                'Hillside Inflows': get_hillside_catchment_locs()}
+    for k, data in datasets.items():
+        fig, ax = smt.plot.plt_matrix(smt.get_model_zeros() + np.nan, title=k, no_flow_layer=0, color_bar=False,
+                                      base_map=True)
+        data = smt.io.add_mxmy_to_df(data)
+        ax.scatter(data.mx, data.my, color='r')
+        fig.tight_layout()
+        if save:
+            fig.savefig(outdir.joinpath(f'{k.replace(" ", "_")}.png'))
+
+
+def plot_steady_state_water_budget():  # todo START HERE
+    outdir = save_path.joinpath('steady_state_water_budget')
+    outdir.mkdir(exist_ok=True)
+    # todo plot mean recharge
+    # todo plot pumping/inflows
+    # todo plot hillside inflows
     raise NotImplementedError  # todo various zones
 
 
-def plot_steady_state_water_bud_locs(save=False):
+def plot_steady_state_water_bud_locs():  # todo
+    outdir = save_path.joinpath('steady_state_water_budget')
+    outdir.mkdir(exist_ok=True)
     # todo plot starting heads
     # todo plot mean recharge
     # todo plot pumping/inflows
-    # todo plot
+    # todo plot hillside inflows
     raise NotImplementedError
 
 
 def plot_targets():
+    outdir = save_path.joinpath('targets')
+    outdir.mkdir(exist_ok=True)
+
     # todo spatially and temporally
     #  objective function and weighting
     raise NotImplementedError
 
 
 if __name__ == '__main__':
-    plot_parameterisation()
-    plot_all_spd()
+    save = False  # todo save when finally finished.
+
+    # checked and finished, but not saved
+    plot_boundary_locs(save)
+    plot_all_spd(save)
+    plot_parameterisation(save)
+    plot_thickness_top_bot(save)
     plt.show()

@@ -5,8 +5,7 @@ on: 2/08/22
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from model_build.utils import select_resample
-from matplotlib.cm import get_cmap
+from model_build.utils import select_resample, get_colors
 from model_build.project_model_tools import smt, _river_locs
 from project_base import base_model_build_data_dir, processed_model_build_data_dir
 
@@ -231,22 +230,6 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False):
     outdata.to_csv(riv_stage_data_path)
     return select_resample(outdata, start_date, end_date, frequency, 'mean')
 
-
-def get_colors(vals, cmap_name='tab10'):
-    n_scens = len(vals)
-    if n_scens < 20:
-        cmap = get_cmap(cmap_name)
-        colors = [cmap(e / (n_scens + 1)) for e in range(n_scens)]
-    else:
-        colors = []
-        i = 0
-        cmap = get_cmap(cmap_name)
-        for v in vals:
-            colors.append(cmap(i / 20))
-            i += 1
-            if i == 20:
-                i = 0
-    return colors
 
 
 def data_checks():

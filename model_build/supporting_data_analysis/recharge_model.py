@@ -558,9 +558,9 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
         irrig_effic = _map_from_irrig_code(irrig_codes, 'irrig_effic')
 
         if limited_irrigation:
-            irrig_aval = get_irrig_avaliblity((len(temp_data), *smt.model_array_shape[1:]))
+            irrig_aval = get_irrig_avaliblity((len(temp_data), *smt.model_shape[1:]))
         else:
-            irrig_aval = np.full((len(temp_data), *smt.model_array_shape[1:]), np.inf)
+            irrig_aval = np.full((len(temp_data), *smt.model_shape[1:]), np.inf)
 
         irrig_trig = np.repeat(_map_from_irrig_code(irrig_codes, 'irrig_trig')[np.newaxis, :],
                                len(temp_data), axis=0)  # 3d, static
@@ -570,10 +570,10 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
         rush = Rushton(
             dates=temp_data.index,
             # 3d arrays in
-            rainfall=np.repeat(temp_data.Rainfall.values[:, np.newaxis], np.prod(smt.model_array_shape[1:]),
-                               axis=1).reshape((len(temp_data), *smt.model_array_shape[1:])),
-            pet=np.repeat(temp_data.PET.values[:, np.newaxis], np.prod(smt.model_array_shape[1:]),
-                          axis=1).reshape((len(temp_data), *smt.model_array_shape[1:])),
+            rainfall=np.repeat(temp_data.Rainfall.values[:, np.newaxis], np.prod(smt.model_shape[1:]),
+                               axis=1).reshape((len(temp_data), *smt.model_shape[1:])),
+            pet=np.repeat(temp_data.PET.values[:, np.newaxis], np.prod(smt.model_shape[1:]),
+                          axis=1).reshape((len(temp_data), *smt.model_shape[1:])),
             taw=np.repeat(static_taw[np.newaxis, :, :], len(temp_data), axis=0),
 
             # 2d arrays in
@@ -598,7 +598,7 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
             # 2d array or None
             max_irrig_apply=max_irrig_apply,
             min_irrig_return=min_irrig_return,
-            irrig_max_store=np.full(smt.model_array_shape[1:], irrig_max_store),
+            irrig_max_store=np.full(smt.model_shape[1:], irrig_max_store),
             irrig_init_store=irrig_init_store,
             irrig_effic=irrig_effic
         )
@@ -618,7 +618,7 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
         init_near_surface_storage = deepcopy(rush.near_surface_storage[-1])
 
         # explicitly reset irrigation storage 0 at the water year break.
-        irrig_init_store = np.zeros(smt.model_array_shape[1:])
+        irrig_init_store = np.zeros(smt.model_shape[1:])
 
         dates.append(deepcopy(rush.dates))
         outdata.append(deepcopy(rush.recharge))
