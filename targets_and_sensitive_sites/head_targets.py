@@ -17,7 +17,7 @@ from model_build.utils import get_colors
 # todo it may be worth comparing recharge and lake levels... at a water year level to see how to apply
 # targets that occur outside of period.
 
-def get_single_head_targets():
+def get_single_head_targets(recalc=False):  # todo add recalc
     # from get_all_wells
     all_wells = get_all_wells()
     all_wells = all_wells.loc[all_wells.ibound > 0]
@@ -81,8 +81,16 @@ def get_low_freq_head_targets(start_date, end_date):
     start_date = pd.to_datetime(start_date).date()
     end_date = pd.to_datetime(end_date).date()
 
-    idx = (outdata.loc[:, 'date'] >= start_date) & (outdata.loc[:, 'date'] <= end_date)
-    return outdata[idx]
+    outdata.loc[:, 'date'] = pd.to_datetime(outdata.loc[:, 'date'])
+    use_outdata = []
+    for w in outdata.well.unique():
+        temp = outdata.loc[outdata.well == w, ['date', 'level']]
+        temp.rename(columns={'level': w}, inplace=True)
+        use_outdata.append(temp)
+    outdata = pd.concat(use_outdata)
+    outdata = outdata.groupby('date').mean()
+    idx = (outdata.index >= pd.to_datetime(start_date)) & (outdata.index <= pd.to_datetime(end_date))
+    return outdata.loc[idx]
 
 
 def get_high_freq_head_targets(start_date, end_date, freq='D'):
@@ -115,7 +123,7 @@ def plot_head_targets(how='all'):
 
         # add ngmp wells
         t = get_low_freq_head_targets(None, None)
-        wells = all_wells.loc[t.well.unique()]
+        wells = all_wells.loc[t.keys()]
         ax.scatter(wells.nztmx, wells.nztmy, color='b', marker='p', label='mod_freq')
 
         # add high frequency
@@ -139,29 +147,29 @@ def plot_head_targets(how='all'):
         colors = get_colors(qcs)
         for qc, c in zip(qcs, colors):
             temp = single_targets.loc[single_targets.quality_code == qc]
-            ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'single targets qc: {qc}', marker='d', alpha=alpha)
+            ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'Single targets qc: {qc}', marker='d', alpha=alpha)
 
         # add scott piezo locs
         piezo = get_2011_piezo_survey(recalc=True)
-        ax.scatter(piezo.nztmx, piezo.nztmy, color='orange', marker='s', alpha=alpha, label='piezo 2011')
+        ax.scatter(piezo.nztmx, piezo.nztmy, color='orange', marker='s', alpha=alpha, label='Piezo 2011')
 
         # add ngmp wells
         t = get_low_freq_head_targets(None, None)
-        wells = all_wells.loc[t.well.unique()]
-        ax.scatter(wells.nztmx, wells.nztmy, color='b', marker='p', label='mod_freq')
+        wells = all_wells.loc[t.keys()]
+        ax.scatter(wells.nztmx, wells.nztmy, color='b', marker='p', label='Moderate freq')
 
         # add high frequency
         t = get_high_freq_head_targets(None, None)
         wells = all_wells.loc[t.keys()]
-        ax.scatter(wells.nztmx, wells.nztmy, color='magenta', marker='*', label='high_freq')
-
-        print('plotting all head targets')
-        ax.legend()
-        ax.set_title('included head targets')
+        ax.scatter(wells.nztmx, wells.nztmy, color='magenta', marker='*', label='High freq')
 
         print('plotting head targets included in the model')
+        ax.legend(loc='lower left')
+        ax.set_title('Head targets included in the model')
+
     else:
         raise NotImplementedError
+    return fig, ax
 
 
 def export_incl_head_target_locs():
@@ -186,10 +194,9 @@ def export_incl_head_target_locs():
     temp_out.loc[:, 'type'] = 'piezo_2011'
     outdata.append(temp_out)
 
-
     # add ngmp wells
     t = get_low_freq_head_targets(None, None)
-    wells = all_wells.loc[t.well.unique()]
+    wells = all_wells.loc[t.keys()]
     temp_out = {'nztmx': wells.nztmx.values, 'nztmy': wells.nztmy.values}
     temp_out = pd.DataFrame(temp_out)
     temp_out.loc[:, 'type'] = 'mod_freq'
@@ -206,8 +213,9 @@ def export_incl_head_target_locs():
     outdata = pd.concat(outdata)
     outdata.to_csv(processed_target_dir.joinpath('head_target_locations.csv'))
 
+
 if __name__ == '__main__':
-    plot_head_targets()
     plot_head_targets(how='incl')
-    export_incl_head_target_locs()
     smt.plot.show()
+    plot_head_targets()
+    export_incl_head_target_locs()

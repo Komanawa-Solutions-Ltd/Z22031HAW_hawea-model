@@ -17,8 +17,6 @@ from model_parameterisation.inital_parametersiation import get_inital_sy, get_in
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
 
 
-# todo build the model including all packages
-
 def build_initial_model(model_name, model_ws,
                         exe_name='mfnwt', run_model=False):
     t = time.time()
@@ -50,9 +48,6 @@ def build_initial_model(model_name, model_ws,
 
 
 if __name__ == '__main__':
-    # todo check units
-    # kh look way to low try running at 1000
-    # todo check budgets
     # todo this is running, but it's not converging START HERE
     build_initial_model(model_name='test', model_ws=Path.home().joinpath('Downloads/test_model'),
                         run_model=True)

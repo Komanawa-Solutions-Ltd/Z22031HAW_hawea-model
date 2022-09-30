@@ -21,6 +21,8 @@ from optimisation.optimisation_period import tdis
 from project_base import proj_root, base_model_build_data_dir
 from model_build.supporting_data_analysis import *
 from model_build.zones import get_model_zones
+from targets_and_sensitive_sites.head_targets import plot_head_targets
+from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
 
 save_path = proj_root.joinpath('optimisation/pre_optimisation_plots')
 save_path.mkdir(exist_ok=True)
@@ -317,7 +319,7 @@ def plot_boundary_locs(save=False):
             fig.savefig(outdir.joinpath(f'{k.replace(" ", "_")}.png'))
 
 
-def plot_steady_state_water_budget(save=False):  # todo check
+def plot_steady_state_water_budget(save=False):
     outdir = save_path.joinpath('steady_state_water_budget')
     outdir.mkdir(exist_ok=True)
     rch = get_rch_data(tdis)
@@ -331,7 +333,7 @@ def plot_steady_state_water_budget(save=False):  # todo check
 
     for k, z in zones.items():
         labels.append(k)
-        data['recharge'].append(np.nansum(rch[z])*smt.grid_space**2)
+        data['recharge'].append(np.nansum(rch[z]) * smt.grid_space ** 2)
         for w, wdata in wel.items():
             wdata = pd.DataFrame(wdata)
             wdata = wdata.loc[z[wdata.i, wdata.j]]
@@ -342,48 +344,114 @@ def plot_steady_state_water_budget(save=False):  # todo check
     modifer = 1
     maxv = np.array(list(data.values())).max() * modifer
     minv = np.array(list(data.values())).min() * modifer
-    x = np.arange(len(labels))
+    x = np.arange(len(labels) * len(data), step=len(data))
+    colors = get_colors(data)
+    fig, ax = plt.subplots(figsize=(10, 8))
+    for i, (c, (k, v)) in enumerate(zip(colors, data.items())):
+        ax.bar(x + i, np.array(v) * modifer, color=c, label=k)
+        if i == 0:
+            ax.vlines(x + i + 0.5, minv, maxv, ls=':', color='k')
+            ax.set_ylabel(f'flux (m3/day)')
 
-    fig, axs = plt.subplots(nrows=len(data), figsize=(10, 8), sharex=True, sharey=True)
-    for i, (ax, (k, v)) in enumerate(zip(axs, data.items())):
-        ax.bar(x, np.array(v) * modifer, color='grey')
-        ax.vlines(x + 0.5, minv, maxv, ls=':')
-        ax.set_ylabel(f'{k} flux (m3/s)')
-        #ax.set_ylim(minv * 1.05, maxv * 1.05)
-
-    axs[-1].set_xticks(x)
-    axs[-1].set_xticklabels(labels, rotation=-45)
-    axs[-1].set_xlabel('model zone')
+    ax.axhline(0, ls='-', color='k')
+    ax.set_xticks(x + len(data) / 2)
+    ax.set_xticklabels(labels, rotation=-45)
+    ax.set_xlabel('model zone')
+    ax.set_xlim(x.min(), x.max() + len(data) + 0.5)
+    ax.legend()
     fig.suptitle('fixed water budget for model zones')
     fig.tight_layout()
     if save:
         fig.savefig(outdir.joinpath('water_budget.png'))
 
 
-def plot_steady_state_water_bud_locs():  # todo
+def plot_steady_state_water_bud_locs(save):
     outdir = save_path.joinpath('steady_state_water_budget')
     outdir.mkdir(exist_ok=True)
-    # todo plot starting heads
-    # todo plot mean recharge
-    # todo plot pumping/inflows
-    # todo plot hillside inflows
-    raise NotImplementedError
+    ibound = smt.get_no_flow(0)
+    rch = get_rch_data(tdis)
+    rch = rch[0]
+    rch[ibound != 0] = np.nan
+    wel = get_well_data(tdis, get_hillslope_multiplier(True), get_race_multiplier(True), return_unique_spd=True)
+    wel = {k: v[0] for k, v in wel.items()}
+    start = get_starting_heads()[0]
+    start[ibound != 1] = np.nan
+    # plot mean recharge
+    fig, ax = smt.plot.plt_matrix(rch * 1000, no_flow_layer=0, base_map=True, title='Mean Recharge (mm)')
+    if save:
+        fig.savefig(outdir.joinpath('spatial_mean_recharge.png'))
+
+    # plot starting heads
+    fig, ax = smt.plot.plt_matrix(start, no_flow_layer=0, base_map=True, title='Starting Heads (m)', contour=True,
+                                  contour_levels=np.arange(np.nanmin(start), np.nanmax(start), 20),
+                                  label_contours=True)
+    if save:
+        fig.savefig(outdir.joinpath('spatial_start_heads.png'))
+
+    for k, v in wel.items():
+        fig, ax = smt.plot.plt_matrix(rch * np.nan, no_flow_layer=0, base_map=True,
+                                      title=f'Wel: {k} flux by color', color_bar=False)
+        v = pd.DataFrame(v)
+        if k == 'pump':
+            v.loc[:, 'flux'] *= -1
+        v = smt.io.add_mxmy_to_df(v)
+        from matplotlib.colors import LogNorm
+        sc = ax.scatter(v.mx, v.my, c=v.flux, cmap='magma', norm=LogNorm())
+        cbar = fig.colorbar(sc)
+        if save:
+            fig.savefig(outdir.joinpath('spatial_start_heads.png'))
 
 
-def plot_targets():
+def plot_targets(save):  # todo & check
     outdir = save_path.joinpath('targets')
     outdir.mkdir(exist_ok=True)
 
-    # todo spatially and temporally
-    #  objective function and weighting
+    # spatially
+    # head targets
+    fig, ax = plot_head_targets('incl')
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath('spatial_head_targets.png'))
+
+    # river targets
+    riv_loc = get_riv_target_locs()
+    riv_targ = get_hawea_gain_loss_targets()
+    use_riv_targets = smt.get_model_zeros() * np.nan
+    for k, v in riv_loc.items():
+        use_riv_targets[v] = k
+
+    base_names = [f'Hawea Target: {int(e)}' for e in riv_loc.keys()]
+    zone_colors = get_colors(base_names)
+    cmap = ListedColormap(zone_colors)
+    fig, ax1 = plt.subplots(figsize=smt.default_figsize)
+    smt.plot.plt_matrix(use_riv_targets, no_flow_layer=0, base_map=True,
+                        title='River conductance Zones', cmap=cmap, color_bar=False, ax=ax1, alpha=1)
+    handles, labels = [], []
+    for c, n in zip(zone_colors, base_names):
+        handles.append(Patch(facecolor=c))
+        labels.append(n.capitalize())
+    ax1.legend(handles, labels, loc='lower left')
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath('river_conductance.png'))
+
+    #  todo temporally
+
+    #  todo relatvily temporaly
+
+    #  todo objective function and weighting
+
+def plot_deciding_time_period(save): # todo
     raise NotImplementedError
 
 
 if __name__ == '__main__':
     save = False  # todo save when finally finished.
-    plot_steady_state_water_budget()
+    plot_targets(save)
     plt.show()
     # checked and finished, but not saved
+    plot_steady_state_water_bud_locs(save)
+    plot_steady_state_water_budget(save)
     plot_boundary_locs(save)
     plot_all_spd(save)
     plot_parameterisation(save)

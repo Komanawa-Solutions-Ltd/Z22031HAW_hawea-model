@@ -48,4 +48,6 @@ def get_hawea_gain_loss_targets():
 
 
 if __name__ == '__main__':
-    get_riv_target_locs(recalc=True)
+    loc = get_riv_target_locs()
+    targ = get_hawea_gain_loss_targets()
+    pass

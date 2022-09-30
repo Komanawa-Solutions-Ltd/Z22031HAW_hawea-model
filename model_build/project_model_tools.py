@@ -273,7 +273,7 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 
-def get_starting_heads(recalc=False):  # TODO GET!
+def get_starting_heads(recalc=False):
     save_path = processed_model_build_data_dir.joinpath('start_heads.txt')
     if save_path.exists() and not recalc:
         return np.loadtxt(save_path)[np.newaxis]
