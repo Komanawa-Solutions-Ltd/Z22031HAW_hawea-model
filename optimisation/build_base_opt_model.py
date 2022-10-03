@@ -4,9 +4,7 @@ on: 27/09/22
 """
 import time
 from pathlib import Path
-
 import numpy as np
-
 from model_build.modflow_example import build_model
 from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
