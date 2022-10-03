@@ -23,6 +23,7 @@ from model_build.supporting_data_analysis import *
 from model_build.zones import get_model_zones
 from targets_and_sensitive_sites.head_targets import plot_head_targets
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
+from optimisation.determine_opt_start import get_opt_start_stop
 
 save_path = proj_root.joinpath('optimisation/pre_optimisation_plots')
 save_path.mkdir(exist_ok=True)
@@ -441,8 +442,14 @@ def plot_targets(save):  # todo & check
 
     #  todo objective function and weighting
 
-def plot_deciding_time_period(save): # todo
-    raise NotImplementedError
+
+def plot_deciding_time_period(save):
+    outdir = save_path.joinpath('determine_opt_period')
+    outdir.mkdir(exist_ok=True)
+    figs, names = get_opt_start_stop()
+    if save:
+        for f, n in zip(figs, names):
+            f.savefig(outdir.joinpath(f'{n}.png'))
 
 
 if __name__ == '__main__':
@@ -450,6 +457,7 @@ if __name__ == '__main__':
     plot_targets(save)
     plt.show()
     # checked and finished, but not saved
+    plot_deciding_time_period(save)
     plot_steady_state_water_bud_locs(save)
     plot_steady_state_water_budget(save)
     plot_boundary_locs(save)

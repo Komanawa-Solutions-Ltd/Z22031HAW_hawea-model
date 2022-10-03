@@ -12,6 +12,8 @@ on: 7/09/22
 4. single targets (weight by quality code)
 5. river targets (high weight)
 
+consider applying a temporal weighting to high frequency targets (later has better pumping data)
+
 """
 # todo look into PYEMU for objective function calculation support
 # todo make this fast to calculate!

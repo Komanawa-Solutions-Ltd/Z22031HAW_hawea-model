@@ -6,10 +6,8 @@ import datetime
 import pandas as pd
 from model_tools.time_discretization import TimeDis
 
-start = '2015-07-01'  # todo this is just a dummy value
-end = '2020-06-27'  # todo this is just a dummy value
-# todo I could consider doing an average year run and then use the starting heads to define from there... or look at the head data,
-#  what time does the mean best represent out of the year across all high frequency heads?, better approach
+start = '2015-07-18'  # Keynote set based on the minimisation of the RSME to the mean values
+end = '2020-06-27'  # Keynote this is the end of the available data
 base_time = pd.date_range(start, end, freq='W')
 indates = [(base_time.min(), base_time.max() + datetime.timedelta(days=6))]
 indates.extend(zip(base_time, base_time + datetime.timedelta(days=6)))

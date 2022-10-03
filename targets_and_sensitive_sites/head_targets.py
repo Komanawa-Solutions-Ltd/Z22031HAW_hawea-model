@@ -3,7 +3,10 @@ created matt_dumont
 on: 15/08/22
 """
 import warnings
+import datetime
 
+import matplotlib.pyplot as plt
+from dateutil.relativedelta import relativedelta
 import numpy as np
 import pandas as pd
 from model_build.supporting_data_analysis import get_all_wells
@@ -12,12 +15,113 @@ from model_build.utils import select_resample
 from model_build.zones import get_param_zones
 from project_base import processed_target_dir, base_target_dir
 from model_build.utils import get_colors
+from model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch, get_irrigation_code
+from model_build.supporting_data_analysis import get_hillside_flows
+from optimisation.optimisation_period import start, end
 
 
 # todo it may be worth comparing recharge and lake levels... at a water year level to see how to apply
 # targets that occur outside of period.
 
-def get_single_head_targets(recalc=False):  # todo add recalc
+def get_indicative_times():
+    well_data = _get_single_target_data()
+    dates, rch = get_corrected_historical_era5_rch(None, None,
+                                                   frequency='M')  # todo separate irrigated from dryland? yes
+    print('got rch')
+    use_rch = []
+    irrig = {}
+    for y in [2015, 2020, 2021]:
+        irrig[y] = get_irrigation_code(y) == -1
+    use_rch.append(np.nanmean(rch[dates.year <= 2015][:, ~irrig[2015]], axis=1))
+    use_rch.append(np.nanmean(rch[(dates.year > 2015) & (dates.year <= 2020)][:, ~irrig[2020]], axis=1))
+    use_rch.append(np.nanmean(rch[dates.year >= 2021][:, ~irrig[2021]], axis=1))
+    use_rch = np.concatenate(use_rch)
+    hill = get_hillside_flows(None, None, 'M')
+    hill = hill.sum(axis=1)
+
+    targ_dates = [datetime.date(2011, 9, 21)]
+    targ_dates.extend(well_data.drilldate)
+
+    targ_dates = pd.to_datetime(targ_dates)
+    targ_dates = targ_dates[targ_dates < pd.to_datetime(start)]
+
+    targ_rch = []
+    targ_hill = []
+    nmonths = 6
+    for t in targ_dates:
+        tstart_date = pd.to_datetime(datetime.date(t.year, t.month, 1) + relativedelta(months=-nmonths))
+        tend_date = pd.to_datetime(datetime.date(t.year, t.month, 1) + relativedelta(months=1, days=-1))
+
+        targ_rch.append(use_rch[(dates >= tstart_date) & (dates <= tend_date)].sum())
+        targ_hill.append(hill.loc[(hill.index >= tstart_date) & (hill.index <= tend_date)].sum())
+    targ_data = pd.DataFrame({'date': targ_dates, 'rch': targ_rch, 'hill': targ_hill})
+    targ_data.loc[:, 'month'] = targ_data.date.dt.month
+
+    period_dates = pd.date_range(start, end, freq='M')
+    period_rch = []
+    period_hill = []
+    for p in period_dates:
+        pstart_date = pd.to_datetime(p + relativedelta(months=-nmonths))
+        period_rch.append(use_rch[(dates >= pstart_date) & (dates <= p)].sum())
+        period_hill.append(hill.loc[(hill.index >= pstart_date) & (hill.index <= p)].sum())
+    period_data = pd.DataFrame({'date': period_dates, 'rch': period_rch, 'hill': period_hill})
+    period_data.loc[:, 'month'] = period_data.date.dt.month
+    # todo monthly mean target?
+    # todo compare last n months of recharge...
+    fig, ax = plt.subplots()
+    ax.scatter(period_data.rch, period_data.hill, c='b', label='period data')
+    ax.scatter(targ_data.rch, targ_data.hill, c='r', label='target data')
+    for d, r, h, m in period_data.itertuples(False, None):
+        ax.text(r, h, f'{d.year}-{m}', color='b')
+    for d, r, h, m in targ_data.itertuples(False, None):
+        ax.text(r, h, f'{d.year}-{m}', color='r')
+    ax.set_title('all')
+    ax.legend()
+
+    for m in range(1, 12):
+        temp_targ = targ_data.loc[targ_data.month == m]
+        temp_period = period_data.loc[period_data.month == m]
+        pass
+        fig, ax = plt.subplots()
+        ax.scatter(temp_period.rch, temp_period.hill, c='b', label='period data')
+        for d, r, h, m in temp_period.itertuples(False, None):
+            ax.text(r, h, f'{d.year}-{m}', color='b')
+        ax.scatter(temp_targ.rch, temp_targ.hill, c='r', label='target data')
+        for d, r, h, m in temp_targ.itertuples(False, None):
+            ax.text(r, h, f'{d.year}-{m}', color='r')
+        ax.set_title(f'month: {m}')
+        ax.legend()
+
+    fig, ax = plt.subplots()
+    temp_targ = targ_data.iloc[0]
+    print(temp_targ)
+    temp_period = period_data.loc[period_data.month == 9]
+    ax.scatter(temp_period.rch, temp_period.hill, c='b', label='period data')
+    ax.scatter(temp_targ.rch, temp_targ.hill, c='r', label='target data')
+    for d, r, h, m in temp_period.itertuples(False, None):
+        ax.text(r, h, f'{d.year}-{m}')
+    ax.set_title(f'sept 2011 vs sept')
+    ax.legend()
+
+    fig, ax = plt.subplots()
+    ax.scatter(period_data.rch, period_data.hill, c='b', label='period data')
+    ax.scatter(temp_targ.rch, temp_targ.hill, c='r', label='target data')
+    ax.set_title(f'sept 2011 vs all')
+    for d, r, h, m in period_data.itertuples(False, None):
+        ax.text(r, h, f'{d.year}-{m}')
+    ax.legend()
+    plt.show()
+
+    # todo stdev on the lake wave... how much does that vary monthly
+    # todo look at relationship between rch, hillslope, time delta against lakewave for high frequency data
+    #  use this to determine minimum difference (e.g. weight deltas by correlation).
+    # todo look at the ideal correlation between head, rch, hillslope (e.g. 1 month, 2 to 6 month mean)
+
+
+    raise NotImplementedError
+
+
+def _get_single_target_data():
     # from get_all_wells
     all_wells = get_all_wells()
     all_wells = all_wells.loc[all_wells.ibound > 0]
@@ -27,7 +131,11 @@ def get_single_head_targets(recalc=False):  # todo add recalc
     idx = (all_wells.param_zone < 0) & (all_wells.quality_code < 3)
     all_wells = all_wells.loc[~idx]
     all_wells = all_wells.loc[all_wells.quality_code > 0]
+    return all_wells
 
+
+def get_single_head_targets(recalc=False):  # todo add recalc
+    all_wells = _get_single_target_data()
     # todo, set indiciative times! how do I want to do this???
     warnings.warn('not finished, still need to set indicative times')
 
@@ -214,7 +322,10 @@ def export_incl_head_target_locs():
     outdata.to_csv(processed_target_dir.joinpath('head_target_locations.csv'))
 
 
+# todo wait 6 months to 1 year of data before fitting targets, 6 months should be suitable
+
 if __name__ == '__main__':
+    get_indicative_times()
     plot_head_targets(how='incl')
     smt.plot.show()
     plot_head_targets()

@@ -696,6 +696,7 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
     processed_dates_path = processed_model_build_data_dir.joinpath(
         f'corrected_weekly_historical_era5_rch_dates_{lm_path}limited_irr.npz')
     if processed_dates_path.exists() and processed_rch_path.exists() and not recalc:
+        print('loading from repo')
         dates = np.load(processed_dates_path).get('arr_0')
         rch = np.load(processed_rch_path).get('arr_0')
 
@@ -713,10 +714,9 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
         return temp.index, out_rch
     print(
         'ignore user warnings re uncorrected data.  correcting uncorrected data so I need to get the uncorrected data')
-    get_weekly_plus_era5_rch()
     historical_dates, historical_rch = get_rch(None, None, frequency='W', limited_irrigation=False)
-    era5_dates, era5_rch_raw = get_weekly_plus_era5_rch(start_date=datetime.date(2010, 1, 1),
-                                                        end_date=datetime.date(2022, 1, 1),
+    era5_dates, era5_rch_raw = get_weekly_plus_era5_rch(start_date=None,
+                                                        end_date=None,
                                                         limited_irrigation=False, frequency='W')
     era5_dates = pd.to_datetime(era5_dates)
 
@@ -793,6 +793,7 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
     # predict new data
     outdata = np.full(era5_rch_raw.shape, np.nan)
     for y in [2015, 2020, 2021]:
+        print(y)
         if y <= 2015:
             era5_year_idx = (era5_year <= y)
 
@@ -802,6 +803,8 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
             era5_year_idx = (era5_year >= 2021)
         else:
             raise ValueError('shouldnt get here')
+        if era5_year_idx.sum() == 0:
+            continue
         # irrigated
         data = era5_rch_raw[era5_year_idx][:, irrigated[y]]
         expect_shape = data.shape
@@ -865,5 +868,3 @@ if __name__ == '__main__':
     get_corrected_historical_era5_rch(None, None, recalc=True, limited_irrigation=False)
     get_corrected_historical_era5_rch(None, None, recalc=True, limited_irrigation=True)
 
-    raise NotImplementedError
-    # data_checks()

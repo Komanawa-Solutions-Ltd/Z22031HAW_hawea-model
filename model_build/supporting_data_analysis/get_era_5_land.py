@@ -9,7 +9,7 @@ from pathlib import Path
 if __name__ == '__main__':
     # keynote used tethys instead
     c = cdsapi.Client()
-    y = 1950
+    y = 2021
     c.retrieve(
         'reanalysis-era5-land',
         {

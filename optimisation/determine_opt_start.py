@@ -14,6 +14,8 @@ from model_build.project_model_tools import smt
 
 
 def get_opt_start_stop():  # todo return data, include in pre model optimisation overview
+    figs = []
+    names = []
     targets = get_high_freq_head_targets('2015-07-01', None)
 
     targets.loc[:, 'month'] = targets.index.month
@@ -37,7 +39,7 @@ def get_opt_start_stop():  # todo return data, include in pre model optimisation
     monthly_ext = monthly.copy(deep=True)
     monthly_ext.index = [e + relativedelta(years=1) for e in monthly.index]
     monthly = pd.concat((monthly, monthly_ext))
-    fig, (ax1, ax2) = plt.subplots(nrows=2, sharex=True, sharey=True)
+    fig, (ax1, ax2) = plt.subplots(nrows=2, sharex=True, sharey=True, figsize=(10, 8))
     for t, c in zip(targ_names, colors):
         ax1.plot(weekly.index, weekly.loc[:, t], c=c, label=t, marker='.')
         ax2.plot(monthly.index, monthly.loc[:, t], c=c, label=t, marker='.')
@@ -52,8 +54,10 @@ def get_opt_start_stop():  # todo return data, include in pre model optimisation
     fig.supylabel('Difference (m)')
 
     fig.tight_layout()
+    figs.append(fig)
+    names.append('monthy_weekly_delta_to_mean')
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 8))
     targets = get_high_freq_head_targets(None, None)
     targets = targets - mean_targets
 
@@ -67,6 +71,8 @@ def get_opt_start_stop():  # todo return data, include in pre model optimisation
     ax.set_xlabel('Time')
     ax.set_ylabel('Difference (m)')
     fig.tight_layout()
+    figs.append(fig)
+    names.append('real_time_delta_to_mean')
 
     all_wells = get_all_wells().loc[mean_targets.keys()]
     fig, ax = smt.plot.plot_basemap(no_flow_layer=0)
@@ -79,13 +85,14 @@ def get_opt_start_stop():  # todo return data, include in pre model optimisation
         ax.text(x + 100, y + adder, k, color='k', fontdict={'weight': 'heavy'})
     ax.legend()
     ax.set_title('Head obs locations')
-    plt.show()
+    figs.append(fig)
+    names.append('high_frequency_locs')
     # todo water levels are closest to average in July and Jan..., what should I choose as my start date.
     # todo look at data avaliblity some pumping data only comes on line in 2018...
     # todo what does all of the other data look like for periods
-    raise NotImplementedError
+    return figs, names
 
 
 if __name__ == '__main__':
     get_opt_start_stop()
-    fig, ax = smt.plot.plt_matrix(smt.get_model_zeros(), )
+    plt.show()
