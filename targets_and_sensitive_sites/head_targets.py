@@ -116,6 +116,7 @@ def get_indicative_times():
     # todo look at relationship between rch, hillslope, time delta against lakewave for high frequency data
     #  use this to determine minimum difference (e.g. weight deltas by correlation).
     # todo look at the ideal correlation between head, rch, hillslope (e.g. 1 month, 2 to 6 month mean)
+    # todo correlation to lake levels will vary by distance.
 
 
     raise NotImplementedError
