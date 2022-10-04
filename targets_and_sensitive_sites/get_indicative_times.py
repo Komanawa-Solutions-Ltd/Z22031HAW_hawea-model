@@ -16,6 +16,7 @@ from model_build.utils import get_colors
 from model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch, get_irrigation_code
 from optimisation.optimisation_period import start, end
 from targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
+from project_base import processed_target_dir
 
 
 # targets that occur outside of period.
@@ -31,29 +32,50 @@ def get_last_nmonths(nmonths, indates, data):
     return np.array(out)
 
 
-def get_dryland_mean_era5_rch(freq='M'):
+def get_mean_era5_rch(freq='M', dryland_only=False):
+    """
+    in mm
+    :param freq:
+    :param dryland_only:
+    :return:
+    """
     dates, rch = get_corrected_historical_era5_rch(None, None,
                                                    frequency=freq)
     print('got rch')
     use_rch = []
-    irrig = {}
-    for y in [2015, 2020, 2021]:
-        irrig[y] = get_irrigation_code(y) == -1
-    use_rch.append(np.nanmean(rch[dates.year <= 2015][:, ~irrig[2015]], axis=1))
-    use_rch.append(np.nanmean(rch[(dates.year > 2015) & (dates.year <= 2020)][:, ~irrig[2020]], axis=1))
-    use_rch.append(np.nanmean(rch[dates.year >= 2021][:, ~irrig[2021]], axis=1))
-    use_rch = np.concatenate(use_rch)
+    if dryland_only:
+        irrig = {}
+        for y in [2015, 2020, 2021]:
+            irrig[y] = get_irrigation_code(y) == -1
+        use_rch.append(np.nanmean(rch[dates.year <= 2015][:, ~irrig[2015]], axis=1))
+        use_rch.append(np.nanmean(rch[(dates.year > 2015) & (dates.year <= 2020)][:, ~irrig[2020]], axis=1))
+        use_rch.append(np.nanmean(rch[dates.year >= 2021][:, ~irrig[2021]], axis=1))
+        use_rch = np.concatenate(use_rch)
+    else:
+        use_rch = np.nanmean(rch, axis=(1, 2))
     return dates, use_rch
 
 
-def get_indicative_times_v2():  # todo add recalc option
+def get_indicative_times_v2(recalc=False, return_figs=False):
+    save_path = processed_target_dir.joinpath('indicative_time_mapper.csv')
+    if return_figs:
+        assert recalc, 'must re-run full process to create figures'
+
+    if save_path.exists() and not recalc:
+        data = pd.read_csv(save_path, index_col=0)['0']
+        data = data.to_dict()
+        return data
+
     freq = 'M'
-    dates, use_rch = get_dryland_mean_era5_rch(freq)
+    dates, use_rch = get_mean_era5_rch(freq)
     rch = pd.DataFrame(index=dates, columns=['rch'], data=use_rch)
     hill = get_hillside_flows(None, None, freq)
     hill = pd.DataFrame(hill.sum(axis=1), columns=['hill'])
     all_data = pd.merge(rch, hill, right_index=True, left_index=True)
 
+    mean_rch_vol = np.nanmean(use_rch * ((smt.get_no_flow(0) == 1) * smt.grid_space ** 2 / 1000).sum())
+    mean_hill_vol = hill['hill'].mean()
+    rch_dist_mult = mean_rch_vol / mean_hill_vol
     # normalize to 0-1
     all_data_norm = (all_data - all_data.mean()) / (all_data.max() - all_data.min())
     all_data_norm = all_data_norm - all_data_norm.min()
@@ -68,7 +90,7 @@ def get_indicative_times_v2():  # todo add recalc option
     targ_dates = targ_dates[targ_dates < pd.to_datetime(start)]
 
     targ_data = pd.DataFrame(index=targ_dates)
-    nmonths = 6  # keynote choose 6 months as the absolute correlation is strongest with recharge, which is the highest flux
+    nmonths = 12  # keynote choose 12 months as mutual info is largest and it makes most sense
     targ_data.loc[:, 'rch'] = get_last_nmonths(nmonths, targ_dates, all_data_norm.loc[:, 'rch'])
     targ_data.loc[:, 'hill'] = get_last_nmonths(nmonths, targ_dates, all_data_norm.loc[:, 'hill'])
     targ_data.loc[:, 'month'] = targ_data.index.month
@@ -79,38 +101,95 @@ def get_indicative_times_v2():  # todo add recalc option
     period_data.loc[:, 'hill'] = get_last_nmonths(nmonths, period_dates, all_data_norm.loc[:, 'hill'])
     period_data.loc[:, 'month'] = period_data.index.month
 
-    for m in range(1, 12):
+    # re-normalise the sum values
+    for k in ['rch', 'hill']:
+        all_vals = np.concatenate((period_data[k].values, targ_data[k].values))
+        targ_data.loc[:, k] = (targ_data.loc[:, k] - all_vals.min()) / (all_vals.max() - all_vals.min())
+        period_data.loc[:, k] = (period_data.loc[:, k] - all_vals.min()) / (all_vals.max() - all_vals.min())
+
+    # find best and plot lines betwen best
+    # shape = (periods, targs)
+    for m in range(1, 13):
         period_months = [
             (datetime.date(2020, m, 1) + relativedelta(months=-1)).month,
+            m,
             (datetime.date(2020, m, 1) + relativedelta(months=1)).month,
         ]
-        temp_targ = targ_data.loc[np.in1d(targ_data.month, [m])]
-        temp_period = period_data.loc[np.in1d(period_data.month, period_months)]
-        pass
-        fig, ax = plt.subplots()
-        ax.scatter(temp_period.rch, temp_period.hill, c='b', label='period data')
-        for d, r, h, im in temp_period.itertuples(True, None):
-            ax.text(r, h, f'{d.year}-{im}', color='b')
-        ax.scatter(temp_targ.rch, temp_targ.hill, c='r', label='target data')
-        for d, r, h, im in temp_targ.itertuples(True, None):
-            ax.text(r, h, f'{d.year}-{im}', color='r')
-        ax.set_title('months: {} to {} for month: {}'.format(*period_months, m))
-        ax.set_ylabel('hillslope (normalized)')
-        ax.set_xlabel('recharge (normalised)')
-        ax.legend()
+        targ_idx = np.in1d(targ_data.month, [m])
+        period_idx = np.in1d(period_data.month, period_months)
 
-    plt.show()
-    # todo add in era5 for 2021
-    # todo need to id wheter to preference rch or hillslope or neither
-    # todo could prefernce just on a model water budget basis... might be easiest/simlest, I like this
-    # todo the other option is to just use all the dates, or all the dates within x percent
-    # todo make a total shift (e.g. joining each time period plot and add to pre-optimisation
-    raise NotImplementedError
+        rch_dif = (period_data.loc[period_idx].rch.values[:, np.newaxis] - targ_data.loc[targ_idx].rch.values[
+                                                                           np.newaxis, :])
+        hill_dif = (period_data.loc[period_idx].hill.values[:, np.newaxis] - targ_data.loc[targ_idx].hill.values[
+                                                                             np.newaxis, :])
+        # preferentially shift hillslope vs recharge in proportion to to total flux
+        obj = ((rch_dif * rch_dist_mult) ** 2 + (hill_dif ** 2)) ** 0.5
+        idxs = np.argmin(obj, axis=0)
+
+        targ_data.loc[targ_idx, 'new_per'] = period_data.loc[period_idx].index[idxs]
+        targ_data.loc[targ_idx, 'new_rch'] = period_data.loc[period_idx].rch.values[idxs]
+        targ_data.loc[targ_idx, 'new_hill'] = period_data.loc[period_idx].hill.values[idxs]
+
+    new_keys = ['new_per', 'new_rch', 'new_hill']
+
+    # plotting
+    figs, names = [], []
+    fig, ax = plt.subplots(figsize=(10, 8))
+    ax.scatter(period_data.rch, period_data.hill, c='b', label='Period data')
+    ax.scatter(targ_data.rch, targ_data.hill, c='r', label='Target data')
+
+    # plot linking lines
+    link_keys = ['rch', 'hill', 'new_rch', 'new_hill']
+    for rch, hill, new_rch, new_hill in targ_data.loc[:, link_keys].itertuples(False, None):
+        ax.plot([rch, new_rch], [hill, new_hill], color='k', ls=':')
+    ax.set_ylabel('Hillslope (normalized)')
+    ax.set_xlabel('Recharge (normalised)')
+    ax.set_title('All date shifts\nnote target months can only shift +- 1 month')
+    ax.legend()
+    fig.tight_layout()
+    figs.append(fig)
+    names.append('all_targ_shifts')
+
+    for m in range(1, 13):
+        period_months = [
+            (datetime.date(2020, m, 1) + relativedelta(months=-1)).month,
+            m,
+            (datetime.date(2020, m, 1) + relativedelta(months=1)).month,
+        ]
+        targ_idx = np.in1d(targ_data.month, [m])
+        period_idx = np.in1d(period_data.month, period_months)
+        fig, ax = plt.subplots(figsize=(10, 8))
+        ax.scatter(period_data.loc[period_idx].rch, period_data.loc[period_idx].hill, c='b', label='Period data')
+        for d, r, h, im in period_data.loc[period_idx].itertuples(True, None):
+            ax.text(r, h, f'{d.year}-{im}', color='b')
+        ax.scatter(targ_data.loc[targ_idx].rch, targ_data.loc[targ_idx].hill, c='r', label='Target data')
+        for d, r, h, im in targ_data.loc[targ_idx].drop(columns=new_keys).itertuples(True, None):
+            ax.text(r, h, f'{d.year}-{im}', color='r')
+
+        # plot linking lines
+        link_keys = ['rch', 'hill', 'new_rch', 'new_hill']
+        for rch, hill, new_rch, new_hill in targ_data.loc[targ_idx, link_keys].itertuples(False, None):
+            ax.plot([rch, new_rch], [hill, new_hill], color='k', ls=':')
+        ax.set_ylabel('Hillslope (normalized)')
+        ax.set_xlabel('Recharge (normalised)')
+        ax.set_title(f'Target time shifts for month: {m}\nnote target months can only shift +- 1 month')
+        ax.legend()
+        fig.tight_layout()
+        figs.append(fig)
+        names.append(f'{m}_targ_shifts')
+
+    outdata = {
+        f'{old.month}-{old.year}': f'{new.month}-{new.year}' for old, new in targ_data.new_per.items()
+    }
+    pd.Series(outdata).to_csv(save_path)
+    if return_figs:
+        return outdata, (figs, names)
+    return outdata
 
 
 def get_indicative_times():
     well_data = get_single_target_data()
-    dates, use_rch = get_dryland_mean_era5_rch()
+    dates, use_rch = get_mean_era5_rch()
     hill = get_hillside_flows(None, None, 'M')
     hill = hill.sum(axis=1)
 
@@ -202,6 +281,12 @@ def predictive_power_hill_rch():
     figs, names = [], []
     targs = get_high_freq_head_targets(None, None, freq=freq)
     targ_names = targs.keys()
+    # remove mean monthly data
+    targs.loc[:, 'month'] = targs.index.month
+    mean_targs = targs.groupby('month').mean()
+    for t in targ_names:
+        targs.loc[:, t] = targs.loc[:, t] - targs.month.replace(mean_targs.loc[:, t].to_dict())
+
     colors = get_colors(targ_names)
     all_wells = get_all_wells().loc[targ_names]
     lake_locs = get_lake_hawea_loc()
@@ -210,7 +295,7 @@ def predictive_power_hill_rch():
     all_wells.loc[:, 'dist'] = lake_y - all_wells.loc[:, 'nztmy']
     print(all_wells.loc[:, 'dist'])
 
-    dates, use_rch = get_dryland_mean_era5_rch(freq)
+    dates, use_rch = get_mean_era5_rch(freq)
     rch = pd.DataFrame(index=dates, columns=['rch'], data=use_rch)
     hill = get_hillside_flows(None, None, freq)
     hill = pd.DataFrame(hill.sum(axis=1), columns=['hill'])
@@ -223,15 +308,17 @@ def predictive_power_hill_rch():
     keys = []
     nmonths = np.arange(1, 13)
     for n in nmonths:
-        targs.loc[:, f'rch_{n}'] = get_last_nmonths(n, targs.index, all_data_norm.loc[:, 'rch'])
-        targs.loc[:, f'hill_{n}'] = get_last_nmonths(n, targs.index, all_data_norm.loc[:, 'hill'])
-        keys.extend([f'rch_{n}', f'hill_{n}'])
+        targs.loc[:, f'norm_rch_{n}'] = get_last_nmonths(n, targs.index, all_data_norm.loc[:, 'rch'])
+        targs.loc[:, f'norm_hill_{n}'] = get_last_nmonths(n, targs.index, all_data_norm.loc[:, 'hill'])
+        targs.loc[:, f'raw_rch_{n}'] = get_last_nmonths(n, targs.index, all_data.loc[:, 'rch'])
+        targs.loc[:, f'raw_hill_{n}'] = get_last_nmonths(n, targs.index, all_data.loc[:, 'hill'])
+        keys.extend([f'norm_rch_{n}', f'norm_hill_{n}'])
     outdata = pd.DataFrame(index=targ_names, columns=keys)
     outdata_pp = pd.DataFrame(index=targ_names, columns=keys)
     outdata_mutreggres = pd.DataFrame(index=targ_names, columns=keys)
     for t, k in itertools.product(targ_names, keys):
         n = int(k.split('_')[-1])
-        k1, k2 = f'rch_{n}', f'hill_{n}'
+        k1, k2 = f'norm_rch_{n}', f'norm_hill_{n}'
         use_data = targs.loc[:, [t, k1, k2]].dropna()
         mut = mutual_info_regression(use_data.loc[:, [k1, k2]], use_data.loc[:, t])
         outdata_mutreggres.loc[t, k1] = mut[0]
@@ -245,27 +332,47 @@ def predictive_power_hill_rch():
         corr = np.corrcoef(corr_data[:, 0], corr_data[:, 1])
         outdata.loc[t, k] = corr[0, 1]
 
-    outdata = outdata.abs()
-    for df, n in zip([outdata_pp, outdata, outdata_mutreggres], ['pp score', 'pearson correlation', 'mutual_info']):
+    # plotting
+    figs, names = [], []
+    for df, n in zip([outdata_pp, outdata, outdata_mutreggres], ['Pp score', 'Pearson correlation', 'Mutual info']):
         fig, axs = plt.subplots(2, sharex=True, sharey=True, figsize=(10, 8))
         fig.suptitle(n)
-        for k, ax in zip(['rch', 'hill'], axs):
+        for k, ax in zip(['norm_rch', 'norm_hill'], axs):
             use_keys = [f'{k}_{e}' for e in nmonths]
             for t, c in zip(targ_names, colors):
                 ax.plot(nmonths, df.loc[t, use_keys], c=c, label=t, marker='.')
             ax.plot(nmonths, df.loc[:, use_keys].mean(), c='k', marker='.', label='mean')
-            ax.set_title(f'correlations to shifted to {k}')
+            ax.set_title(f'Correlations to shifted to {k}')
             ax.set_ylabel(n)
-            ax.set_xlabel('cumulative months shifted back')
+            ax.set_xlabel('Cumulative months shifted back')
+        fig.tight_layout()
+        figs.append(fig)
+        names.append(f'target_time_correlations_{n}')
     print('correlation coeff')
     print(outdata.max(axis=1))
     print('ppscore')
     print(outdata_pp.max(axis=1))
     print('mut_regress')
     print(outdata_mutreggres.max(axis=1))
-    plt.show()
-    # todo include this in writeup
-    # Keynote 6 months is best for all except mutual regression
+
+    for s in ['norm', 'raw']:
+        for e in [6, 12]:
+            fig, axs = plt.subplots(2, sharex=False, sharey=True, figsize=(10, 8))
+            fig.suptitle(f'{e} months cumulative preceding {s} data')
+            for k, ax in zip(['rch', 'hill'], axs):
+                for t, c in zip(targ_names, colors):
+                    ax.scatter(targs.loc[:, f'{s}_{k}_{e}'], targs.loc[:, t], color=c, label=t, marker='.')
+                ax.set_title(k)
+                ax.scatter(targs.loc[:, f'{s}_{k}_{e}'], targs.loc[:, targ_names].mean(axis=1), color='k', label='Mean',
+                           marker='.')
+                ax.legend()
+            fig.supxlabel('Preceding normalised value')
+            fig.supylabel('Normalised target')
+            fig.tight_layout()
+            figs.append(fig)
+            names.append(f'target_time_{s}_data_{e}_preciding_months')
+    return s, (figs, names)
+    # keynote chose 1 year as it is the default and also one of the highest for both mutinfo, perarosns, and ppscore
 
 
 def get_compare_correlations_lake():
@@ -281,7 +388,7 @@ def get_compare_correlations_lake():
     all_wells.loc[:, 'dist'] = lake_y - all_wells.loc[:, 'nztmy']
     print(all_wells.loc[:, 'dist'])
 
-    dates, use_rch = get_dryland_mean_era5_rch(freq)
+    dates, use_rch = get_mean_era5_rch(freq)
     rch = pd.DataFrame(index=dates, columns=['rch'], data=use_rch)
     hill = get_hillside_flows(None, None, freq)
     hill = pd.DataFrame(hill.sum(axis=1), columns=['hill'])
@@ -362,5 +469,7 @@ def get_compare_correlations_lake():
 
 
 if __name__ == '__main__':
+    get_indicative_times_v2(recalc=True)
+    plt.show()
     predictive_power_hill_rch()
-    get_indicative_times_v2()
+    plt.show()

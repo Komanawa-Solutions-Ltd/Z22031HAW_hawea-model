@@ -13,7 +13,7 @@ from targets_and_sensitive_sites.head_targets import get_high_freq_head_targets,
 from model_build.project_model_tools import smt
 
 
-def get_opt_start_stop():  # todo return data, include in pre model optimisation overview
+def get_opt_start_stop():
     figs = []
     names = []
     targets = get_high_freq_head_targets('2015-07-01', None)

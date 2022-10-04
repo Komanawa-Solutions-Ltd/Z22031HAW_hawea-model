@@ -438,7 +438,7 @@ def plot_targets(save):  # todo & check
 
     #  todo temporally
 
-    #  todo relatvily temporaly
+    # todo temporally by zones
 
     #  todo objective function and weighting
 
@@ -451,12 +451,23 @@ def plot_deciding_time_period(save):
         for f, n in zip(figs, names):
             f.savefig(outdir.joinpath(f'{n}.png'))
 
+def indicative_target_times(save):
+    outdir = save_path.joinpath('indicative_target_times')
+    figs, names = [], []
+    from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2, predictive_power_hill_rch
+    i, ifigs, inames = get_indicative_times_v2(True, True)
+    figs.extend(ifigs)
+    names.extend(inames)
+    i, ifigs, inames = predictive_power_hill_rch()
+    figs.extend(ifigs)
+    names.extend(inames)
+    if save:
+        for f, n in zip(figs, names):
+            f.savefig(outdir.joinpath(f'{n}.png'))
 
-if __name__ == '__main__':
-    save = False  # todo save when finally finished.
-    plot_targets(save)
-    plt.show()
-    # checked and finished, but not saved
+
+def make_all_preopt(save):
+    indicative_target_times(save)
     plot_deciding_time_period(save)
     plot_steady_state_water_bud_locs(save)
     plot_steady_state_water_budget(save)
@@ -464,4 +475,12 @@ if __name__ == '__main__':
     plot_all_spd(save)
     plot_parameterisation(save)
     plot_thickness_top_bot(save)
+
+
+if __name__ == '__main__':
+    save = False  # todo save when finally finished.
+    plot_targets(save)
+    plt.show()
+    # checked and finished, but not saved
+    make_all_preopt()
     plt.show()

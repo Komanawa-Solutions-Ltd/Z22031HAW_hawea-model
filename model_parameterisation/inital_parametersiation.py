@@ -27,8 +27,8 @@ def get_initial_riv_conductance(return_just_start=False):
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model
     # keynote use log values
-    start_val = (10, (0.01, 600))  # todo review
-    lake_val = (10, (0.01, 600))  # todo review
+    start_val = (10, (0.01, 600))  # todo review UPDATE INITAL  WITH LOG10MEAN OF SCOTT PARAMS
+    lake_val = (10, (0.01, 600))  # todo review UPDATE  INITAL WITH LOG10MEAN OF SCOTT PARAMS
 
     # for reference scott's model ha min = 0.09, max = 300, median = 14
     if return_just_start:

@@ -10,10 +10,12 @@ from model_build.project_model_tools import smt
 from project_base import processed_target_dir, base_target_dir
 from model_build.utils import get_colors
 from targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
+from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
 
 
-def get_single_head_targets(recalc=False):  # todo add recalc
+def get_single_head_targets():
     all_wells = get_single_target_data()
+    indicative_times = get_indicative_times_v2()
     # todo, set indiciative times! how do I want to do this???
     warnings.warn('not finished, still need to set indicative times')
 
@@ -41,6 +43,7 @@ def get_2011_piezo_survey(recalc=False):
     data.loc[:, 'ibound'] = ibound[data.i, data.j]
     data = data.loc[data.ibound > 0]
 
+    indicative_times = get_indicative_times_v2()
     # todo set indicative times! how do I want to do this
     warnings.warn('not finished, still need to set indicative times')
     data.to_csv(processed_path)

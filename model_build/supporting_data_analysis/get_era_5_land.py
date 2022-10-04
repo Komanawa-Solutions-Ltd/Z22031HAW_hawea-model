@@ -8,7 +8,6 @@ from pathlib import Path
 
 if __name__ == '__main__':
     # keynote used tethys instead
-    # todo chck and add 2021 to the era5 data!!!
     c = cdsapi.Client()
     y = 2021
     c.retrieve(

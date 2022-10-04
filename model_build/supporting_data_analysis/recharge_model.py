@@ -482,6 +482,15 @@ def get_irrigation_code(y, recalc=False):
 
 def get_historical_rch_model_results(data_source='historical', limited_irrigation=False, recalc=False,
                                      from_year=None, to_year=None):
+    """
+
+    :param data_source:
+    :param limited_irrigation:
+    :param recalc:
+    :param from_year:
+    :param to_year:
+    :return: rch in mm
+    """
     assert data_source in ['historical', 'era5']
     if from_year is None:
         assert to_year is None
@@ -635,6 +644,15 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
 
 
 def get_weekly_plus_era5_rch(start_date=None, end_date=None, frequency='W', limited_irrigation=False, fun='mean'):
+    """
+
+    :param start_date:
+    :param end_date:
+    :param frequency:
+    :param limited_irrigation:
+    :param fun:
+    :return: rch in mm
+    """
     if start_date is None:
         start_date = datetime.date(1950, 1, 1)
 
@@ -682,7 +700,7 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
     :param limited_irrigation: boolean limit amount of irrigation applied
     :param frequency: pd freq code (weekly plus)
     :param fun: function to resample if needed
-    :return:
+    :return: rch in mm
     """
     if frequency == 'D':
         raise ValueError('must be weekly plus')
@@ -845,6 +863,7 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
 
 
 def get_rch(start_date, end_date, frequency='D', limited_irrigation=False, recalc=False, fun='mean'):
+    # keynote all rch is in mm
     dates, rch = get_historical_rch_model_results('historical', limited_irrigation=limited_irrigation, recalc=recalc)
 
     temp = pd.DataFrame(index=dates,
@@ -867,4 +886,3 @@ if __name__ == '__main__':
 
     get_corrected_historical_era5_rch(None, None, recalc=True, limited_irrigation=False)
     get_corrected_historical_era5_rch(None, None, recalc=True, limited_irrigation=True)
-
