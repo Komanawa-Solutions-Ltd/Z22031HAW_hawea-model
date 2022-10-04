@@ -16,7 +16,7 @@ from targets_and_sensitive_sites.get_indicative_times import get_indicative_time
 def get_single_head_targets():
     all_wells = get_single_target_data()
     indicative_times = get_indicative_times_v2()
-    # todo, set indiciative times! how do I want to do this???
+    # todo, set indiciative times! how do I want to do this???, mean across full mapped month
     warnings.warn('not finished, still need to set indicative times')
 
     return all_wells
@@ -44,7 +44,7 @@ def get_2011_piezo_survey(recalc=False):
     data = data.loc[data.ibound > 0]
 
     indicative_times = get_indicative_times_v2()
-    # todo set indicative times! how do I want to do this
+    # todo set indicative times! how do I want to do this mean across full mapped month
     warnings.warn('not finished, still need to set indicative times')
     data.to_csv(processed_path)
     return data
