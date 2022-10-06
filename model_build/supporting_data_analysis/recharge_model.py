@@ -152,7 +152,10 @@ def _get_raw_era5_land():
     return outdata
 
 
-def get_era5_land(correct=True, recalc=False):
+def get_era5_land(correct=True, recalc=False, return_figs=False):
+    if return_figs:
+        assert recalc and correct
+
     if correct:
         processed_path = processed_model_build_data_dir.joinpath('corrected_era5_data.csv')
         if processed_path.exists() and not recalc:
@@ -161,6 +164,7 @@ def get_era5_land(correct=True, recalc=False):
             return data
 
         from sklearn.linear_model import LinearRegression
+        fig, (rainax, petax) = plt.subplots(2, figsize=(10, 8))
         era5 = _get_raw_era5_land()
         era5.loc[:, 'season'] = [int_season_mapper[m] for m in era5.index.month]
         era5.index = pd.to_datetime(era5.index).date
@@ -172,11 +176,19 @@ def get_era5_land(correct=True, recalc=False):
         y = met_data.loc[use_dates, 'PET']
         regr.fit(x, y)
         print('r2 for pet conversion')
+        rscore = regr.score(x, y)
         print(regr.score(x, y))
         era5.loc[:, 'uncor_potential_et'] = era5.loc[:, 'potential_et']
         xall = era5.loc[:, ['potential_et', 'season']]
         era5.loc[:, 'potential_et'] = regr.predict(xall)
+        y_pred = regr.predict(x)
         era5.loc[era5.potential_et < 0, 'potential_et'] = 0
+        petax.scatter(x.values[:, 0], y, color='k', label='Original data')
+        petax.scatter(x.values[:, 0], y_pred, color='r', label='Predicted data')
+        petax.set_title(f'PET prediction\nFunction of PET and season\nR2:{round(rscore, 2)}')
+        petax.set_xlabel('ERA5-Land PET')
+        petax.set_ylabel('Measured PET')
+        petax.legend()
 
         # correct rainfall
         met_data.rename(columns={'Rainfall': 'precipitation'}, inplace=True)
@@ -194,14 +206,27 @@ def get_era5_land(correct=True, recalc=False):
         y = weekly_met.loc[:, ['precipitation']]
         regr = LinearRegression()
         regr.fit(x, y)
+        plot_x = (x.sort_values('precipitation'))
+        y_pred = regr.predict(plot_x)
         print('r2 for precip conversion')
-        print(regr.score(x, y))
+        rscore = regr.score(x, y)
+        print(rscore)
         era5.loc[:, 'uncor_precipitation'] = xall = era5.loc[:, 'precipitation']
         era5.loc[:, 'precipitation'] = regr.predict(xall.values[:, np.newaxis])
         era5.loc[era5.precipitation < 0, 'precipitation'] = 0
 
+        rainax.scatter(x.values[:, 0], y, color='k', label='Original data')
+        rainax.plot(plot_x.values[:, 0], y_pred, color='k', ls=':', label='Predicted data')
+        rainax.set_title(f'Rainfall prediction\nfunction of weekly rainfall\nR2:{round(rscore, 2)}')
+        rainax.set_xlabel('ERA5-Land weekly rainfall')
+        rainax.set_ylabel('Measured weekly rainfall')
+        rainax.legend()
+        fig.tight_layout()
+
         era5.to_csv(processed_path)
         era5.index = pd.to_datetime(era5.index)
+        if return_figs:
+            return era5, fig
         return era5
     else:
         return _get_raw_era5_land()
@@ -691,7 +716,7 @@ def get_weekly_plus_era5_rch(start_date=None, end_date=None, frequency='W', limi
 
 
 def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limited_irrigation=False,
-                                      frequency='W', fun='mean'):
+                                      frequency='W', fun='mean', return_fig=False):
     """
     # keynote corrected recharge is a little low for dryland, but about right for irrigated.
     :param start_date: None or start date
@@ -702,6 +727,8 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
     :param fun: function to resample if needed
     :return: rch in mm
     """
+    if return_fig:
+        assert recalc
     if frequency == 'D':
         raise ValueError('must be weekly plus')
     if limited_irrigation:
@@ -794,19 +821,37 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
     unirrigated_era5_fit_data_season = np.concatenate(unirrigated_era5_fit_data_season)
     unirrigated_hist_fit_data = np.concatenate(unirrigated_hist_fit_data)
 
+    fig, (irrig_ax, unirrig_ax) = plt.subplots(2, figsize=(10, 8))
     # make fit
     from sklearn.linear_model import LinearRegression
     regr_irrig = LinearRegression()
     x = np.concatenate((irrigated_era5_fit_data[:, np.newaxis], irrigated_era5_fit_data_season[:, np.newaxis]), axis=1)
     y = irrigated_hist_fit_data
     regr_irrig.fit(x, y)
-    print('irrigated r2', regr_irrig.score(x, y))
+    rscore = regr_irrig.score(x, y)
+    print('irrigated r2', rscore)
+    y_pred = regr_irrig.predict(x)
+    irrig_ax.scatter(x[:, 0], y, color='k', label='Original data')
+    irrig_ax.scatter(x[:, 0], y_pred, color='r', label='Predicted data')
+    irrig_ax.set_title(f'Irrigated weekly recharge\nFunction of ERA5 recharge and season\nR2:{round(rscore, 2)}')
+    irrig_ax.set_ylabel('Recharged modelled from measured data')
+    irrig_ax.set_xlabel('Recharged modelled from ERA5-land data')
 
     regr_unirrig = LinearRegression()
     x = unirrigated_era5_fit_data[:, np.newaxis]
     y = unirrigated_hist_fit_data
     regr_unirrig.fit(x, y)
-    print('unirrigated r2', regr_unirrig.score(x, y))
+    rscore = regr_unirrig.score(x, y)
+    print('unirrigated r2', rscore)
+    y_pred = regr_unirrig.predict(x)
+    unirrig_ax.scatter(x[:, 0], y, color='k', label='Original data')
+    unirrig_ax.plot(x[:, 0], y_pred, color='r', label='Predicted data')
+    unirrig_ax.set_title(f'Un-irrigated weekly recharge\nFunction of ERA5 recharge\nR2:{round(rscore, 2)}')
+    unirrig_ax.set_ylabel('Recharged modelled from measured data')
+    unirrig_ax.set_xlabel('Recharged modelled from ERA5-land data')
+
+    fig.suptitle('ERA5-Land recharge correction')
+    fig.tight_layout()
 
     # predict new data
     outdata = np.full(era5_rch_raw.shape, np.nan)
@@ -858,6 +903,8 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
     if any(idx):
         warnings.warn(f'na values for full model in: {era5_dates[idx]}')
     out_rch = temp.values.reshape((len(temp), *outdata.shape[1:]))
+    if return_fig:
+        return temp.index, out_rch, fig
 
     return temp.index, out_rch
 

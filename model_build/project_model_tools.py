@@ -305,13 +305,13 @@ def data_checks():
     cols = range(0, smt.cols, 20)
     for c in cols:
         smt.plot.plt_slice(np.zeros(smt.model_shape) * np.nan, x_coords=c, y_coords=None, coords_in_row_col=True,
-                           plot_locator=True, )
+                           plot_locator=True, title=f'col{c}')
 
     # E-W cross sections
     rows = range(0, smt.rows, 20)
     for r in rows:
         smt.plot.plt_slice(np.zeros(smt.model_shape) * np.nan, x_coords=None, y_coords=r, coords_in_row_col=True,
-                           plot_locator=True)
+                           plot_locator=True, title=f'row{r}')
     smt.plot.show()
 
     # happy with this setup
@@ -326,9 +326,9 @@ def export_model_boundary():
 
 
 if __name__ == '__main__':
+    data_checks()
     get_starting_heads(True)
     export_model_boundary()
     elv_calc()
     smt.plot.plt_matrix(smt.get_model_zeros(), base_map=True)
     smt.plot.show()
-    data_checks()

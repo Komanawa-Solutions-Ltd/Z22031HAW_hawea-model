@@ -2,24 +2,42 @@
 created matt_dumont 
 on: 15/08/22
 """
+import time
 import warnings
 import numpy as np
+from dateutil.relativedelta import relativedelta
 import pandas as pd
 from model_build.supporting_data_analysis import get_all_wells
 from model_build.project_model_tools import smt
 from project_base import processed_target_dir, base_target_dir
-from model_build.utils import get_colors
+from model_build.utils import get_colors, select_resample
 from targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
 from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
 
 
 def get_single_head_targets():
     all_wells = get_single_target_data()
+    all_wells.loc[:, 'org_time'] = [f'{e.month}-{e.year}' for e in all_wells.drilldate]
     indicative_times = get_indicative_times_v2()
-    # todo, set indiciative times! how do I want to do this???, mean across full mapped month
-    warnings.warn('not finished, still need to set indicative times')
+    all_wells.loc[:, 'model_time'] = all_wells.loc[:, 'org_time'].replace(indicative_times)
+    all_wells.loc[:, 'model_month'] = all_wells.model_time.str.split('-').str.get(0).astype(int)
+    assert all_wells.model_time.notna().all()
 
-    return all_wells
+    outdata = []
+
+    # duplicate all times
+    for i, r in all_wells.reset_index().iterrows():
+        start_date = pd.to_datetime('01-' + r.model_time, format='%d-%m-%Y')
+        dates = pd.date_range(start_date, start_date + relativedelta(months=1, days=-1), freq='D')
+        temp = pd.DataFrame(np.repeat(r.to_numpy()[np.newaxis, :], len(dates), axis=0), columns=r.keys())
+        temp.loc[:, 'use_datetime'] = dates
+        outdata.append(temp)
+    outdata = pd.concat(outdata)
+    outdata.loc[:, 'k'] = 0
+    outdata.loc[:, 'i'] = outdata.loc[:, 'i'].astype(int)
+    outdata.loc[:, 'j'] = outdata.loc[:, 'j'].astype(int)
+    outdata.loc[:, 'head'] = outdata.loc[:, 'depth_to_water_elv'].astype(float)
+    return outdata
 
 
 def get_2011_piezo_survey(recalc=False):
@@ -28,9 +46,12 @@ def get_2011_piezo_survey(recalc=False):
     processed_path = processed_target_dir.joinpath('piezo_targets.csv')
 
     if processed_path.exists() and not recalc:
-        data = pd.read_csv(processed_path)
-        # todo manage types
-        raise NotImplementedError
+        data = pd.read_csv(processed_path, index_col=0)
+        data.loc[:, 'i'] = data.loc[:, 'i'].astype(int)
+        data.loc[:, 'j'] = data.loc[:, 'j'].astype(int)
+        data.loc[:, 'k'] = data.loc[:, 'k'].astype(int)
+        data.loc[:, 'use_datetime'] = pd.to_datetime(data.loc[:, 'use_datetime'])
+
         return data
 
     data = pd.read_excel(data_path, 'Appendix Table')
@@ -43,14 +64,21 @@ def get_2011_piezo_survey(recalc=False):
     data.loc[:, 'ibound'] = ibound[data.i, data.j]
     data = data.loc[data.ibound > 0]
 
-    indicative_times = get_indicative_times_v2()
-    # todo set indicative times! how do I want to do this mean across full mapped month
-    warnings.warn('not finished, still need to set indicative times')
-    data.to_csv(processed_path)
-    return data
+    indicative_time = get_indicative_times_v2()['9-2011']
+    start_date = pd.to_datetime('01-' + indicative_time, format='%d-%m-%Y')
+    outdata = []
+    dates = pd.date_range(start_date, start_date + relativedelta(months=1, days=-1), freq='D')
+    for d in dates:
+        temp = data.copy(True)
+        temp.loc[:, 'use_datetime'] = d
+        outdata.append(temp)
+    outdata = pd.concat(outdata).reset_index(drop=True)
+    outdata.loc[:, 'k'] = 0
+    outdata.to_csv(processed_path)
+    return outdata
 
 
-def get_low_freq_head_targets(start_date, end_date):
+def get_low_freq_head_targets(start_date, end_date, freq='D'):
     data_path = base_target_dir.joinpath('NGMP bore fluctuations 1996 - 2019.csv')
     data = pd.read_csv(data_path)
     outdata = []
@@ -78,8 +106,8 @@ def get_low_freq_head_targets(start_date, end_date):
         use_outdata.append(temp)
     outdata = pd.concat(use_outdata)
     outdata = outdata.groupby('date').mean()
-    idx = (outdata.index >= pd.to_datetime(start_date)) & (outdata.index <= pd.to_datetime(end_date))
-    return outdata.loc[idx]
+    outdata = select_resample(outdata, start_date, end_date, frequency=freq)
+    return outdata
 
 def plot_head_targets(how='all'):
     alpha = 0.8
@@ -193,6 +221,18 @@ def export_incl_head_target_locs():
 
 
 if __name__ == '__main__':
+    print('piezo')
+    print(get_2011_piezo_survey(recalc=True).dtypes)
+    time.sleep(1)
+    print('single')
+    print(get_single_head_targets().dtypes)
+    time.sleep(1)
+    print('low')
+    print(get_low_freq_head_targets(None, None).dtypes)
+    time.sleep(1)
+    print('high')
+    print(get_high_freq_head_targets(None, None).dtypes)
+    time.sleep(1)
     plot_head_targets(how='incl')
     smt.plot.show()
     plot_head_targets()

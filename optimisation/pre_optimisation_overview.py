@@ -21,7 +21,8 @@ from optimisation.optimisation_period import tdis
 from project_base import proj_root, base_model_build_data_dir
 from model_build.supporting_data_analysis import *
 from model_build.zones import get_model_zones
-from targets_and_sensitive_sites.head_targets import plot_head_targets
+from targets_and_sensitive_sites.head_targets import plot_head_targets, get_high_freq_head_targets, \
+    get_low_freq_head_targets, get_2011_piezo_survey, get_single_head_targets
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
 from optimisation.determine_opt_start import get_opt_start_stop
 
@@ -403,7 +404,7 @@ def plot_steady_state_water_bud_locs(save):
             fig.savefig(outdir.joinpath('spatial_start_heads.png'))
 
 
-def plot_targets(save):  # todo & check
+def plot_targets(save):
     outdir = save_path.joinpath('targets')
     outdir.mkdir(exist_ok=True)
 
@@ -416,7 +417,6 @@ def plot_targets(save):  # todo & check
 
     # river targets
     riv_loc = get_riv_target_locs()
-    riv_targ = get_hawea_gain_loss_targets()
     use_riv_targets = smt.get_model_zeros() * np.nan
     for k, v in riv_loc.items():
         use_riv_targets[v] = k
@@ -426,7 +426,7 @@ def plot_targets(save):  # todo & check
     cmap = ListedColormap(zone_colors)
     fig, ax1 = plt.subplots(figsize=smt.default_figsize)
     smt.plot.plt_matrix(use_riv_targets, no_flow_layer=0, base_map=True,
-                        title='River conductance Zones', cmap=cmap, color_bar=False, ax=ax1, alpha=1)
+                        title='River target zones', cmap=cmap, color_bar=False, ax=ax1, alpha=1)
     handles, labels = [], []
     for c, n in zip(zone_colors, base_names):
         handles.append(Patch(facecolor=c))
@@ -436,11 +436,92 @@ def plot_targets(save):  # todo & check
     if save:
         fig.savefig(outdir.joinpath('river_conductance.png'))
 
-    #  todo temporally
+    # temporally (high frequency)
+    high = get_high_freq_head_targets(*tdis.date_limits, freq='W')
+    low = get_low_freq_head_targets(*tdis.date_limits, freq='W')
+    all_targs = pd.merge(high, low, how='outer', right_index=True, left_index=True)
+    all_targs = all_targs.loc[(all_targs.index >= tdis.date_limits[0]) & (all_targs.index <= tdis.date_limits[1])]
+    targ_names = all_targs.keys()
 
-    # todo temporally by zones
+    fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(8, 10), gridspec_kw=dict(height_ratios=(1, 2)))
+    colors = get_colors(targ_names)
+    colors[-1] = 'gold'
+    for i, (k, c) in enumerate(zip(targ_names, colors)):
+        temp = all_targs.loc[:, k].dropna()
+        ax1.axhline(i, color='k', alpha=.30)
+        ax1.scatter(temp.index, np.repeat(i, len(temp)), color=c)
+    ax1.set_yticks(range(len(targ_names)))
+    ax1.set_yticklabels(targ_names)
+    ax1.set_ylabel('Well name')
 
-    #  todo objective function and weighting
+    all_wells = get_all_wells().loc[targ_names]
+    smt.plot.plot_basemap(ax=ax2, no_flow_layer=0)
+
+    for k, c in zip(targ_names, colors):
+        x, y = all_wells.loc[k, ['nztmx', 'nztmy']]
+        ax2.scatter(x, y, color=c, label=k, s=80)
+    ax2.legend(loc='lower left')
+
+    fig.suptitle('High Frequency targets')
+    fig.tight_layout()
+    if save:
+        fig.savefig('high_freq_temporal_targets.png')
+
+    # temporally by zones (low frequency) incl riv targets
+    riv_targ = get_hawea_gain_loss_targets()
+    low_heads = pd.concat([
+        get_2011_piezo_survey(),
+        get_single_head_targets()
+
+    ])
+    low_heads.loc[:, 'use_datetime'] = pd.to_datetime('15-' + low_heads.model_time, format='%d-%m-%Y')
+    low_heads.drop_duplicates(['use_datetime', 'i', 'j'], inplace=True)
+    zones = get_model_zones()
+    use_zones = [
+        'sandypoint',
+        'flat',
+        'east',
+        'mangawera',
+        'terrace',
+        'river targets'
+    ]
+    fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(8, 10), gridspec_kw=dict(height_ratios=(1, 2)))
+    colors = get_colors(use_zones)
+
+    zone_plot = smt.get_model_zeros() * np.nan
+    zone_plot[zones['active']] = 2
+    for i, z in enumerate(use_zones[:-1]):
+        zone_plot[zones[z]] = i
+
+    # plot low freq heads
+    for i, (z, c) in enumerate(zip(use_zones[:-1], colors[:-1])):
+        idx = zone_plot[low_heads.i, low_heads.j] == i
+        temp = low_heads.loc[idx]
+        np.random.seed(13658 + i)
+        adders = np.random.uniform(0.1, 0.9, len(temp))
+        ax1.scatter(temp.use_datetime, i + adders, color=c)
+
+    # plot river targets
+    ax1.scatter(riv_targ.index, len(use_zones) - 1 + riv_targ.target_key / 4, color=colors[-1])
+
+    ax1.set_yticks(np.arange(len(use_zones)) + 0.5)
+    ax1.set_yticklabels(use_zones)
+
+    # plot zones
+    cmap = ListedColormap(colors[:-1])
+    smt.plot.plt_matrix(zone_plot, no_flow_layer=0, base_map=True,
+                        cmap=cmap, color_bar=False, ax=ax2, alpha=0.5)
+    handles, labels = [], []
+    for c, n in zip(colors[:-1], use_zones[:-1]):
+        handles.append(Patch(facecolor=c))
+        labels.append(n.capitalize())
+    ax2.legend(handles, labels, loc='lower left')
+    fig.suptitle('Low frequency targets')
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath('low_freq_temporal_targets.png'))
+
+    #  todo objective function and weighting, just write up
 
 
 def plot_deciding_time_period(save):
@@ -450,6 +531,7 @@ def plot_deciding_time_period(save):
     if save:
         for f, n in zip(figs, names):
             f.savefig(outdir.joinpath(f'{n}.png'))
+
 
 def indicative_target_times(save):
     outdir = save_path.joinpath('indicative_target_times')
@@ -466,21 +548,137 @@ def indicative_target_times(save):
             f.savefig(outdir.joinpath(f'{n}.png'))
 
 
+def plot_zone_maps(save):
+    outdir = save_path
+    zones = get_model_zones()
+    use_zones1 = [
+        'lake',
+        'sandypoint',
+        'flat',
+        'east',
+        'mangawera',
+        'terrace',
+    ]
+    use_zones2 = [
+        'near_river',
+        'hawea_flat',
+        'hawea_town',
+    ]
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 8))
+    colors1 = {i: c for i, c in enumerate(get_colors(use_zones1, 'Set1'))}
+    colors2 = {i: c for i, c in enumerate(get_colors(use_zones2, 'Set2'))}
+    for colors, use_zones, ax, ttl, a in zip([colors1, colors2],
+                                             [use_zones1, use_zones2],
+                                             [ax1, ax2],
+                                             ['Large zones', 'Detailed zones'],
+                                             [0.5, 0.7]):
+
+        # plot zones
+        zone_plot = smt.get_model_zeros() * np.nan
+        for i, z in enumerate(use_zones):
+            zone_plot[zones[z]] = i
+        smt.plot.plt_discrete_matrix(zone_plot, colors=colors, names={i: n for i, n in enumerate(use_zones)},
+                                     legend_loc='lower left', no_flow_layer=0, base_map=True,
+                                     ax=ax, alpha=a,
+                                     title=ttl)
+    fig.suptitle('Model zones')
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath('zones.png'))
+
+
+def plot_indicative_cross_sections(save):
+    outdir = save_path.joinpath('cross_sections')
+    outdir.mkdir(exist_ok=True)
+    rows = [50, 100, 170]
+    cols = [80, 100]
+    # mangawera points
+    xs = [1296620.8105173516, 1302218.1332765596, 1307002.4370875028, 1308347.0453480945]
+    ys = [5052176.357249308, 5047110.623802427, 5043326.958697041, 5038636.464764744]
+
+    figs, names = [], []
+
+    title = f'Bespoke cross section'
+    fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(10, 8), gridspec_kw=dict(height_ratios=(1, 2)))
+    smt.plot.plt_slice(np.zeros(smt.model_shape) * np.nan, x_coords=xs, y_coords=ys,
+                       coords_in_row_col=False,
+                       plot_locator=True, title=title, color_bar=False, ax=ax1, locator_ax=ax2,
+                       no_flow_layer=0
+                       )
+    fig.set_size_inches(10, 8)
+    fig.tight_layout()
+    figs.append(fig)
+    names.append(title.replace(' ', '_'))
+
+    for r in rows:
+        title = f'Cross section Row {r}'
+        fig, ax = smt.plot.plt_slice(np.zeros(smt.model_shape) * np.nan, x_coords=None, y_coords=r,
+                                     coords_in_row_col=True,
+                                     plot_locator=True, title=title, color_bar=False, no_flow_layer=0)
+        fig.tight_layout()
+        figs.append(fig)
+        names.append(title.replace(' ', '_'))
+
+    for c in cols:
+        title = f'Cross section column {c}'
+        fig, ax = smt.plot.plt_slice(np.zeros(smt.model_shape) * np.nan, x_coords=c, y_coords=None,
+                                     coords_in_row_col=True,
+                                     plot_locator=True, title=title, color_bar=False, no_flow_layer=0)
+        fig.tight_layout()
+        figs.append(fig)
+        names.append(title.replace(' ', '_'))
+
+    if save:
+        for f, n in zip(figs, names):
+            f.savefig(outdir.joinpath(f'{n}.png'))
+
+
+def plot_era5_correction_process(save):
+    outdir = save_path.joinpath('era5_correction')
+    outdir.mkdir(exist_ok=True)
+    from model_build.supporting_data_analysis.recharge_model import get_era5_land, get_corrected_historical_era5_rch
+    era5, era_data_fig = get_era5_land(True, True, True)
+
+    temp, out_rch, rch_fig = get_corrected_historical_era5_rch(None, None, recalc=True, return_fig=True)
+
+    if save:
+        era_data_fig.savefig(outdir.joinpath('era5_data_correction.png'))
+        rch_fig.savefig(outdir.joinpath('era5_rch_correction.png'))
+
+
+def plot_hillslope_inflow_process(save):  # todo
+    from model_build.supporting_data_analysis.hillside_inflows import lindis_correlation_with_malf
+    outdir = save_path.joinpath('hillslope_inflow_correction')
+    outdir.mkdir(exist_ok=True)
+    lindis_correlation_with_malf()  # todo there are draft figures here but they need some cleanup  START HERE!!!
+
+
 def make_all_preopt(save):
-    indicative_target_times(save)
-    plot_deciding_time_period(save)
-    plot_steady_state_water_bud_locs(save)
-    plot_steady_state_water_budget(save)
-    plot_boundary_locs(save)
-    plot_all_spd(save)
-    plot_parameterisation(save)
-    plot_thickness_top_bot(save)
+    funcs = [
+        plot_era5_correction_process,
+        plot_indicative_cross_sections,
+        plot_zone_maps,
+        plot_targets,
+        indicative_target_times,
+        plot_deciding_time_period,
+        plot_steady_state_water_bud_locs,
+        plot_steady_state_water_budget,
+        plot_boundary_locs,
+        plot_all_spd,
+        plot_parameterisation,
+        plot_thickness_top_bot,
+    ]
+    for f in funcs:
+        f(save)
+        if save:
+            plt.close()
+        else:
+            plt.show()
 
 
 if __name__ == '__main__':
-    save = False  # todo save when finally finished.
-    plot_targets(save)
+    save = False
+    plot_hillslope_inflow_process(save)  # todo
     plt.show()
     # checked and finished, but not saved
-    make_all_preopt()
-    plt.show()
+    make_all_preopt(save)
