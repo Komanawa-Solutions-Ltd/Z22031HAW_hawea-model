@@ -398,13 +398,13 @@ def calc_alf(data, key='flow'):
     return out
 
 
-def lindis_correlation_with_malf():
+def lindis_correlation_with_malf(return_figs=False):
     """
     this is the correct one for the hillslope data
     :param recalc:
     :return:
     """
-
+    figs, names = [], []
     from sklearn.linear_model import LinearRegression
     data = get_historical_flows(None, None, 'D')
     data.loc[:, 'Lindis'] = data.loc[:, 'Lindis'].fillna(method='ffill')
@@ -418,15 +418,15 @@ def lindis_correlation_with_malf():
         'Lindis': get_lindis_area()
     }
     colors = {
-        'Luggate': 'orange',
-        'Grandview': 'g',
+        'Luggate': 'g',
+        'Grandview': 'orange',
         'Lagoon': 'r',
         'Lindis': 'b'
     }
     for k, v in all_catchments.items():
         data.loc[:, k] *= 1 / v
 
-    fig, ax = plt.subplots()
+    fig6, ax = plt.subplots()
     for k in all_catchments:
         c = colors[k]
         ax.plot(data.index, data.loc[:, k], c=c, label=k)
@@ -455,18 +455,23 @@ def lindis_correlation_with_malf():
     ys = regr_malf.predict(xs)
     xs2 = np.log(catchments.loc[:, 'shp_area'])[:, np.newaxis]
     ys2 = regr_malf.predict(xs2)
-
-    fig, ax = plt.subplots()
+    intercept = (0 - regr_malf.intercept_) / regr_malf.coef_
+    fig, ax = plt.subplots(figsize=(6, 5))
     for k in all_catchments:
         if k == 'Luggate':
             continue
         ax.scatter(catchment_malfs.loc[k, 'catchment_area'], catchment_malfs.loc[k, 'malf'], label=k,
                    c=colors[k])
-    ax.plot(np.e ** xs, ys, ls=':', c='k')
-    ax.scatter(np.e ** xs2, ys2, c='pink')
+    ax.scatter(np.e ** xs2, ys2, c='pink', label='Other hill catchments')
+    ax.plot(np.e ** xs, ys, ls=':', c='k',
+            label=f'regression: 0 MALF at {np.round(np.e ** intercept / 1000 ** 2, 2)[0]} km2 catchment')
     ax.legend()
-    ax.set_ylabel('MALF (m3/day/catchment area)')
-    ax.set_xlabel('catchment area')
+    ax.set_ylabel('MALF / catchment area (m/day)')
+    ax.set_xlabel('Catchment area')
+    ax.set_title('MALF vs Catchment area regression')
+    fig.tight_layout()
+    figs.append(fig)
+    names.append('malf_fit')
 
     stat_data = []
     predicted_rivers = [
@@ -491,32 +496,49 @@ def lindis_correlation_with_malf():
     x = stat_data.loc[:, ['Lindis', 'malf']]
     y = stat_data.loc[:, 'flow']
     regr.fit(x, y)
+    rscore = regr.score(x, y)
     print(regr.score(x, y))
+    y_pred = regr.predict(x)
     stat_data.loc[:, 'predict'] = regr.predict(x)
-    fig, ax = plt.subplots()
+    import matplotlib.gridspec as gridspec
+    fig = plt.figure(tight_layout=True, figsize=(8, 10))
+    gs = gridspec.GridSpec(2, 2)
+    ax1 = fig.add_subplot(gs[0, :])
+    ax2 = fig.add_subplot(gs[1, 0])
+    ax3 = fig.add_subplot(gs[1, 1])
+
+    ax1.scatter(x.values[:, 0], y, color='k', label='Original Data')
+    ax1.scatter(x.values[:, 0], y_pred, color='r', label='Predicted Data', alpha=0.7)
+    ax1.set_ylabel('Measured flow/catchment area (m)')
+    ax1.set_xlabel('Lindis flow/catchment area (m)')
+    ax1.set_title(f'Predicting flow / catchment area (CA) by\n'
+                  f'Lindis flow / CA and stream MALF\n'
+                  f'R2:{round(rscore, 2)}')
+    ax1.legend()
+
     all_data = []
     for k in predicted_rivers:
         c = colors[k]
         idx = stat_data.river == k
         x = stat_data.loc[idx, 'flow']
         y = stat_data.loc[idx, 'predict']
-        ax.scatter(x, y, c=c, label=k)
+        ax2.scatter(x, y, c=c, label=k)
         all_data.extend(x)
         all_data.extend(y)
-    ax.plot([0, 1], [0, 1], c='k', ls=':', label='1:1 line')
-    ax.legend()
-    ax.set_ylim(min(all_data), max(all_data))
-    ax.set_xlim(min(all_data), max(all_data))
-    ax.set_aspect('equal')
-    ax.set_ylabel('predicted (flow/catchment area)')
-    ax.set_xlabel('observed (flow/catchment area)')
+    ax2.plot([0, 1], [0, 1], c='k', ls=':', label='1:1 line')
+    ax2.legend()
+    ax2.set_ylim(min(all_data), max(all_data))
+    ax2.set_xlim(min(all_data), max(all_data))
+    ax2.set_aspect('equal')
+    ax2.set_ylabel('predicted (flow/catchment area, m)')
+    ax2.set_xlabel('observed (flow/catchment area, m)')
 
     for k in all_catchments:
         temp = data.loc[:, ['Lindis']]
         temp.loc[:, 'malf'] = regr_malf.predict(np.log([[all_catchments[k]]]))[0]
         data.loc[:, f'p_{k}'] = regr.predict(temp.loc[:, ['Lindis', 'malf']])
 
-    fig, ax = plt.subplots()
+    fig5, ax = plt.subplots()
     for k in all_catchments:
         c = colors[k]
         ax.plot(data.index, data.loc[:, k], c=c, label=k)
@@ -531,7 +553,7 @@ def lindis_correlation_with_malf():
         data.loc[:, k] *= v
         data.loc[:, f'p_{k}'] *= v
 
-    fig, ax = plt.subplots()
+    fig4, ax = plt.subplots()
     for k in all_catchments:
         c = colors[k]
         ax.plot(data.index, data.loc[:, k], c=c, label=k)
@@ -562,47 +584,56 @@ def lindis_correlation_with_malf():
     for g in catchments.loc[:, 'group'].unique():
         idxs = catchments.loc[catchments.group == g].index
         grouped_data.loc[:, g] = outdata.loc[:, idxs].sum(axis=1)
-    fig, ax = plt.subplots()
+    fig3, ax = plt.subplots()
     grouped_data.plot(ax=ax)
     ax.set_ylabel('flow m3/day')
     ax.set_xlabel('time')
 
-    fig, ax = plt.subplots()
+    fig2, ax = plt.subplots()
     (grouped_data / 86400).plot(ax=ax)
     ax.set_ylabel('flow m3/s')
     ax.set_xlabel('time')
 
-    fig, ax = plt.subplots()
+    fig1, ax = plt.subplots()
     (grouped_data / 86400 * 1000).plot(ax=ax)
     ax.set_ylabel('flow L/s')
     ax.set_xlabel('time')
 
     data = data.resample('M').mean()
-    fig, ax = plt.subplots()
     all_data = []
     for k in predicted_rivers:
         c = colors[k]
         x = data.loc[:, k]
         y = data.loc[:, f'p_{k}']
-        ax.scatter(x, y, c=c, label=k)
+        ax3.scatter(x, y, c=c, label=k)
         all_data.extend(x)
         all_data.extend(y)
-    ax.plot([0, 1], [0, 1], c='k', ls=':', label='1:1 line')
-    ax.legend()
-    ax.set_ylim(np.nanmin(all_data), np.nanmax(all_data))
-    ax.set_xlim(np.nanmin(all_data), np.nanmax(all_data))
-    ax.set_aspect('equal')
-    ax.set_ylabel('predicted (flow)')
-    ax.set_xlabel('observed (flow)')
+    ax3.plot([0, 1], [0, 1], c='k', ls=':', label='1:1 line')
+    ax3.legend()
+    ax3.set_ylim(np.nanmin(all_data), np.nanmax(all_data))
+    ax3.set_xlim(np.nanmin(all_data), np.nanmax(all_data))
+    ax3.set_aspect('equal')
+    ax3.set_ylabel('predicted (flow, m3/s)')
+    ax3.set_xlabel('observed (flow, m3/s)')
+    fig.suptitle('Flow prediction of daily flows')
+    fig.align_labels()
+    fig.tight_layout()
+    figs.append(fig)
+    names.append('flow_fitting')
+
     grouped_data.loc[:, 'year'] = grouped_data.index.year
     print(grouped_data.groupby('year').mean() / 365)
 
     print(grouped_data.mean())
 
     pass
-    plt.show()
     # drop mt_brown
     outdata.drop(columns='ss22', inplace=True)
+    if return_figs:
+        for f in [fig1, fig2, fig3, fig4, fig5, fig6]:
+            plt.close(f)
+        return outdata, (figs, names)
+    plt.show()
     return outdata
 
 

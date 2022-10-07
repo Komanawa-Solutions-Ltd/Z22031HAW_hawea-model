@@ -1,0 +1,6 @@
+,Target Group,intragroup weight,Relative intergroup weight,Function
+1,High frequency head targets,None,High,RSME
+2,Low frequency head targets,None,high,RSME
+3,Scott 2011 piezo survey,None,moderate,RSME
+4,Drill date data,By quality code,low,RSME
+5,River targets,None,high,RSME

@@ -442,7 +442,7 @@ def get_compare_correlations_lake():
         ax.axvline(i, color='k', alpha=0.5, ls=':')
         ax1.axvline(i, color='k', alpha=0.5, ls=':')
 
-    fig, ax = smt.plot.plot_basemap(no_flow_layer=0)
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
 
     ax.scatter(all_wells.nztmx, all_wells.nztmy, color='r')
     for k, c in zip(targ_names, colors):

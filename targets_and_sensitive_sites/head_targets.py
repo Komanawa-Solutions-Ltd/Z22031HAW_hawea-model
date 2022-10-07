@@ -127,15 +127,16 @@ def plot_head_targets(how='all'):
         piezo = get_2011_piezo_survey(recalc=True)
         ax.scatter(piezo.nztmx, piezo.nztmy, color='orange', marker='s', alpha=alpha, label='piezo 2011')
 
+        marker_size = 50
         # add ngmp wells
         t = get_low_freq_head_targets(None, None)
         wells = all_wells.loc[t.keys()]
-        ax.scatter(wells.nztmx, wells.nztmy, color='b', marker='p', label='mod_freq')
+        ax.scatter(wells.nztmx, wells.nztmy, color='r', marker='p', label='mod_freq', s=marker_size)
 
         # add high frequency
         t = get_high_freq_head_targets(None, None)
         wells = all_wells.loc[t.keys()]
-        ax.scatter(wells.nztmx, wells.nztmy, color='magenta', marker='*', label='high_freq')
+        ax.scatter(wells.nztmx, wells.nztmy, color='magenta', marker='*', label='high_freq', s=marker_size)
 
         print('plotting all head targets')
         ax.set_title('all head targets')
@@ -159,15 +160,16 @@ def plot_head_targets(how='all'):
         piezo = get_2011_piezo_survey(recalc=True)
         ax.scatter(piezo.nztmx, piezo.nztmy, color='orange', marker='s', alpha=alpha, label='Piezo 2011')
 
+        marker_size = 120
         # add ngmp wells
         t = get_low_freq_head_targets(None, None)
         wells = all_wells.loc[t.keys()]
-        ax.scatter(wells.nztmx, wells.nztmy, color='b', marker='p', label='Moderate freq')
+        ax.scatter(wells.nztmx, wells.nztmy, color='r', marker='p', label='Moderate freq', s=marker_size)
 
         # add high frequency
         t = get_high_freq_head_targets(None, None)
         wells = all_wells.loc[t.keys()]
-        ax.scatter(wells.nztmx, wells.nztmy, color='magenta', marker='*', label='High freq')
+        ax.scatter(wells.nztmx, wells.nztmy, color='magenta', marker='*', label='High freq', s=marker_size)
 
         print('plotting head targets included in the model')
         ax.legend(loc='lower left')

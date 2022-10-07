@@ -1,0 +1,56 @@
+,Parameter type,Static,Package,Name,Initial,Min,Max
+0,Lake Sy,True,Upw,all,1e-10,na,na
+1,SS,True,Upw,all,1e-10,na,na
+2,VKA,True,Upw,all,1,na,na
+3,Lake Conductance,True,Upw,all,10000000000.0,na,na
+4,Hillside inflow multiplier,False,Wel,south_east,0.9,1.0,1.1
+5,Hillside inflow multiplier,False,Wel,main,0.9,1.0,1.1
+6,Hillside inflow multiplier,False,Wel,maungawera,0.9,1.0,1.1
+7,Race loss multiplier,False,Wel,all,0.9,1.0,1.1
+8,River Conductance,False,Riv,h1,100,1000,10000
+9,River Conductance,False,Riv,h2,100,1000,10000
+10,River Conductance,False,Riv,h3,100,1000,10000
+11,River Conductance,False,Riv,c1,100,1000,10000
+12,Specific Yeild,False,Upw,sandyhill,0.001,0.02,0.3
+13,Specific Yeild,False,Upw,mangawera,0.001,0.02,0.3
+14,Specific Yeild,False,Upw,rivergroup1,0.001,0.02,0.3
+15,Specific Yeild,False,Upw,rivergroup2,0.001,0.02,0.3
+16,Specific Yeild,False,Upw,terrace3,0.001,0.02,0.3
+17,Specific Yeild,False,Upw,terrace4,0.001,0.02,0.3
+18,Specific Yeild,False,Upw,terrace5,0.001,0.02,0.3
+19,Specific Yeild,False,Upw,haweaflat6,0.001,0.02,0.3
+20,Specific Yeild,False,Upw,haweaflat7,0.001,0.02,0.3
+21,Specific Yeild,False,Upw,haweaflat8,0.001,0.02,0.3
+22,Specific Yeild,False,Upw,haweaflat9,0.001,0.02,0.3
+23,Specific Yeild,False,Upw,haweaflat10,0.001,0.02,0.3
+24,Specific Yeild,False,Upw,rivergroup15,0.001,0.02,0.3
+25,Specific Yeild,False,Upw,haweaflat17,0.001,0.02,0.3
+26,Specific Yeild,False,Upw,rivergroup18,0.001,0.02,0.3
+27,Specific Yeild,False,Upw,haweaflat19,0.001,0.02,0.3
+28,Specific Yeild,False,Upw,haweaflat23,0.001,0.02,0.3
+29,Specific Yeild,False,Upw,terrace24,0.001,0.02,0.3
+30,Specific Yeild,False,Upw,terrace25,0.001,0.02,0.3
+31,Specific Yeild,False,Upw,terrace26,0.001,0.02,0.3
+32,Specific Yeild,False,Upw,rivergroup27,0.001,0.02,0.3
+33,Conductivity,False,Upw,sandyhill,0.01,10.0,1000.0
+34,Conductivity,False,Upw,mangawera,0.01,10.0,1000.0
+35,Conductivity,False,Upw,lake_conductance,0.01,10.0,1000.0
+36,Conductivity,False,Upw,rivergroup1,0.01,10.0,1000.0
+37,Conductivity,False,Upw,rivergroup2,0.01,10.0,1000.0
+38,Conductivity,False,Upw,terrace3,0.01,10.0,1000.0
+39,Conductivity,False,Upw,terrace4,0.01,10.0,1000.0
+40,Conductivity,False,Upw,terrace5,0.01,10.0,1000.0
+41,Conductivity,False,Upw,haweaflat6,0.01,10.0,1000.0
+42,Conductivity,False,Upw,haweaflat7,0.01,10.0,1000.0
+43,Conductivity,False,Upw,haweaflat8,0.01,10.0,1000.0
+44,Conductivity,False,Upw,haweaflat9,0.01,10.0,1000.0
+45,Conductivity,False,Upw,haweaflat10,0.01,10.0,1000.0
+46,Conductivity,False,Upw,rivergroup15,0.01,10.0,1000.0
+47,Conductivity,False,Upw,haweaflat17,0.01,10.0,1000.0
+48,Conductivity,False,Upw,rivergroup18,0.01,10.0,1000.0
+49,Conductivity,False,Upw,haweaflat19,0.01,10.0,1000.0
+50,Conductivity,False,Upw,haweaflat23,0.01,10.0,1000.0
+51,Conductivity,False,Upw,terrace24,0.01,10.0,1000.0
+52,Conductivity,False,Upw,terrace25,0.01,10.0,1000.0
+53,Conductivity,False,Upw,terrace26,0.01,10.0,1000.0
+54,Conductivity,False,Upw,rivergroup27,0.01,10.0,1000.0

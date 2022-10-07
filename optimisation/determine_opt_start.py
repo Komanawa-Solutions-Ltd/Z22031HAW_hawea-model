@@ -104,7 +104,7 @@ def get_opt_start_stop():
     names.append('real_time_delta_to_mean')
 
     all_wells = get_all_wells().loc[targ_names]
-    fig, ax = smt.plot.plot_basemap(no_flow_layer=0)
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
 
     ax.scatter(all_wells.nztmx, all_wells.nztmy, color='r')
     for k, c in zip(targ_names, colors):

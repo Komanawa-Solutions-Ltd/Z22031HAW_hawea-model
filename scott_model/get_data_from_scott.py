@@ -90,10 +90,13 @@ def plot_hk():
     print(pd.Series(t.flatten()).describe())
     smt_scott.plot.plt_matrix(t, base_map=True,
                               title='hk')
-    print('log hk describe')
     smt_scott.plot.plt_matrix(np.log10(t), base_map=True,
                               title='log hk')
+    print('log hk describe')
     print(pd.Series(np.log10(t).flatten()).describe())
+
+    print('log describe and re-mapped')
+    print(10**pd.Series(np.log10(t).flatten()).describe())
 
 
 def plot_riv_conductances():
@@ -105,8 +108,8 @@ def plot_riv_conductances():
 
 
 if __name__ == '__main__':
+    plot_hk()
+    smt_scott.plot.show()
     get_scott_hds()
     smt_scott.get_no_flow(recalc=True)
-    plot_hk()
     plot_riv_conductances()
-    smt_scott.plot.show()

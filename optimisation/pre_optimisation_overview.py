@@ -2,6 +2,7 @@
 created matt_dumont 
 on: 19/09/22
 """
+import kslcore
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
@@ -26,7 +27,14 @@ from targets_and_sensitive_sites.head_targets import plot_head_targets, get_high
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
 from optimisation.determine_opt_start import get_opt_start_stop
 
-save_path = proj_root.joinpath('optimisation/pre_optimisation_plots')
+extension = '.pdf'
+if extension == '.png':
+    save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_png')
+elif extension == '.pdf':
+    save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_pdf')
+else:
+    raise ValueError('nope')
+
 save_path.mkdir(exist_ok=True)
 
 
@@ -66,9 +74,16 @@ def plot_parameterisation(save=False):
         temp.loc[range(num), 'Package'] = pkg
         temp.loc[range(num), ['Name', 'Initial', 'Min', 'Max']] = list(zip(names, init, minn, maxx))
         out.append(temp)
-    out = pd.concat(out)
+    out = pd.concat(out).reset_index(drop=True)
     if save:
-        out.to_csv(outdir.joinpath('parameter_overview.csv'))
+        if extension == '.pdf':
+            import pdfkit as pdf
+            tempf = Path.home().joinpath('Downloads/temp.html')
+            out.to_html(tempf)
+            new = outdir.joinpath('parameter_overview.pdf')
+            pdf.from_file(str(tempf), str(new))
+        if extension == '.png':
+            out.to_csv(outdir.joinpath('parameter_overview.csv'))
 
     # river conductance
     riv_data = get_river_loc_data()
@@ -94,7 +109,7 @@ def plot_parameterisation(save=False):
     legendax.spines["bottom"].set_visible(False)
     fig.tight_layout()
     if save:
-        fig.savefig(outdir.joinpath('river_conductance.png'))
+        fig.savefig(outdir.joinpath(f'river_conductance{extension}'))
 
     # plot_example_rbf_interp
     pps = get_pilot_point_locations()
@@ -130,7 +145,7 @@ def plot_parameterisation(save=False):
     fig1.suptitle('example RBF multiquadric interpolation')
     fig1.tight_layout()
     if save:
-        fig1.savefig(outdir.joinpath('example_rbf.png'))
+        fig1.savefig(outdir.joinpath(f'example_rbf{extension}'))
 
     # inital transmisivity
     khs = get_inital_kh()
@@ -146,7 +161,7 @@ def plot_parameterisation(save=False):
     fig.tight_layout()
 
     if save:
-        fig.savefig(outdir.joinpath('inital_trans.png'))
+        fig.savefig(outdir.joinpath(f'inital_trans{extension}'))
 
     # parameter zones
     pilot_locs = get_pilot_point_locations()
@@ -190,7 +205,7 @@ def plot_parameterisation(save=False):
     legendax.spines["bottom"].set_visible(False)
     fig.tight_layout()
     if save:
-        fig.savefig(outdir.joinpath('kh_sy_params.png'))
+        fig.savefig(outdir.joinpath(f'kh_sy_params{extension}'))
 
 
 def plot_thickness_top_bot(save=False):
@@ -207,7 +222,7 @@ def plot_thickness_top_bot(save=False):
                                       base_map=True, contour=True, label_contours=True,
                                       contour_levels=contours)
         if save:
-            outpath = save_path.joinpath('model_structure', f'{k}.png')
+            outpath = save_path.joinpath('model_structure', f'{k}{extension}')
             outpath.parent.mkdir(exist_ok=True)
             fig.savefig(outpath)
 
@@ -223,24 +238,24 @@ def plot_all_spd(save=False):
                               return_unique_spd=True)
     for k, v in well_data.items():
         plot_spd(v, smt, tdis, is_array=False, key='flux', func=np.nansum, title=f'wel: {k}',
-                 outpath=outdir.joinpath(f'well_{k}_time.png'))
+                 outpath=outdir.joinpath(f'well_{k}_time{extension}'))
 
     # recharge
     plot_spd(get_rch_data(tdis), smt, tdis, is_array=True, key='total LSR',
-             func=np.nansum, mult_by_area=True, title='recharge', outpath=outdir.joinpath('rch_time.png'))
+             func=np.nansum, mult_by_area=True, title='recharge', outpath=outdir.joinpath(f'rch_time{extension}'))
 
     # lake
     plot_spd(get_ghb_data(tdis), smt, tdis,
              func=np.nanmean,
-             key='bhead', title='lake heads', outpath=outdir.joinpath('lake_time.png'))
+             key='bhead', title='lake heads', outpath=outdir.joinpath(f'lake_time{extension}'))
 
     # river
     plot_spd(get_riv_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
              func=first, key='stage', title='first river cell stage',
-             outpath=outdir.joinpath('riv_first_cell_time.png'))
+             outpath=outdir.joinpath(f'riv_first_cell_time{extension}'))
     plot_spd(get_riv_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
              func=last, key='stage', title='last river cell stage',
-             outpath=outdir.joinpath('riv_last_cell_time.png'))
+             outpath=outdir.joinpath(f'riv_last_cell_time{extension}'))
 
     # river height and stage data
     plt_stg_data = get_river_stage_data(None, None).dropna().describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
@@ -266,7 +281,7 @@ def plot_all_spd(save=False):
     ax.set_xlabel('Distance from top of river')
     ax.legend()
     if save:
-        fig.savefig(outdir.joinpath('River_profile.png'))
+        fig.savefig(outdir.joinpath(f'River_profile{extension}'))
 
     # monthly stage data
     # look at stage through time at our locations( which are???)
@@ -280,7 +295,7 @@ def plot_all_spd(save=False):
     ax.set_title('Monthly lake level')
     ax.set_ylabel('Stage (m)')
     if save:
-        fig.savefig(outdir.joinpath('Monthly_mean_lake_levels.png'))
+        fig.savefig(outdir.joinpath(f'Monthly_mean_lake_levels{extension}'))
 
     river_data = pd.read_csv(base_model_build_data_dir.joinpath('River_Level_Hawea.csv'))
     print(river_data.describe())
@@ -293,14 +308,14 @@ def plot_all_spd(save=False):
     ax.set_title('Hawea at Camp Hill stage')
     ax.set_ylabel('Stage (m)')
     if save:
-        fig.savefig(outdir.joinpath('Monthly_mean_camphill_levels.png'))
+        fig.savefig(outdir.joinpath(f'Monthly_mean_camphill_levels{extension}'))
 
     fig, ax = plt.subplots(figsize=(10, 8))
     monthly.Stage_Clutha2200.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
     ax.set_title('Clutha at Luggate stage')
     ax.set_ylabel('Stage (m)')
     if save:
-        fig.savefig(outdir.joinpath('Monthly_mean_clutha_levels.png'))
+        fig.savefig(outdir.joinpath(f'Monthly_mean_clutha_levels{extension}'))
 
 
 def plot_boundary_locs(save=False):
@@ -318,7 +333,7 @@ def plot_boundary_locs(save=False):
         ax.scatter(data.mx, data.my, color='r')
         fig.tight_layout()
         if save:
-            fig.savefig(outdir.joinpath(f'{k.replace(" ", "_")}.png'))
+            fig.savefig(outdir.joinpath(f'{k.replace(" ", "_")}{extension}'))
 
 
 def plot_steady_state_water_budget(save=False):
@@ -364,7 +379,7 @@ def plot_steady_state_water_budget(save=False):
     fig.suptitle('fixed water budget for model zones')
     fig.tight_layout()
     if save:
-        fig.savefig(outdir.joinpath('water_budget.png'))
+        fig.savefig(outdir.joinpath(f'water_budget{extension}'))
 
 
 def plot_steady_state_water_bud_locs(save):
@@ -373,7 +388,7 @@ def plot_steady_state_water_bud_locs(save):
     ibound = smt.get_no_flow(0)
     rch = get_rch_data(tdis)
     rch = rch[0]
-    rch[ibound != 0] = np.nan
+    rch[ibound != 1] = np.nan
     wel = get_well_data(tdis, get_hillslope_multiplier(True), get_race_multiplier(True), return_unique_spd=True)
     wel = {k: v[0] for k, v in wel.items()}
     start = get_starting_heads()[0]
@@ -381,14 +396,14 @@ def plot_steady_state_water_bud_locs(save):
     # plot mean recharge
     fig, ax = smt.plot.plt_matrix(rch * 1000, no_flow_layer=0, base_map=True, title='Mean Recharge (mm)')
     if save:
-        fig.savefig(outdir.joinpath('spatial_mean_recharge.png'))
+        fig.savefig(outdir.joinpath(f'spatial_mean_recharge{extension}'))
 
     # plot starting heads
     fig, ax = smt.plot.plt_matrix(start, no_flow_layer=0, base_map=True, title='Starting Heads (m)', contour=True,
                                   contour_levels=np.arange(np.nanmin(start), np.nanmax(start), 20),
                                   label_contours=True)
     if save:
-        fig.savefig(outdir.joinpath('spatial_start_heads.png'))
+        fig.savefig(outdir.joinpath(f'spatial_start_heads{extension}'))
 
     for k, v in wel.items():
         fig, ax = smt.plot.plt_matrix(rch * np.nan, no_flow_layer=0, base_map=True,
@@ -401,7 +416,7 @@ def plot_steady_state_water_bud_locs(save):
         sc = ax.scatter(v.mx, v.my, c=v.flux, cmap='magma', norm=LogNorm())
         cbar = fig.colorbar(sc)
         if save:
-            fig.savefig(outdir.joinpath('spatial_start_heads.png'))
+            fig.savefig(outdir.joinpath(f'spatial_start_heads{extension}'))
 
 
 def plot_targets(save):
@@ -413,7 +428,7 @@ def plot_targets(save):
     fig, ax = plot_head_targets('incl')
     fig.tight_layout()
     if save:
-        fig.savefig(outdir.joinpath('spatial_head_targets.png'))
+        fig.savefig(outdir.joinpath(f'spatial_head_targets{extension}'))
 
     # river targets
     riv_loc = get_riv_target_locs()
@@ -434,7 +449,7 @@ def plot_targets(save):
     ax1.legend(handles, labels, loc='lower left')
     fig.tight_layout()
     if save:
-        fig.savefig(outdir.joinpath('river_conductance.png'))
+        fig.savefig(outdir.joinpath(f'river_conductance{extension}'))
 
     # temporally (high frequency)
     high = get_high_freq_head_targets(*tdis.date_limits, freq='W')
@@ -455,7 +470,7 @@ def plot_targets(save):
     ax1.set_ylabel('Well name')
 
     all_wells = get_all_wells().loc[targ_names]
-    smt.plot.plot_basemap(ax=ax2, no_flow_layer=0)
+    smt.plot.plt_basemap(ax=ax2, no_flow_layer=0)
 
     for k, c in zip(targ_names, colors):
         x, y = all_wells.loc[k, ['nztmx', 'nztmy']]
@@ -465,7 +480,7 @@ def plot_targets(save):
     fig.suptitle('High Frequency targets')
     fig.tight_layout()
     if save:
-        fig.savefig('high_freq_temporal_targets.png')
+        fig.savefig(outdir.joinpath(f'high_freq_temporal_targets{extension}'))
 
     # temporally by zones (low frequency) incl riv targets
     riv_targ = get_hawea_gain_loss_targets()
@@ -500,6 +515,7 @@ def plot_targets(save):
         np.random.seed(13658 + i)
         adders = np.random.uniform(0.1, 0.9, len(temp))
         ax1.scatter(temp.use_datetime, i + adders, color=c)
+        ax1.axhline(i + 1, color='k', ls=':')
 
     # plot river targets
     ax1.scatter(riv_targ.index, len(use_zones) - 1 + riv_targ.target_key / 4, color=colors[-1])
@@ -519,9 +535,7 @@ def plot_targets(save):
     fig.suptitle('Low frequency targets')
     fig.tight_layout()
     if save:
-        fig.savefig(outdir.joinpath('low_freq_temporal_targets.png'))
-
-    #  todo objective function and weighting, just write up
+        fig.savefig(outdir.joinpath(f'low_freq_temporal_targets{extension}'))
 
 
 def plot_deciding_time_period(save):
@@ -530,22 +544,23 @@ def plot_deciding_time_period(save):
     figs, names = get_opt_start_stop()
     if save:
         for f, n in zip(figs, names):
-            f.savefig(outdir.joinpath(f'{n}.png'))
+            f.savefig(outdir.joinpath(f'{n}{extension}'))
 
 
 def indicative_target_times(save):
     outdir = save_path.joinpath('indicative_target_times')
+    outdir.mkdir(exist_ok=True)
     figs, names = [], []
     from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2, predictive_power_hill_rch
-    i, ifigs, inames = get_indicative_times_v2(True, True)
+    i, (ifigs, inames) = get_indicative_times_v2(True, True)
     figs.extend(ifigs)
     names.extend(inames)
-    i, ifigs, inames = predictive_power_hill_rch()
+    i, (ifigs, inames) = predictive_power_hill_rch()
     figs.extend(ifigs)
     names.extend(inames)
     if save:
         for f, n in zip(figs, names):
-            f.savefig(outdir.joinpath(f'{n}.png'))
+            f.savefig(outdir.joinpath(f'{n}{extension}'))
 
 
 def plot_zone_maps(save):
@@ -584,7 +599,7 @@ def plot_zone_maps(save):
     fig.suptitle('Model zones')
     fig.tight_layout()
     if save:
-        fig.savefig(outdir.joinpath('zones.png'))
+        fig.savefig(outdir.joinpath(f'zones{extension}'))
 
 
 def plot_indicative_cross_sections(save):
@@ -630,7 +645,7 @@ def plot_indicative_cross_sections(save):
 
     if save:
         for f, n in zip(figs, names):
-            f.savefig(outdir.joinpath(f'{n}.png'))
+            f.savefig(outdir.joinpath(f'{n}{extension}'))
 
 
 def plot_era5_correction_process(save):
@@ -642,19 +657,62 @@ def plot_era5_correction_process(save):
     temp, out_rch, rch_fig = get_corrected_historical_era5_rch(None, None, recalc=True, return_fig=True)
 
     if save:
-        era_data_fig.savefig(outdir.joinpath('era5_data_correction.png'))
-        rch_fig.savefig(outdir.joinpath('era5_rch_correction.png'))
+        era_data_fig.savefig(outdir.joinpath(f'era5_data_correction{extension}'))
+        rch_fig.savefig(outdir.joinpath(f'era5_rch_correction{extension}'))
 
 
-def plot_hillslope_inflow_process(save):  # todo
+def plot_hillslope_inflow_process(save):
     from model_build.supporting_data_analysis.hillside_inflows import lindis_correlation_with_malf
     outdir = save_path.joinpath('hillslope_inflow_correction')
     outdir.mkdir(exist_ok=True)
-    lindis_correlation_with_malf()  # todo there are draft figures here but they need some cleanup  START HERE!!!
+    outdata, (figs, names) = lindis_correlation_with_malf(return_figs=True)
+    if save:
+        for f, n in zip(figs, names):
+            f.savefig(outdir.joinpath(f'{n}{extension}'))
+
+
+def draft_objective_function_thoughts(save):
+    data = pd.DataFrame(index=range(1, 6),
+                        columns=['Target Group', 'intragroup weight', 'Relative intergroup weight', 'Function'],
+                        data=[
+                            ['High frequency head targets', 'None', 'High', 'RSME'],
+                            ['Low frequency head targets', 'None', 'high', 'RSME'],
+                            ['Scott 2011 piezo survey', 'None', 'moderate', 'RSME'],
+                            ['Drill date data', 'By quality code', 'low', 'RSME'],
+                            ['River targets', 'None', 'high', 'RSME'],
+                        ])
+    if save:
+        if extension == '.pdf':
+            import pdfkit as pdf
+            tempf = Path.home().joinpath('Downloads/temp.html')
+            data.to_html(tempf)
+            new = save_path.joinpath('obj_function.pdf')
+            pdf.from_file(str(tempf), str(new))
+        if extension == '.png':
+            data.to_csv(save_path.joinpath('obj_function.csv'))
+
+    model_stats = pd.DataFrame(
+        index=range(1, 4), columns=['Step', 'Run time', 'File size'],
+        data=[['python model build', '9s', ' NA'],
+              ['writing model', '7.5s', '148MB'],
+              ['Running Model (259 periods)', '51.5s', '240MB (minimum(80MB))'], ]
+    )
+    if save:
+        if extension == '.pdf':
+            import pdfkit as pdf
+            tempf = Path.home().joinpath('Downloads/temp.html')
+            model_stats.to_html(tempf)
+            new = save_path.joinpath('model_stats.pdf')
+            pdf.from_file(str(tempf), str(new))
+        if extension == '.png':
+            model_stats.to_csv(save_path.joinpath('model_stats.csv'))
 
 
 def make_all_preopt(save):
     funcs = [
+        draft_objective_function_thoughts,
+        plot_thickness_top_bot,
+        plot_hillslope_inflow_process,
         plot_era5_correction_process,
         plot_indicative_cross_sections,
         plot_zone_maps,
@@ -666,19 +724,18 @@ def make_all_preopt(save):
         plot_boundary_locs,
         plot_all_spd,
         plot_parameterisation,
-        plot_thickness_top_bot,
     ]
     for f in funcs:
+        print(f.__name__)
         f(save)
         if save:
             plt.close()
         else:
             plt.show()
+    print('Done with everything!!!')
 
 
 if __name__ == '__main__':
-    save = False
-    plot_hillslope_inflow_process(save)  # todo
-    plt.show()
+    save = True
     # checked and finished, but not saved
     make_all_preopt(save)
