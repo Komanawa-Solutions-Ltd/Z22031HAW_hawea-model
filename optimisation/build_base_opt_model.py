@@ -5,7 +5,7 @@ on: 27/09/22
 import time
 from pathlib import Path
 import numpy as np
-from model_build.modflow_example import build_model
+from model_build.modflow_model import build_model
 from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
 from model_parameterisation.static_params import ss, vka
@@ -18,8 +18,11 @@ from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, 
 def build_initial_model(model_name, model_ws,
                         exe_name='mfnwt', run_model=False):
     t = time.time()
+    oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
+    # todo other steps if I end up with them
     build_model(smt=smt,
                 tdis=tdis,
+                oc_spd=oc_spd,
                 exe_name=exe_name,
                 model_name=model_name,
                 model_ws=model_ws,
@@ -37,15 +40,20 @@ def build_initial_model(model_name, model_ws,
                                        hill_param=get_hillslope_multiplier(True),
                                        race_param=get_race_multiplier(True)),
                 options='COMPLEX',
-                nwt_kwargs={'maxiterout': 100, 'maxitinner': 100},  # todo just playing
+                nwt_kwargs={'maxiterout': 1000, 'maxitinner': 100},
                 hani=None,
                 mfv='mfnwt',
                 run_model=run_model,
                 verbose=True,
-                t=t)
+                t=t,
+                noprint=True)
 
 
 if __name__ == '__main__':
-    # todo this is running, but it's not converging START HERE
+    # todo this is running and converging but is still a bit slow as maxiterout = 1000,
+    # todo look at problem steps and see what is going wrong
+    # todo also see if running in memory would speed things up, unlikely
+    # see if adding daily steps helps speed up the run time, nope it basically doubled the time
+    #  START HERE
     build_initial_model(model_name='test', model_ws=Path.home().joinpath('Downloads/test_model'),
                         run_model=True)

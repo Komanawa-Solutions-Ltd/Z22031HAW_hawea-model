@@ -18,13 +18,14 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
                 hk, vka, layer_avg,
                 ss, sy, strt,
                 chani,
+                oc_spd,
                 rch=None,
-                ghb_spd=None,  # todo incorporate
-                riv_spd=None,  # todo incorporate
+                ghb_spd=None,
+                riv_spd=None,
                 options='COMPLEX',
                 drn_spd=None, well_spd=None, nwt_kwargs={},
                 hani=None, mfv='mfnwt', run_model=False,
-                verbose=False, t=None):
+                verbose=False, t=None, noprint=False):
     """
     build modflow model
     :param smt: instance of ModelTools
@@ -74,6 +75,7 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
     :param mfv: the modflow version mf2005 or mfnwt (e.g. lpf vs upw package)
                replace hk with files is assumed to be used
     :param run_model: boolean, if True run model and return converged string, other wise do not run and return m
+    :param t: time.time() for calculate run time
     :return: 'model: {}, converged: {}'.format(model_name, boolean) (run_model=False) or m (run_model=False)
     """
     extra = ''
@@ -101,16 +103,16 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
         _create_rch_package(m, rch)
     if drn_spd is not None:
         assert isinstance(drn_spd, dict), 'drain spd needs to be a dictionary'
-        _create_drn_package(m, drn_spd)
+        _create_drn_package(m, drn_spd, noprint)
     if well_spd is not None:
         assert isinstance(well_spd, dict), 'well spd needs to be a dictionary'
-        _create_wel_package(m, well_spd)
+        _create_wel_package(m, well_spd, noprint)
     if riv_spd is not None:
         assert isinstance(riv_spd, dict)
-        _create_riv_package(m, riv_data=riv_spd)
+        _create_riv_package(m, riv_data=riv_spd, noprint=noprint)
     if ghb_spd is not None:
-        _create_ghb_package(m, ghb_spd)
-    flopy.modflow.ModflowOc(m, stress_period_data={(0, 0): ['save head', 'save budget']})
+        _create_ghb_package(m, ghb_spd, noprint)
+    flopy.modflow.ModflowOc(m, stress_period_data=oc_spd)
     if verbose:
         print(f'took {time.time() - t}s to build the model in python{extra}')
     t = time.time()
@@ -230,7 +232,7 @@ def _create_lay_prop_package(m, smt, hk, vka, layer_avg, chani, hani=None, ss=0,
     if len(chani) == 1:
         chani = np.repeat(chani, smt.model_shape[0])
     assert chani.shape == (smt.model_shape[0],), ('chani must match number of layers or be a single value '
-                                                        'or length 1')
+                                                  'or length 1')
     if hani is None:
         assert (np.atleast_1d(chani) > 0).all(), 'if hani is not set then chani needs to be >0 for all layers'
         hani = 0
@@ -359,16 +361,24 @@ def _create_nwt_package(m, options, headtol=0.01, fluxtol=500, maxiterout=100, m
                                    )
 
 
-def _create_ghb_package(m, ghb_data):
+def _create_ghb_package(m, ghb_data, noprint):
+    options = None
+    if noprint:
+        options = ['NOPRINT']
     flopy.modflow.ModflowGhb(
         model=m,
         ipakcb=740,
         stress_period_data=ghb_data,
+        options=options
     )
 
 
-def _create_drn_package(m, drn_spd):
-    drn = flopy.modflow.ModflowDrn(m, stress_period_data=drn_spd)
+def _create_drn_package(m, drn_spd, noprint):
+    options = None
+    if noprint:
+        options = ['NOPRINT']
+    drn = flopy.modflow.ModflowDrn(m, stress_period_data=drn_spd,
+                                   options=options)
 
 
 def _create_rch_package(m, rch_data):
@@ -387,24 +397,31 @@ def _create_rch_package(m, rch_data):
                                          unitnumber=716)
 
 
-def _create_riv_package(m, riv_data):
+def _create_riv_package(m, riv_data, noprint):
+    options = None
+    if noprint:
+        options = ['NOPRINT']
     riv = flopy.modflow.ModflowRiv(
         model=m,
         ipakcb=740,
         stress_period_data=riv_data,
         unitnumber=718,
-
+        options=options
     )
 
 
-def _create_wel_package(m, well_spd):
+def _create_wel_package(m, well_spd, noprint=False):
     """
     create and add the well package
     :param m: a flopy model instance
     :param wel_version: which version of wells to use
     :return:
     """
+    options = None
+    if noprint:
+        options = ['NOPRINT']
     wel = flopy.modflow.mfwel.ModflowWel(m,
                                          ipakcb=740,  # save budget
                                          stress_period_data=well_spd,
-                                         unitnumber=709)
+                                         unitnumber=709,
+                                         options=options)
