@@ -64,6 +64,7 @@ def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=Fals
 
     assert np.isclose(pumping_data.groupby('date').sum().loc[:, pumping_key], outdata.sum(axis=1)).all()
     outdata = outdata.loc[:, well_names.loc[well_names.ibound == 1].index]
+    outdata.drop(columns=['w_068', 'w_025'], inplace=True)
     outdata.to_csv(processed_path)
     return select_resample(outdata, start_date, end_date, frequency, func=func)
 
@@ -72,6 +73,7 @@ def get_pumping_locs():
     data = get_well_flowmeter_mapper()
     data = data.loc[:, ['ibound', 'use_x', 'use_y', 'i', 'j', 'k']]
     data = data.loc[data.ibound == 1]
+    data.drop(['w_068', 'w_025'], inplace=True)
     zones = get_model_zones()
     for k, v in zones.items():
         data.loc[:, k] = v[data.i, data.j]
