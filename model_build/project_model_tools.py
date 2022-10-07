@@ -8,6 +8,7 @@ from project_base import proj_root, modelling_dir, unbacked_dir, base_model_buil
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+from copy import deepcopy
 
 # todo clone the 'modflow_tools' repo and make a new branch for this model, don't forget to merge
 # when finished
@@ -233,6 +234,15 @@ def elv_calc():
     temp[idx] = rbots[idx] - 0.5  # set model bottoms to below river level.
     bot[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
+    # fix bottom area which is causing dry cells by reducing the gradient
+    fixer = np.isfinite(smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('bottoms_fixer.shp'),
+                                             'id', alltouched=True))
+    temp = deepcopy(bot[fixer])
+    diff = (temp.max()-temp.min())
+    temp2 = (temp-temp.min())/(temp.max()-temp.min())
+
+    bot[fixer] = temp3 = temp2 * diff/3 + temp.min()
+
     # adjust top so it is above rbot
     temp = top[river.loc[:, 'i'], river.loc[:, 'j']]
     idx = temp <= rbots
@@ -326,9 +336,12 @@ def export_model_boundary():
 
 
 if __name__ == '__main__':
+    elv_calc()
+    get_bottom(True)
+    smt.recalc_all_pickles()
+    raise NotImplementedError
     data_checks()
     get_starting_heads(True)
     export_model_boundary()
-    elv_calc()
     smt.plot.plt_matrix(smt.get_model_zeros(), base_map=True)
     smt.plot.show()
