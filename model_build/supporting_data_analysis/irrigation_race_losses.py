@@ -33,6 +33,7 @@ def get_race_locs(recalc=default_recalc):
     outdata.loc[:, 'param'] = 'all'
     outdata.drop(columns='dummy', inplace=True)
     outdata.loc[:, 'k'] = 0
+    outdata = outdata.loc[smt.get_no_flow(0)[outdata.i, outdata.j] == 1]  # get rid of no flow race losses
     outdata.to_csv(race_loc_data_path)
 
     return outdata
