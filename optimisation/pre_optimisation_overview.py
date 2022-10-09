@@ -695,7 +695,7 @@ def draft_objective_function_thoughts(save):
         index=range(1, 4), columns=['Step', 'Run time', 'File size'],
         data=[['python model build', '9s', ' NA'],
               ['writing model', '7.5s', '148MB'],
-              ['Running Model (259 periods)', '51.5s', '240MB (minimum(80MB))'], ]
+              ['Running Model (259 periods)', '30.8s', '240MB (minimum(80MB))'], ]
     )
     if save:
         if extension == '.pdf':
