@@ -15,6 +15,33 @@ from model_parameterisation.inital_parametersiation import get_inital_sy, get_in
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
 
 
+def test_times():
+    t = time.time()
+    interpolate_kh_pilot_points(get_inital_kh(return_just_start=True))
+    print(f'took {time.time() - t}s for interpolate_kh_pilot_points')
+    t = time.time()
+    interpolate_sy_pilot_points(get_inital_sy(return_just_start=True))
+    print(f'took {time.time() - t}s for interpolate_sy_pilot_points')
+    t = time.time()
+    get_starting_heads()
+    print(f'took {time.time() - t}s for get_starting_heads')
+    t = time.time()
+    get_rch_data(tdis)
+    print(f'took {time.time() - t}s for get_rch_data')
+    t = time.time()
+    get_ghb_data(tdis)
+    print(f'took {time.time() - t}s for get_ghb_data')
+    t = time.time()
+    get_riv_data(tdis, riv_params=get_initial_riv_conductance(True))
+    print(f'took {time.time() - t}s for get_riv_data')
+    t = time.time()
+    get_well_data(tdis,
+                  hill_param=get_hillslope_multiplier(True),
+                  race_param=get_race_multiplier(True))
+    print(f'took {time.time() - t}s for get_well_data')
+    t = time.time()
+
+
 def build_initial_model(model_name, model_ws,
                         exe_name='mfnwt', run_model=False):
     t = time.time()
@@ -67,4 +94,4 @@ if __name__ == '__main__':
     #  START HERE
     build_initial_model(model_name='test', model_ws=Path.home().joinpath('Downloads/test_model'),
                        run_model=True)
-    check_for_dry(Path.home().joinpath('Downloads/test_model/test.hds'))
+    #check_for_dry(Path.home().joinpath('Downloads/test_model/test.hds'))

@@ -15,6 +15,8 @@ from model_build.supporting_data_analysis.get_pumping_data import get_historical
 from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
 from model_build.supporting_data_analysis.all_wells import get_all_wells
 from model_build.zones import get_param_zones, get_model_zones
+from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
+from optimisation.optimisation_period import tdis
 
 if __name__ == '__main__':
     # recalculate all saved data in model_build
@@ -51,8 +53,10 @@ if __name__ == '__main__':
     get_historical_pumping_data(None, None, recalc=True)
     get_soil_classes(recalc=True)
     get_era5_land(correct=True, recalc=True)
+    get_rch_data(tdis, recalc=True)
+    get_ghb_data(tdis, recalc=True)
+    get_well_data(tdis, hill_param={'south_east': 1, 'main': 1, 'maungawera': 1, }, race_param={'all': 1}, recalc=True)
     for k in [True, False]:
         get_historical_rch_model_results(data_source='historical', limited_irrigation=k, recalc=True)
         get_historical_rch_model_results(data_source='era5', limited_irrigation=k, recalc=True)
         get_corrected_historical_era5_rch(None, None, recalc=True, limited_irrigation=k)
-

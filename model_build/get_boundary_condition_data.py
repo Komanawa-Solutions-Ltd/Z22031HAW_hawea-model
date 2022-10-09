@@ -2,14 +2,18 @@
 created matt_dumont 
 on: 1/08/22
 """
+import pickle
+import time
+
 from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
     get_river_loc_data, get_lake_hawea_loc, get_lake_heads
 from model_parameterisation.static_params import lake_conduct
 import flopy
+from project_base import processed_model_build_data_dir
 
 
-def get_well_data(tdis, hill_param, race_param, return_unique_spd=False):
+def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=False):
     """
 
     :param tdis: time discritsation object
@@ -19,41 +23,66 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False):
                               different data.
     :return:
     """
-    # race data
-    race_locs = get_race_locs()
-    race_flow = get_race_well_losses(*tdis.date_limits)
-    # add parameter
-    race_flow *= race_param['all']
-    race_spd = tdis.map_data_locations(race_locs, {'flux': race_flow},
-                                       flopy.modflow.ModflowWel.get_default_dtype(),
-                                       apply_to_all=True,
-                                       group_cells=True,
-                                       grouper='sum'
-                                       )
+    save_path = processed_model_build_data_dir.joinpath(f'well_stress_period_data-{tdis.name}.p')
+    if save_path.exists() and not recalc:
+        (race_spd, hill_spd, pumping_spd) = pickle.load(open(save_path, 'rb'))
+    else:
+        # race data
+        race_locs = get_race_locs()
+        race_flow = get_race_well_losses(*tdis.date_limits)
 
-    # hillside data
-    hillside_locs = get_hillside_catchment_locs()
-    hillside_flow = get_hillside_flows(*tdis.date_limits)
-    # add parameter
-    for k, v in hill_param.items():
-        use_keys = hillside_locs.loc[hillside_locs.param == k].index
-        hillside_flow.loc[:, use_keys] *= v
-    hill_spd = tdis.map_data_locations(hillside_locs, {'flux': hillside_flow},
-                                       flopy.modflow.ModflowWel.get_default_dtype(),
-                                       group_cells=True,
-                                       grouper='sum'
-                                       )
+        race_spd = tdis.map_data_locations(race_locs, {'flux': race_flow},
+                                           flopy.modflow.ModflowWel.get_default_dtype(),
+                                           apply_to_all=True,
+                                           group_cells=False,
+                                           grouper='sum',
+                                           manage_datatypes=False
+                                           )
 
-    # pumping data
-    pumping_locs = get_pumping_locs()
-    pumping_flow = get_historical_pumping_data(*tdis.date_limits)
-    pumping_flow *= -1
-    pumping_flow.fillna(0, inplace=True)
-    pumping_spd = tdis.map_data_locations(pumping_locs, {'flux': pumping_flow},
-                                          flopy.modflow.ModflowWel.get_default_dtype(),
-                                          group_cells=True,
-                                          grouper='sum'
-                                          )
+        # hillside data
+        hillside_locs = get_hillside_catchment_locs()
+        hillside_flow = get_hillside_flows(*tdis.date_limits)
+        # add parameter
+        for k, v in hill_param.items():
+            use_keys = hillside_locs.loc[hillside_locs.param == k].index
+            hillside_flow.loc[:, use_keys] *= v
+        hill_spd = tdis.map_data_locations(hillside_locs, {'flux': hillside_flow},
+                                           flopy.modflow.ModflowWel.get_default_dtype(),
+                                           group_cells=False,
+                                           grouper='sum',
+                                           manage_datatypes=False
+                                           )
+
+        # pumping data
+        pumping_locs = get_pumping_locs()
+        pumping_flow = get_historical_pumping_data(*tdis.date_limits)
+        pumping_flow *= -1
+        pumping_flow.fillna(0, inplace=True)
+        pumping_spd = tdis.map_data_locations(pumping_locs, {'flux': pumping_flow},
+                                              flopy.modflow.ModflowWel.get_default_dtype(),
+                                              group_cells=True,
+                                              grouper='sum',
+                                              manage_datatypes=True
+                                              )
+        pickle.dump((race_spd, hill_spd, pumping_spd), open(save_path, 'wb'))
+
+    # manage parameters
+    for p, d in race_spd.items():
+        d.loc[:, 'flux'] *= race_param['all']
+
+    for p, d in hill_spd.items():
+        for k, v in hill_param.items():
+            idx = d.param == k
+            d.loc[idx, 'flux'] *= v
+
+    # convert to numpy arrays (well is done before pickle)
+    race_spd = tdis.manage_dtypes(race_spd, flopy.modflow.ModflowWel.get_default_dtype(),
+                                  group_cells=True,
+                                  grouper='sum', )
+    hill_spd = tdis.manage_dtypes(hill_spd, flopy.modflow.ModflowWel.get_default_dtype(),
+                                  group_cells=True,
+                                  grouper='sum', )
+
     if return_unique_spd:
         out = {'race': race_spd, 'hill': hill_spd, 'pump': pumping_spd}
         return out
@@ -65,14 +94,23 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False):
         return out_spd
 
 
-def get_rch_data(tdis):
+def get_rch_data(tdis, recalc=False):
+    save_path = processed_model_build_data_dir.joinpath(f'rch_stress_period_data-{tdis.name}.p')
+    if save_path.exists() and not recalc:
+        out = pickle.load(open(save_path, 'rb'))
+        return out
     rch_dates, rch_raw = get_rch(*tdis.date_limits, frequency='d')  # tdis manges this
     rch_raw *= 1 / 1000  # convert from mm/day to m/day
     rch_data = tdis.map_array_to_spd(rch_dates, rch_raw)
+    pickle.dump(rch_data, open(save_path, 'wb'))
     return rch_data
 
 
-def get_ghb_data(tdis):
+def get_ghb_data(tdis, recalc=False):
+    save_path = processed_model_build_data_dir.joinpath(f'ghb_stress_period_data-{tdis.name}.p')
+    if save_path.exists() and not recalc:
+        out = pickle.load(open(save_path, 'rb'))
+        return out
     lake_locs = get_lake_hawea_loc()
     lake_locs.loc[:, 'cond'] = lake_conduct
     lake_hds = get_lake_heads(*tdis.date_limits)
@@ -83,6 +121,7 @@ def get_ghb_data(tdis):
     out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
                                   flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
 
+    pickle.dump(out, open(save_path, 'wb'))
     return out
 
 
@@ -104,13 +143,12 @@ if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
     from model_parameterisation.inital_parametersiation import get_initial_riv_conductance
 
-    get_ghb_data(tdis)
-
-    get_riv_data(tdis, get_initial_riv_conductance(return_just_start=True))
     b = get_well_data(tdis, hill_param={
         # k: (initial, (low, high),
         'south_east': 1,
         'main': 1,
         'maungawera': 1, }
-                      , race_param={'all': 1})
+                      , race_param={'all': 1}, recalc=True)
+    get_riv_data(tdis, get_initial_riv_conductance(return_just_start=True))
+    get_ghb_data(tdis)
     b = get_rch_data(tdis)

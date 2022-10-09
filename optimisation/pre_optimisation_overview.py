@@ -693,9 +693,9 @@ def draft_objective_function_thoughts(save):
 
     model_stats = pd.DataFrame(
         index=range(1, 4), columns=['Step', 'Run time', 'File size'],
-        data=[['python model build', '9s', ' NA'],
+        data=[['python model build', '3.7s', ' NA'],
               ['writing model', '7.5s', '148MB'],
-              ['Running Model (259 periods)', '30.8s', '240MB (minimum(80MB))'], ]
+              ['Running Model (259 periods)', '30.8s, 28.04s in ramdisk', '240MB (minimum(80MB))'], ]
     )
     if save:
         if extension == '.pdf':

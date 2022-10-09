@@ -15,13 +15,15 @@ indates.extend(zip(base_time, base_time + datetime.timedelta(days=6)))
 steady = [True] + [False for e in base_time]
 nper = len(base_time) + 1  # one steady stated period and then the transient period
 
-tdis = TimeDis(nper=nper,
-               tsmult=1.2,
-               steady=steady,
-               dates=indates,
-               nstp=1,
-               tunit='day',
-               check_dates_in_order=False
-               )
+tdis = TimeDis(
+    name='optimisation_period',
+    nper=nper,
+    tsmult=1.2,
+    steady=steady,
+    dates=indates,
+    nstp=1,
+    tunit='day',
+    check_dates_in_order=False
+)
 tdis.perlen[0] = 1  # manually set first stress period to length of 1
 pass
