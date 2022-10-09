@@ -49,6 +49,16 @@ def build_initial_model(model_name, model_ws,
                 noprint=True)
 
 
+def check_for_dry(hds_file):
+    import flopy
+    hds = flopy.utils.HeadFile(hds_file).get_alldata()[:, 0]
+    dry_hds = hds < -100
+    smt.plot.plt_matrix(dry_hds.sum(axis=0), base_map=True)
+    print(np.where(dry_hds.any(axis=(1, 2))))
+    smt.io.array_to_raster(hds_file.parent.joinpath('dry_hds.tif'), dry_hds.sum(axis=0), 0)
+    smt.plot.show()
+
+
 if __name__ == '__main__':
     # todo this is running and converging but is still a bit slow as maxiterout = 1000,
     # todo look at problem steps and see what is going wrong
@@ -56,4 +66,5 @@ if __name__ == '__main__':
     # see if adding daily steps helps speed up the run time, nope it basically doubled the time
     #  START HERE
     build_initial_model(model_name='test', model_ws=Path.home().joinpath('Downloads/test_model'),
-                        run_model=True)
+                       run_model=True)
+    check_for_dry(Path.home().joinpath('Downloads/test_model/test.hds'))

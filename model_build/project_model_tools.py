@@ -235,19 +235,36 @@ def elv_calc():
     bot[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
     # fix bottom area which is causing dry cells by reducing the gradient
-    fixer = np.isfinite(smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('bottoms_fixer.shp'),
-                                             'id', alltouched=True))
-    temp = deepcopy(bot[fixer])
-    diff = (temp.max()-temp.min())
-    temp2 = (temp-temp.min())/(temp.max()-temp.min())
-
-    bot[fixer] = temp3 = temp2 * diff/3 + temp.min()
+    ibound = no_flow()
+    fixer = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('bottoms_fixer_slope.shp'),
+                                             'id', alltouched=True)
+    fixer[np.isnan(fixer)] = -1
+    fixer = fixer.astype(int)
+    for v in np.unique(fixer):
+        if v < 0:
+            continue
+        idx = fixer == v
+        temp = deepcopy(bot[idx])
+        diff = (temp.max() - temp.min())
+        temp2 = (temp - temp.min()) / (temp.max() - temp.min())
+        bot[idx] = temp2 * diff / 3 + temp.min()
 
     # adjust top so it is above rbot
     temp = top[river.loc[:, 'i'], river.loc[:, 'j']]
     idx = temp <= rbots
     temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
     top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
+
+    # adjust the bottoms near the river which are causing dry cells
+    fixer = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('bottoms_fixer_flat.shp'),
+                                             'id', alltouched=True)
+    fixer[np.isnan(fixer)] = -1
+    fixer = fixer.astype(int)
+    for v in np.unique(fixer):
+        if v < 0:
+            continue
+        temp = deepcopy(bot[fixer == v])
+        bot[fixer == v] = temp.min()
 
     assert np.isfinite(top).all()
     assert np.isfinite(bot).all()
@@ -337,8 +354,11 @@ def export_model_boundary():
 
 if __name__ == '__main__':
     elv_calc()
-    get_bottom(True)
+    bot = get_bottom(True)
     smt.recalc_all_pickles()
+    smt.plot.plt_matrix(bot, base_map=True, contour=True, contour_levels=np.arange(bot.min(), bot.max(), 10),
+                        label_contours=True)
+    smt.plot.show()
     raise NotImplementedError
     data_checks()
     get_starting_heads(True)

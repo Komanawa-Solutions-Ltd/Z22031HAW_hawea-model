@@ -13,6 +13,7 @@ on: 7/09/22
 5. river targets (high weight)
 
 consider applying a temporal weighting to high frequency targets (later has better pumping data)
+how to manage dry cells... weight misfit higher???
 
 """
 # todo look into PYEMU for objective function calculation support
