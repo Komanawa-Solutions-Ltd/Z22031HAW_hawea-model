@@ -357,7 +357,7 @@ if __name__ == '__main__':
     bot = get_bottom(True)
     smt.recalc_all_pickles()
     smt.plot.plt_matrix(bot, base_map=True, contour=True, contour_levels=np.arange(bot.min(), bot.max(), 10),
-                        label_contours=True)
+                        label_contours=True, no_flow_layer=0)
     smt.plot.show()
     raise NotImplementedError
     data_checks()
