@@ -34,13 +34,13 @@ if __name__ == '__main__':
     no_flow()
     elv_calc()
     smt.recalc_all_pickles()
-    get_starting_heads(True)
+    get_starting_heads(recalc=True)
 
     get_param_zones(recalc=True)
     get_lake_array(recalc=True)
     get_model_zones(recalc=True)
 
-    get_river_loc_data(True)
+    get_river_loc_data(recalc=True)
     get_river_stage_data(None, None, recalc=True)
     get_all_wells(recalc=True)
     get_lake_hawea_loc(recalc=True)
