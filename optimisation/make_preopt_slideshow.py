@@ -91,6 +91,8 @@ def build_slideshow(outpath):
         'ss_wb',
         'spd',
 
+        'initial model',
+
         'targets',
         'objective_function',
 
