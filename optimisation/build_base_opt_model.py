@@ -46,7 +46,7 @@ def build_initial_model(model_name, model_ws,
                         exe_name='mfnwt', run_model=False):
     t = time.time()
     oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
-    # todo other steps if I end up with them
+    # keynote other steps if I end up with them
     build_model(smt=smt,
                 tdis=tdis,
                 oc_spd=oc_spd,
@@ -87,9 +87,6 @@ def check_for_dry(hds_file):
 
 
 if __name__ == '__main__':
-    # todo this is running and converging but is still a bit slow as maxiterout = 1000,
-    # todo look at problem steps and see what is going wrong
-    # todo also see if running in memory would speed things up, unlikely
     # see if adding daily steps helps speed up the run time, nope it basically doubled the time
     #  START HERE
     build_initial_model(model_name='test', model_ws=Path.home().joinpath('Downloads/test_model'),

@@ -87,7 +87,7 @@ def get_indicative_times_v2(recalc=False, return_figs=False):
     targ_dates.extend(well_data.drilldate)
 
     targ_dates = pd.to_datetime(targ_dates)
-    targ_dates = targ_dates[targ_dates < pd.to_datetime(start)]
+    targ_dates = targ_dates[(targ_dates < pd.to_datetime(start)) | (targ_dates > pd.to_datetime(end))]
 
     targ_data = pd.DataFrame(index=targ_dates)
     nmonths = 12  # keynote choose 12 months as mutual info is largest and it makes most sense

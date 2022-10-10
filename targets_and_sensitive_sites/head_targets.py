@@ -2,6 +2,7 @@
 created matt_dumont 
 on: 15/08/22
 """
+import pickle
 import time
 import warnings
 import numpy as np
@@ -108,6 +109,7 @@ def get_low_freq_head_targets(start_date, end_date, freq='D'):
     outdata = outdata.groupby('date').mean()
     outdata = select_resample(outdata, start_date, end_date, frequency=freq)
     return outdata
+
 
 def plot_head_targets(how='all'):
     alpha = 0.8
@@ -222,7 +224,54 @@ def export_incl_head_target_locs():
     outdata.to_csv(processed_target_dir.joinpath('head_target_locations.csv'))
 
 
+def get_all_hds_targets(tdis, recalc=False):
+    save_path = processed_target_dir.joinpath(f'optimisation_hds_targets-{tdis.name}.p')
+    if save_path.exists() and not recalc:
+        out = pickle.load(open(save_path, 'rb'))
+        return out
+
+    need_keys = ['k', 'i', 'j', 'use_datetime', 'head', 'group']
+    all_head_targets = []
+    piezo = get_2011_piezo_survey(recalc=recalc)
+    piezo.loc[:, 'group'] = 'piezo'
+    all_head_targets.append(piezo.loc[:, need_keys])
+
+    single = get_single_head_targets()
+    single.loc[:, 'group'] = 'single_' + single.quality_code.astype(str)
+    all_head_targets.append(single.loc[:, need_keys])
+
+    low = get_low_freq_head_targets(*tdis.date_limits, 'W')
+    high = get_high_freq_head_targets(*tdis.date_limits, 'W')
+
+    all_wells = get_all_wells()
+    regular = pd.merge(low, high, right_index=True, left_index=True, how='outer')
+    regular.index.name = 'use_datetime'
+    for k in regular.columns:
+        temp = pd.DataFrame(regular.loc[:, k]).reset_index().dropna()
+        temp.rename(columns={k: 'head'}, inplace=True)
+        i, j = all_wells.loc[k, ['i', 'j']]
+        temp.loc[:, 'k'] = 0
+        temp.loc[:, 'i'] = i
+        temp.loc[:, 'j'] = j
+        temp.loc[:, 'group'] = 'regular'
+        all_head_targets.append(temp)
+    all_head_targets = pd.concat(all_head_targets).reset_index(drop=True)
+    all_head_targets = all_head_targets.loc[all_head_targets.loc[:,'head'].notna()]
+
+    # add step and per, remove duplicated data
+    all_head_targets = tdis.add_nstp_nper_to_df(all_head_targets, datetime_col='use_datetime',
+                                                action_on_duplicates='last')
+
+    all_head_targets = all_head_targets.loc[all_head_targets.nper>0]
+    all_head_targets = all_head_targets.drop_duplicates(subset=['i', 'j', 'group', 'nper']).reset_index(drop=True)
+    pickle.dump(all_head_targets, open(save_path, 'wb'))
+    return all_head_targets
+
+
 if __name__ == '__main__':
+    from optimisation.optimisation_period import tdis
+
+    get_all_hds_targets(tdis, recalc=True)
     print('piezo')
     print(get_2011_piezo_survey(recalc=True).dtypes)
     time.sleep(1)

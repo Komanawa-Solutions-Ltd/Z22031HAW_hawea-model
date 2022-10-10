@@ -46,6 +46,7 @@ def get_hawea_gain_loss_targets():
     data.loc[:, 'target_key'] = data.shortname.str.strip('S').astype(int)
     return data.loc[:, ['target_val', 'target_key']]
 
+#TODO add NSTP AND NPER
 
 if __name__ == '__main__':
     loc = get_riv_target_locs()

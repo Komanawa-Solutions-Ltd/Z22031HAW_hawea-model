@@ -23,7 +23,7 @@ from project_base import proj_root, base_model_build_data_dir
 from model_build.supporting_data_analysis import *
 from model_build.zones import get_model_zones
 from targets_and_sensitive_sites.head_targets import plot_head_targets, get_high_freq_head_targets, \
-    get_low_freq_head_targets, get_2011_piezo_survey, get_single_head_targets
+    get_low_freq_head_targets, get_2011_piezo_survey, get_single_head_targets, get_all_hds_targets
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
 from optimisation.determine_opt_start import get_opt_start_stop
 
@@ -536,6 +536,37 @@ def plot_targets(save):
     fig.tight_layout()
     if save:
         fig.savefig(outdir.joinpath(f'low_freq_temporal_targets{extension}'))
+
+    # plot targets from get targets
+    all_hds = get_all_hds_targets(tdis)
+    all_hds = smt.io.add_mxmy_to_df(all_hds)
+    groups = all_hds.group.unique()
+    colors = get_colors(groups)
+    # temporally
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    for i, (g, c) in enumerate(zip(groups, colors)):
+        temp = all_hds.loc[all_hds.group == g]
+        np.random.seed(56548 + i)
+        mapper = np.random.uniform(0.1, 0.9, len(temp))
+        ax.scatter(temp.nper, mapper + i, color=c, label=g)
+        ax.axhline(i + 1, color='k', ls=':')
+    ax.set_title('Targets after formatting for model input')
+    ax.set_yticks(np.arange(len(groups)) + 1)
+    ax.set_yticklabels(groups)
+    if save:
+        fig.savefig(outdir.joinpath(f'temporal_post_formatting{extension}'))
+
+    #  from get all head targest spatially
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    for g, c in zip(groups, colors):
+        temp = all_hds.loc[all_hds.group == g]
+        ax.scatter(temp.mx, temp.my, color=c, label=g)
+    ax.set_title('Targets after formatting for model input')
+    ax.legend()
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath(f'spatial_post_formatting{extension}'))
 
 
 def plot_deciding_time_period(save):

@@ -1,4 +1,4 @@
 ,Step,Run time,File size
-1,python model build,9s, NA
+1,python model build,3.7s, NA
 2,writing model,7.5s,148MB
-3,Running Model (259 periods),51.5s,240MB (minimum(80MB))
+3,Running Model (259 periods),"30.8s, 28.04s in ramdisk",240MB (minimum(80MB))
