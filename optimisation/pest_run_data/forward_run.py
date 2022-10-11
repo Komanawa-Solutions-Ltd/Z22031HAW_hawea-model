@@ -1,0 +1,56 @@
+"""
+created matt_dumont 
+on: 11/10/22
+"""
+
+import time
+from pathlib import Path
+import numpy as np
+from model_build.modflow_model import build_model
+from model_build.project_model_tools import smt, get_starting_heads
+from optimisation.optimisation_period import tdis
+from model_parameterisation.static_params import ss, vka
+from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
+from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
+
+
+# todo I probably need to manage the python setup and environment to allow this!!!
+
+def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param):
+    exe_name = 'mfnwt'
+    run_model = True
+    t = time.time()
+    oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
+    # keynote other steps if I end up with them
+    build_model(smt=smt,
+                tdis=tdis,
+                oc_spd=oc_spd,
+                exe_name=exe_name,
+                model_name=model_name,
+                model_ws=model_ws,
+                hk=interpolate_kh_pilot_points(kh_param),
+                vka=vka,
+                layer_avg=0,
+                ss=ss,
+                sy=interpolate_sy_pilot_points(sy_param),
+                strt=get_starting_heads(),
+                chani=1,
+                rch=get_rch_data(tdis),
+                ghb_spd=get_ghb_data(tdis),
+                riv_spd=get_riv_data(tdis, riv_params=riv_params),
+                well_spd=get_well_data(tdis,
+                                       hill_param=hill_param,
+                                       race_param=race_param),
+                options='COMPLEX',
+                nwt_kwargs={'maxiterout': 1000, 'maxitinner': 100},
+                hani=None,
+                mfv='mfnwt',
+                run_model=run_model,
+                verbose=True,
+                t=t,
+                noprint=True)
+
+
+def process_model_output(hds_file, cbc_file, version):
+    # todo
+    raise NotImplementedError

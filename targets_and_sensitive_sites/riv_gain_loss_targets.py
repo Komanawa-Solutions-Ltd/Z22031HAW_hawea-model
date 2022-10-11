@@ -2,6 +2,8 @@
 created matt_dumont 
 on: 15/08/22
 """
+import pickle
+
 import numpy as np
 import pandas as pd
 
@@ -46,9 +48,23 @@ def get_hawea_gain_loss_targets():
     data.loc[:, 'target_key'] = data.shortname.str.strip('S').astype(int)
     return data.loc[:, ['target_val', 'target_key']]
 
-#TODO add NSTP AND NPER
+
+def get_hawea_gain_loss_nper(tdis, recalc=False):
+    save_path = processed_target_dir.joinpath(f'hawea_r_targets-{tdis.name}.p')
+
+    if save_path.exists() and not recalc:
+        return pickle.load(open(save_path, 'rb'))
+
+    targets = get_hawea_gain_loss_targets()
+    targets = tdis.add_nstp_nper_to_df(targets, action_on_duplicates='last')
+    pickle.dump(targets, open(save_path, 'wb'))
+    return targets
+
 
 if __name__ == '__main__':
+    from optimisation.optimisation_period import tdis
+
+    temp = get_hawea_gain_loss_nper(tdis, True)
     loc = get_riv_target_locs()
     targ = get_hawea_gain_loss_targets()
     pass
