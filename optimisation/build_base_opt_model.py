@@ -13,6 +13,7 @@ from model_parameterisation.pilot_points import interpolate_kh_pilot_points, int
 from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh, \
     get_initial_riv_conductance, get_race_multiplier, get_hillslope_multiplier
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
+from targets_and_sensitive_sites.model_output import process_model_output
 
 
 def test_times():
@@ -90,6 +91,11 @@ def check_for_dry(hds_file):
 
 if __name__ == '__main__':
     # see if adding daily steps helps speed up the run time, nope it basically doubled the time
-    build_initial_model(model_name='test', model_ws=Path.home().joinpath('Downloads/test_model'),
-                       run_model=True)
+    # todo run in repo!
+    model_ws = Path.home().joinpath('Downloads/test_model')
+    model_name = 'test'
+    build_initial_model(model_name=model_name, model_ws=model_ws,
+                        run_model=True)
+    process_model_output(model_ws, model_ws.joinpath(f'{model_name}.hds'), True)
+
     check_for_dry(Path.home().joinpath('Downloads/test_model/test.hds'))

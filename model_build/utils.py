@@ -68,7 +68,6 @@ def plot_1_to_1(ax, **kwargs):
     limits = []
     limits.extend(xs)
     limits.extend(ys)
-    use_limits = (min(limits), max(limits))
     ax.plot(limits, limits, **kwargs)
 
 

@@ -2,19 +2,24 @@
 created matt_dumont 
 on: 11/10/22
 """
-
+import sys
 import time
 from pathlib import Path
-import numpy as np
 from model_build.modflow_model import build_model
 from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
 from model_parameterisation.static_params import ss, vka
 from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
+from targets_and_sensitive_sites.model_output import process_model_output
 
 
 # todo I probably need to manage the python setup and environment to allow this!!!
+
+def read_param_data(model_ws):  # todo read in the parameter data
+    raise NotImplementedError
+    return kh_param, sy_param, riv_params, hill_param, race_param
+
 
 def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param):
     exe_name = 'mfnwt'
@@ -51,6 +56,19 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                 noprint=True)
 
 
-def process_model_output(hds_file, cbc_file, version):
-    # todo
-    raise NotImplementedError
+if __name__ == '__main__':
+    name = sys.argv[1]
+    plot = sys.argv[2] == 1
+    model_ws = Path(__file__).parent
+    kh_param, sy_param, riv_params, hill_param, race_param = read_param_data(model_ws)
+    build_run_model(
+        model_name=name, model_ws=model_ws,
+        kh_param=kh_param,
+        sy_param=sy_param,
+        riv_params=riv_params,
+        hill_param=hill_param,
+        race_param=race_param
+    )
+    process_model_output(model_ws=model_ws,
+                         hds_file=model_ws.joinpath(f'{name}.hds'),
+                         plot=plot)

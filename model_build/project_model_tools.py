@@ -293,6 +293,13 @@ def get_bottom(recalc=False):
     return out
 
 
+def get_ibound(recalc=False):
+    if recalc:
+        no_flow()
+    out = np.loadtxt(processed_model_build_data_dir.joinpath('ibound.txt'))
+    return out
+
+
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              model_version_name, sdp, temp_file_dir,
                              rotation=0, layer_type=layer_type,

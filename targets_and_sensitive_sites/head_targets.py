@@ -14,6 +14,7 @@ from project_base import processed_target_dir, base_target_dir
 from model_build.utils import get_colors, select_resample
 from targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
 from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
+from model_build.zones import get_model_zones
 
 
 def get_single_head_targets():
@@ -230,13 +231,13 @@ def get_all_hds_targets(tdis, recalc=False):
         out = pickle.load(open(save_path, 'rb'))
         return out
 
-    need_keys = ['k', 'i', 'j', 'use_datetime', 'head', 'group']
+    need_keys = ['k', 'i', 'j', 'use_datetime', 'head', 'group', 'name']
     all_head_targets = []
-    piezo = get_2011_piezo_survey(recalc=recalc)
+    piezo = get_2011_piezo_survey(recalc=recalc).rename(columns={'Site': 'name'})
     piezo.loc[:, 'group'] = 'piezo'
     all_head_targets.append(piezo.loc[:, need_keys])
 
-    single = get_single_head_targets()
+    single = get_single_head_targets().rename(columns={'well_name': 'name'})
     single.loc[:, 'group'] = 'single_' + single.quality_code.astype(str)
     all_head_targets.append(single.loc[:, need_keys])
 
@@ -250,28 +251,50 @@ def get_all_hds_targets(tdis, recalc=False):
         temp = pd.DataFrame(regular.loc[:, k]).reset_index().dropna()
         temp.rename(columns={k: 'head'}, inplace=True)
         i, j = all_wells.loc[k, ['i', 'j']]
+        temp.loc[:, 'name'] = k
         temp.loc[:, 'k'] = 0
         temp.loc[:, 'i'] = i
         temp.loc[:, 'j'] = j
         temp.loc[:, 'group'] = 'regular'
         all_head_targets.append(temp)
     all_head_targets = pd.concat(all_head_targets).reset_index(drop=True)
-    all_head_targets = all_head_targets.loc[all_head_targets.loc[:,'head'].notna()]
+    all_head_targets = all_head_targets.loc[all_head_targets.loc[:, 'head'].notna()]
 
     # add step and per, remove duplicated data
     all_head_targets = tdis.add_nstp_nper_to_df(all_head_targets, datetime_col='use_datetime',
                                                 action_on_duplicates='last')
 
-    all_head_targets = all_head_targets.loc[all_head_targets.nper>0]
+    all_head_targets = all_head_targets.loc[all_head_targets.nper > 0]
     all_head_targets = all_head_targets.drop_duplicates(subset=['i', 'j', 'group', 'nper']).reset_index(drop=True)
+    all_head_targets.loc[:, 'name'] = ('hds_'
+                                       + all_head_targets.name.str.replace(' ', '_')
+                                       + '_'
+                                       + all_head_targets.nper.astype(str))
+    # todo add zone
+    zones = get_model_zones()
+    use_zones = [
+        'sandypoint',
+        'flat',
+        'east',
+        'mangawera',
+        'terrace'
+
+    ]
+    all_head_targets.loc[:, 'zone'] = 'east'
+    for z in use_zones:
+        idx = zones[z]
+        idx = idx[all_head_targets.i, all_head_targets.j]
+        all_head_targets.loc[idx, 'zone'] = z
+
     pickle.dump(all_head_targets, open(save_path, 'wb'))
-    return all_head_targets
+    return all_head_targets  # todo get zones
 
 
 if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
 
     get_all_hds_targets(tdis, recalc=True)
+    raise NotImplementedError
     print('piezo')
     print(get_2011_piezo_survey(recalc=True).dtypes)
     time.sleep(1)
