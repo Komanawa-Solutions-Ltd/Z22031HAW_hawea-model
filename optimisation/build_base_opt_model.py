@@ -97,5 +97,3 @@ if __name__ == '__main__':
     build_initial_model(model_name=model_name, model_ws=model_ws,
                         run_model=True)
     process_model_output(model_ws, model_ws.joinpath(f'{model_name}.hds'), True)
-
-    check_for_dry(Path.home().joinpath('Downloads/test_model/test.hds'))

@@ -5,6 +5,8 @@ on: 15/08/22
 import pickle
 import time
 import warnings
+from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
 import numpy as np
 from dateutil.relativedelta import relativedelta
 import pandas as pd
@@ -234,6 +236,7 @@ def get_all_hds_targets(tdis, recalc=False):
     need_keys = ['k', 'i', 'j', 'use_datetime', 'head', 'group', 'name']
     all_head_targets = []
     piezo = get_2011_piezo_survey(recalc=recalc).rename(columns={'Site': 'name'})
+    piezo.loc[:, 'name'] = piezo.loc[:, 'name'].str.replace('/', '_').str.replace('bore','')
     piezo.loc[:, 'group'] = 'piezo'
     all_head_targets.append(piezo.loc[:, need_keys])
 
@@ -266,11 +269,13 @@ def get_all_hds_targets(tdis, recalc=False):
 
     all_head_targets = all_head_targets.loc[all_head_targets.nper > 0]
     all_head_targets = all_head_targets.drop_duplicates(subset=['i', 'j', 'group', 'nper']).reset_index(drop=True)
-    all_head_targets.loc[:, 'name'] = ('hds_'
+    all_head_targets.loc[:, 'name'] = ('h_'
                                        + all_head_targets.name.str.replace(' ', '_')
                                        + '_'
-                                       + all_head_targets.nper.astype(str))
-    # todo add zone
+                                       + all_head_targets.nper.astype(str)).str.lower()
+    all_head_targets.drop_duplicates(subset=['name'], keep='last', inplace=True)
+
+    # add zone
     zones = get_model_zones()
     use_zones = [
         'sandypoint',
@@ -287,7 +292,38 @@ def get_all_hds_targets(tdis, recalc=False):
         all_head_targets.loc[idx, 'zone'] = z
 
     pickle.dump(all_head_targets, open(save_path, 'wb'))
-    return all_head_targets  # todo get zones
+    return all_head_targets
+
+
+def plot_hds_regular_locator(ax, colors_dict):
+    all_wells = get_all_wells()
+    smt.plot.plt_basemap(ax=ax, no_flow_layer=0)
+
+    for k, c in colors_dict.items():
+        k = k.replace('h_', '')
+        x, y = all_wells.loc[k, ['nztmx', 'nztmy']]
+        ax.scatter(x, y, color=c, label=k, s=80)
+    ax.legend(loc='lower left')
+
+
+def plot_hds_zone_locator(ax, colors_dict, default_zone='east'):
+    use_zones = list(colors_dict.keys())
+    use_colors = [colors_dict[k] for k in use_zones]
+    vals = {k: i for i, k in enumerate(use_zones)}
+    zones = get_model_zones()
+    zone_plot = smt.get_model_zeros() * np.nan
+    zone_plot[zones['active']] = vals[default_zone]
+    for i, z in enumerate(use_zones):
+        zone_plot[zones[z]] = i
+
+    cmap = ListedColormap(use_colors)
+    smt.plot.plt_matrix(zone_plot, no_flow_layer=0, base_map=True,
+                        cmap=cmap, color_bar=False, ax=ax, alpha=0.5)
+    handles, labels = [], []
+    for c, n in zip(use_colors, use_zones):
+        handles.append(Patch(facecolor=c))
+        labels.append(n.capitalize())
+    ax.legend(handles, labels, loc='lower left')
 
 
 if __name__ == '__main__':

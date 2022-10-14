@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from targets_and_sensitive_sites.head_targets import get_all_hds_targets
+from targets_and_sensitive_sites.head_targets import get_all_hds_targets, plot_hds_zone_locator, \
+    plot_hds_regular_locator
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
 from optimisation.optimisation_period import tdis
 from model_build.supporting_data_analysis import get_river_loc_data
@@ -28,6 +29,7 @@ consider applying a temporal weighting to high frequency targets (later has bett
 how to manage dry cells... weight misfit higher???
 
 """
+
 
 def generate_outputs(hds_path, cbc_path):
     all_hds = flopy.utils.HeadFile(hds_path).get_alldata()
@@ -95,6 +97,8 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     plot_dir.mkdir(exist_ok=True)
     ibound = smt.get_no_flow(0)
 
+    reg_colormap = 'brg'
+
     # plot hds (ss)
     plt_hds = all_hds[0, 0]
     plt_hds[ibound != 1] = np.nan
@@ -155,27 +159,28 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     ax.legend()
     fig.tight_layout()
     fig.savefig(plot_dir.joinpath('hds_all_mod_v_meas.png'))
+    plt.close(fig)
 
     # all hds by group, color by zone/name
     zones = hds_obs.zone.unique()
     zcolors = get_colors(zones)
     for g in hds_groups:
-        fig, ax = plt.subplots(figsize=(9, 9))
+        fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
         temp = hds_obs.loc[hds_obs.group == g]
         ax.set_aspect('equal')
         if g == 'regular':
             use_names = np.unique([f'{"_".join(e.split("_")[:-1])}' for e in temp.name])
             names = sorted(use_names)
-            ncolors = get_colors(names)
+            ncolors = get_colors(names,reg_colormap)
             for n, nc in zip(names, ncolors):
                 temp2 = temp.loc[temp.name.str.contains(n)]
                 ax.scatter(temp2.modelled, temp2.measured, color=nc, label=n.capitalize())
-            # todo add locator
+            plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(names, ncolors)})
         else:
             for z, zc in zip(zones, zcolors):
                 temp2 = temp.loc[temp.zone == z]
                 ax.scatter(temp2.modelled, temp2.measured, color=zc, label=z.capitalize())
-            # todo add locator
+            plot_hds_zone_locator(ax_loc, {z: zc for z, zc in zip(zones, zcolors)})
 
         ax.set_title(f'{g.capitalize()} hds measured vs modelled')
         ax.set_xlabel('Modelled (m)')
@@ -184,9 +189,10 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         ax.legend()
         fig.tight_layout()
         fig.savefig(plot_dir.joinpath(f'hds_{g}_mod_v_meas.png'))
+        plt.close(fig)
 
     # residuals by time(color by group)
-    fig, ax = plt.subplots(figsize=(12, 9))
+    fig, ax = plt.subplots(figsize=(9, 9))
     for g, c in zip(hds_groups, hds_colors):
         temp = hds_obs.loc[hds_obs.group == g]
         ax.scatter(temp.nper, temp.modelled - temp.measured, color=c, label=g.capitalize())
@@ -202,21 +208,21 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
 
     # residuals by time by group, color by zone???
     for g in hds_groups:
-        fig, ax = plt.subplots(figsize=(12, 9))
+        fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
         temp = hds_obs.loc[hds_obs.group == g]
         if g == 'regular':
-            # todo add locator
             use_names = np.unique([f'{"_".join(e.split("_")[:-1])}' for e in temp.name])
             names = sorted(use_names)
-            ncolors = get_colors(names)
+            ncolors = get_colors(names,reg_colormap)
             for n, nc in zip(names, ncolors):
                 temp2 = temp.loc[temp.name.str.contains(n)]
                 ax.scatter(temp2.nper, temp2.modelled - temp2.measured, color=nc, label=n.capitalize())
+            plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(names, ncolors)})
         else:
-            # todo add locator
             for z, zc in zip(zones, zcolors):
                 temp2 = temp.loc[temp.zone == z]
                 ax.scatter(temp2.nper, temp2.modelled - temp2.measured, color=zc, label=z.capitalize())
+            plot_hds_zone_locator(ax_loc, {z: zc for z, zc in zip(zones, zcolors)})
         ax.set_title(f'{g.capitalize()} hds residuals vs time')
         ax.set_xlabel('Model period')
         ax.set_ylabel('Residual (modelled - measured, m)')
@@ -327,9 +333,10 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
             fig.suptitle(f'Budgets: {i:02d}')
             fig.tight_layout()
             fig.savefig(plot_dir.joinpath(f'transient budget_{i:02d} of {len(figs) - 1}.png'))
+            plt.close(fig)
 
     # todo parameter shifts, need prior info, so later
-    # todo close all figures after saved!!
+    # todo close all figures after saved!!, done for current
     plt.show()  # todo DADB
 
 
@@ -343,7 +350,7 @@ def process_model_output(model_ws, hds_file, plot=False):
     out_obs, all_riv_obs, dry_hds, flooded_cells, all_hds, = generate_outputs(hds_file, cbc_file)
 
     # save output
-    out_obs.to_csv(model_ws.joinpath('observations.dat'), sep='\t')
+    out_obs.to_csv(model_ws.joinpath('observations.dat'), sep='\t', index=False)
     np.savetxt(model_ws.joinpath('dry_cells.txt'), dry_hds, fmt='%d')
     np.savetxt(model_ws.joinpath('dry_cells.txt'), flooded_cells, fmt='%d')
 
@@ -351,7 +358,7 @@ def process_model_output(model_ws, hds_file, plot=False):
     if plot:
         visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file)
 
-
+# todo what happens if the model doesn't converge! re pest
 if __name__ == '__main__':
     t = time.time()
     process_model_output('/home/matt_dumont/Downloads/test_model',
