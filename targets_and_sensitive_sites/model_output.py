@@ -171,7 +171,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         if g == 'regular':
             use_names = np.unique([f'{"_".join(e.split("_")[:-1])}' for e in temp.name])
             names = sorted(use_names)
-            ncolors = get_colors(names,reg_colormap)
+            ncolors = get_colors(names, reg_colormap)
             for n, nc in zip(names, ncolors):
                 temp2 = temp.loc[temp.name.str.contains(n)]
                 ax.scatter(temp2.modelled, temp2.measured, color=nc, label=n.capitalize())
@@ -213,7 +213,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         if g == 'regular':
             use_names = np.unique([f'{"_".join(e.split("_")[:-1])}' for e in temp.name])
             names = sorted(use_names)
-            ncolors = get_colors(names,reg_colormap)
+            ncolors = get_colors(names, reg_colormap)
             for n, nc in zip(names, ncolors):
                 temp2 = temp.loc[temp.name.str.contains(n)]
                 ax.scatter(temp2.nper, temp2.modelled - temp2.measured, color=nc, label=n.capitalize())
@@ -340,11 +340,35 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     plt.show()  # todo DADB
 
 
+def modflow_converged(list_path):
+    """
+    returned convergence of the model
+
+    :param list_path: path to the list file
+    :return: True if converged, False if not, None if not realised
+    """
+    # could make this faster by only loading the last n lines? or through a regular expression?,
+    # but not super slow
+    converg = True
+    end_neg = 'FAILED TO MEET SOLVER'.lower()
+    with open(list_path) as temp:
+        for i in temp:
+            if end_neg in i.lower():
+                converg = False
+                break
+    return converg
+
+
 def process_model_output(model_ws, hds_file, plot=False):
     model_ws = Path(model_ws)
     hds_file = Path(hds_file)
     list_file = hds_file.with_suffix('.list')
     cbc_file = hds_file.with_suffix('.cbc')
+
+    # check convergence
+    if not modflow_converged(list_file):
+        with open(model_ws.joinpath('0_Modflow_Did_NOT_CONVERGE.txt'), 'w') as f:
+            f.write('')
 
     # output information
     out_obs, all_riv_obs, dry_hds, flooded_cells, all_hds, = generate_outputs(hds_file, cbc_file)
@@ -357,6 +381,7 @@ def process_model_output(model_ws, hds_file, plot=False):
     # plot stuff
     if plot:
         visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file)
+
 
 # todo what happens if the model doesn't converge! re pest
 if __name__ == '__main__':

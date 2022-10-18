@@ -73,7 +73,7 @@ if __name__ == '__main__':
     # todo check but should be done
     name = sys.argv[1]
     plot = sys.argv[2] == 1
-    model_ws = Path(__file__).parent
+    model_ws = Path(__file__).parent # todo check!
     kh_param, sy_param, riv_params, hill_param, race_param = read_param_data(model_ws)
     build_run_model(
         model_name=name, model_ws=model_ws,
