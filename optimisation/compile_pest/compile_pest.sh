@@ -1,47 +1,55 @@
 # note that I have changed the max character limits in pest following 2.7 in unixpest.pdf
 # new limits were set to 300 characters, max characters is 77 in a single line
+# pest was run on ubuntu (xubuntu) 22.04
 
-# install GFORTRAN if  needed # todo
+# install GFORTRAN if  needed
+sudo apt-get update
+sudo apt-get install gfortran
 
 pest_dir='/pest'
-base_tar=dirname -- "$( readlink -f -- "$0"; )"; # todo get access to the path
+base_tar='/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/optimisation/compile_pest/pest17_mod.tar'
 
+sudo mkdir $pest_dir
+# move to working directory
 
-mkdir $pest_dir
-# todo copy tar to directory to use
-cp
-
-#
-
-# todo move to working directory
 cd $pest_dir
 
+#  copy tar to directory to use
+sudo cp $base_tar pest17_mod.tar
+
 # extract
-tar – xvf pest17_mod.tar # todo check line
-# todo 2.2 Symbols used with Compiler Directives, I don't understand
+sudo tar -xvf pest17_mod.tar
 
 # compile PEST
-make cppp
-make -f pest.mak all
-make clean
-make -f ppest.mak all
-make clean
-make -f pestutl1.mak all
-make clean
-make -f pestutl2.mak all
-make clean
-make -f pestutl3.mak all
-make clean
-make -f pestutl4.mak all
-make clean
-make -f pestutl5.mak all
-make clean
-make -f pestutl6.mak all
-make clean
-make -f pestutl7.mak all
-make clean
-make -f sensan.mak all
-make clean
-4make –f beopest.mak all
-make clean
-make install
+sudo make cppp
+sudo make -f pest.mak all
+sudo make clean
+sudo make -f ppest.mak all
+sudo make clean
+sudo make -f pestutl1.mak all
+sudo make clean
+sudo make -f pestutl2.mak all
+sudo make clean
+sudo make -f pestutl3.mak all
+sudo make clean
+sudo make -f pestutl4.mak all
+sudo make clean
+sudo make -f pestutl5.mak all
+sudo make clean
+sudo make -f pestutl6.mak all
+sudo make clean
+sudo make -f pestutl7.mak all
+sudo make clean
+sudo make -f sensan.mak all
+sudo make clean
+sudo make -f beopest.mak all
+sudo make clean
+sudo mkdir /bin/pest
+sudo make install
+
+# add pest path variable
+echo 'export PATH="$PATH:/bin/pest"' >> ~/.bashrc
+source ~/.bashrc
+
+# delete pest dir
+sudo rm -r $pest_dir
