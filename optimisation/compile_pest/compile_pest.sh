@@ -7,7 +7,8 @@ sudo apt-get update
 sudo apt-get install gfortran
 
 pest_dir='/pest'
-base_tar='/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/optimisation/compile_pest/pest17_mod.tar'
+base_dir = $(dirname "$0")
+base_tar="$base_dir/pest17_mod.tar"
 
 sudo mkdir $pest_dir
 # move to working directory
