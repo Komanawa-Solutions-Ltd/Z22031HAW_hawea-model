@@ -369,6 +369,7 @@ def process_model_output(model_ws, hds_file, plot=False):
     if not modflow_converged(list_file):
         with open(model_ws.joinpath('0_Modflow_Did_NOT_CONVERGE.txt'), 'w') as f:
             f.write('')
+        return
 
     # output information
     out_obs, all_riv_obs, dry_hds, flooded_cells, all_hds, = generate_outputs(hds_file, cbc_file)

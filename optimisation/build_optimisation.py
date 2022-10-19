@@ -98,7 +98,7 @@ def set_control_data(pst, noptmax):
     pst.control_data.numlam = 10
     # what happens if modflow dies, no output files written
     pst.control_data.lamforgive = 'lamforgive'
-    pst.control_data.derforgive = 'noderforgive'  # todo maybe consider further
+    pst.control_data.derforgive = 'derforgive'  # todo maybe consider further
 
     # line 6
     pst.control_data.relparmax = 10  # max 10% change
