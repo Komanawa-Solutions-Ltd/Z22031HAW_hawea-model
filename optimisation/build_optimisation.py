@@ -14,8 +14,7 @@ from project_base import proj_root
 
 base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 
-default_output_path = Path(
-    '/home/matt_dumont/Downloads/test_model/observations.dat')  # todo replace with repo when done
+default_output_path = proj_root.joinpath('optimisation/pre_opt_model/observations.dat')
 
 
 def _get_param_data():
@@ -72,21 +71,24 @@ def make_ins_and_output_files(pst_dir):
         f.write('pif ~\n')
         f.write('~name~\n')
         for n in default_data.loc[:, 'name']:
-            f.write(f'l1 w w w w !{n}!\n')
+            f.write(f'l1 w w w w w !{n}!\n')
 
     return [str(ins_file)], [str(output_file)]
 
 
-def set_control_data(pst, trial):
+def set_control_data(pst, noptmax):
     assert isinstance(pst, pyemu.Pst)
     # control information
 
     # lines 1-5
     pst.control_data.rstfle = 'restart'
     pst.control_data.pestmode = 'estimation'
-    pst.control_data.precis = 'double'
+    pst.control_data.precis = 'single'
     pst.control_data.phiratsuf = 0.3
     pst.control_data.obsreref = 'noobsreref'  # no observation re-referencing
+    pst.control_data.numcom = 1
+    pst.control_data.jacfile = 0  # todo check
+    pst.control_data.messfile = 0  # todo check
 
     # line 5 (lambda stuff)
     pst.control_data.rlambda1 = 10
@@ -112,16 +114,12 @@ def set_control_data(pst, trial):
     pst.control_data.phiredswh = 0.1  # switch to 3 point at 10% reduction
     pst.control_data.noptswitch = 1  # wait n itertations to switch to 3 point
     pst.control_data.doaui = 'noaui'  # no automatic user inter
-    pst.control_data.dosenreuse = 'nosensereuse'  # do not use snsitivity reuse
     pst.control_data.boundscale = 'boundscale'  # treat the boundaries as confidence intervals for parameter scaling
 
     # splitswh  # do no supply not using spllit slope analysis
 
     # line 8
-    if trial:
-        pst.control_data.noptmax = 0  # max iterations, set to 0 for trial run!!
-    else:
-        pst.control_data.noptmax = 50  # max iterations
+    pst.control_data.noptmax = noptmax  # max iterations, set to 0 for trial run
 
     pst.control_data.phiredstp = 0.005  # relative phi change to be 'optimised'
     pst.control_data.nphistp = 4  # min number of iterations with relative phi change before optimisation is complete
@@ -147,6 +145,11 @@ def set_control_data(pst, trial):
     # icor
     # ieig
     # parsaverun
+
+    # keynote hack to solve bug
+    for k in pst.control_data.keyword_accessed:
+        pst.control_data._df.loc[k, 'passed'] = True
+    # end hack
 
 
 def set_parameter_data_groups(pst):
@@ -226,17 +229,31 @@ def hack_for_absparmax(file):
     pass
 
 
-def raw_pest(name='opt', pst_dir=Path.home().joinpath('Downloads/raw_pst_trial'), trial=False):
+def raw_pest(name, pst_dir, noptmax,
+             write_trial_paramfile=False):
     """
 
     :param name: name for the pest object  e.g. {name}.pst
     :param pst_dir: directory to save all pest related files (including forward_run.py)
-    :param trial: bool if True then set nmaxopt to 0 (just trial of running the model)
+    :param noptmax: pest parameter noptmax, number of optimisation iterations
+                    special values:
+                      -2: PEST will calculate the Jacobian matrix, store it in a JCO file, and
+                          then cease execution immediately. This matrix can then be used for linear analysis, and/or for
+                          construction of an SVD-assist input dataset.
+
+                      -1: instructs PEST to compute the Jacobian matrix. However after
+                          doing this, PEST records the same information on its output files as that which it would
+                          normally record on completion of an inversion process. This includes composite sensitivities
+                          and, if pertinent, post-calibration uncertainty and covariance statistics calculated from
+                          parameter sensitivities. It then undertakes a final model run so that model input and output
+                          files remaining after PEST execution is complete pertain to parameters values provided in the
+                          PEST control file.
+
+                       0:PEST will not estimate parameters, nor even calculate a Jacobian matrix. Instead it will
+                         terminate execution after just one model run.
+    :param write_trial_paramfile: bool, if true write 'trial.par' for use in utilities
     :return:
     """
-    # todo manage env and others
-    # see https://github.com/pypest/pyemu/blob/develop/examples/modflow_to_pest_like_a_boss.ipynb
-
     pst_dir.mkdir(exist_ok=True)
     pst_path = pst_dir.joinpath('opt.pst')
 
@@ -247,7 +264,7 @@ def raw_pest(name='opt', pst_dir=Path.home().joinpath('Downloads/raw_pst_trial')
 
     pst = pyemu.Pst.from_io_files(tpl_files, input_files, ins_files, output_files)
 
-    set_control_data(pst, trial)
+    set_control_data(pst, noptmax)
 
     # do not use senestivity reuse
 
@@ -274,9 +291,17 @@ def raw_pest(name='opt', pst_dir=Path.home().joinpath('Downloads/raw_pst_trial')
     # No regularisation, just use svd
 
     # model commands
-    # todo modify, need to use the right python env
-    shutil.copyfile(base_pst_data.joinpath("forward_run.py"),
-                    pst_dir.joinpath("forward_run.py"))
+
+    # manage pythonpath
+
+    with open(base_pst_data.joinpath("forward_run.py")) as f:
+        data = f.read()
+
+    data = data.replace('$$$$$USE_PATH$$$$$', str(proj_root))
+
+    with open(pst_dir.joinpath("forward_run.py"), 'w') as f:
+        f.write(data)
+
     # todo can I set a second command line for just the new parameter sections (e.g. to plot, but not plot derivetives
     # todo dbl check this behaves as I expect, e.g. separate file for each run.
     pst.model_command = ["conda run -n hawea python forward_run.py"]  # todo args ect.
@@ -285,7 +310,21 @@ def raw_pest(name='opt', pst_dir=Path.home().joinpath('Downloads/raw_pst_trial')
     pst.write(pst_dir.joinpath(f'{name}.pst'))
     hack_for_absparmax(pst_dir.joinpath(f'{name}.pst'))
 
-    # todo run pestcheck and others
+    if write_trial_paramfile:
+        trial_data = pd.DataFrame(index=pst.parameter_data.index, columns=['val', 'scale', 'offset'])
+        trial_data.loc[:, 'scale'] = pst.parameter_data.loc[:, 'scale']
+        trial_data.loc[:, 'offset'] = pst.parameter_data.loc[:, 'offset']
+        for n in trial_data.index:
+            l, u = pst.parameter_data.loc[n, ['parlbnd', 'parubnd']]
+            trial_data.loc[n, 'val'] = round(np.random.uniform(l, u), 3)
+        with open(pst_dir.joinpath('trial.par'), 'w') as f:
+            f.write('single point\n')
+            trial_data.to_csv(f, sep='\t', header=False)
+
+    # run pestcheck
+    # got warning, It appears that the PEST control file contains a "rsi" section. but I don't think this will impact anything
+    # passed IN Scheck'
+    # passed tempchek
 
     # todo parallell pest???
     # todo trial run
@@ -306,6 +345,11 @@ def determine_max_str_size():
 
 
 if __name__ == '__main__':
-    determine_max_str_size()
-    # raw_pest()
+    pdir = Path.home().joinpath('Downloads/raw_pst_trial')
+    for f in pdir.glob('*'):
+        if f.is_dir():
+            shutil.rmtree(f)
+        else:
+            f.unlink()
+    raw_pest(name='opt', pst_dir=pdir, noptmax=1, write_trial_paramfile=True)
     pass

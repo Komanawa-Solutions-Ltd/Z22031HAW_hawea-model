@@ -3,11 +3,13 @@ created matt_dumont
 on: 11/10/22
 """
 import sys
-import time
 from pathlib import Path
 
+t = Path('$$$$$USE_PATH$$$$$')
+sys.path.append(str(t))
+sys.path.append(str(t.parent.joinpath('modflow_tools_haw')))  # supporting KSL package
+import time
 import pandas as pd
-
 from model_build.modflow_model import build_model
 from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
@@ -17,8 +19,6 @@ from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, 
 from targets_and_sensitive_sites.model_output import process_model_output
 from model_parameterisation.inital_parametersiation import *
 
-
-# todo I probably need to manage the python setup and environment to allow this!!!
 
 def read_param_data(model_ws):
     parameter_file = model_ws.joinpath('parameters.dat')
@@ -40,7 +40,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
     t = time.time()
     oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
     # keynote other steps if I end up with them
-    build_model(smt=smt,
+    out = build_model(smt=smt,
                 tdis=tdis,
                 oc_spd=oc_spd,
                 exe_name=exe_name,
@@ -67,13 +67,16 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                 verbose=True,
                 t=t,
                 noprint=True)
+    print(out)
 
 
 if __name__ == '__main__':
     # todo check but should be done
-    name = sys.argv[1]
-    plot = sys.argv[2] == 1
-    model_ws = Path(__file__).parent # todo check!
+    # name = sys.argv[1]
+    # plot = sys.argv[2] == 1
+    plot = False  # todo testing
+    name = 'test'  # todo testing
+    model_ws = Path(__file__).parent  # todo check!
     kh_param, sy_param, riv_params, hill_param, race_param = read_param_data(model_ws)
     build_run_model(
         model_name=name, model_ws=model_ws,
@@ -86,3 +89,6 @@ if __name__ == '__main__':
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),
                          plot=plot)
+
+    # todo may want to remove the model files...
+    # todo how to paralleize
