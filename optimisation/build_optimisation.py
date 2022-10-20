@@ -2,7 +2,7 @@
 created matt_dumont 
 on: 11/10/22
 """
-
+import multiprocessing
 import shutil
 import numpy as np
 import pandas as pd
@@ -135,7 +135,7 @@ def set_control_data(pst, noptmax):
     # line 9
     pst.control_data.ires = 0
     pst.control_data.jcosave = 'jcosave'
-    pst.control_data.verboserec = 'noverboserec'  # todo condsider re-setting when up and running, look at diff
+    pst.control_data.verboserec = 'noverboserec'
     pst.control_data.jcosaveitn = 'jcosaveitn'
     pst.control_data.reisaveitn = 'reisaveitn'
     pst.control_data.parsaveitn = 'parsaveitn'
@@ -229,6 +229,39 @@ def hack_for_absparmax(file):
     pass
 
 
+def write_parellel_pst_file_structure(pest_file, forward_run_path, num_cores=None):  # todo
+    assert isinstance(pest_file, Path)
+    assert isinstance(forward_run_path, Path)
+    assert isinstance(num_cores, int) or num_cores is None
+
+    pest_dir = pest_file.parent
+    if num_cores is None:
+        num_cores = multiprocessing.cpu_count()
+    parellel_cores = num_cores - 1
+
+    # make folder structure
+    for n in range(parellel_cores):
+        runner_dir = pest_dir.joinpath(f'runner_{n:02d}')
+        runner_dir.mkdir()
+
+        # copy forward_run model script
+        shutil.copyfile(forward_run_path, runner_dir.joinpath(forward_run_path.name))
+    ifile_type = None  # todo
+    wait = 0.5  # sufficient for cores on local machine
+    # todo write run managment file
+    management_file = pest_file.with_suffix('.rmf')
+    with open(management_file,'w') as f:
+        f.write('prf\n')
+        f.write(f'{parellel_cores} {ifile_type} {wait} ') # todo not finished with this line
+
+
+    # todo look at pyemu.os_utils.start_workers... # todo this looks worse than what I can do with tmux
+    # todo look into preformance vs efficency cores
+    #  https://apple.stackexchange.com/questions/443713/python-script-using-efficiency-cores-rather-than-performance-cores-in-m1
+
+    raise NotImplementedError
+
+
 def raw_pest(name, pst_dir, noptmax,
              write_trial_paramfile=False):
     """
@@ -255,7 +288,6 @@ def raw_pest(name, pst_dir, noptmax,
     :return:
     """
     pst_dir.mkdir(exist_ok=True)
-    pst_path = pst_dir.joinpath('opt.pst')
 
     # make parameter files
     input_files, tpl_files = make_template_and_infiles(pst_dir)
@@ -326,6 +358,11 @@ def raw_pest(name, pst_dir, noptmax,
 
     # todo trial run, review challenges
     # todo need to lower weights on river targets... too high
+
+    # todo build paraelle pest options
+
+    # todo create a command to initialize all of the pest pagents on different tmux terminals... too much effort otherwise
+    # todo I am having permissions problems
 
 
 def determine_max_str_size():

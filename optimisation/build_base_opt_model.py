@@ -93,12 +93,11 @@ def check_for_dry(hds_file):
 
 if __name__ == '__main__':
     # see if adding daily steps helps speed up the run time, nope it basically doubled the time
-    # todo re-run in repo!
     model_ws = proj_root.joinpath('optimisation/pre_opt_model')
     model_name = 'pre_opt'
     build_initial_model(model_name=model_name, model_ws=model_ws,
                         run_model=True)
-    process_model_output(model_ws, model_ws.joinpath(f'{model_name}.hds'), False)  # todo set to true after debug
+    process_model_output(model_ws, model_ws.joinpath(f'{model_name}.hds'), True)
 
     # compress model files with 7zip
     filelist = list(model_ws.glob(f'{model_name}.*'))

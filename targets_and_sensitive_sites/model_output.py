@@ -58,7 +58,6 @@ def generate_outputs(hds_path, cbc_path):
     all_riv = np.array(flopy.utils.CellBudgetFile(cbc_path).get_data(text='RIVER LEAKAGE', full3D=True))[:, 0]
 
     for per in pers:
-        # todo in future submit pull request to get multiple Kstpkstper from cbc
         riv_leak = flopy.utils.CellBudgetFile(cbc_path).get_data(kstpkper=(0, per), text='RIVER LEAKAGE', full3D=True)
         all_riv[per] = np.array(riv_leak[0])[0]
     for i, target_key, nper in riv.loc[:, ['target_key', 'nper']].itertuples(True, None):
@@ -85,7 +84,6 @@ def generate_outputs(hds_path, cbc_path):
     out_obs.append(riv.rename(columns={'target_val': 'measured'}).loc[:, need_keys])
 
     # todo add dry hds?!?! to objective function????
-    # todo add flooded cells to objecive function???, probably not
     out_obs = pd.concat(out_obs)
     return out_obs, all_riv_obs, dry_hds.sum(axis=(0, 1)), flooded_cells.sum(axis=(0, 1)), all_hds
 
@@ -336,8 +334,6 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
             plt.close(fig)
 
     # todo parameter shifts, need prior info, so later
-    # todo close all figures after saved!!, done for current
-    plt.show()  # todo DADB
 
 
 def modflow_converged(list_path):
@@ -367,7 +363,7 @@ def process_model_output(model_ws, hds_file, plot=False):
 
     # check convergence
     if not modflow_converged(list_file):
-        with open(model_ws.joinpath('0_Modflow_Did_NOT_CONVERGE.txt'), 'w') as f: # todo change name
+        with open(model_ws.joinpath('0_Modflow_Did_NOT_CONVERGE.txt'), 'w') as f:  # todo change name!, which ones did not run
             f.write('')
         return
 
@@ -384,7 +380,6 @@ def process_model_output(model_ws, hds_file, plot=False):
         visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file)
 
 
-# todo what happens if the model doesn't converge! re pest
 if __name__ == '__main__':
     t = time.time()
     process_model_output('/home/matt_dumont/Downloads/test_model',
