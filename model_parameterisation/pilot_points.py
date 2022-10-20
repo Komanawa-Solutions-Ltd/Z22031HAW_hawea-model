@@ -31,6 +31,15 @@ def get_pilot_point_locations(recalc=False):
 
     data = gpd.read_file(data_path)
     x, y = data.geometry.x, data.geometry.y
+
+    data.loc[:, 'group'] = data.loc[:, 'group'].replace({
+        'rivergroup': 'riv_g',
+        'terrace': 'ter',
+        'haweaflat': 'h_flat',
+        'sandyhill': 'sandy',
+        'mangawera': 'mang'
+    })
+
     outdata = data.loc[:, ['id', 'group']]
     assert len(outdata.id.unique()) == len(outdata)
     outdata.loc[:, 'x'] = x
@@ -59,7 +68,7 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
 
     pilot_locs = get_pilot_point_locations()
     pilot_locs.loc[:, 'value'] = [kh_data.get(n) for n in pilot_locs.index]
-    for k in ['sandyhill', 'mangawera']:
+    for k in ['sandy', 'mang']:
         pilot_locs.loc[pilot_locs.group == k, 'value'] = kh_data[k]
     assert pilot_locs.loc[:, 'value'].notnull().all()
     # keynote interpolate on log values!
@@ -94,13 +103,13 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     pilot_locs.loc[:, 'value'] = 10 ** (pilot_locs.loc[:, 'value'])
     # set lake values
     lake_array = get_lake_array()
-    kh[np.isfinite(lake_array)] = kh_data['lake_conductance']
+    kh[np.isfinite(lake_array)] = kh_data['lake']
 
     # set sandy point & mangawera zones
     zones = get_param_zones()
     # zone 1 = Sandy point, zone 2 = mangawera valley
-    kh[zones == 1] = kh_data['sandyhill']
-    kh[zones == 2] = kh_data['mangawera']
+    kh[zones == 1] = kh_data['sandy']
+    kh[zones == 2] = kh_data['mang']
     kh[~idx] = 0
     assert np.isfinite(kh).all()
     kh = kh[np.newaxis]
@@ -117,7 +126,7 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
 
     pilot_locs = get_pilot_point_locations()
     pilot_locs.loc[:, 'value'] = [sy_data.get(n) for n in pilot_locs.index]
-    for k in ['sandyhill', 'mangawera']:
+    for k in ['sandy', 'mang']:
         pilot_locs.loc[pilot_locs.group == k, 'value'] = sy_data[k]
     assert pilot_locs.loc[:, 'value'].notnull().all()
 
@@ -153,8 +162,8 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     # set sandy point & mangawera zones
     zones = get_param_zones()
     # zone 1 = Sandy point, zone 2 = mangawera valley
-    sy[zones == 1] = sy_data['sandyhill']
-    sy[zones == 2] = sy_data['mangawera']
+    sy[zones == 1] = sy_data['sandy']
+    sy[zones == 2] = sy_data['mang']
     sy[~idx] = 0
     assert np.isfinite(sy).all()
     min_v = min(sy_data.values())
@@ -171,8 +180,8 @@ def exampine_kh_interpolation():
     pps = get_pilot_point_locations()
     options = [10, 50, 100, 200, 300, 500]
     kh_data = {
-        'sandyhill': np.random.choice(options),
-        'mangawera': np.random.choice(options),
+        'sandy': np.random.choice(options),
+        'mang': np.random.choice(options),
     }
 
     ncols = 3
@@ -209,8 +218,8 @@ def examine_sy_interpolation(log_before=False):
     choices = [0.02, 0.05, 0.1, 0.2, 0.3]
     pps = get_pilot_point_locations()
     sy_data = {
-        'sandyhill': np.random.choice(choices),
-        'mangawera': np.random.choice(choices),
+        'sandy': np.random.choice(choices),
+        'mang': np.random.choice(choices),
     }
 
     ncols = 1
@@ -252,6 +261,4 @@ def examine_sy_interpolation(log_before=False):
 
 if __name__ == '__main__':
     t = get_pilot_point_locations(recalc=True)
-    examine_sy_interpolation()
-    exampine_kh_interpolation()
     pass

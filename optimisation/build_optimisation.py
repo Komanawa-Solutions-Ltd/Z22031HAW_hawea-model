@@ -87,8 +87,8 @@ def set_control_data(pst, noptmax):
     pst.control_data.phiratsuf = 0.3
     pst.control_data.obsreref = 'noobsreref'  # no observation re-referencing
     pst.control_data.numcom = 1
-    pst.control_data.jacfile = 0  # todo check
-    pst.control_data.messfile = 0  # todo check
+    pst.control_data.jacfile = 0
+    pst.control_data.messfile = 0
 
     # line 5 (lambda stuff)
     pst.control_data.rlambda1 = 10
@@ -135,7 +135,7 @@ def set_control_data(pst, noptmax):
     # line 9
     pst.control_data.ires = 0
     pst.control_data.jcosave = 'jcosave'
-    pst.control_data.verboserec = 'verboserec'  # todo condsider re-setting when up and running
+    pst.control_data.verboserec = 'noverboserec'  # todo condsider re-setting when up and running, look at diff
     pst.control_data.jcosaveitn = 'jcosaveitn'
     pst.control_data.reisaveitn = 'reisaveitn'
     pst.control_data.parsaveitn = 'parsaveitn'
@@ -302,9 +302,7 @@ def raw_pest(name, pst_dir, noptmax,
     with open(pst_dir.joinpath("forward_run.py"), 'w') as f:
         f.write(data)
 
-    # todo can I set a second command line for just the new parameter sections (e.g. to plot, but not plot derivetives
-    # todo dbl check this behaves as I expect, e.g. separate file for each run.
-    pst.model_command = ["conda run -n hawea python forward_run.py"]  # todo args ect.
+    pst.model_command = ["conda run -n hawea python forward_run.py"]  # todo args ect., how does parallel act
 
     # write pest file.
     pst.write(pst_dir.joinpath(f'{name}.pst'))
@@ -326,8 +324,8 @@ def raw_pest(name, pst_dir, noptmax,
     # passed IN Scheck'
     # passed tempchek
 
-    # todo parallell pest???
-    # todo trial run
+    # todo trial run, review challenges
+    # todo need to lower weights on river targets... too high
 
 
 def determine_max_str_size():
@@ -345,7 +343,7 @@ def determine_max_str_size():
 
 
 if __name__ == '__main__':
-    pdir = Path.home().joinpath('Downloads/raw_pst_trial')
+    pdir = Path.home().joinpath('Downloads/raw_pst_trial_no_verbose')
     for f in pdir.glob('*'):
         if f.is_dir():
             shutil.rmtree(f)

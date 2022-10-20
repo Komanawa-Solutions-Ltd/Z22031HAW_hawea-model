@@ -91,4 +91,6 @@ if __name__ == '__main__':
                          plot=plot)
 
     # todo may want to remove the model files...
+    # todo save list files?? so I can examine where models are falling over...
+    # todo write a function that looks for problem spots and what exists in that area... include options from flopy?
     # todo how to paralleize

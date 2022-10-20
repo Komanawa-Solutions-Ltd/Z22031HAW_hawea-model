@@ -121,8 +121,8 @@ def plot_parameterisation(save=False):
     np.random.seed(165653)
     c = np.random.choice(options)
     kh_data = {
-        'sandyhill': a,
-        'mangawera': b,
+        'sandy': a,
+        'mang': b,
         'lake_conductance': c,
     }
 
@@ -151,7 +151,7 @@ def plot_parameterisation(save=False):
     khs = get_inital_kh()
     lake = get_lake_array()
     thick = get_starting_heads()[0] - smt.get_bottoms()[0]
-    kh = np.full(smt.model_shape[1:], khs['sandyhill'][0])
+    kh = np.full(smt.model_shape[1:], khs['sandy'][0])
     kh[np.isfinite(lake)] = khs['lake_conductance'][0]
 
     thick[smt.get_no_flow(0) != 1] = np.nan
@@ -173,7 +173,7 @@ def plot_parameterisation(save=False):
 
     # plot zones
     zone_colors = ['b', 'tan', 'thistle']
-    zone_names = ['lake_conductance', 'sandyhill', 'mangawera']
+    zone_names = ['lake_conductance', 'sandy', 'mang']
     cmap = ListedColormap(zone_colors)
 
     fig, (ax1, legendax) = plt.subplots(ncols=2, gridspec_kw={'width_ratios': [5, 1], },

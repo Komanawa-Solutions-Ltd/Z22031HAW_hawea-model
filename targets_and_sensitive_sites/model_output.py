@@ -367,7 +367,7 @@ def process_model_output(model_ws, hds_file, plot=False):
 
     # check convergence
     if not modflow_converged(list_file):
-        with open(model_ws.joinpath('0_Modflow_Did_NOT_CONVERGE.txt'), 'w') as f:
+        with open(model_ws.joinpath('0_Modflow_Did_NOT_CONVERGE.txt'), 'w') as f: # todo change name
             f.write('')
         return
 

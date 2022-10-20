@@ -24,22 +24,23 @@ def get_initial_riv_conductance(return_just_start=False):
             params[k] = v[0]
     return params
 
+
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model based on the 10**mean(log10(scotts parameters))
     # keynote use log values
     start_val = (10, (0.01, 1000))
-    lake_val =  (10, (0.01, 1000))
+    lake_val = (10, (0.01, 1000))
 
     # for reference scott's model ha min = 0.09, max = 300, median = 14
     if return_just_start:
         start_val = start_val[0]
         lake_val = lake_val[0]
     pps = get_pilot_point_locations()
-    pps = pps.loc[~np.in1d(pps.group, ['sandyhill', 'mangawera'])]
+    pps = pps.loc[~np.in1d(pps.group, ['sandy', 'mang'])]
     kh_data = {
-        'sandyhill': start_val,
-        'mangawera': start_val,
-        'lake_conductance': lake_val
+        'sandy': start_val,
+        'mang': start_val,
+        'lake': lake_val
     }
 
     for i in pps.index:
@@ -55,10 +56,10 @@ def get_inital_sy(return_just_start=False):
     if return_just_start:
         start_val = start_val[0]
     pps = get_pilot_point_locations()
-    pps = pps.loc[~np.in1d(pps.group, ['sandyhill', 'mangawera'])]
+    pps = pps.loc[~np.in1d(pps.group, ['sandy', 'mang'])]
     sy_data = {
-        'sandyhill': start_val,
-        'mangawera': start_val,
+        'sandy': start_val,
+        'mang': start_val,
     }
 
     for i in pps.index:
@@ -74,9 +75,9 @@ def get_hillslope_multiplier(return_just_start=False):
     # allow paramters to move +- 10% (somewhat arbitrary)
     params = {
         # k: (initial, (low, high),
-        'south_east': (1, (0.9, 1.1)),
+        'se': (1, (0.9, 1.1)),
         'main': (1, (0.9, 1.1)),
-        'maungawera': (1, (0.9, 1.1)),
+        'mang': (1, (0.9, 1.1)),
 
     }
     if return_just_start:

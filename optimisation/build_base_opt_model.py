@@ -14,6 +14,8 @@ from model_parameterisation.inital_parametersiation import get_inital_sy, get_in
     get_initial_riv_conductance, get_race_multiplier, get_hillslope_multiplier
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
 from targets_and_sensitive_sites.model_output import process_model_output
+from project_base import proj_root
+import py7zr
 
 
 def test_times():
@@ -91,10 +93,20 @@ def check_for_dry(hds_file):
 
 if __name__ == '__main__':
     # see if adding daily steps helps speed up the run time, nope it basically doubled the time
-    # todo run in repo!
-    model_ws = Path.home().joinpath('Downloads/test_model')
-    model_name = 'test'
+    # todo re-run in repo!
+    model_ws = proj_root.joinpath('optimisation/pre_opt_model')
+    model_name = 'pre_opt'
     build_initial_model(model_name=model_name, model_ws=model_ws,
                         run_model=True)
-    process_model_output(model_ws, model_ws.joinpath(f'{model_name}.hds'), True)
-    # todo compress model files! and remove the archive
+    process_model_output(model_ws, model_ws.joinpath(f'{model_name}.hds'), False)  # todo set to true after debug
+
+    # compress model files with 7zip
+    filelist = list(model_ws.glob(f'{model_name}.*'))
+    with py7zr.SevenZipFile(model_ws.joinpath(f'{model_name}.7z'), 'w') as archive:
+        for p in filelist:
+            print(f'zipping: {p.name}')
+            archive.write(p)
+
+    # delete files
+    for f in filelist:
+        f.unlink()
