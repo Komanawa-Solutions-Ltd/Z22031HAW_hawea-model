@@ -57,6 +57,7 @@ def copy_forward_run(pst_dir):
 
     with open(forward_run_path, 'w') as f:
         f.write(data)
+    return forward_run_path
 
 
 def make_template_and_infiles(pst_dir):
@@ -307,7 +308,7 @@ def raw_pest(name, pst_dir, noptmax,
     # model commands
 
     # manage pythonpath
-    copy_forward_run(pst_dir)
+    forward_run_path = copy_forward_run(pst_dir)
     pst.model_command = ["conda run -n hawea python forward_run.py"]
 
     # write pest file.
@@ -331,7 +332,7 @@ def raw_pest(name, pst_dir, noptmax,
     # passed IN Scheck'
     # passed tempchek
 
-    # todo write_beopest_run_manager(pest_file=pest_file, forward_run_path=forward_run_path)
+    write_beopest_run_manager(pest_file=pest_file, forward_run_path=forward_run_path)
     # todo trial run, review challenges
     # todo need to lower weights on river targets... too high... log transfrom flows
     # todo I would like to save list files!!!
