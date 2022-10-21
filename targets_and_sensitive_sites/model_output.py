@@ -2,8 +2,9 @@
 created matt_dumont 
 on: 7/09/22
 """
+import shutil
 import time
-
+import py7zr
 import flopy
 import matplotlib.pyplot as plt
 import numpy as np
@@ -83,7 +84,7 @@ def generate_outputs(hds_path, cbc_path):
     riv.loc[:, 'zone'] = 'riv'
     out_obs.append(riv.rename(columns={'target_val': 'measured'}).loc[:, need_keys])
 
-    # todo add dry hds?!?! to objective function????
+    # todo add dry hds?!?! to objective function????, probably not
     out_obs = pd.concat(out_obs)
     return out_obs, all_riv_obs, dry_hds.sum(axis=(0, 1)), flooded_cells.sum(axis=(0, 1)), all_hds
 
@@ -355,16 +356,31 @@ def modflow_converged(list_path):
     return converg
 
 
-def process_model_output(model_ws, hds_file, plot=False):
+def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_param=True):
     model_ws = Path(model_ws)
     hds_file = Path(hds_file)
     list_file = hds_file.with_suffix('.list')
     cbc_file = hds_file.with_suffix('.cbc')
+    parameter_file = model_ws.joinpath('parameters.dat')
+
+    # save listfile and parameter file
+    if savelist:
+        save_list_dir = model_ws.joinpath('list_file_repo')
+        save_list_dir.mkdir(exist_ok=True)
+        n = max([-1] + [int(e.stem.split('_')[-1]) for e in save_list_dir.glob('*')]) + 1
+        new_path = save_list_dir.joinpath(f'list_{n}.list')
+        with py7zr.SevenZipFile(new_path.with_suffix(".7z"), 'w') as archive:
+            archive.write(list_file.name)
+
+    if save_param:
+        save_param_dir = model_ws.joinpath('param_file_repo')
+        save_param_dir.mkdir(exist_ok=True)
+        n = max([-1] + [int(e.stem.split('_')[-1]) for e in save_param_dir.glob('*')]) + 1
+        new_path = save_param_dir.joinpath(f'parameter_{n}.dat')
+        shutil.copyfile(parameter_file, new_path)
 
     # check convergence
     if not modflow_converged(list_file):
-        with open(model_ws.joinpath('0_Modflow_Did_NOT_CONVERGE.txt'), 'w') as f:  # todo change name!, which ones did not run
-            f.write('')
         return
 
     # output information

@@ -5,7 +5,7 @@ on: 11/10/22
 import sys
 from pathlib import Path
 
-t = Path('$$$$$USE_PATH$$$$$')
+t = Path('/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model')
 sys.path.append(str(t))
 sys.path.append(str(t.parent.joinpath('modflow_tools_haw')))  # supporting KSL package
 import time

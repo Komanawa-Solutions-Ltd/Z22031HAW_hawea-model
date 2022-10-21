@@ -2,6 +2,9 @@
 created matt_dumont 
 on: 11/10/22
 """
+import socket
+import json
+import subprocess
 import multiprocessing
 import shutil
 import numpy as np
@@ -11,6 +14,7 @@ from pathlib import Path
 from model_parameterisation.inital_parametersiation import get_race_multiplier, get_hillslope_multiplier, \
     get_initial_riv_conductance, get_inital_sy, get_inital_kh
 from project_base import proj_root
+from model_tools.beopest_manager import write_beopest_run_manager
 
 base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 
@@ -42,6 +46,17 @@ def _get_param_data():
 def _get_base_obs():
     default_data = pd.read_csv(default_output_path, sep='\t')
     return default_data
+
+def copy_forward_run(pst_dir):
+    pst_dir.mkdir(exist_ok=True)
+    forward_run_path = pst_dir.joinpath("forward_run.py")
+    with open(base_pst_data.joinpath("forward_run.py")) as f:
+        data = f.read()
+
+    data = data.replace('$$$$$USE_PATH$$$$$', str(proj_root))
+
+    with open(forward_run_path, 'w') as f:
+        f.write(data)
 
 
 def make_template_and_infiles(pst_dir):
@@ -98,7 +113,7 @@ def set_control_data(pst, noptmax):
     pst.control_data.numlam = 10
     # what happens if modflow dies, no output files written
     pst.control_data.lamforgive = 'lamforgive'
-    pst.control_data.derforgive = 'derforgive'  # todo maybe consider further
+    pst.control_data.derforgive = 'derforgive'
 
     # line 6
     pst.control_data.relparmax = 10  # max 10% change
@@ -229,39 +244,6 @@ def hack_for_absparmax(file):
     pass
 
 
-def write_parellel_pst_file_structure(pest_file, forward_run_path, num_cores=None):  # todo
-    assert isinstance(pest_file, Path)
-    assert isinstance(forward_run_path, Path)
-    assert isinstance(num_cores, int) or num_cores is None
-
-    pest_dir = pest_file.parent
-    if num_cores is None:
-        num_cores = multiprocessing.cpu_count()
-    parellel_cores = num_cores - 1
-
-    # make folder structure
-    for n in range(parellel_cores):
-        runner_dir = pest_dir.joinpath(f'runner_{n:02d}')
-        runner_dir.mkdir()
-
-        # copy forward_run model script
-        shutil.copyfile(forward_run_path, runner_dir.joinpath(forward_run_path.name))
-    ifile_type = None  # todo
-    wait = 0.5  # sufficient for cores on local machine
-    # todo write run managment file
-    management_file = pest_file.with_suffix('.rmf')
-    with open(management_file,'w') as f:
-        f.write('prf\n')
-        f.write(f'{parellel_cores} {ifile_type} {wait} ') # todo not finished with this line
-
-
-    # todo look at pyemu.os_utils.start_workers... # todo this looks worse than what I can do with tmux
-    # todo look into preformance vs efficency cores
-    #  https://apple.stackexchange.com/questions/443713/python-script-using-efficiency-cores-rather-than-performance-cores-in-m1
-
-    raise NotImplementedError
-
-
 def raw_pest(name, pst_dir, noptmax,
              write_trial_paramfile=False):
     """
@@ -325,19 +307,12 @@ def raw_pest(name, pst_dir, noptmax,
     # model commands
 
     # manage pythonpath
-
-    with open(base_pst_data.joinpath("forward_run.py")) as f:
-        data = f.read()
-
-    data = data.replace('$$$$$USE_PATH$$$$$', str(proj_root))
-
-    with open(pst_dir.joinpath("forward_run.py"), 'w') as f:
-        f.write(data)
-
-    pst.model_command = ["conda run -n hawea python forward_run.py"]  # todo args ect., how does parallel act
+    copy_forward_run(pst_dir)
+    pst.model_command = ["conda run -n hawea python forward_run.py"]
 
     # write pest file.
-    pst.write(pst_dir.joinpath(f'{name}.pst'))
+    pest_file = pst_dir.joinpath(f'{name}.pst')
+    pst.write(pest_file)
     hack_for_absparmax(pst_dir.joinpath(f'{name}.pst'))
 
     if write_trial_paramfile:
@@ -356,13 +331,10 @@ def raw_pest(name, pst_dir, noptmax,
     # passed IN Scheck'
     # passed tempchek
 
+    # todo write_beopest_run_manager(pest_file=pest_file, forward_run_path=forward_run_path)
     # todo trial run, review challenges
-    # todo need to lower weights on river targets... too high
-
-    # todo build paraelle pest options
-
-    # todo create a command to initialize all of the pest pagents on different tmux terminals... too much effort otherwise
-    # todo I am having permissions problems
+    # todo need to lower weights on river targets... too high... log transfrom flows
+    # todo I would like to save list files!!!
 
 
 def determine_max_str_size():
@@ -379,12 +351,20 @@ def determine_max_str_size():
     shutil.rmtree(tempdir)
 
 
+# todo write a function that looks for problem spots in a list file and what exists in that area... include options from flopy?
+
 if __name__ == '__main__':
+    copy_forward_run(base_pst_data.joinpath('example_runfile'))
+    safemode = True  # todo change to True after I start the process
     pdir = Path.home().joinpath('Downloads/raw_pst_trial_no_verbose')
-    for f in pdir.glob('*'):
-        if f.is_dir():
-            shutil.rmtree(f)
+    if pdir.exists() and safemode:
+        temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
+        if 'y' not in temp.lower():
+            raise KeyboardInterrupt(f'stopped to prevent deletion of all files in {pdir}')
+    for fn in pdir.glob('*'):
+        if fn.is_dir():
+            shutil.rmtree(fn)
         else:
-            f.unlink()
-    raw_pest(name='opt', pst_dir=pdir, noptmax=1, write_trial_paramfile=True)
+            fn.unlink()
+    raw_pest(name='opt', pst_dir=pdir, noptmax=0, write_trial_paramfile=True)
     pass
