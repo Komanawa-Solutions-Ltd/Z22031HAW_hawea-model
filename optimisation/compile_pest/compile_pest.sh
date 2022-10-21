@@ -5,18 +5,18 @@
 # install GFORTRAN if  needed
 sudo apt-get update
 sudo apt-get install gfortran
+sudo apt-get install make
 
 pest_dir='/pest'
-base_dir=$(dirname "$0")
-base_tar="$base_dir/pest17_mod.tar"
+base_tar="./pest17_mod.tar"
 
 sudo mkdir $pest_dir
-# move to working directory
-
-cd $pest_dir
 
 #  copy tar to directory to use
-sudo cp $base_tar pest17_mod.tar
+sudo cp $base_tar "$pest_dir/pest17_mod.tar"
+
+# move to working directory
+cd $pest_dir
 
 # extract
 sudo tar -xvf pest17_mod.tar
