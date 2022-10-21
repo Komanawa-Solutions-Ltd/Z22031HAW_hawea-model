@@ -7,7 +7,7 @@ sudo apt-get update
 sudo apt-get install gfortran
 
 pest_dir='/pest'
-base_dir = $(dirname "$0")
+base_dir=$(dirname "$0")
 base_tar="$base_dir/pest17_mod.tar"
 
 sudo mkdir $pest_dir
