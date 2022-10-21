@@ -15,7 +15,7 @@ sudo mkdir $pest_dir
 #  copy tar to directory to use
 sudo cp $base_tar "$pest_dir/pest17_mod.tar"
 
-# move to working directory # todo update other
+# move to working directory
 cd $pest_dir
 
 # extract

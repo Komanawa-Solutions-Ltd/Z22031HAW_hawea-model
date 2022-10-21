@@ -2,10 +2,6 @@
 created matt_dumont 
 on: 11/10/22
 """
-import socket
-import json
-import subprocess
-import multiprocessing
 import shutil
 import numpy as np
 import pandas as pd
@@ -46,6 +42,7 @@ def _get_param_data():
 def _get_base_obs():
     default_data = pd.read_csv(default_output_path, sep='\t')
     return default_data
+
 
 def copy_forward_run(pst_dir):
     pst_dir.mkdir(exist_ok=True)
@@ -224,7 +221,7 @@ def set_obs_data(pst):
     # increase weight of specific groups
     group_wts = {
         'regular': 10,
-        'riv': 8,
+        'riv': 8e-3,
         'piezo': 5,
         'single': 1,
     }
@@ -309,7 +306,7 @@ def raw_pest(name, pst_dir, noptmax,
 
     # manage pythonpath
     forward_run_path = copy_forward_run(pst_dir)
-    pst.model_command = ["conda run -n hawea python forward_run.py"]
+    pst.model_command = [f"conda run -n hawea python {pst_dir.joinpath('forward_run.py')}"]
 
     # write pest file.
     pest_file = pst_dir.joinpath(f'{name}.pst')
@@ -332,10 +329,8 @@ def raw_pest(name, pst_dir, noptmax,
     # passed IN Scheck'
     # passed tempchek
 
-    write_beopest_run_manager(pest_file=pest_file, forward_run_path=forward_run_path)
+    write_beopest_run_manager(pest_file=pest_file)
     # todo trial run, review challenges
-    # todo need to lower weights on river targets... too high... log transfrom flows
-    # todo I would like to save list files!!!
 
 
 def determine_max_str_size():
@@ -356,8 +351,10 @@ def determine_max_str_size():
 
 if __name__ == '__main__':
     copy_forward_run(base_pst_data.joinpath('example_runfile'))
-    safemode = True  # todo change to True after I start the process
-    pdir = Path.home().joinpath('Downloads/raw_pst_trial_no_verbose')
+    safemode = True
+
+    pdir = Path('/media/matt_dumont/data/beopest_2022_10_21')  # todo this is for tuke run
+    # pdir = Path.home().joinpath('Downloads/beopest1')  # todo this is for waitaha test run
     if pdir.exists() and safemode:
         temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
         if 'y' not in temp.lower():
@@ -367,5 +364,5 @@ if __name__ == '__main__':
             shutil.rmtree(fn)
         else:
             fn.unlink()
-    raw_pest(name='opt', pst_dir=pdir, noptmax=0, write_trial_paramfile=True)
+    raw_pest(name='opt', pst_dir=pdir, noptmax=50, write_trial_paramfile=False)
     pass
