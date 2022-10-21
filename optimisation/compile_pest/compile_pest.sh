@@ -15,11 +15,12 @@ sudo mkdir $pest_dir
 #  copy tar to directory to use
 sudo cp $base_tar "$pest_dir/pest17_mod.tar"
 
-# move to working directory
-cd "$pest_dir/pest_source"
+# move to working directory # todo update other
+cd $pest_dir
 
 # extract
 sudo tar -xvf pest17_mod.tar
+cd "$pest_dir/pest_source"
 
 # compile PEST
 sudo make cppp
@@ -49,7 +50,7 @@ sudo mkdir /bin/pest
 sudo make install
 
 # add pest path variable
-echo 'export PATH="$PATH:/bin/pest"' >> ~/.bashrc
+echo 'export PATH="$PATH:/bin/pest"' >>~/.bashrc
 source ~/.bashrc
 
 # delete pest dir
