@@ -52,7 +52,7 @@ def get_inital_kh(return_just_start=False):
 def get_inital_sy(return_just_start=False):
     # keynote do not use log values
     # keynote one value for the whole model
-    start_val = (0.02, (0.001, 0.3))
+    start_val = (0.02, (0.0001, 0.3))
     if return_just_start:
         start_val = start_val[0]
     pps = get_pilot_point_locations()
@@ -75,9 +75,9 @@ def get_hillslope_multiplier(return_just_start=False):
     # allow paramters to move +- 10% (somewhat arbitrary)
     params = {
         # k: (initial, (low, high),
-        'se': (1, (0.9, 1.1)),
-        'main': (1, (0.9, 1.1)),
-        'mang': (1, (0.9, 1.1)),
+        'se': (1, (0.8, 1.2)),
+        'main': (1, (0.8, 1.2)),
+        'mang': (1, (0.8, 1.2)),
 
     }
     if return_just_start:
@@ -89,7 +89,7 @@ def get_hillslope_multiplier(return_just_start=False):
 def get_race_multiplier(return_just_start=False):
     # justification, simply allow the highly uncertain losses to move +- 10% (somewhat arbitrary)
     params = {
-        'all': (1, (0.9, 1.1)),
+        'all': (1, (0.8, 1.2)),
     }
     if return_just_start:
         for k, v in params.items():

@@ -220,8 +220,8 @@ def set_obs_data(pst):
 
     # increase weight of specific groups
     group_wts = { # todo write this out to file! when building optimisation
-        'regular': 50,
-        'riv': 1e-4,
+        'regular': 25,
+        'riv': 5e-4,
         'piezo': 5,
         'single': 1,
     }
@@ -355,7 +355,8 @@ if __name__ == '__main__':
 
     #pdir = Path('/media/matt_dumont/data/beopest_2022_10_21')  # todo this is for tuke run, has not worked yet
     #pdir = Path.home().joinpath('Downloads/beopest_2022_10_21')  # todo this is for waithaha run 1,
-    pdir = Path.home().joinpath('Downloads/beopest_2022_10_22')  # todo this is for waithaha run 2, lower riv target
+    #pdir = Path.home().joinpath('Downloads/beopest_2022_10_22.2')  # todo this is for waithaha run 2, lower riv target, looks pretty good
+    pdir = Path.home().joinpath('Downloads/beopest_2022_10_22.2_increase_sy_mult_bounds')  # todo this is for waithaha run 3, same weights different bounds
     # pdir = Path.home().joinpath('Downloads/beopest1')  # todo this is for waitaha test run
     if pdir.exists() and safemode:
         temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
