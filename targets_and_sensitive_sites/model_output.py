@@ -102,7 +102,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     # plot hds (ss)
     plt_hds = all_hds[0, 0]
     plt_hds[ibound != 1] = np.nan
-    clevels = np.arange(np.nanmin(plt_hds), np.nanmax(plt_hds), 20)
+    clevels = np.arange((np.nanmin(plt_hds)//5)*5, np.nanmax(plt_hds), 5) # todo check!
     fig, ax = smt.plot.plt_matrix(plt_hds, no_flow_layer=0, base_map=True, title='Steady state heads',
                                   contour=True, label_contours=True, contour_levels=clevels)
     fig.tight_layout()
