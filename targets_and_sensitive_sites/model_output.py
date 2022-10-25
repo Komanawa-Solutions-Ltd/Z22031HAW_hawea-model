@@ -84,7 +84,6 @@ def generate_outputs(hds_path, cbc_path):
     riv.loc[:, 'zone'] = 'riv'
     out_obs.append(riv.rename(columns={'target_val': 'measured'}).loc[:, need_keys])
 
-    # todo add dry hds?!?! to objective function????, probably not
     out_obs = pd.concat(out_obs)
     return out_obs, all_riv_obs, dry_hds.sum(axis=(0, 1)), flooded_cells.sum(axis=(0, 1)), all_hds
 
@@ -96,18 +95,33 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         plot_dir = model_ws.joinpath('plots')
     plot_dir.mkdir(exist_ok=True)
     ibound = smt.get_no_flow(0)
+    hds_groups = ['piezo', 'single_3', 'single_1', 'regular']
+    hds_colors = get_colors(hds_groups)
+    reg_colormap = 'tab10'
 
-    reg_colormap = 'brg'
+    hds_obs = out_obs.loc[np.in1d(out_obs.group, hds_groups)]
+    hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
+    hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.nper)
+    hds_obs.loc[:, 'week'] = hds_obs.date.dt.isocalendar().loc[:, 'week']
+    regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
+    regular_wells = sorted(regular_hds.well_name.unique())
+    regular_colors = get_colors(regular_wells, reg_colormap)
 
-    # plot hds (ss)
-    plt_hds = all_hds[0, 0]
-    plt_hds[ibound != 1] = np.nan
-    clevels = np.arange((np.nanmin(plt_hds)//5)*5, np.nanmax(plt_hds), 5) # todo check!
-    fig, ax = smt.plot.plt_matrix(plt_hds, no_flow_layer=0, base_map=True, title='Steady state heads',
-                                  contour=True, label_contours=True, contour_levels=clevels)
-    fig.tight_layout()
-    fig.savefig(plot_dir.joinpath('ss_hds.png'))
-    plt.close(fig)
+    # plot hds (ss, min, max, range)
+    all_plt_hds = {
+        'Steady state heads': all_hds[0, 0],
+        'Min heads': np.nanmin(all_hds[1:, 0], axis=0),
+        'Max heads': np.nanmax(all_hds[1:, 0], axis=0),
+        'Range of Heads': np.nanmax(all_hds[1:, 0], axis=0) - np.nanmin(all_hds[1:, 0], axis=(0))
+    }
+    for key, plt_hds in all_plt_hds.items():
+        plt_hds[ibound != 1] = np.nan
+        clevels = np.arange((np.nanmin(plt_hds) // 5) * 5, np.nanmax(plt_hds) // 5 * 5 + 5, 10)
+        fig, ax = smt.plot.plt_matrix(plt_hds, no_flow_layer=0, base_map=True, title=key,
+                                      contour=True, label_contours=True, contour_levels=clevels)
+        fig.tight_layout()
+        fig.savefig(plot_dir.joinpath(f'{key.replace(" ", "_")}.png'))
+        plt.close(fig)
 
     # plot dry hds
     dry_hds = dry_hds.astype(float)
@@ -140,11 +154,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     fig.savefig(plot_dir.joinpath('all_river_fluxes.png'))
     plt.close(fig)
 
-    hds_groups = ['piezo', 'single_3', 'single_1', 'regular']
-    hds_colors = get_colors(hds_groups)
-
     # plot observations/objectiv function
-    hds_obs = out_obs.loc[np.in1d(out_obs.group, hds_groups)]
 
     # all hds (color by group)
     fig, ax = plt.subplots(figsize=(9, 9))
@@ -169,13 +179,10 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         temp = hds_obs.loc[hds_obs.group == g]
         ax.set_aspect('equal')
         if g == 'regular':
-            use_names = np.unique([f'{"_".join(e.split("_")[:-1])}' for e in temp.name])
-            names = sorted(use_names)
-            ncolors = get_colors(names, reg_colormap)
-            for n, nc in zip(names, ncolors):
+            for n, nc in zip(regular_wells, regular_colors):
                 temp2 = temp.loc[temp.name.str.contains(n)]
                 ax.scatter(temp2.modelled, temp2.measured, color=nc, label=n.capitalize())
-            plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(names, ncolors)})
+            plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(regular_wells, regular_colors)})
         else:
             for z, zc in zip(zones, zcolors):
                 temp2 = temp.loc[temp.zone == z]
@@ -211,13 +218,10 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
         temp = hds_obs.loc[hds_obs.group == g]
         if g == 'regular':
-            use_names = np.unique([f'{"_".join(e.split("_")[:-1])}' for e in temp.name])
-            names = sorted(use_names)
-            ncolors = get_colors(names, reg_colormap)
-            for n, nc in zip(names, ncolors):
+            for n, nc in zip(regular_wells, regular_colors):
                 temp2 = temp.loc[temp.name.str.contains(n)]
                 ax.scatter(temp2.nper, temp2.modelled - temp2.measured, color=nc, label=n.capitalize())
-            plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(names, ncolors)})
+            plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(regular_wells, regular_colors)})
         else:
             for z, zc in zip(zones, zcolors):
                 temp2 = temp.loc[temp.zone == z]
@@ -231,6 +235,54 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         ax.legend()
         fig.tight_layout()
         fig.savefig(plot_dir.joinpath(f'hds_{g}_residual_time.png'))
+        plt.close(fig)
+
+    # extra plots for regular heads
+    weekly_data = regular_hds.groupby(['well_name', 'week']).mean()
+
+    # plot weekly annual average of heads all regular heads
+    fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
+    for n, nc in zip(regular_wells, regular_colors):
+        temp2 = weekly_data.loc[n].reset_index()
+        ax.scatter(temp2.week, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+        ax.plot(temp2.week, temp2.modelled, color=nc, label=f'{n.capitalize()} modelled')
+    plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(regular_wells, regular_colors)})
+    ax.set_title(f'Weekly mean regular hds')
+    ax.set_xlabel('Week of the year')
+    ax.set_ylabel('Weekly mean Head (m)')
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(plot_dir.joinpath(f'hds_weekly_mean_all.png'))
+    plt.close(fig)
+
+    # plot each regular heads and weeky anual average
+    for n, nc in zip(regular_wells, regular_colors):
+        # weekly
+        fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
+        temp2 = weekly_data.loc[n].reset_index()
+        ax.scatter(temp2.week, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+        ax.plot(temp2.week, temp2.modelled, color=nc, label=f'{n.capitalize()} modelled')
+        plot_hds_regular_locator(ax_loc, {n: nc})
+        ax.set_title(f'Weekly mean regular hds')
+        ax.set_xlabel('Week of the year')
+        ax.set_ylabel('Weekly mean Head (m)')
+        ax.legend()
+        fig.tight_layout()
+        fig.savefig(plot_dir.joinpath(f'hds_weekly_mean_{n}.png'))
+        plt.close(fig)
+
+        # full dataset
+        fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
+        temp2 = regular_hds.loc[regular_hds.well_name == n].sort_values('date')
+        ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+        ax.plot(temp2.date, temp2.modelled, color=nc, label=f'{n.capitalize()} modelled')
+        plot_hds_regular_locator(ax_loc, {n: nc})
+        ax.set_title(f'{n.capitalize()} hds')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Weekly mean Head (m)')
+        ax.legend()
+        fig.tight_layout()
+        fig.savefig(plot_dir.joinpath(f'hds_closeup_{n}.png'))
         plt.close(fig)
 
     # river observations
@@ -335,8 +387,6 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
             fig.savefig(plot_dir.joinpath(f'transient budget_{i:02d} of {len(figs) - 1}.png'))
             plt.close(fig)
 
-    # todo parameter shifts, need prior info, so later
-
 
 def modflow_converged(list_path):
     """
@@ -400,7 +450,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
 if __name__ == '__main__':
     t = time.time()
-    process_model_output('/home/matt_dumont/Downloads/test_model',
-                         '/home/matt_dumont/Downloads/test_model/test.hds',
+    process_model_output('/home/matt_dumont/Downloads/beopest_2022_10_21/agent00',
+                         '/home/matt_dumont/Downloads/beopest_2022_10_21/agent00/opt_model.hds',
                          plot=True)
     print(f'took {time.time() - t}s to process output')

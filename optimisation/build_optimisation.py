@@ -375,6 +375,6 @@ if __name__ == '__main__':
     #  consider adding an average year target for the regular heads!
     #  I need to see why mangawera has such high heads as the inital condition
     #  I should consider removing some of near river pumping wells as I think this may be causing a lot of my challenges
-    #  pull out the max sensitivity!, It's always mangawera sy...!
     #  I should weight the regular wells near the river much lower than those further away.
     #  add actual modelled and measured v time to model plots!
+    #  maybe remove limits as percentiles thing
