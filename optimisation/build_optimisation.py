@@ -219,18 +219,20 @@ def set_obs_data(pst):
         pst.observation_data.loc[pst.observation_data.obgnme == g, 'weight'] *= 1 / weight_totals[g]
 
     # increase weight of specific groups
-    group_wts = { # todo write this out to file! when building optimisation
+    group_wts = {
         'regular': 25,
         'riv': 5e-4,
         'piezo': 5,
         'single': 1,
     }
+    group_wts_summary = pd.DataFrame(group_wts)
 
     for g in pst.nnz_obs_groups:
         pst.observation_data.loc[pst.observation_data.obgnme == g, 'weight'] *= group_wts[g]
 
     test = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight']
     assert np.isclose(test, np.array([group_wts[e] for e in test.index])).all()
+    return group_wts_summary
 
 
 def hack_for_absparmax(file):
@@ -296,7 +298,7 @@ def raw_pest(name, pst_dir, noptmax,
     set_parameter_data_groups(pst)
 
     # add observation details
-    set_obs_data(pst)
+    group_wt_summary = set_obs_data(pst)
 
     # No prior information, just use svd
 
@@ -311,6 +313,7 @@ def raw_pest(name, pst_dir, noptmax,
     # write pest file.
     pest_file = pst_dir.joinpath(f'{name}.pst')
     pst.write(pest_file)
+    group_wt_summary.to_csv(pst_dir.joinpath('group_weights_summary.txt'), sep='\t')
     hack_for_absparmax(pst_dir.joinpath(f'{name}.pst'))
 
     if write_trial_paramfile:
@@ -353,10 +356,11 @@ if __name__ == '__main__':
     copy_forward_run(base_pst_data.joinpath('example_runfile'))
     safemode = True
 
-    #pdir = Path('/media/matt_dumont/data/beopest_2022_10_21')  # todo this is for tuke run, has not worked yet
-    #pdir = Path.home().joinpath('Downloads/beopest_2022_10_21')  # todo this is for waithaha run 1,
-    #pdir = Path.home().joinpath('Downloads/beopest_2022_10_22.2')  # todo this is for waithaha run 2, lower riv target, looks pretty good
-    pdir = Path.home().joinpath('Downloads/beopest_2022_10_22.2_increase_sy_mult_bounds')  # todo this is for waithaha run 3, same weights different bounds
+    # pdir = Path('/media/matt_dumont/data/beopest_2022_10_21')  # todo this is for tuke run, has not worked yet
+    # pdir = Path.home().joinpath('Downloads/beopest_2022_10_21')  # todo this is for waithaha run 1,
+    # pdir = Path.home().joinpath('Downloads/beopest_2022_10_22.2')  # todo this is for waithaha run 2, lower riv target, looks pretty good
+    pdir = Path.home().joinpath(
+        'Downloads/beopest_2022_10_22.2_increase_sy_mult_bounds')  # todo this is for waithaha run 3, same weights different bounds
     # pdir = Path.home().joinpath('Downloads/beopest1')  # todo this is for waitaha test run
     if pdir.exists() and safemode:
         temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
@@ -378,3 +382,5 @@ if __name__ == '__main__':
     #  I should weight the regular wells near the river much lower than those further away.
     #  add actual modelled and measured v time to model plots!
     #  maybe remove limits as percentiles thing
+    #  set ss to sy does this fix the crazy high heads in mangawera
+    #  recharge multiplier?, or carpet drains in mangawera, talk to Jens about streams

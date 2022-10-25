@@ -101,7 +101,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
 
     hds_obs = out_obs.loc[np.in1d(out_obs.group, hds_groups)]
     hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
-    hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.nper)
+    hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.loc[:,'nper'])
     hds_obs.loc[:, 'week'] = hds_obs.date.dt.isocalendar().loc[:, 'week']
     regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
     regular_wells = sorted(regular_hds.well_name.unique())
