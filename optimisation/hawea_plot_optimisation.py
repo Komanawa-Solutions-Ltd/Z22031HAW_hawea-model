@@ -98,7 +98,9 @@ def plot_opt(pest_dir):
     fig.savefig(base_plot_dir.joinpath('parameter_norm_sy_kh.png'))
 
 
-# todo location of failures (e.g. model cells with max change over n iterations)
+# todo location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
+
+
 def _dummy(x):
     return x
 
