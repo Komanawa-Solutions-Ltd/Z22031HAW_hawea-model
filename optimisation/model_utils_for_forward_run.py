@@ -14,11 +14,16 @@ from targets_and_sensitive_sites.model_output import process_model_output
 from model_parameterisation.inital_parametersiation import *
 
 
-def read_param_data(model_ws, parameter_file=None):
+def read_param_data(model_ws, parameter_file=None, format='model'):
     if parameter_file is None:
         parameter_file = model_ws.joinpath('parameters.dat')
 
-    data = pd.read_csv(parameter_file, sep='\t', index_col=0, header=None).loc[:, 1].to_dict()
+    if format == 'model':
+        data = pd.read_csv(parameter_file, sep='\t', index_col=0, header=None).loc[:, 1].to_dict()
+    elif format == 'pest':
+        data = pd.read_csv(parameter_file, sep='\s+', index_col=0, header=None, skiprows=1).loc[:, 1].to_dict()
+    else:
+        raise ValueError('bad format for parameter file')
 
     kh_param = {k: data[f'kh_{k}'] for k in get_inital_kh().keys()}
     sy_param = {k: data[f'sy_{k}'] for k in get_inital_sy().keys()}

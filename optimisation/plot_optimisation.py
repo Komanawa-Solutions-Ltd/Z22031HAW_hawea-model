@@ -14,13 +14,20 @@ from model_tools.plot_optimisation import plot_optimisation_and_extract_info
 
 def plot_opt(pest_dir):
     base_plot_dir = Path(pest_dir).joinpath('Base_Optimisation_plots')
+    base_plot_dir.mkdir(exist_ok=True)
     base_optimised_model_dir = Path(pest_dir).joinpath('Final_opt_model')
 
     # run final model
     name = 'final_opt_model'
     model_ws = base_optimised_model_dir
+    opt_par_file = list(pest_dir.glob('*.par'))
+    assert len(opt_par_file) == 1
+    opt_par_file = opt_par_file[0]
+
     kh_param, sy_param, riv_params, hill_param, race_param = read_param_data(model_ws,
-                                                                             parameter_file=)  # todo set parameter file
+                                                                             parameter_file=opt_par_file,
+                                                                             format='pest')
+
     build_run_model(
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,
@@ -29,10 +36,14 @@ def plot_opt(pest_dir):
         hill_param=hill_param,
         race_param=race_param
     )
+    opt_plot_dir = base_plot_dir.joinpath('final_opt_model')
+    opt_plot_dir.mkdir(exist_ok=True)
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),
                          plot=True,
-                         plot_dir=base_plot_dir.joinpath('final_opt_model'))
+                         plot_dir=opt_plot_dir,
+                         savelist=False,
+                         save_param=False)
 
     # add from model tools
     plot_optimisation_and_extract_info(pest_dir=pest_dir, base_plot_dir=base_plot_dir)
