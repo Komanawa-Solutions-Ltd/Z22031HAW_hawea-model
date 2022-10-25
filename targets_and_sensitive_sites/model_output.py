@@ -90,9 +90,10 @@ def generate_outputs(hds_path, cbc_path):
 
 
 def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file,
-                    plot_transient_budget=False):
+                    plot_transient_budget=False, plot_dir=None):
     assert isinstance(model_ws, Path)
-    plot_dir = model_ws.joinpath('plots')
+    if plot_dir is None:
+        plot_dir = model_ws.joinpath('plots')
     plot_dir.mkdir(exist_ok=True)
     ibound = smt.get_no_flow(0)
 
@@ -356,7 +357,7 @@ def modflow_converged(list_path):
     return converg
 
 
-def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_param=True):
+def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_param=True, plot_dir=None):
     model_ws = Path(model_ws)
     hds_file = Path(hds_file)
     list_file = hds_file.with_suffix('.list')
@@ -393,7 +394,8 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
     # plot stuff
     if plot:
-        visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file)
+        visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file,
+                        plot_dir=plot_dir)
 
 
 if __name__ == '__main__':
