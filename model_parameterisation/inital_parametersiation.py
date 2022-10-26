@@ -52,7 +52,7 @@ def get_inital_kh(return_just_start=False):
 def get_inital_sy(return_just_start=False):
     # keynote do not use log values
     # keynote one value for the whole model
-    start_val = (0.02, (0.0001, 0.3))
+    start_val = (0.02, (0.001, 0.3))
     if return_just_start:
         start_val = start_val[0]
     pps = get_pilot_point_locations()
