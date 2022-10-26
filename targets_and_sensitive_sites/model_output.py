@@ -421,7 +421,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
         n = max([-1] + [int(e.stem.split('_')[-1]) for e in save_list_dir.glob('*')]) + 1
         new_path = save_list_dir.joinpath(f'list_{n}.list')
         with py7zr.SevenZipFile(new_path.with_suffix(".7z"), 'w') as archive:
-            archive.write(list_file)
+            archive.write(list_file, list_file.name)
 
     if save_param:
         save_param_dir = model_ws.joinpath('param_file_repo')

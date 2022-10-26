@@ -10,7 +10,7 @@ from pathlib import Path
 from model_parameterisation.inital_parametersiation import get_race_multiplier, get_hillslope_multiplier, \
     get_initial_riv_conductance, get_inital_sy, get_inital_kh
 from project_base import proj_root
-from model_tools.beopest_manager import write_beopest_run_manager
+from model_tools.beopest_manager import BeopestManager
 
 base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 
@@ -225,7 +225,7 @@ def set_obs_data(pst):
         'piezo': 5,
         'single': 1,
     }
-    group_wts_summary = pd.DataFrame(group_wts)
+    group_wts_summary = pd.Series(group_wts)
 
     for g in pst.nnz_obs_groups:
         pst.observation_data.loc[pst.observation_data.obgnme == g, 'weight'] *= group_wts[g]
@@ -331,9 +331,7 @@ def raw_pest(name, pst_dir, noptmax,
     # got warning, It appears that the PEST control file contains a "rsi" section. but I don't think this will impact anything
     # passed IN Scheck'
     # passed tempchek
-
-    write_beopest_run_manager(pest_file=pest_file)
-    # todo trial run, review challenges
+    return pest_file
 
 
 def determine_max_str_size():
@@ -371,7 +369,9 @@ if __name__ == '__main__':
             shutil.rmtree(fn)
         else:
             fn.unlink()
-    raw_pest(name='opt', pst_dir=pdir, noptmax=50, write_trial_paramfile=False)
+    pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50, write_trial_paramfile=False)
+    man = BeopestManager(pest_file=pest_file)
+    man.write_beopest_run_manager()
     pass
 
     # todo thoughts after first round:

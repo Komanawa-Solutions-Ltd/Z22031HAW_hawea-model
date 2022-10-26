@@ -11,6 +11,8 @@ from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 from model_tools.plot_optimisation import plot_optimisation_and_extract_info
 from model_parameterisation.inital_parametersiation import *
+from model_tools.util_functions.list_file_utils import ListSolverInfo
+import py7zr
 
 
 def plot_opt(pest_dir):
@@ -97,12 +99,31 @@ def plot_opt(pest_dir):
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('parameter_norm_sy_kh.png'))
 
+    # todo location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
+    all_overs = get_all_list_data(pest_dir, 50, 0)
+    # todo pull nubmer of times, which time steps, etc.
+    # todo once I have a useful dataset!
 
-# todo location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
 
 
 def _dummy(x):
     return x
+
+
+def get_all_list_data(pest_dir, outer, inner):
+    listfiles = []
+    temp = [open(e, 'r') for e in pest_dir.rglob("**/*.list")]
+    listfiles.extend(temp)
+    for p in pest_dir.rglob('**/list_*.7z'):
+        with py7zr.SevenZipFile(p, 'r') as zip:
+            listfiles.extend(zip.readall().values)
+    outdata = []
+    for f in listfiles:
+        temp = ListSolverInfo(f).get_over(outer, inner)
+        outdata.append(temp)
+        f.close()
+    outdata = pd.concat(outdata)
+    return outdata
 
 
 if __name__ == '__main__':
@@ -112,5 +133,6 @@ if __name__ == '__main__':
         # '/home/matt_dumont/Downloads/beopest_2022_10_22.2',
         # '/home/matt_dumont/Downloads/beopest_2022_10_22.2_increase_sy_mult_bounds',
     ]:
-        print(f'plotting: {d}')
-        plot_opt(Path(d))
+        get_all_list_data()
+        # print(f'plotting: {d}')
+        # plot_opt(Path(d))
