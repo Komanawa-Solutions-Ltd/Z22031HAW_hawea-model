@@ -40,6 +40,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
     t = time.time()
     oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
     # keynote other steps if I end up with them
+    sy = interpolate_sy_pilot_points(sy_param)
     out = build_model(smt=smt,
                       tdis=tdis,
                       oc_spd=oc_spd,
@@ -49,8 +50,8 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       hk=interpolate_kh_pilot_points(kh_param),
                       vka=vka,
                       layer_avg=0,
-                      ss=ss,
-                      sy=interpolate_sy_pilot_points(sy_param),
+                      ss=sy,
+                      sy=sy,
                       strt=get_starting_heads(),
                       chani=1,
                       rch=get_rch_data(tdis),

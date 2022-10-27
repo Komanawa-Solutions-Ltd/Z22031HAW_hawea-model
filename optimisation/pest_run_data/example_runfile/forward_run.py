@@ -8,6 +8,7 @@ from pathlib import Path
 t = Path('/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model')
 sys.path.append(str(t))
 sys.path.append(str(t.parent.joinpath('modflow_tools_haw')))  # supporting KSL package
+print(f'pythonpath: {sys.path}')
 from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 
