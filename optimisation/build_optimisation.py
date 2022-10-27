@@ -354,7 +354,7 @@ if __name__ == '__main__':
     copy_forward_run(base_pst_data.joinpath('example_runfile'))
     safemode = True
 
-    pdir = Path.home().joinpath('Downloads/beopest_2022_10_28')  # keynote set ss to sy
+    pdir = Path.home().joinpath('Downloads/beopest_2022_10_28')  # keynote set ss to sy, did not work back to just ss
 
     if pdir.exists() and safemode:
         temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')

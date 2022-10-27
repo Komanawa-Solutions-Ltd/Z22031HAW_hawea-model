@@ -50,7 +50,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       hk=interpolate_kh_pilot_points(kh_param),
                       vka=vka,
                       layer_avg=0,
-                      ss=sy,
+                      ss=ss,
                       sy=sy,
                       strt=get_starting_heads(),
                       chani=1,
