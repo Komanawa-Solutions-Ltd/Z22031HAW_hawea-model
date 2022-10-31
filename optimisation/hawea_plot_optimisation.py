@@ -99,11 +99,30 @@ def plot_opt(pest_dir):
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('parameter_norm_sy_kh.png'))
 
-    # todo location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
-    all_overs = get_all_list_data(pest_dir, 50, 0)
-    # todo pull nubmer of times, which time steps, etc.
-    # todo once I have a useful dataset!
+    # location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
+    all_overs, all_itters = get_all_list_data(pest_dir, 50, 0)
 
+    limits = [50, 100, 300, 500, 800]
+    for l in limits:
+        temp = all_overs.loc[all_overs.outer_iter >= l]
+        temp = temp.drop_duplicates(subset=['layer', 'row', 'column', 'nper', 'nstp'])
+        plt_data = temp.groupby(['layer', 'row', 'column']).count().outer_iter.reset_index()
+        fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+        ax.scatter(*smt.convert_matrix_to_coords(plt_data.row, plt_data.column), s=plt_data.outer_iter, color='r')
+        fig.tight_layout()
+        fig.savefig(base_plot_dir.joinpath(f'more_than_{l}_outers.png'))
+
+    t = all_itters.loc[:, ['nper', 'outer_itts']].groupby('nper').describe().loc[:, 'outer_itts']
+    fig, ax = plt.subplots(figsize=(8, 10))
+    t.loc[:, ['min', 'mean', 'max']].plot(ax=ax)
+    ax.set_xlabel('nper')
+    ax.set_ylabel('outer iterations')
+    fig.tight_layout()
+    fig.savefig(base_plot_dir.joinpath('iterations_per_nper.png'))
+    t = t.sort_values('mean', ascending=False)
+
+    with open(base_plot_dir.joinpath('num_outer_itts.txt'), 'w') as f:
+        f.write(t.to_string())
 
 
 def _dummy(x):
@@ -111,28 +130,39 @@ def _dummy(x):
 
 
 def get_all_list_data(pest_dir, outer, inner):
+    pest_dir = Path(pest_dir)
     listfiles = []
     temp = [open(e, 'r') for e in pest_dir.rglob("**/*.list")]
     listfiles.extend(temp)
-    for p in pest_dir.rglob('**/list_*.7z'):
+    for i, p in enumerate(pest_dir.rglob('**/list_*.7z')):
+        if i % 100 == 0:
+            print(f'reading file {i}: {p}')
+            break  # todo DADB
         with py7zr.SevenZipFile(p, 'r') as zip:
-            listfiles.extend(zip.readall().values)
-    outdata = []
-    for f in listfiles:
-        temp = ListSolverInfo(f).get_over(outer, inner)
-        outdata.append(temp)
+            listfiles.extend(zip.readall().values())
+    outdata_solver = []
+    outdata_itters = []
+    for i, f in enumerate(listfiles):
+        if i % 100 == 0:
+            print(f'extracting file {i}')
+        temp = ListSolverInfo(f)
+        outdata_solver.append(temp.get_over(outer, inner))
+        outdata_itters.append(temp.itteration_overview)
         f.close()
-    outdata = pd.concat(outdata)
-    return outdata
+    outdata_solver = pd.concat(outdata_solver).reset_index()
+    outdata_itters = pd.concat(outdata_itters).reset_index()
+    return outdata_solver, outdata_itters
 
 
 if __name__ == '__main__':
-    for d in [
-        '/home/matt_dumont/Downloads/beopest_2022_10_21',
+    pest_runs = [
+        '/home/matt_dumont/Downloads/beopest_2022_10_28'
+        # '/home/matt_dumont/Downloads/beopest_2022_10_21',
         # '/home/matt_dumont/Downloads/beopest_2022_10_22',
         # '/home/matt_dumont/Downloads/beopest_2022_10_22.2',
         # '/home/matt_dumont/Downloads/beopest_2022_10_22.2_increase_sy_mult_bounds',
-    ]:
-        get_all_list_data()
-        # print(f'plotting: {d}')
-        # plot_opt(Path(d))
+    ]
+
+    for d in pest_runs:
+        print(f'plotting: {d}')
+        plot_opt(Path(d))
