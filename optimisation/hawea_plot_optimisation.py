@@ -137,7 +137,6 @@ def get_all_list_data(pest_dir, outer, inner):
     for i, p in enumerate(pest_dir.rglob('**/list_*.7z')):
         if i % 100 == 0:
             print(f'reading file {i}: {p}')
-            break  # todo DADB
         with py7zr.SevenZipFile(p, 'r') as zip:
             listfiles.extend(zip.readall().values())
     outdata_solver = []
