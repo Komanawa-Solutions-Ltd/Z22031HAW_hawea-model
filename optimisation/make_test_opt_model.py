@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 def recalc_model_build(rerun_rushton=False):
-    from model_build.project_model_tools import smt, simplify_hawea_dem, simplify_upper_clutha_dem, no_flow, elv_calc, \
+    from model_build.project_model_tools import smt, no_flow, elv_calc, \
         get_lake_array, get_starting_heads
     from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
     from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes, \
