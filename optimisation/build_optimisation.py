@@ -144,7 +144,7 @@ def set_control_data(pst, noptmax):
 
 def set_parameter_data_groups(pst):
     assert isinstance(pst, pyemu.Pst)
-
+    # todo add rch_mult
     # set tranformation
     # sy, hill, race = none; kh, riv = log
     pst.parameter_data.loc[:, 'partrans'] = 'none'
@@ -161,6 +161,7 @@ def set_parameter_data_groups(pst):
     # Not using scale and offset
     # 'dercom' # not using as only 1 model command (so far)
     # default is factor, just changing the multipliers to absolute.
+    # todo hill, rch, race need to be set to absolute 1, for some reason this isnt happening
 
     # parameter group data
     parameter_groups = pd.DataFrame(index=pd.unique(pst.parameter_data.loc[all_params, 'pargp']))
@@ -333,6 +334,7 @@ def determine_max_str_size():
 
 
 if __name__ == '__main__':
+    # todo re-run pest tests
     copy_forward_run(base_pst_data.joinpath('example_runfile'))
     safemode = True
     from make_test_opt_model import test_path, test_notes
@@ -360,13 +362,7 @@ if __name__ == '__main__':
 
     # todo thoughts after first round:
     #  I need to see what is causing the model to fall over as it is not suitably optimised
-    #  I need to see why mangawera has such high heads as the inital condition
     #  I should consider removing some of near river pumping wells as I think this may be causing a lot of my challenges
-    #  I should weight the regular wells near the river much lower than those further away.
-    #  add actual modelled and measured v time to model plots!
-    #  maybe remove limits as percentiles thing, Done
-    #  recharge multiplier?, or carpet drains in mangawera, talk to Jens about streams
-
-# todo steady state budget plot right?
+    #  carpet drains in mangawera, talk to Jens about streams
 
 # todo time for optimisation???
