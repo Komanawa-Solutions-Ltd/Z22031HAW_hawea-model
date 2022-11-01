@@ -68,7 +68,7 @@ def get_river_gage_locs(riv_data):
     return riv_data
 
 
-def get_stage_locs(riv_data):
+def get_stage_locs(riv_data, show=False):
     loc_data = pd.read_excel(gageing_path, 'locs').set_index('site')
     temp = riv_data.copy(deep=True)
     temp = smt.io.add_mxmy_to_df(temp)
@@ -84,7 +84,8 @@ def get_stage_locs(riv_data):
     fig, ax = smt.plot.plt_matrix(temp, title='river_locs', base_map=True)
     ax.scatter(x, y, c='r', label='clutha_luggate')
     ax.scatter(loc_data.loc['Camp Hill', 'x'], loc_data.loc['Camp Hill', 'y'], c='b', label='hawea_camphill')
-    smt.plot.show()
+    if show:
+        smt.plot.show()
 
     return riv_data
 
@@ -143,7 +144,7 @@ def _print_flowlengths():
         print(f'length of record {k}: {temp.min().date()} to {temp.max().date()}')
 
 
-def get_river_stage_data(start_date, end_date, frequency='D', recalc=False):
+def get_river_stage_data(start_date, end_date, frequency='D', recalc=False, plot=False):
     if riv_stage_data_path.exists() and not recalc:
         outdata = pd.read_csv(riv_stage_data_path, index_col=0).astype(float)
         outdata.index = pd.to_datetime(outdata.index)
@@ -226,7 +227,8 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False):
     ax.set_xlabel('distance from top of river')
     ax.legend()
 
-    plt.show()
+    if plot:
+        plt.show()
     outdata.to_csv(riv_stage_data_path)
     return select_resample(outdata, start_date, end_date, frequency, 'mean')
 

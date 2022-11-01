@@ -7,36 +7,13 @@ import numpy as np
 import pandas as pd
 import pyemu
 from pathlib import Path
-from model_parameterisation.inital_parametersiation import get_race_multiplier, get_hillslope_multiplier, \
-    get_initial_riv_conductance, get_inital_sy, get_inital_kh
+from optimisation.model_utils_for_forward_run import _get_param_data
 from project_base import proj_root
 from model_tools.beopest_manager import BeopestManager
 
 base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 
 default_output_path = proj_root.joinpath('optimisation/pre_opt_model/observations.dat')
-
-
-def _get_param_data():
-    param_fs = [get_race_multiplier, get_hillslope_multiplier,
-                get_initial_riv_conductance, get_inital_sy, get_inital_kh]
-    param_groups = ['race', 'hill', 'riv', 'sy', 'kh']
-    param_names = []
-    param_starts = []
-    param_low = []
-    param_up = []
-
-    for f, g in zip(param_fs, param_groups):
-        temp = f()
-        keys = list(temp.keys())
-        param_names.extend([f'{g}_{k}' for k in keys])
-        param_starts.extend([temp[k][0] for k in keys])
-        param_low.extend([temp[k][1][0] for k in keys])
-        param_up.extend([temp[k][1][1] for k in keys])
-
-    param_data = pd.DataFrame({'name': param_names, 'start': param_starts,
-                               'low': param_low, 'up': param_up})
-    return param_data
 
 
 def _get_base_obs(output_path):
@@ -127,7 +104,7 @@ def set_control_data(pst, noptmax):
     pst.control_data.phiredswh = 0.1  # switch to 3 point at 10% reduction
     pst.control_data.noptswitch = 1  # wait n itertations to switch to 3 point
     pst.control_data.doaui = 'noaui'  # no automatic user inter
-    pst.control_data.boundscale = 'boundscale'  # treat the boundaries as confidence intervals for parameter scaling
+    pst.control_data.boundscale = 'noboundscale'  # treat the boundaries as confidence intervals for parameter scaling
 
     # splitswh  # do no supply not using spllit slope analysis
 
@@ -190,7 +167,7 @@ def set_parameter_data_groups(pst):
     parameter_groups.loc[:, 'pargpnme'] = parameter_groups.index.copy()
     parameter_groups.loc[:, 'inctyp'] = 'relative'
     parameter_groups.loc[:, 'derinc'] = 0.01  # the increments for calculating derivatives
-    parameter_groups.loc[:, 'derinclb'] = 0.0  # parameter increment lower bound, # todo this may need changing
+    parameter_groups.loc[:, 'derinclb'] = 0.0  # parameter increment lower bound,
     parameter_groups.loc[:, 'forcen'] = 'switch'  # start with forward derivative and switch to 3 point derivatives
     parameter_groups.loc[:, 'derincmul'] = 2.0  # double parameter increments when moving to 3 point derivatives
     parameter_groups.loc[:, 'dermthd'] = 'parabolic'  # parabolic method for 3 point derivative fits
@@ -200,9 +177,9 @@ def set_parameter_data_groups(pst):
     pst.parameter_groups = parameter_groups
 
 
-def set_obs_data(pst):
+def set_obs_data(pst, obs_path):
     assert isinstance(pst, pyemu.Pst)
-    base_obs = _get_base_obs().set_index('name')
+    base_obs = _get_base_obs(obs_path).set_index('name')
     all_obs = pst.observation_data.index
     pst.observation_data.loc[:, 'obgnme'] = base_obs.loc[all_obs, 'group'].str.split('_').str.get(0)
     pst.observation_data.loc[:, 'obsval'] = base_obs.loc[all_obs, 'measured']
@@ -212,6 +189,12 @@ def set_obs_data(pst):
 
     # double impact of single_3 relative to single_1
     pst.observation_data.loc[base_obs.loc[all_obs, 'group'] == 'single_3', 'weight'] *= 2
+
+    # increase weights on normals near river
+    near_river_reg = ['g40_0041', 'g40_0416']
+    fac = 10
+    for r in near_river_reg:
+        pst.observation_data.loc[pst.observation_data.obsnme.str.contains(r), 'weight'] *= 1 / fac
 
     # normalise weights by group totals  (total weight sums to 1) for each group
     weight_totals = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight'].to_dict()
@@ -271,11 +254,11 @@ def raw_pest(name, pst_dir, noptmax,
     :return:
     """
     pst_dir.mkdir(exist_ok=True)
-    output_path = model_template_dir.joinpath('observations.dat')
+    obs_template_path = model_template_dir.joinpath('observations.dat')
     # make parameter files
     input_files, tpl_files = make_template_and_infiles(pst_dir)
 
-    ins_files, output_files = make_ins_and_output_files(pst_dir, output_path=output_path)
+    ins_files, output_files = make_ins_and_output_files(pst_dir, output_path=obs_template_path)
 
     pst = pyemu.Pst.from_io_files(tpl_files, input_files, ins_files, output_files)
 
@@ -299,7 +282,7 @@ def raw_pest(name, pst_dir, noptmax,
     set_parameter_data_groups(pst)
 
     # add observation details
-    group_wt_summary = set_obs_data(pst)
+    group_wt_summary = set_obs_data(pst, obs_template_path)
 
     # No prior information, just use svd
 
@@ -349,14 +332,12 @@ def determine_max_str_size():
     shutil.rmtree(tempdir)
 
 
-# todo write a function that looks for problem spots in a list file and what exists in that area... include options from flopy?
-
 if __name__ == '__main__':
     copy_forward_run(base_pst_data.joinpath('example_runfile'))
     safemode = True
-    from make_test_opt_model import test_path
+    from make_test_opt_model import test_path, test_notes
 
-    pdir = Path.home().joinpath('Downloads/beopest_2022_10_28')  # keynote set ss to sy, did not work back to just ss
+    pdir = Path.home().joinpath('Downloads/beopest_2022-11-1')  # keynote set ss to sy, did not work back to just ss
 
     if pdir.exists() and safemode:
         temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
@@ -367,19 +348,25 @@ if __name__ == '__main__':
             shutil.rmtree(fn)
         else:
             fn.unlink()
+    # copy notes over, as well as version!
     pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50, write_trial_paramfile=False,
                          model_template_dir=test_path)
     man = BeopestManager(pest_file=pest_file)
     man.write_beopest_run_manager()
-    pass
+    # copy across version and notes
+    with open(pdir.joinpath('1_opt_notes_version.txt'), 'w') as f:
+        f.write(f'version = {test_path.name}\n')
+        f.write(test_notes)
 
     # todo thoughts after first round:
     #  I need to see what is causing the model to fall over as it is not suitably optimised
-    #  consider adding an average year target for the regular heads!
     #  I need to see why mangawera has such high heads as the inital condition
     #  I should consider removing some of near river pumping wells as I think this may be causing a lot of my challenges
     #  I should weight the regular wells near the river much lower than those further away.
     #  add actual modelled and measured v time to model plots!
-    #  maybe remove limits as percentiles thing
-    #  set ss to sy does this fix the crazy high heads in mangawera
+    #  maybe remove limits as percentiles thing, Done
     #  recharge multiplier?, or carpet drains in mangawera, talk to Jens about streams
+
+# todo steady state budget plot right?
+
+# todo time for optimisation???

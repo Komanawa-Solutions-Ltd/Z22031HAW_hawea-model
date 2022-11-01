@@ -5,6 +5,9 @@ on: 1/11/22
 
 # this allows testing multiple paramters sets/structures quickly, use git branches for some of this.
 from pathlib import Path
+from optimisation.model_utils_for_forward_run import _get_param_data
+
+import matplotlib.pyplot as plt
 
 
 def recalc_model_build(rerun_rushton=False):
@@ -38,9 +41,8 @@ def recalc_model_build(rerun_rushton=False):
     get_all_wells(recalc=True)
     get_lake_hawea_loc(recalc=True)
     get_race_locs(recalc=True)
+    print('#####here')
     get_hillside_catchment_locs(recalc=True)
-    get_catchment_areas(recalc=True)
-    get_luggate_catchment_area(recalc=True)
     get_hillside_flows(None, None, recalc=True)
     get_well_flowmeter_mapper(recalc=True)
     get_historical_pumping_data(None, None, recalc=True)
@@ -54,6 +56,7 @@ def recalc_model_build(rerun_rushton=False):
             get_historical_rch_model_results(data_source='historical', limited_irrigation=k, recalc=True)
             get_historical_rch_model_results(data_source='era5', limited_irrigation=k, recalc=True)
             get_corrected_historical_era5_rch(None, None, recalc=True, limited_irrigation=k)
+    plt.close('all')
 
 
 def recalc_param_targets():
@@ -81,8 +84,13 @@ def build_test_model(model_ws, notes):
 
     plot = True
     name = 'opt_model'
+    model_ws.mkdir(exist_ok=True)
     with open(model_ws.joinpath('0_new_model_notes'), 'w') as f:
         f.write(notes)
+
+    param_data = _get_param_data()
+    param_data.to_csv(model_ws.joinpath('parameters.dat'), sep='\t', header=False, index=False)
+
     kh_param, sy_param, riv_params, hill_param, race_param = read_param_data(model_ws)
     build_run_model(
         model_name=name, model_ws=model_ws,
@@ -98,8 +106,14 @@ def build_test_model(model_ws, notes):
 
 
 # todo version here to run pest and base model
-mversion = ''
-test_notes = ''
+# make a new branch on major structural shifts
+mversion = 'lower_reg_rside'
+test_notes = """
+branch: main
+previous optimisation: initial.
+This optimisation lowers the regular heads near the river by a factor of 10 (1/10)  This was done
+as structural errors in the river heads can impact the fit/misfit here
+"""
 test_path = Path().home().joinpath('Downloads').joinpath(mversion)
 if __name__ == '__main__':
     build_test_model(model_ws=test_path, notes=test_notes)

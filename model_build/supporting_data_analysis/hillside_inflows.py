@@ -24,7 +24,7 @@ catchment_loc_path = processed_model_build_data_dir.joinpath('catchment_locs.csv
 flow_data_path = processed_model_build_data_dir.joinpath('hillside_flows.csv')
 
 
-def get_hillside_catchment_locs(recalc=False):
+def get_hillside_catchment_locs(recalc=False, show=False):
     if not recalc and catchment_loc_path.exists():
         outdata = pd.read_csv(catchment_loc_path, index_col=0)
         dtypes = {
@@ -70,7 +70,8 @@ def get_hillside_catchment_locs(recalc=False):
     ax.scatter(outdata.mx, outdata.my, c='b', label='new')
     for mx, px, my, py in outdata.loc[:, ['mx', 'px', 'my', 'py']].itertuples(False, None):
         ax.plot([mx, px], [my, py], c='k')
-    smt.plot.show()
+    if show:
+        smt.plot.show()
 
     outdata.reset_index()
     outdata.loc[np.in1d(outdata.group, ['south_east']), 'param'] = 'south_east'
@@ -652,7 +653,7 @@ def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
         data.set_index('datetime', inplace=True)
         data = data.astype(float)
     else:
-        data = lindis_correlation_with_malf()
+        data, (figs, names) = lindis_correlation_with_malf(return_figs=True)
         data.to_csv(flow_data_path)
 
     return select_resample(data, start_date, end_date, frequency, 'mean')

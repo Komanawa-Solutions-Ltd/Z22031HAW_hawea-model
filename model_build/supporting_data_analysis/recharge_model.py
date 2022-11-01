@@ -322,7 +322,7 @@ def data_checks():
     smt.plot.show()
 
 
-def get_soil_classes(recalc=False):
+def get_soil_classes(recalc=False, show=False):
     soil_classes_path = processed_model_build_data_dir.joinpath('soil_classes.txt')
     if soil_classes_path.exists() and not recalc:
         return np.loadtxt(soil_classes_path).astype(int)
@@ -331,7 +331,8 @@ def get_soil_classes(recalc=False):
                                                     'Jens_soil', alltouched=True)
     soil_classes[np.isnan(soil_classes)] = 0
     smt.plot.plt_matrix(soil_classes, base_map=True, no_flow_layer=0, cmap='tab10')
-    smt.plot.show()
+    if show:
+        smt.plot.show()
     np.savetxt(soil_classes_path, soil_classes, fmt='%d')
     return soil_classes
 

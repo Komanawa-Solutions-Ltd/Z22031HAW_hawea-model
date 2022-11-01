@@ -14,6 +14,28 @@ from targets_and_sensitive_sites.model_output import process_model_output
 from model_parameterisation.inital_parametersiation import *
 
 
+def _get_param_data():
+    param_fs = [get_race_multiplier, get_hillslope_multiplier,
+                get_initial_riv_conductance, get_inital_sy, get_inital_kh]
+    param_groups = ['race', 'hill', 'riv', 'sy', 'kh']
+    param_names = []
+    param_starts = []
+    param_low = []
+    param_up = []
+
+    for f, g in zip(param_fs, param_groups):
+        temp = f()
+        keys = list(temp.keys())
+        param_names.extend([f'{g}_{k}' for k in keys])
+        param_starts.extend([temp[k][0] for k in keys])
+        param_low.extend([temp[k][1][0] for k in keys])
+        param_up.extend([temp[k][1][1] for k in keys])
+
+    param_data = pd.DataFrame({'name': param_names, 'start': param_starts,
+                               'low': param_low, 'up': param_up})
+    return param_data
+
+
 def read_param_data(model_ws, parameter_file=None, format='model'):
     if parameter_file is None:
         parameter_file = model_ws.joinpath('parameters.dat')
