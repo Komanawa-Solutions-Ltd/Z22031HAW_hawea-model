@@ -109,3 +109,5 @@ if __name__ == '__main__':
     # delete files
     for f in filelist:
         f.unlink()
+
+# todo re-run with final structure!

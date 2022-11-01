@@ -39,8 +39,8 @@ def _get_param_data():
     return param_data
 
 
-def _get_base_obs():
-    default_data = pd.read_csv(default_output_path, sep='\t')
+def _get_base_obs(output_path):
+    default_data = pd.read_csv(output_path, sep='\t')
     return default_data
 
 
@@ -70,14 +70,14 @@ def make_template_and_infiles(pst_dir):
     return [str(input_file)], [str(tpl_file)]
 
 
-def make_ins_and_output_files(pst_dir):
+def make_ins_and_output_files(pst_dir, output_path):
     output_file = pst_dir.joinpath('observations.dat')
     ins_file = pst_dir.joinpath('observations.dat.ins')
     output_file.unlink(missing_ok=True)
 
-    shutil.copyfile(default_output_path, output_file)
+    shutil.copyfile(output_path, output_file)
 
-    default_data = _get_base_obs()
+    default_data = _get_base_obs(output_path)
 
     # make observation instruction files
     with open(ins_file, 'w') as f:
@@ -245,7 +245,7 @@ def hack_for_absparmax(file):
 
 
 def raw_pest(name, pst_dir, noptmax,
-             write_trial_paramfile=False):
+             write_trial_paramfile=False, model_template_dir=default_output_path.parent):
     """
 
     :param name: name for the pest object  e.g. {name}.pst
@@ -267,14 +267,15 @@ def raw_pest(name, pst_dir, noptmax,
                        0:PEST will not estimate parameters, nor even calculate a Jacobian matrix. Instead it will
                          terminate execution after just one model run.
     :param write_trial_paramfile: bool, if true write 'trial.par' for use in utilities
+    :param model_template_dir: path to the model direcory that holds the base template data
     :return:
     """
     pst_dir.mkdir(exist_ok=True)
-
+    output_path = model_template_dir.joinpath('observations.dat')
     # make parameter files
     input_files, tpl_files = make_template_and_infiles(pst_dir)
 
-    ins_files, output_files = make_ins_and_output_files(pst_dir)
+    ins_files, output_files = make_ins_and_output_files(pst_dir, output_path=output_path)
 
     pst = pyemu.Pst.from_io_files(tpl_files, input_files, ins_files, output_files)
 
@@ -338,7 +339,7 @@ def determine_max_str_size():
     tempdir = Path.home().joinpath('temp_for_pest')
     tempdir.mkdir(exist_ok=True)
     [input_file], [tpl_file] = make_template_and_infiles(tempdir)
-    [ins_file], [output_file] = make_ins_and_output_files(tempdir)
+    [ins_file], [output_file] = make_ins_and_output_files(tempdir, default_output_path)
     line_len = []
     for file in [input_file, tpl_file, ins_file, output_file]:
         with open(file, 'r') as f:
@@ -353,6 +354,7 @@ def determine_max_str_size():
 if __name__ == '__main__':
     copy_forward_run(base_pst_data.joinpath('example_runfile'))
     safemode = True
+    from make_test_opt_model import test_path
 
     pdir = Path.home().joinpath('Downloads/beopest_2022_10_28')  # keynote set ss to sy, did not work back to just ss
 
@@ -365,7 +367,8 @@ if __name__ == '__main__':
             shutil.rmtree(fn)
         else:
             fn.unlink()
-    pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50, write_trial_paramfile=False)
+    pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50, write_trial_paramfile=False,
+                         model_template_dir=test_path)
     man = BeopestManager(pest_file=pest_file)
     man.write_beopest_run_manager()
     pass
