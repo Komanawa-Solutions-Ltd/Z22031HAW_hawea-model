@@ -155,7 +155,7 @@ def get_all_list_data(pest_dir, outer, inner):
 
 if __name__ == '__main__':
     pest_runs = [
-        '/home/matt_dumont/Downloads/beopest_2022_10_28'
+        '/home/matt_dumont/Downloads/beopest_2022-11-1'
         # '/home/matt_dumont/Downloads/beopest_2022_10_21',
         # '/home/matt_dumont/Downloads/beopest_2022_10_22',
         # '/home/matt_dumont/Downloads/beopest_2022_10_22.2',

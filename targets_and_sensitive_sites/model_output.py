@@ -333,7 +333,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
             continue
         ax.bar(i, temp.loc[f'{k}_IN'], color=c, label=k.lower().capitalize())
         ax.bar(i, temp.loc[f'{k}_OUT'] * -1, color=c)
-    ax.set_yscale('symlog')
+    #ax.set_yscale('symlog')
     ax.set_xticks([])
     ax.set_xticklabels([])
     ax.axhline(0, color='k')
