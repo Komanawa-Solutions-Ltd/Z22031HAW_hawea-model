@@ -2,12 +2,26 @@
 created matt_dumont 
 on: 1/09/22
 """
-from model_parameterisation.pilot_points import get_pilot_point_locations
+from model_parameterisation.pilot_points import get_pilot_point_locations, get_rch_pilot_point_locations
 import numpy as np
 
 
 # keynote these set initials and bounds
 # keynote param key in loc data or riv and well
+
+def get_initial_rch_mult(return_just_start=False):  # todo propogate through, incl plots
+    # keynote do not use log values
+    # keynote one value for the whole model
+    start_val = (1, (0.8, 1.2))
+    if return_just_start:
+        start_val = start_val[0]
+    pps = get_rch_pilot_point_locations()
+    rch_mult = {}
+
+    for i in pps.index:
+        rch_mult[i] = start_val
+
+    return rch_mult
 
 
 def get_initial_riv_conductance(return_just_start=False):
@@ -36,10 +50,7 @@ def get_inital_kh(return_just_start=False):
         start_val = start_val[0]
         lake_val = lake_val[0]
     pps = get_pilot_point_locations()
-    pps = pps.loc[~np.in1d(pps.group, ['sandy', 'mang'])]
     kh_data = {
-        'sandy': start_val,
-        'mang': start_val,
         'lake': lake_val
     }
 
@@ -56,11 +67,7 @@ def get_inital_sy(return_just_start=False):
     if return_just_start:
         start_val = start_val[0]
     pps = get_pilot_point_locations()
-    pps = pps.loc[~np.in1d(pps.group, ['sandy', 'mang'])]
-    sy_data = {
-        'sandy': start_val,
-        'mang': start_val,
-    }
+    sy_data = {}
 
     for i in pps.index:
         sy_data[i] = start_val

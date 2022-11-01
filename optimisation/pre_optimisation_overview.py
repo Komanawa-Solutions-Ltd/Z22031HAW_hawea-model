@@ -48,6 +48,7 @@ def plot_parameterisation(save=False):
         'River Conductance': ('Riv', get_initial_riv_conductance()),
         'Specific Yeild': ('Upw', get_inital_sy()),
         'Conductivity': ('Upw', get_inital_kh()),
+        # todo add rch mult
     }
     static_params = {
         'Lake Sy': lake_sy,
@@ -206,6 +207,8 @@ def plot_parameterisation(save=False):
     fig.tight_layout()
     if save:
         fig.savefig(outdir.joinpath(f'kh_sy_params{extension}'))
+
+    # todo plot rch mult pilot points
 
 
 def plot_thickness_top_bot(save=False):

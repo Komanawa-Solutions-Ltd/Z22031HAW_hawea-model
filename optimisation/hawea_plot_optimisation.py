@@ -51,13 +51,16 @@ def plot_opt(pest_dir):
     # add from model tools
     plot_optimisation_and_extract_info(pest_dir=pest_dir, base_plot_dir=base_plot_dir)
 
-    # location of parameters at bound
+    # location of parameters at bound #todo not working right???
     init_sy_param = get_inital_sy()
     init_kh_param = get_inital_kh()
     init_race_param = get_race_multiplier()
     init_hill_param = get_hillslope_multiplier()
     init_riv_param = get_initial_riv_conductance()
     pp_locs = get_pilot_point_locations()
+    # todo plot rch mult
+    # todo plot rch multiplier array
+    # todo plot kh, sy array
 
     out = pd.DataFrame(columns=['group', 'norm_param_val'])
     out.index.name = 'pname'

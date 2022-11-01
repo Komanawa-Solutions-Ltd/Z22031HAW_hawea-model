@@ -94,7 +94,7 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
         return out_spd
 
 
-def get_rch_data(tdis, recalc=False):
+def get_rch_data(tdis, recalc=False): # todo add rch mult, needs refactor
     save_path = processed_model_build_data_dir.joinpath(f'rch_stress_period_data-{tdis.name}.p')
     if save_path.exists() and not recalc:
         out = pickle.load(open(save_path, 'rb'))

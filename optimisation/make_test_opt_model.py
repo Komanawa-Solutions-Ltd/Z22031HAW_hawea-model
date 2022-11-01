@@ -60,7 +60,7 @@ def recalc_model_build(rerun_rushton=False):
 
 
 def recalc_param_targets():
-    from model_parameterisation.pilot_points import get_pilot_point_locations
+    from model_parameterisation.pilot_points import get_pilot_point_locations, get_rch_pilot_point_locations
     from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs
     from targets_and_sensitive_sites.head_targets import get_2011_piezo_survey, get_all_hds_targets
     from targets_and_sensitive_sites.senstive_sites import get_wetlands
@@ -73,6 +73,7 @@ def recalc_param_targets():
     get_indicative_times_v2(recalc=True)
     get_all_hds_targets(tdis, recalc=True)
     get_pilot_point_locations(recalc=True)
+    get_rch_pilot_point_locations(recalc=True)
 
 
 def build_test_model(model_ws, notes):

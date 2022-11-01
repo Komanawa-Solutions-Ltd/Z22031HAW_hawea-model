@@ -4,7 +4,7 @@ on: 2/09/22
 """
 import numpy as np
 import pandas as pd
-from scipy.interpolate import RBFInterpolator
+from scipy.interpolate import RBFInterpolator, griddata
 from project_base import base_param_dir, processed_param_dir
 from model_build.project_model_tools import smt, get_lake_array
 from model_parameterisation.static_params import lake_sy
@@ -53,6 +53,37 @@ def get_pilot_point_locations(recalc=False):
     return outdata
 
 
+def get_rch_pilot_point_locations(recalc=False):
+    data_path = base_param_dir.joinpath('rch_pilot_points.shp')
+    processed_path = processed_param_dir.joinpath('rch_pilot_points.csv')
+
+    if processed_path.exists() and not recalc:
+        outdata = pd.read_csv(processed_path, index_col=0)
+        dtypes = {
+            'i': 'int64',
+            'j': 'int64',
+        }
+
+        for k, v in dtypes.items():
+            outdata.loc[:, k] = outdata.loc[:, k].astype(v)
+        return outdata
+
+    data = gpd.read_file(data_path)
+    x, y = data.geometry.x, data.geometry.y
+
+    outdata = data.loc[:, ['id', 'group']]
+    assert len(outdata.id.unique()) == len(outdata)
+    outdata.loc[:, 'x'] = x
+    outdata.loc[:, 'y'] = y
+    i, j = smt.convert_coords_to_matix(x, y)
+    outdata.loc[:, 'i'] = i
+    outdata.loc[:, 'j'] = j
+    outdata.loc[:, 'name'] = outdata.group.astype(str)
+    outdata.set_index('name', inplace=True)
+    outdata.to_csv(processed_path)
+    return outdata
+
+
 def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='multiquadric'):
     """
 
@@ -68,8 +99,6 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
 
     pilot_locs = get_pilot_point_locations()
     pilot_locs.loc[:, 'value'] = [kh_data.get(n) for n in pilot_locs.index]
-    for k in ['sandy', 'mang']:
-        pilot_locs.loc[pilot_locs.group == k, 'value'] = kh_data[k]
     assert pilot_locs.loc[:, 'value'].notnull().all()
     # keynote interpolate on log values!
     pilot_locs.loc[:, 'value'] = np.log10(pilot_locs.loc[:, 'value'])
@@ -105,11 +134,6 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     lake_array = get_lake_array()
     kh[np.isfinite(lake_array)] = kh_data['lake']
 
-    # set sandy point & mangawera zones
-    zones = get_param_zones()
-    # zone 1 = Sandy point, zone 2 = mangawera valley
-    kh[zones == 1] = kh_data['sandy']
-    kh[zones == 2] = kh_data['mang']
     kh[~idx] = 0
     assert np.isfinite(kh).all()
     kh = kh[np.newaxis]
@@ -126,11 +150,9 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
 
     pilot_locs = get_pilot_point_locations()
     pilot_locs.loc[:, 'value'] = [sy_data.get(n) for n in pilot_locs.index]
-    for k in ['sandy', 'mang']:
-        pilot_locs.loc[pilot_locs.group == k, 'value'] = sy_data[k]
     assert pilot_locs.loc[:, 'value'].notnull().all()
 
-    # interpolate kh
+    # interpolate sy
     ibound = smt.get_no_flow(layer=0)
     i, j = smt.get_model_index_grid()
     idx = ibound == 1
@@ -159,11 +181,6 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     lake_array = get_lake_array()
     sy[np.isfinite(lake_array)] = lake_sy
 
-    # set sandy point & mangawera zones
-    zones = get_param_zones()
-    # zone 1 = Sandy point, zone 2 = mangawera valley
-    sy[zones == 1] = sy_data['sandy']
-    sy[zones == 2] = sy_data['mang']
     sy[~idx] = 0
     assert np.isfinite(sy).all()
     min_v = min(sy_data.values())
@@ -259,6 +276,45 @@ def examine_sy_interpolation(log_before=False):
     smt.plot.show()
 
 
+def interpolate_rch_pilot_points(rch_data, return_df=False):  # todo propogate through
+    # keynote do not interpolate on log values
+    # set pilot point values
+
+    pilot_locs = get_rch_pilot_point_locations()
+    pilot_locs.loc[:, 'value'] = [rch_data.get(n) for n in pilot_locs.index]
+    assert pilot_locs.loc[:, 'value'].notnull().all()
+
+    # interpolate rch
+    ibound = smt.get_no_flow(layer=0)
+    x, y = smt.get_model_x_y()
+    idx = ibound == 1
+
+    rch_mult = griddata(
+        pilot_locs.loc[:, ['x', 'y']].values, pilot_locs.loc[:, 'value'].values,
+        (x, y),
+        method='linear'
+    )
+    rch_mult[~idx] = 1
+    assert np.isfinite(rch_mult).all()
+
+    if return_df:
+        return rch_mult, pilot_locs
+    return rch_mult
+
+
+def examine_rch_mult():
+    pps = get_rch_pilot_point_locations(recalc=True)
+    pps.loc[:, 'value'] = np.random.uniform(0.8, 1.2, len(pps))
+    rch_mult = {}
+
+    for i in pps.index:
+        rch_mult[i] = pps.loc[i, 'value']
+
+    out = interpolate_rch_pilot_points(rch_mult)
+    smt.plot.plt_matrix(out, no_flow_layer=0, base_map=True)
+    smt.plot.show()
+
+
 if __name__ == '__main__':
-    t = get_pilot_point_locations(recalc=True)
+    examine_rch_mult()
     pass

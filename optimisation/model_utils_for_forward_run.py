@@ -16,7 +16,7 @@ from model_parameterisation.inital_parametersiation import *
 
 def _get_param_data():
     param_fs = [get_race_multiplier, get_hillslope_multiplier,
-                get_initial_riv_conductance, get_inital_sy, get_inital_kh]
+                get_initial_riv_conductance, get_inital_sy, get_inital_kh] # todo add rch mult
     param_groups = ['race', 'hill', 'riv', 'sy', 'kh']
     param_names = []
     param_starts = []
@@ -52,6 +52,7 @@ def read_param_data(model_ws, parameter_file=None, format='model'):
     riv_params = {k: data[f'riv_{k}'] for k in get_initial_riv_conductance().keys()}
     hill_param = {k: data[f'hill_{k}'] for k in get_hillslope_multiplier().keys()}
     race_param = {k: data[f'race_{k}'] for k in get_race_multiplier().keys()}
+    # todo add rch mult
 
     return kh_param, sy_param, riv_params, hill_param, race_param
 
@@ -76,7 +77,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       sy=sy,
                       strt=get_starting_heads(),
                       chani=1,
-                      rch=get_rch_data(tdis),
+                      rch=get_rch_data(tdis), # todo add rch mult
                       ghb_spd=get_ghb_data(tdis),
                       riv_spd=get_riv_data(tdis, riv_params=riv_params),
                       well_spd=get_well_data(tdis,

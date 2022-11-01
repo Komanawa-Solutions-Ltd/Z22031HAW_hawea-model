@@ -123,6 +123,13 @@ def no_flow():
     cameron = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('cameron_hill.shp'), 'id',
                                                     alltouched=True)
     ibound[0][np.isfinite(cameron)] = 0
+
+    # remove sandy point
+    sp_rm = temp_smt.io.shape_file_to_model_array(
+        base_model_build_data_dir.joinpath('rm_sandy_point.shp'), 'id',
+        alltouched=True)
+    ibound[0][np.isfinite(sp_rm)] = 0
+
     np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound[0])
     return ibound
 

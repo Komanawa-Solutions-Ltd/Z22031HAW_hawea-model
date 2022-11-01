@@ -16,6 +16,7 @@ from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, 
 from targets_and_sensitive_sites.model_output import process_model_output
 from project_base import proj_root
 import py7zr
+from optimisation.model_utils_for_forward_run import build_run_model
 
 
 def test_times():
@@ -43,6 +44,7 @@ def test_times():
                   race_param=get_race_multiplier(True))
     print(f'took {time.time() - t}s for get_well_data')
     t = time.time()
+    # todo add rch mult
 
 
 def build_initial_model(model_name, model_ws,
@@ -50,34 +52,15 @@ def build_initial_model(model_name, model_ws,
     t = time.time()
     oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
     # keynote other steps if I end up with them
-    build_model(smt=smt,
-                tdis=tdis,
-                oc_spd=oc_spd,
-                exe_name=exe_name,
-                model_name=model_name,
-                model_ws=model_ws,
-                hk=interpolate_kh_pilot_points(get_inital_kh(return_just_start=True)),
-                vka=vka,
-                layer_avg=0,
-                ss=ss,
-                sy=interpolate_sy_pilot_points(get_inital_sy(return_just_start=True)),
-                strt=get_starting_heads(),
-                chani=1,
-                rch=get_rch_data(tdis),
-                ghb_spd=get_ghb_data(tdis),
-                riv_spd=get_riv_data(tdis, riv_params=get_initial_riv_conductance(True)),
-                well_spd=get_well_data(tdis,
-                                       hill_param=get_hillslope_multiplier(True),
-                                       race_param=get_race_multiplier(True)),
-                options='COMPLEX',
-                nwt_kwargs={'maxiterout': 1000, 'maxitinner': 100},
-                hani=None,
-                mfv='mfnwt',
-                run_model=run_model,
-                verbose=True,
-                t=t,
-                noprint=True)
-
+    build_run_model(
+        model_name, model_ws,
+        kh_param=get_inital_kh(return_just_start=True),
+        sy_param=get_inital_sy(return_just_start=True),
+        riv_params=get_initial_riv_conductance(True),
+        hill_param=get_hillslope_multiplier(True),
+        race_param=get_race_multiplier(True),
+        # todo add rch mult
+    )
 
 def check_for_dry(hds_file):
     import flopy
