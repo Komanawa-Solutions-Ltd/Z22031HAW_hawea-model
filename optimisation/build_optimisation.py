@@ -144,7 +144,6 @@ def set_control_data(pst, noptmax):
 
 def set_parameter_data_groups(pst):
     assert isinstance(pst, pyemu.Pst)
-    # todo add rch_mult
     # set tranformation
     # sy, hill, race = none; kh, riv = log
     pst.parameter_data.loc[:, 'partrans'] = 'none'
@@ -161,7 +160,10 @@ def set_parameter_data_groups(pst):
     # Not using scale and offset
     # 'dercom' # not using as only 1 model command (so far)
     # default is factor, just changing the multipliers to absolute.
-    # todo hill, rch, race need to be set to absolute 1, for some reason this isnt happening
+    # hill, rch, race need to be set to absolute 1, for some reason this isnt happening
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('rch'), 'parchglim'] = 'absolute(1)'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('hill'), 'parchglim'] = 'absolute(1)'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('race'), 'parchglim'] = 'absolute(1)'
 
     # parameter group data
     parameter_groups = pd.DataFrame(index=pd.unique(pst.parameter_data.loc[all_params, 'pargp']))
@@ -229,7 +231,7 @@ def hack_for_absparmax(file):
 
 
 def raw_pest(name, pst_dir, noptmax,
-             write_trial_paramfile=False, model_template_dir=default_output_path.parent):
+             model_template_dir=default_output_path.parent):
     """
 
     :param name: name for the pest object  e.g. {name}.pst
@@ -250,7 +252,6 @@ def raw_pest(name, pst_dir, noptmax,
 
                        0:PEST will not estimate parameters, nor even calculate a Jacobian matrix. Instead it will
                          terminate execution after just one model run.
-    :param write_trial_paramfile: bool, if true write 'trial.par' for use in utilities
     :param model_template_dir: path to the model direcory that holds the base template data
     :return:
     """
@@ -301,17 +302,21 @@ def raw_pest(name, pst_dir, noptmax,
     group_wt_summary.to_csv(pst_dir.joinpath('group_weights_summary.txt'), sep='\t')
     hack_for_absparmax(pst_dir.joinpath(f'{name}.pst'))
 
-    if write_trial_paramfile:
-        trial_data = pd.DataFrame(index=pst.parameter_data.index, columns=['val', 'scale', 'offset'])
-        trial_data.loc[:, 'scale'] = pst.parameter_data.loc[:, 'scale']
-        trial_data.loc[:, 'offset'] = pst.parameter_data.loc[:, 'offset']
-        for n in trial_data.index:
-            l, u = pst.parameter_data.loc[n, ['parlbnd', 'parubnd']]
-            trial_data.loc[n, 'val'] = round(np.random.uniform(l, u), 3)
-        with open(pst_dir.joinpath('trial.par'), 'w') as f:
-            f.write('single point\n')
-            trial_data.to_csv(f, sep='\t', header=False)
+    trial_data = pd.DataFrame(index=pst.parameter_data.index, columns=['val', 'scale', 'offset'])
+    trial_data.loc[:, 'scale'] = pst.parameter_data.loc[:, 'scale']
+    trial_data.loc[:, 'offset'] = pst.parameter_data.loc[:, 'offset']
+    for n in trial_data.index:
+        l, u = pst.parameter_data.loc[n, ['parlbnd', 'parubnd']]
+        trial_data.loc[n, 'val'] = round(np.random.uniform(l, u), 3)
+    with open(pst_dir.joinpath('trial.par'), 'w') as f:
+        f.write('single point\n')
+        trial_data.to_csv(f, sep='\t', header=False)
 
+    # todo create pest check bash file
+    write_pest_check_sh(pst_dir, pstname=name, insfiles=ins_files, modfiles=output_files,
+                        templates=tpl_files, test_parfiles=[pst_dir.joinpath('trial.par')]
+
+                        )
     # run pestcheck
     # got warning, It appears that the PEST control file contains a "rsi" section. but I don't think this will impact anything
     # passed IN Scheck'
@@ -333,36 +338,28 @@ def determine_max_str_size():
     shutil.rmtree(tempdir)
 
 
+def write_pest_check_sh(pst_dir, pstname, insfiles, modfiles, templates, test_parfiles):
+    """
+
+    :param pst_dir: pest directory
+    :param pstname: name of the pest optimisation
+    :param insfiles: instruction files
+    :param modfiles: model output file for reading
+    :param templates: template files
+    :param test_parfiles: test parameter files
+    :return:
+    """
+    assert isinstance(pst_dir, Path)
+    outfile = pst_dir.joinpath('0_pest_check_results')
+    outfile.unlink(missing_ok=True)
+    with open(pst_dir.joinpath('0_run_pest_checks.sh'), 'w') as f:
+        f.write(f'pestchek {pstname} &> {outfile.name}\n')
+        for infile, mod_outfile in zip(insfiles, modfiles):
+            f.write(f'inschek {Path(infile).name} {Path(mod_outfile).name} &>> {outfile.name}\n')
+        for tempfile, test_parfile in zip(templates, test_parfiles):
+            modfile = pst_dir.joinpath(f'{Path(tempfile).name}.tempcheck.dat')
+            f.write(f'tempchek {Path(tempfile).name} {Path(modfile).name} {test_parfile.name} &>> {outfile}\n')
+
+
 if __name__ == '__main__':
-    # todo re-run pest tests
     copy_forward_run(base_pst_data.joinpath('example_runfile'))
-    safemode = True
-    from make_test_opt_model import test_path, test_notes
-
-    pdir = Path.home().joinpath('Downloads/beopest_2022-11-1')  # keynote set ss to sy, did not work back to just ss
-
-    if pdir.exists() and safemode:
-        temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
-        if 'y' not in temp.lower():
-            raise KeyboardInterrupt(f'stopped to prevent deletion of all files in {pdir}')
-    for fn in pdir.glob('*'):
-        if fn.is_dir():
-            shutil.rmtree(fn)
-        else:
-            fn.unlink()
-    # copy notes over, as well as version!
-    pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50, write_trial_paramfile=False,
-                         model_template_dir=test_path)
-    man = BeopestManager(pest_file=pest_file)
-    man.write_beopest_run_manager()
-    # copy across version and notes
-    with open(pdir.joinpath('1_opt_notes_version.txt'), 'w') as f:
-        f.write(f'version = {test_path.name}\n')
-        f.write(test_notes)
-
-    # todo thoughts after first round:
-    #  I need to see what is causing the model to fall over as it is not suitably optimised
-    #  I should consider removing some of near river pumping wells as I think this may be causing a lot of my challenges
-    #  carpet drains in mangawera, talk to Jens about streams
-
-# todo time for optimisation???

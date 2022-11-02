@@ -2,6 +2,7 @@
 created matt_dumont 
 on: 25/10/22
 """
+import os.path
 from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.colors import FuncNorm
@@ -11,6 +12,8 @@ from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 from model_tools.plot_optimisation import plot_optimisation_and_extract_info
 from model_parameterisation.inital_parametersiation import *
+from model_parameterisation.pilot_points import interpolate_rch_pilot_points, interpolate_sy_pilot_points, \
+    interpolate_kh_pilot_points
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 import py7zr
 
@@ -27,9 +30,9 @@ def plot_opt(pest_dir):
     assert len(opt_par_file) == 1
     opt_par_file = opt_par_file[0]
 
-    kh_param, sy_param, riv_param, hill_param, race_param = read_param_data(model_ws,
-                                                                            parameter_file=opt_par_file,
-                                                                            format='pest')
+    kh_param, sy_param, riv_param, hill_param, race_param, rch_param = read_param_data(model_ws,
+                                                                                       parameter_file=opt_par_file,
+                                                                                       format='pest')
 
     build_run_model(
         model_name=name, model_ws=model_ws,
@@ -37,7 +40,8 @@ def plot_opt(pest_dir):
         sy_param=sy_param,
         riv_params=riv_param,
         hill_param=hill_param,
-        race_param=race_param
+        race_param=race_param,
+        rch_param=rch_param
     )
     opt_plot_dir = base_plot_dir.joinpath('final_opt_model')
     opt_plot_dir.mkdir(exist_ok=True)
@@ -51,20 +55,38 @@ def plot_opt(pest_dir):
     # add from model tools
     plot_optimisation_and_extract_info(pest_dir=pest_dir, base_plot_dir=base_plot_dir)
 
-    # location of parameters at bound #todo not working right???
+    # location of parameters at bound #todo not working right???, check
     init_sy_param = get_inital_sy()
     init_kh_param = get_inital_kh()
     init_race_param = get_race_multiplier()
     init_hill_param = get_hillslope_multiplier()
     init_riv_param = get_initial_riv_conductance()
+    init_rch_param = get_initial_rch_mult()
     pp_locs = get_pilot_point_locations()
-    # todo plot rch mult
-    # todo plot rch multiplier array
-    # todo plot kh, sy array
+    rch_pp_locs = get_rch_pilot_point_locations()
+
+    # plot rch multiplier array, kh, sy array
+    rch_mult_array = interpolate_rch_pilot_points(rch_param)
+    sy_array = interpolate_sy_pilot_points(sy_param)
+    kh_array = interpolate_kh_pilot_points(kh_param)
+
+    fig, ax = smt.plot.plt_matrix(rch_mult_array, base_map=True, no_flow_layer=0, title='Rch multiplier')
+    fig.tight_layout()
+    fig.savefig(base_plot_dir.joinpath('rch_mult_array.png'))
+
+    fig, ax = smt.plot.plt_matrix(sy_array, base_map=True, no_flow_layer=0, title='Sy field')
+    fig.tight_layout()
+    fig.savefig(base_plot_dir.joinpath('sy_array.png'))
+
+    fig, (ax, ax1) = plt.subplots(ncols=2)
+    smt.plot.plt_matrix(kh_array, base_map=True, no_flow_layer=0, title='Kh field', ax=ax)
+    smt.plot.plt_matrix(np.log10(kh_array), base_map=True, no_flow_layer=0, title='log10 Kh field', ax=ax1)
+    fig.tight_layout()
+    fig.savefig(base_plot_dir.joinpath('kh_array.png'))
 
     out = pd.DataFrame(columns=['group', 'norm_param_val'])
     out.index.name = 'pname'
-    for pref in ['race', 'hill', 'riv', 'sy', 'kh']:
+    for pref in ['race', 'hill', 'riv', 'sy', 'kh', 'rch']:
         init = eval(f'init_{pref}_param')
         meas = eval(f'{pref}_param')
         for k, (start, (upper, lower)) in init.items():
@@ -78,26 +100,28 @@ def plot_opt(pest_dir):
         f.write(out.to_string())
 
     # pps at locs
-    for pref in ['sy', 'kh']:
+    prefs = ['sy', 'kh', 'rch']
+    locs = [pp_locs, pp_locs, rch_pp_locs]
+    for pref, plocs in zip(prefs, locs):
         init = eval(f'init_{pref}_param')
         meas = eval(f'{pref}_param')
         for k, (start, (upper, lower)) in init.items():
             imesure = meas[k]
             norm_val = (imesure - lower) / (upper - lower)
-            if k in ['sandy', 'mang']:
-                pp_locs.loc[pp_locs.group == k, pref] = norm_val
-            else:
-                pp_locs.loc[k, pref] = norm_val
+            plocs.loc[k, pref] = norm_val
 
-    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 8))
+    fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=(10, 8))
     smt.plot.plt_basemap(ax1)
     smt.plot.plt_basemap(ax2)
+    smt.plot.plt_basemap(ax3)
     ax1.set_title('Kh normalised')
     ax2.set_title('Sy normalised')
+    ax3.set_title('Rch mult normalised')
     norm = FuncNorm((_dummy, _dummy), vmin=0, vmax=1)
 
     ax1.scatter(pp_locs.x, pp_locs.y, c=pp_locs.kh, cmap='plasma', norm=norm)
     sc = ax2.scatter(pp_locs.x, pp_locs.y, c=pp_locs.sy, cmap='plasma', norm=norm)
+    ax3.scatter(rch_pp_locs.x, rch_pp_locs.y, c=rch_pp_locs.rch, cmap='plasma', norm=norm)
     fig.colorbar(sc, location='bottom')
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('parameter_norm_sy_kh.png'))

@@ -48,7 +48,7 @@ def plot_parameterisation(save=False):
         'River Conductance': ('Riv', get_initial_riv_conductance()),
         'Specific Yeild': ('Upw', get_inital_sy()),
         'Conductivity': ('Upw', get_inital_kh()),
-        # todo add rch mult
+        'Recharge Multiplier': ('Rch', get_initial_rch_mult())
     }
     static_params = {
         'Lake Sy': lake_sy,
@@ -188,9 +188,9 @@ def plot_parameterisation(save=False):
 
     # plot pilot points
     groups = pilot_locs.group.unique()
+    markersize = 3
+    marker = 'o'
     for group, c in zip(groups, get_colors(groups)):
-        markersize = 3
-        marker = 'o'
         temp = pilot_locs.loc[pilot_locs.group == group]
         ax.scatter(temp.x, temp.y, color=c, marker='o')
         handles.append(Line2D([0], [0], marker=marker, color='w',
@@ -208,7 +208,15 @@ def plot_parameterisation(save=False):
     if save:
         fig.savefig(outdir.joinpath(f'kh_sy_params{extension}'))
 
-    # todo plot rch mult pilot points
+    # plot rch mult pilot points
+    rch_pilots = get_rch_pilot_point_locations()
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    ax.scatter(rch_pilots.x, rch_pilots.y, color='r', marker='o')
+    ax.set_title('Rch multiplier points (linear interpolation)')
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath(f'kh_sy_params{extension}'))
+
 
 
 def plot_thickness_top_bot(save=False):
@@ -244,8 +252,10 @@ def plot_all_spd(save=False):
                  outpath=outdir.joinpath(f'well_{k}_time{extension}'))
 
     # recharge
-    plot_spd(get_rch_data(tdis), smt, tdis, is_array=True, key='total LSR',
-             func=np.nansum, mult_by_area=True, title='recharge', outpath=outdir.joinpath(f'rch_time{extension}'))
+    plot_spd(get_rch_data(tdis, rch_param=get_initial_rch_mult(True)),
+             smt, tdis, is_array=True, key='total LSR',
+             func=np.nansum, mult_by_area=True, title='recharge',
+             outpath=outdir.joinpath(f'rch_time{extension}'))
 
     # lake
     plot_spd(get_ghb_data(tdis), smt, tdis,
@@ -342,7 +352,7 @@ def plot_boundary_locs(save=False):
 def plot_steady_state_water_budget(save=False):
     outdir = save_path.joinpath('steady_state_water_budget')
     outdir.mkdir(exist_ok=True)
-    rch = get_rch_data(tdis)
+    rch = get_rch_data(tdis, rch_param=get_initial_rch_mult(True))
     rch = rch[0]
     wel = get_well_data(tdis, get_hillslope_multiplier(True), get_race_multiplier(True), return_unique_spd=True)
     wel = {k: v[0] for k, v in wel.items()}
@@ -389,7 +399,7 @@ def plot_steady_state_water_bud_locs(save):
     outdir = save_path.joinpath('steady_state_water_budget')
     outdir.mkdir(exist_ok=True)
     ibound = smt.get_no_flow(0)
-    rch = get_rch_data(tdis)
+    rch = get_rch_data(tdis, rch_param=get_initial_rch_mult(True))
     rch = rch[0]
     rch[ibound != 1] = np.nan
     wel = get_well_data(tdis, get_hillslope_multiplier(True), get_race_multiplier(True), return_unique_spd=True)

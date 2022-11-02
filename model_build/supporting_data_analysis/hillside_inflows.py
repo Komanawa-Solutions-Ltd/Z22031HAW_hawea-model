@@ -47,6 +47,10 @@ def get_hillside_catchment_locs(recalc=False, show=False):
     outdata.loc[:, 'i'] = i
     outdata.loc[:, 'j'] = j
 
+    # remove hillslopes below lugate tarras road
+    x, y = 1308110, 5039985
+    outdata = outdata.loc[outdata.py >= y]
+
     move_direction = {
         'maungawera': ('i', 1),
         'flat_west': ('j', 1),

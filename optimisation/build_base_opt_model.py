@@ -11,7 +11,7 @@ from optimisation.optimisation_period import tdis
 from model_parameterisation.static_params import ss, vka
 from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
 from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh, \
-    get_initial_riv_conductance, get_race_multiplier, get_hillslope_multiplier
+    get_initial_riv_conductance, get_race_multiplier, get_hillslope_multiplier, get_initial_rch_mult
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
 from targets_and_sensitive_sites.model_output import process_model_output
 from project_base import proj_root
@@ -30,7 +30,7 @@ def test_times():
     get_starting_heads()
     print(f'took {time.time() - t}s for get_starting_heads')
     t = time.time()
-    get_rch_data(tdis)
+    get_rch_data(tdis, get_initial_rch_mult(True))
     print(f'took {time.time() - t}s for get_rch_data')
     t = time.time()
     get_ghb_data(tdis)
@@ -59,8 +59,9 @@ def build_initial_model(model_name, model_ws,
         riv_params=get_initial_riv_conductance(True),
         hill_param=get_hillslope_multiplier(True),
         race_param=get_race_multiplier(True),
-        # todo add rch mult
+        rch_param=get_initial_rch_mult(True)
     )
+
 
 def check_for_dry(hds_file):
     import flopy

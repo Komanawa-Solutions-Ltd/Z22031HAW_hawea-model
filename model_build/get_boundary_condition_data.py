@@ -8,6 +8,7 @@ import time
 from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
     get_river_loc_data, get_lake_hawea_loc, get_lake_heads
+from model_parameterisation.pilot_points import interpolate_rch_pilot_points
 from model_parameterisation.static_params import lake_conduct
 import flopy
 from project_base import processed_model_build_data_dir
@@ -42,6 +43,9 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
         # hillside data
         hillside_locs = get_hillside_catchment_locs()
         hillside_flow = get_hillside_flows(*tdis.date_limits)
+
+        # remove flows from south of lugate tarras rd.
+        hillside_flow = hillside_flow.loc[:, hillside_locs.index]
         # add parameter
         for k, v in hill_param.items():
             use_keys = hillside_locs.loc[hillside_locs.param == k].index
@@ -94,16 +98,20 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
         return out_spd
 
 
-def get_rch_data(tdis, recalc=False): # todo add rch mult, needs refactor
+def get_rch_data(tdis, rch_param, recalc=False):
     save_path = processed_model_build_data_dir.joinpath(f'rch_stress_period_data-{tdis.name}.p')
     if save_path.exists() and not recalc:
         out = pickle.load(open(save_path, 'rb'))
-        return out
-    rch_dates, rch_raw = get_rch(*tdis.date_limits, frequency='d')  # tdis manges this
-    rch_raw *= 1 / 1000  # convert from mm/day to m/day
-    rch_data = tdis.map_array_to_spd(rch_dates, rch_raw)
-    pickle.dump(rch_data, open(save_path, 'wb'))
-    return rch_data
+    else:
+        rch_dates, rch_raw = get_rch(*tdis.date_limits, frequency='d')  # tdis manges this
+        rch_raw *= 1 / 1000  # convert from mm/day to m/day
+        out = tdis.map_array_to_spd(rch_dates, rch_raw)
+        pickle.dump(out, open(save_path, 'wb'))
+
+    # add rch mult
+    rch_mult = interpolate_rch_pilot_points(rch_param)
+    out = {k: v * rch_mult for k, v in out.items()}
+    return out
 
 
 def get_ghb_data(tdis, recalc=False):
@@ -151,4 +159,3 @@ if __name__ == '__main__':
                       , race_param={'all': 1}, recalc=True)
     get_riv_data(tdis, get_initial_riv_conductance(return_just_start=True))
     get_ghb_data(tdis)
-    b = get_rch_data(tdis)

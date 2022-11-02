@@ -6,7 +6,8 @@ on: 1/11/22
 # this allows testing multiple paramters sets/structures quickly, use git branches for some of this.
 from pathlib import Path
 from optimisation.model_utils_for_forward_run import _get_param_data
-
+from project_base import unbacked_dir
+import shutil
 import matplotlib.pyplot as plt
 
 
@@ -26,6 +27,7 @@ def recalc_model_build(rerun_rushton=False):
     from model_build.zones import get_param_zones, get_model_zones
     from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
     from optimisation.optimisation_period import tdis
+    from model_parameterisation.inital_parametersiation import get_initial_rch_mult
 
     no_flow()
     elv_calc()
@@ -47,7 +49,7 @@ def recalc_model_build(rerun_rushton=False):
     get_well_flowmeter_mapper(recalc=True)
     get_historical_pumping_data(None, None, recalc=True)
     get_soil_classes(recalc=True)
-    get_rch_data(tdis, recalc=True)
+    get_rch_data(tdis, rch_param=get_initial_rch_mult(True), recalc=True)
     get_ghb_data(tdis, recalc=True)
     get_well_data(tdis, hill_param={'south_east': 1, 'main': 1, 'maungawera': 1, }, race_param={'all': 1}, recalc=True)
     if rerun_rushton:
@@ -92,29 +94,71 @@ def build_test_model(model_ws, notes):
     param_data = _get_param_data()
     param_data.to_csv(model_ws.joinpath('parameters.dat'), sep='\t', header=False, index=False)
 
-    kh_param, sy_param, riv_params, hill_param, race_param = read_param_data(model_ws)
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws)
     build_run_model(
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,
         sy_param=sy_param,
         riv_params=riv_params,
         hill_param=hill_param,
-        race_param=race_param
+        race_param=race_param,
+        rch_param=rch_param
     )
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),
                          plot=plot)
 
 
-# todo version here to run pest and base model
-# make a new branch on major structural shifts
-mversion = 'lower_reg_rside'
-test_notes = """
-branch: main
-previous optimisation: initial.
-This optimisation lowers the regular heads near the river by a factor of 10 (1/10)  This was done
-as structural errors in the river heads can impact the fit/misfit here
-"""
-test_path = Path().home().joinpath('Downloads').joinpath(mversion)
 if __name__ == '__main__':
-    build_test_model(model_ws=test_path, notes=test_notes)
+    # todo version here to run pest and base model
+    #  for structural changes re-run pre_optimisation_overview.py
+    #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
+    # make a new branch on major structural shifts
+    mversion = 'structure_v2_init'
+    test_notes = """
+    branch: structure_v2
+    previous optimisation: lower_reg_rside.
+    implement new structure, rch multipliers, no sandy point, and no zones for kh/sy
+    """
+    build_model = False
+    build_pest = True
+    safemode = True
+
+
+    test_path = unbacked_dir.joinpath(mversion, 'base_model')
+    test_path.parent.mkdir(exist_ok=True)
+    # build base model
+    if build_model:
+        build_test_model(model_ws=test_path, notes=test_notes)
+
+    # build pest
+    if build_pest:
+        from optimisation.build_optimisation import raw_pest, BeopestManager
+
+        pdir = unbacked_dir.joinpath(mversion, 'Optimisations')
+
+        if pdir.exists() and safemode:
+            temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
+            if 'y' not in temp.lower():
+                raise KeyboardInterrupt(f'stopped to prevent deletion of all files in {pdir}')
+        for fn in pdir.glob('*'):
+            if fn.is_dir():
+                shutil.rmtree(fn)
+            else:
+                fn.unlink()
+        # copy notes over, as well as version!
+        pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50,
+                             model_template_dir=test_path)
+        man = BeopestManager(pest_file=pest_file)
+        man.write_beopest_run_manager()
+        # copy across version and notes
+        with open(pdir.joinpath('1_opt_notes_version.txt'), 'w') as f:
+            f.write(f'version = {test_path.name}\n')
+            f.write(test_notes)
+
+    # todo thoughts after first round:
+    #  I need to see what is causing the model to fall over as it is not suitably optimised
+    #  I should consider removing some of near river pumping wells as I think this may be causing a lot of my challenges
+    #  carpet drains in mangawera, talk to Jens about streams
+
+# todo time for optimisation???

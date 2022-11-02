@@ -9,7 +9,7 @@ import numpy as np
 # keynote these set initials and bounds
 # keynote param key in loc data or riv and well
 
-def get_initial_rch_mult(return_just_start=False):  # todo propogate through, incl plots
+def get_initial_rch_mult(return_just_start=False):
     # keynote do not use log values
     # keynote one value for the whole model
     start_val = (1, (0.8, 1.2))

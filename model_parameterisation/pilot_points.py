@@ -276,7 +276,7 @@ def examine_sy_interpolation(log_before=False):
     smt.plot.show()
 
 
-def interpolate_rch_pilot_points(rch_data, return_df=False):  # todo propogate through
+def interpolate_rch_pilot_points(rch_data, return_df=False):
     # keynote do not interpolate on log values
     # set pilot point values
 
