@@ -18,15 +18,18 @@ from model_tools.util_functions.list_file_utils import ListSolverInfo
 import py7zr
 
 
-def plot_opt(pest_dir):
+def plot_opt(pest_dir, replot=False):
     base_plot_dir = Path(pest_dir).joinpath('Base_Optimisation_plots')
+    if base_plot_dir.exists() and not replot:
+        print('optimisation plots already present')
+        return
     base_plot_dir.mkdir(exist_ok=True)
     base_optimised_model_dir = Path(pest_dir).joinpath('Final_opt_model')
 
     # run final model
     name = 'final_opt_model'
     model_ws = base_optimised_model_dir
-    opt_par_file = list(pest_dir.glob('*.par'))
+    opt_par_file = list(pest_dir.glob('[!trial]*.par'))
     assert len(opt_par_file) == 1
     opt_par_file = opt_par_file[0]
 
@@ -74,13 +77,13 @@ def plot_opt(pest_dir):
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('rch_mult_array.png'))
 
-    fig, ax = smt.plot.plt_matrix(sy_array, base_map=True, no_flow_layer=0, title='Sy field')
+    fig, ax = smt.plot.plt_matrix(sy_array[0], base_map=True, no_flow_layer=0, title='Sy field')
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('sy_array.png'))
 
     fig, (ax, ax1) = plt.subplots(ncols=2)
-    smt.plot.plt_matrix(kh_array, base_map=True, no_flow_layer=0, title='Kh field', ax=ax)
-    smt.plot.plt_matrix(np.log10(kh_array), base_map=True, no_flow_layer=0, title='log10 Kh field', ax=ax1)
+    smt.plot.plt_matrix(kh_array[0], base_map=True, no_flow_layer=0, title='Kh field', ax=ax)
+    smt.plot.plt_matrix(np.log10(kh_array[0]), base_map=True, no_flow_layer=0, title='log10 Kh field', ax=ax1)
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('kh_array.png'))
 
@@ -181,14 +184,11 @@ def get_all_list_data(pest_dir, outer, inner):
 
 
 if __name__ == '__main__':
-    pest_runs = [
-        '/home/matt_dumont/Downloads/beopest_2022-11-1'
-        # '/home/matt_dumont/Downloads/beopest_2022_10_21',
-        # '/home/matt_dumont/Downloads/beopest_2022_10_22',
-        # '/home/matt_dumont/Downloads/beopest_2022_10_22.2',
-        # '/home/matt_dumont/Downloads/beopest_2022_10_22.2_increase_sy_mult_bounds',
-    ]
+    from project_base import unbacked_dir
+
+    re_plot = True
+    pest_runs = unbacked_dir.glob('*/Optimisations')
 
     for d in pest_runs:
         print(f'plotting: {d}')
-        plot_opt(Path(d))
+        plot_opt(d, replot=re_plot)
