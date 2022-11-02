@@ -154,7 +154,17 @@ if __name__ == '__main__':
         # copy notes over, as well as version!
         pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50,
                              model_template_dir=test_path)
-        man = BeopestManager(pest_file=pest_file)
+        man = BeopestManager(pest_file=pest_file,
+                             num_cores={
+                                 '100.124.148.71': None,
+                                 #'100.121.150.68': None, # todo something is falling over on tuke!
+                             },
+                             base_path={
+                                 '100.124.148.71': None,
+                                 #'100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(
+                                 #    pdir.name),
+                             },
+                             )
         man.write_beopest_run_manager()
         # copy across version and notes
         with open(pdir.joinpath('1_opt_notes_version.txt'), 'w') as f:

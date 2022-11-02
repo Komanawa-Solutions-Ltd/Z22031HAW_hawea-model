@@ -16,16 +16,16 @@ if __name__ == '__main__':
         else:
             f.unlink()
 
-    pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=2, write_trial_paramfile=False)
+    pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=2)
     man = BeopestManager(
         pest_file=pest_file,
         num_cores={
             '100.124.148.71': 2,
-            '100.67.70.2': None,
+            '100.121.150.68': None,
         },
         base_path={
             '100.124.148.71': None,
-            '100.67.70.2': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(pdir.name),
+            '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(pdir.name),
         },
         user_names=None,
         short_names=None,
