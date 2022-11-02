@@ -27,16 +27,6 @@ from targets_and_sensitive_sites.head_targets import plot_head_targets, get_high
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
 from optimisation.determine_opt_start import get_opt_start_stop
 
-extension = '.pdf'
-if extension == '.png':
-    save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_png')
-elif extension == '.pdf':
-    save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_pdf')
-else:
-    raise ValueError('nope')
-
-save_path.mkdir(exist_ok=True)
-
 
 def plot_parameterisation(save=False):
     outdir = save_path.joinpath('parameterisation')
@@ -216,7 +206,6 @@ def plot_parameterisation(save=False):
     fig.tight_layout()
     if save:
         fig.savefig(outdir.joinpath(f'kh_sy_params{extension}'))
-
 
 
 def plot_thickness_top_bot(save=False):
@@ -781,5 +770,15 @@ def make_all_preopt(save):
 
 if __name__ == '__main__':
     save = True
-    # checked and finished, but not saved
-    make_all_preopt(save)
+    for extension in ['.pdf', '.png']:
+        if extension == '.png':
+            save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_png')
+        elif extension == '.pdf':
+            save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_pdf')
+        else:
+            raise ValueError('nope')
+
+        save_path.mkdir(exist_ok=True)
+
+        # checked and finished, but not saved
+        make_all_preopt(save)

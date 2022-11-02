@@ -113,6 +113,7 @@ if __name__ == '__main__':
     # todo version here to run pest and base model
     #  for structural changes re-run pre_optimisation_overview.py
     #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
+    #  dont forget to update the git branch on tuke
     # make a new branch on major structural shifts
     mversion = 'structure_v2_init'
     test_notes = """
@@ -120,6 +121,10 @@ if __name__ == '__main__':
     previous optimisation: lower_reg_rside.
     implement new structure, rch multipliers, no sandy point, and no zones for kh/sy
     """
+
+    # todos for current version
+    # todo look over pre_optimisation_overviews
+
     build_model = False
     build_pest = True
     safemode = True
