@@ -40,7 +40,7 @@ def generate_outputs(hds_path, cbc_path):
     hds.loc[:, 'modelled'] = all_hds[hds.nper, hds.k, hds.i, hds.j]
     bots = get_bottom()
     tops = get_top()
-    ibound = get_ibound()
+    ibound = get_ibound()[0]
     #  keynote set dry observations to bottom of cell -5m
     hds.loc[hds.modelled < -666, 'modelled'] = bots[hds.loc[hds.modelled < -666, 'i'],
                                                     hds.loc[hds.modelled < -666, 'j']] - 5

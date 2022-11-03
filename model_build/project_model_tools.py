@@ -308,7 +308,7 @@ def get_ibound(recalc=False):
     if recalc:
         no_flow()
     out = np.loadtxt(processed_model_build_data_dir.joinpath('ibound.txt'))
-    return out
+    return out[np.newaxis]
 
 
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
