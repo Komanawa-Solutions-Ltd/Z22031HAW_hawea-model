@@ -36,7 +36,7 @@ layers = 1
 layer_type = [1]
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
-                                  model_version_name, sdp, temp_file_dir,
+                                  model_version_name, sdp,
                                   rotation=0, layer_type=layer_type,
                                   no_flow_calc=None, elv_calculator=None,
                                   base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
@@ -308,7 +308,7 @@ def get_ibound(recalc=False):
 
 
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
-                             model_version_name, sdp, temp_file_dir,
+                             model_version_name, sdp,
                              rotation=0, layer_type=layer_type,
                              no_flow_calc=no_flow, elv_calculator=elv_calc,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
