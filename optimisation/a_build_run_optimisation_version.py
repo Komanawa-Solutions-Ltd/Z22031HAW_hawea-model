@@ -151,7 +151,6 @@ if __name__ == '__main__':
                 shutil.rmtree(fn)
             else:
                 fn.unlink()
-        # copy notes over, as well as version!
         pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50,
                              model_template_dir=test_path)
         man = BeopestManager(pest_file=pest_file,
