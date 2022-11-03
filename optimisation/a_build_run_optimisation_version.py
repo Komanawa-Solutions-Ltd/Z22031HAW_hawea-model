@@ -31,7 +31,6 @@ def recalc_model_build(rerun_rushton=False):
 
     get_ibound(recalc=True)
     get_elv_db(recalc=True)
-    smt.recalc_all_pickles()
     get_starting_heads(recalc=True)
 
     get_param_zones(recalc=True)
