@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 
 def recalc_model_build(rerun_rushton=False):
-    from model_build.project_model_tools import smt, no_flow, elv_calc, \
+    from model_build.project_model_tools import smt, get_ibound, get_elv_db, \
         get_lake_array, get_starting_heads
     from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
     from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes, \
@@ -29,8 +29,8 @@ def recalc_model_build(rerun_rushton=False):
     from optimisation.optimisation_period import tdis
     from model_parameterisation.inital_parametersiation import get_initial_rch_mult
 
-    no_flow()
-    elv_calc()
+    get_ibound(recalc=True)
+    get_elv_db(recalc=True)
     smt.recalc_all_pickles()
     get_starting_heads(recalc=True)
 
@@ -129,7 +129,6 @@ if __name__ == '__main__':
     build_pest = True
     safemode = True
 
-
     test_path = unbacked_dir.joinpath(mversion, 'base_model')
     test_path.parent.mkdir(exist_ok=True)
     # build base model
@@ -156,11 +155,11 @@ if __name__ == '__main__':
         man = BeopestManager(pest_file=pest_file,
                              num_cores={
                                  '100.124.148.71': None,
-                                 #'100.121.150.68': None, # todo something is falling over on tuke!
+                                 # '100.121.150.68': None, # todo something is falling over on tuke!
                              },
                              base_path={
                                  '100.124.148.71': None,
-                                 #'100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(
+                                 # '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(
                                  #    pdir.name),
                              },
                              )

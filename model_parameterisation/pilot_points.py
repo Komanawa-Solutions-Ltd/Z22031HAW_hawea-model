@@ -310,6 +310,24 @@ def examine_rch_mult():
     for i in pps.index:
         rch_mult[i] = pps.loc[i, 'value']
 
+    rch_mult = {
+        'r1c1': 0.93,
+        'r1c2': 1.137,
+        'r1c3': 0.943,
+        'r1c4': 0.887,
+        'r2c1': 0.923,
+        'r2c2': 1.199,
+        'r2c3': 1.119,
+        'r2c4': 1.0,
+        'r3c1': 1.165,
+        'r3c2': 0.923,
+        'r3c3': 1.07,
+        'r3c4': 1.038,
+        'r4c2': 0.854,
+        'r4c3': 0.944,
+        'r4c4': 0.847,
+        'r5c3': 0.895,
+    }
     out = interpolate_rch_pilot_points(rch_mult)
     smt.plot.plt_matrix(out, no_flow_layer=0, base_map=True)
     smt.plot.show()

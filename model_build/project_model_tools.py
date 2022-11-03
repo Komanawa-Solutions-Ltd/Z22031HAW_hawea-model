@@ -300,6 +300,10 @@ def get_bottom(recalc=False):
     return out
 
 
+def get_elv_db(recalc=False):
+    return np.concatenate((get_top(recalc)[np.newaxis], get_bottom(recalc)[np.newaxis]), axis=0)
+
+
 def get_ibound(recalc=False):
     if recalc:
         no_flow()
@@ -310,7 +314,7 @@ def get_ibound(recalc=False):
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              model_version_name, sdp,
                              rotation=0, layer_type=layer_type,
-                             no_flow_calc=no_flow, elv_calculator=elv_calc,
+                             no_flow_calc=get_ibound, elv_calculator=get_elv_db,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 
@@ -369,7 +373,6 @@ def export_model_boundary():
 if __name__ == '__main__':
     elv_calc()
     bot = get_bottom(True)
-    smt.recalc_all_pickles()
     smt.plot.plt_matrix(bot, base_map=True, contour=True, contour_levels=np.arange(bot.min(), bot.max(), 10),
                         label_contours=True, no_flow_layer=0)
     smt.plot.show()

@@ -2,8 +2,8 @@
 created matt_dumont 
 on: 31/08/22
 """
-from model_build.project_model_tools import smt, simplify_hawea_dem, simplify_upper_clutha_dem, no_flow, elv_calc, \
-    get_lake_array, get_starting_heads
+from model_build.project_model_tools import smt, simplify_hawea_dem, simplify_upper_clutha_dem, get_elv_db, \
+    get_ibound, get_lake_array, get_starting_heads
 from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
 from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes, \
     get_era5_land, get_corrected_historical_era5_rch
@@ -32,9 +32,8 @@ if __name__ == '__main__':
         simplify_upper_clutha_dem(True)
         simplify_hawea_dem(True)
 
-    no_flow()
-    elv_calc()
-    smt.recalc_all_pickles()
+    get_elv_db(recalc=True)
+    get_ibound(recalc=True)
     get_starting_heads(recalc=True)
 
     get_param_zones(recalc=True)

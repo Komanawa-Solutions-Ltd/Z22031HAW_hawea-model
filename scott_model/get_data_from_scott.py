@@ -39,7 +39,7 @@ def ibound_calc():
 
 
 smt_scott = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
-                                   model_version_name, sdp, temp_file_dir,
+                                   model_version_name, sdp,
                                    rotation=0, layer_type=layer_type,
                                    no_flow_calc=ibound_calc, elv_calculator=None,
                                    base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
@@ -111,5 +111,5 @@ if __name__ == '__main__':
     plot_hk()
     smt_scott.plot.show()
     get_scott_hds()
-    smt_scott.get_no_flow(recalc=True)
+    smt_scott.get_no_flow()
     plot_riv_conductances()
