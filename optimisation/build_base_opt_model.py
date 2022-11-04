@@ -16,7 +16,7 @@ from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, 
 from targets_and_sensitive_sites.model_output import process_model_output
 from project_base import proj_root
 import py7zr
-from optimisation.model_utils_for_forward_run import build_run_model
+from optimisation.model_utils_for_forward_run import build_run_model, write_base_param_file
 
 
 def test_times():
@@ -44,13 +44,13 @@ def test_times():
                   race_param=get_race_multiplier(True))
     print(f'took {time.time() - t}s for get_well_data')
     t = time.time()
-    # todo add rch mult
 
 
 def build_initial_model(model_name, model_ws,
                         exe_name='mfnwt', run_model=False):
     t = time.time()
     oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
+    write_base_param_file(outdir=model_ws)
     # keynote other steps if I end up with them
     build_run_model(
         model_name, model_ws,
@@ -78,6 +78,7 @@ def check_for_dry(hds_file):
 if __name__ == '__main__':
     # see if adding daily steps helps speed up the run time, nope it basically doubled the time
     model_ws = proj_root.joinpath('optimisation/pre_opt_model')
+    model_ws.mkdir(exist_ok=True)
     model_name = 'pre_opt'
     build_initial_model(model_name=model_name, model_ws=model_ws,
                         run_model=True)

@@ -58,6 +58,12 @@ def read_param_data(model_ws, parameter_file=None, format='model'):
     return kh_param, sy_param, riv_params, hill_param, race_param, rch_param
 
 
+def write_base_param_file(outdir):  # todo
+    input_file = outdir.joinpath('parameters.dat')
+    param_data = _get_param_data()
+    param_data.to_csv(input_file, sep='\t', header=False, index=False)
+
+
 def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param):
     exe_name = 'mfnwt'
     run_model = True

@@ -110,7 +110,7 @@ def build_test_model(model_ws, notes):
 
 if __name__ == '__main__':
     # todo version here to run pest and base model
-    #  for structural changes re-run pre_optimisation_overview.py
+    #  for structural changes re-run build_base_opt_model.py, pre_optimisation_overview.py
     #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
     #  dont forget to update the git branch on tuke
     # make a new branch on major structural shifts
@@ -122,7 +122,13 @@ if __name__ == '__main__':
     """
 
     # todos for current version
-    # todo look over pre_optimisation_overviews
+    # todo run, look over pre_optimisation_overviews
+    # todo look at river stage interpolation, particularly at the clutha near the bottom.
+    # todo remove near river abstraction... its problematic and stopping the river conductnace from changing
+    # todo consider making a new hds group (problematic vs non-problematic regular)
+    # todo H_g40_0120  (mean c. 314m) is very close (1808m) to H_g40_0367 (mean 319)
+    #   elevation between the two are 5 m different  all_wells.loc[['g40_0367', 'g40_0120']].transpose()
+    #   might be fine???
 
     build_model = False
     build_pest = True
