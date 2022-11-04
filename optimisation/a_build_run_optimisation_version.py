@@ -77,12 +77,13 @@ def recalc_param_targets():
     get_rch_pilot_point_locations(recalc=True)
 
 
-def build_test_model(model_ws, notes):
+def build_test_model(model_ws, notes, recalc=True):
     from targets_and_sensitive_sites.model_output import process_model_output
     from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 
-    recalc_param_targets()
-    recalc_model_build()
+    if recalc:
+        recalc_param_targets()
+        recalc_model_build()
 
     plot = True
     name = 'opt_model'
@@ -114,11 +115,11 @@ if __name__ == '__main__':
     #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
     #  dont forget to update the git branch on tuke
     # make a new branch on major structural shifts
-    mversion = 'structure_v2_init'
+    mversion = 'up_init_kh'
     test_notes = """
     branch: structure_v2
-    previous optimisation: lower_reg_rside.
-    implement new structure, rch multipliers, no sandy point, and no zones for kh/sy
+    previous optimisation: structure_v2_init
+    same as structure_v2_init, but set kh start to 30, allow rch to go down to .7
     """
 
     # todos for current version
@@ -127,10 +128,12 @@ if __name__ == '__main__':
     # todo remove near river abstraction... its problematic and stopping the river conductnace from changing
     # todo consider making a new hds group (problematic vs non-problematic regular)
     # todo H_g40_0120  (mean c. 314m) is very close (1808m) to H_g40_0367 (mean 319)
+    # todo could look at setting inital kh from scott (roughly)
     #   elevation between the two are 5 m different  all_wells.loc[['g40_0367', 'g40_0120']].transpose()
     #   might be fine???
 
-    build_model = False
+    recalc = False
+    build_model = True
     build_pest = True
     safemode = True
 
@@ -138,7 +141,7 @@ if __name__ == '__main__':
     test_path.parent.mkdir(exist_ok=True)
     # build base model
     if build_model:
-        build_test_model(model_ws=test_path, notes=test_notes)
+        build_test_model(model_ws=test_path, notes=test_notes, recalc=recalc)
 
     # build pest
     if build_pest:
@@ -157,17 +160,17 @@ if __name__ == '__main__':
                 fn.unlink()
         pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50,
                              model_template_dir=test_path)
-        man = BeopestManager(pest_file=pest_file,
-                             num_cores={
-                                 '100.124.148.71': None,
-                                 # '100.121.150.68': None, # todo something is falling over on tuke!
-                             },
-                             base_path={
-                                 '100.124.148.71': None,
-                                 # '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(
-                                 #    pdir.name),
-                             },
-                             )
+        man = BeopestManager(
+            pest_file=pest_file,
+            num_cores={
+                '100.124.148.71': None,
+                '100.121.150.68': None,
+            },
+            base_path={
+                '100.124.148.71': None,
+                '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(pdir.name),
+            },
+        )
         man.write_beopest_run_manager()
         # copy across version and notes
         with open(pdir.joinpath('1_opt_notes_version.txt'), 'w') as f:
