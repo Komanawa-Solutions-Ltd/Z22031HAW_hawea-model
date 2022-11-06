@@ -78,9 +78,9 @@ def get_hillside_catchment_locs(recalc=False, show=False):
         smt.plot.show()
 
     outdata.reset_index()
-    outdata.loc[np.in1d(outdata.group, ['south_east']), 'param'] = 'south_east'
+    outdata.loc[np.in1d(outdata.group, ['south_east']), 'param'] = 'se'
     outdata.loc[np.in1d(outdata.group, ('flat_east', 'terrace_east', 'flat_west')), 'param'] = 'main'
-    outdata.loc[np.in1d(outdata.group, ['maungawera']), 'param'] = 'maungawera'
+    outdata.loc[np.in1d(outdata.group, ['maungawera']), 'param'] = 'mang'
 
     outdata = outdata.drop(index='ss22')
 

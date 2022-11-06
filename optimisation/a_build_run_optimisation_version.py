@@ -50,7 +50,7 @@ def recalc_model_build(rerun_rushton=False):
     get_soil_classes(recalc=True)
     get_rch_data(tdis, rch_param=get_initial_rch_mult(True), recalc=True)
     get_ghb_data(tdis, recalc=True)
-    get_well_data(tdis, hill_param={'south_east': 1, 'main': 1, 'maungawera': 1, }, race_param={'all': 1}, recalc=True)
+    get_well_data(tdis, hill_param={'se': 1, 'main': 1, 'mang': 1, }, race_param={'all': 1}, recalc=True)
     if rerun_rushton:
         for k in [True, False]:
             get_era5_land(correct=True, recalc=True)

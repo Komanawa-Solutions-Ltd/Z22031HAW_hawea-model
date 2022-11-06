@@ -50,6 +50,7 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
         for k, v in hill_param.items():
             use_keys = hillside_locs.loc[hillside_locs.param == k].index
             hillside_flow.loc[:, use_keys] *= v
+            assert set(hill_param.keys()) == set(hillside_locs.param)
         hill_spd = tdis.map_data_locations(hillside_locs, {'flux': hillside_flow},
                                            flopy.modflow.ModflowWel.get_default_dtype(),
                                            group_cells=False,
