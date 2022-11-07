@@ -109,18 +109,20 @@ def build_test_model(model_ws, notes, recalc=True):
                          plot=plot)
 
 
+# todo version here to run pest and base model
+#  for structural changes re-run build_base_opt_model.py, pre_optimisation_overview.py
+#  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
+#  dont forget to update the git branch on tuke
+# make a new branch on major structural shifts
+mversion = 'up_init_kh'
+branch = 'structure_v2'
+test_notes = f"""
+name: {mversion}
+branch: {branch}
+previous optimisation: structure_v2_init
+same as structure_v2_init, but set kh start to 30, allow rch to go down to .7
+"""
 if __name__ == '__main__':
-    # todo version here to run pest and base model
-    #  for structural changes re-run build_base_opt_model.py, pre_optimisation_overview.py
-    #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
-    #  dont forget to update the git branch on tuke
-    # make a new branch on major structural shifts
-    mversion = 'up_init_kh'
-    test_notes = """
-    branch: structure_v2
-    previous optimisation: structure_v2_init
-    same as structure_v2_init, but set kh start to 30, allow rch to go down to .7
-    """
 
     # todos for current version
     # todo run, look over pre_optimisation_overviews
@@ -137,7 +139,7 @@ if __name__ == '__main__':
     build_pest = True
     safemode = True
 
-    test_path = unbacked_dir.joinpath(mversion, 'base_model')
+    test_path = unbacked_dir.joinpath(branch, mversion, 'base_model')
     test_path.parent.mkdir(exist_ok=True)
     # build base model
     if build_model:

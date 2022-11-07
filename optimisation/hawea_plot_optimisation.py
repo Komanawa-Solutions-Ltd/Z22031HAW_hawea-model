@@ -185,9 +185,10 @@ def get_all_list_data(pest_dir, outer, inner):
 
 if __name__ == '__main__':
     from project_base import unbacked_dir
+    from optimisation.a_build_run_optimisation_version import branch
 
     re_plot = False
-    pest_runs = unbacked_dir.glob('*/Optimisations')
+    pest_runs = unbacked_dir.joinpath(branch).glob('*/Optimisations')
 
     for d in pest_runs:
         print(f'plotting: {d}')
