@@ -186,7 +186,7 @@ def get_all_list_data(pest_dir, outer, inner):
 if __name__ == '__main__':
     from project_base import unbacked_dir
 
-    re_plot = True
+    re_plot = False
     pest_runs = unbacked_dir.glob('*/Optimisations')
 
     for d in pest_runs:
