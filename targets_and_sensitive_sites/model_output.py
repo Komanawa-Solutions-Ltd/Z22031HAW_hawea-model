@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from targets_and_sensitive_sites.head_targets import get_all_hds_targets, plot_hds_zone_locator, \
-    plot_hds_regular_locator
+    plot_hds_regular_locator, get_annual_mean_head_targets, base_regular_groupnames
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
 from optimisation.optimisation_period import tdis
 from model_build.supporting_data_analysis import get_river_loc_data
@@ -36,7 +36,7 @@ def generate_outputs(hds_path, cbc_path):
     all_hds = flopy.utils.HeadFile(hds_path).get_alldata()
     all_hds[all_hds > 1e20] = np.nan
     hds = get_all_hds_targets(tdis)
-    # keynote this assumes 1 step per stress period
+    # keynote this assumes 1 saved step per stress period
     hds.loc[:, 'modelled'] = all_hds[hds.nper, hds.k, hds.i, hds.j]
     bots = get_bottom()
     tops = get_top()
@@ -44,6 +44,10 @@ def generate_outputs(hds_path, cbc_path):
     #  keynote set dry observations to bottom of cell -5m
     hds.loc[hds.modelled < -666, 'modelled'] = bots[hds.loc[hds.modelled < -666, 'i'],
                                                     hds.loc[hds.modelled < -666, 'j']] - 5
+
+    # get annual mean heads (weekly)
+    annual_mean = get_annual_mean_head_targets(hds)
+    hds = pd.concat([hds, annual_mean])
 
     # dry cells at non-target data points
     dry_hds = (all_hds < -666) & (ibound == 1)
@@ -95,13 +99,18 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         plot_dir = model_ws.joinpath('plots')
     plot_dir.mkdir(exist_ok=True)
     ibound = smt.get_no_flow(0)
-    hds_groups = ['piezo', 'single_3', 'single_1', 'regular']
+    hds_groups = ['h_piezo', 'h_single_3', 'h_single_1', 'regular']
     hds_colors = get_colors(hds_groups)
     reg_colormap = 'tab10'
 
-    hds_obs = out_obs.loc[np.in1d(out_obs.group, hds_groups)]
+    hds_obs = out_obs.loc[np.in1d(out_obs.group, hds_groups + base_regular_groupnames)]
+    mapper = {'h_piezo': 'h_piezo',
+              'h_single_3': 'h_single_3',
+              'h_single_1': 'h_single_1'}
+    mapper.update({k: 'regular' for k in base_regular_groupnames})
+    hds_obs.loc[:, 'group'] = hds_obs.loc[:, 'group'].replace(mapper)
     hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
-    hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.loc[:,'nper'])
+    hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.loc[:, 'nper'])
     hds_obs.loc[:, 'week'] = hds_obs.date.dt.isocalendar().loc[:, 'week']
     regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
     regular_wells = sorted(regular_hds.well_name.unique())
@@ -238,39 +247,8 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         plt.close(fig)
 
     # extra plots for regular heads
-    weekly_data = regular_hds.groupby(['well_name', 'week']).mean()
-
-    # plot weekly annual average of heads all regular heads
-    fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
+    # plot each regular heads
     for n, nc in zip(regular_wells, regular_colors):
-        temp2 = weekly_data.loc[n].reset_index()
-        ax.scatter(temp2.week, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
-        ax.plot(temp2.week, temp2.modelled, color=nc, label=f'{n.capitalize()} modelled')
-    plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(regular_wells, regular_colors)})
-    ax.set_title(f'Weekly mean regular hds')
-    ax.set_xlabel('Week of the year')
-    ax.set_ylabel('Weekly mean Head (m)')
-    ax.legend()
-    fig.tight_layout()
-    fig.savefig(plot_dir.joinpath(f'hds_weekly_mean_all.png'))
-    plt.close(fig)
-
-    # plot each regular heads and weeky anual average
-    for n, nc in zip(regular_wells, regular_colors):
-        # weekly
-        fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
-        temp2 = weekly_data.loc[n].reset_index()
-        ax.scatter(temp2.week, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
-        ax.plot(temp2.week, temp2.modelled, color=nc, label=f'{n.capitalize()} modelled')
-        plot_hds_regular_locator(ax_loc, {n: nc})
-        ax.set_title(f'Weekly mean regular hds')
-        ax.set_xlabel('Week of the year')
-        ax.set_ylabel('Weekly mean Head (m)')
-        ax.legend()
-        fig.tight_layout()
-        fig.savefig(plot_dir.joinpath(f'hds_weekly_mean_{n}.png'))
-        plt.close(fig)
-
         # full dataset
         fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
         temp2 = regular_hds.loc[regular_hds.well_name == n].sort_values('date')
@@ -283,6 +261,64 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         ax.legend()
         fig.tight_layout()
         fig.savefig(plot_dir.joinpath(f'hds_closeup_{n}.png'))
+        plt.close(fig)
+
+    # plot annual average data
+
+    aaverage_data = out_obs.loc[out_obs.group.str.contains('rwh_')]
+    aaverage_data.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in aaverage_data.loc[:, 'name']]
+    aaverage_data.loc[:, 'nper'] *= -1
+    pass
+
+    # modelled vs measured plot
+    fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
+    temp = aaverage_data
+    ax.set_aspect('equal')
+    for n, nc in zip(regular_wells, regular_colors):
+            temp2 = temp.loc[temp.name.str.contains(n)]
+            ax.scatter(temp2.modelled, temp2.measured, color=nc, label=n.capitalize())
+    plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(regular_wells, regular_colors)})
+    ax.set_title(f'Normal year hds measured vs modelled')
+    ax.set_xlabel('Modelled (m)')
+    ax.set_ylabel('Measured (m)')
+    plot_1_to_1(ax, ls=':', c='k', label='1:1 line')
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(plot_dir.joinpath(f'hds_normal_year_mod_v_meas.png'))
+    plt.close(fig)
+
+    # full dataset plots
+    fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
+    temp = aaverage_data
+    ax.set_aspect('equal')
+    for n, nc in zip(regular_wells, regular_colors):
+            temp2 = temp.loc[temp.name.str.contains(n)]
+            ax.scatter(temp2.nper, temp2.measured, color=nc, label=n.capitalize())
+    plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(regular_wells, regular_colors)})
+    ax.set_title(f'Normal year hds measured vs modelled')
+    ax.set_xlabel('Week of year')
+    ax.set_ylabel('Head (m)')
+    plot_1_to_1(ax, ls=':', c='k', label='1:1 line')
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(plot_dir.joinpath(f'hds_normal_year_all.png'))
+    plt.close(fig)
+
+    # individaul plots
+    for n, nc in zip(regular_wells, regular_colors):
+        if n not in aaverage_data.well_name:
+            continue
+        fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
+        temp2 = aaverage_data.loc[aaverage_data.well_name == n].sort_values('nper')
+        ax.scatter(temp2.nper, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+        ax.plot(temp2.nper, temp2.modelled, color=nc, label=f'{n.capitalize()} modelled')
+        plot_hds_regular_locator(ax_loc, {n: nc})
+        ax.set_title(f'{n.capitalize()} regular year hds')
+        ax.set_xlabel('Week of year')
+        ax.set_ylabel('Weekly mean Head (m)')
+        ax.legend()
+        fig.tight_layout()
+        fig.savefig(plot_dir.joinpath(f'hds_regyear_{n}.png'))
         plt.close(fig)
 
     # river observations
@@ -333,7 +369,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
             continue
         ax.bar(i, temp.loc[f'{k}_IN'], color=c, label=k.lower().capitalize())
         ax.bar(i, temp.loc[f'{k}_OUT'] * -1, color=c)
-    #ax.set_yscale('symlog')
+    # ax.set_yscale('symlog')
     ax.set_xticks([])
     ax.set_xticklabels([])
     ax.axhline(0, color='k')
@@ -450,7 +486,8 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
 if __name__ == '__main__':
     t = time.time()
-    process_model_output('/home/matt_dumont/Downloads/beopest_2022_10_21/agent00',
-                         '/home/matt_dumont/Downloads/beopest_2022_10_21/agent00/opt_model.hds',
+    test_hds = Path('/home/matt_dumont/unbacked/hawea/structure_v2/increase_steps/base_model/opt_model.hds')
+    process_model_output(test_hds.parent,
+                         test_hds,
                          plot=True)
     print(f'took {time.time() - t}s to process output')

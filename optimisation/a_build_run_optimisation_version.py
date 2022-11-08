@@ -5,7 +5,10 @@ on: 1/11/22
 
 # this allows testing multiple paramters sets/structures quickly, use git branches for some of this.
 from pathlib import Path
-from optimisation.model_utils_for_forward_run import _get_param_data
+
+import pandas as pd
+
+from optimisation.model_utils_for_forward_run import _get_param_data, read_param_data
 from project_base import unbacked_dir
 import shutil
 import matplotlib.pyplot as plt
@@ -77,7 +80,7 @@ def recalc_param_targets():
     get_rch_pilot_point_locations(recalc=True)
 
 
-def build_test_model(model_ws, notes, recalc=True):
+def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
     from targets_and_sensitive_sites.model_output import process_model_output
     from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 
@@ -92,6 +95,13 @@ def build_test_model(model_ws, notes, recalc=True):
         f.write(notes)
 
     param_data = _get_param_data()
+    if start_param_vals is not None:
+        assert isinstance(start_param_vals, dict)
+        all_params = param_data.loc[:, 'name']
+        assert len(all_params) == len(pd.unique(all_params))
+        assert set(all_params) == set(start_param_vals.keys())
+        start_vals = [start_param_vals[k] for k in all_params]
+        param_data.loc[:, 'start'] = start_vals
     param_data.to_csv(model_ws.joinpath('parameters.dat'), sep='\t', header=False, index=False)
 
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws)
@@ -114,18 +124,47 @@ def build_test_model(model_ws, notes, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'up_init_kh'
-branch = 'structure_v2'
+mversion = 'init_structure_v4'
+previous_mversion = 'up_init_kh'
+branch = 'structure_v4'
+previous_branch = 'structure_v2'
+# todo to use previous parameters, put file here, else None
+param_file = None
+notes = f"""
+set nsteps to 7, add annual mean high frequency targets 
+"""
+
+recalc = True
+build_model = True
+build_pest = True
+safemode = True
+
+# todo fill above here
+
+if param_file is not None:
+    start_param = read_param_data(parameter_file=param_file,
+                                  return_individual=False,
+                                  format='pest')
+    str_sps = '\n'.join([f'* {k}: {v}' for k, v in start_param.items()])
+else:
+    start_param = None
+    str_sps = 'n/a'
+
 test_notes = f"""
-name: {mversion}
+mversion = {mversion}
 branch: {branch}
-previous optimisation: structure_v2_init
-same as structure_v2_init, but set kh start to 30, allow rch to go down to .7
+previous optimisation: {previous_mversion}
+previous branch: {previous_branch}
+
+{notes}
+
+unique start params from: {param_file}
+unique start prams: 
+{str_sps}
+
 """
 if __name__ == '__main__':
-
     # todos for current version
-    # todo run, look over pre_optimisation_overviews
     # todo look at river stage interpolation, particularly at the clutha near the bottom.
     # todo remove near river abstraction... its problematic and stopping the river conductnace from changing
     # todo consider making a new hds group (problematic vs non-problematic regular)
@@ -134,22 +173,17 @@ if __name__ == '__main__':
     #   elevation between the two are 5 m different  all_wells.loc[['g40_0367', 'g40_0120']].transpose()
     #   might be fine???
 
-    recalc = False
-    build_model = True
-    build_pest = True
-    safemode = True
-
     test_path = unbacked_dir.joinpath(branch, mversion, 'base_model')
-    test_path.parent.mkdir(exist_ok=True)
+    test_path.parent.mkdir(exist_ok=True, parents=True)
     # build base model
     if build_model:
-        build_test_model(model_ws=test_path, notes=test_notes, recalc=recalc)
+        build_test_model(model_ws=test_path, start_param_vals=start_param, notes=test_notes, recalc=recalc)
 
     # build pest
     if build_pest:
         from optimisation.build_optimisation import raw_pest, BeopestManager
 
-        pdir = unbacked_dir.joinpath(mversion, 'Optimisations')
+        pdir = unbacked_dir.joinpath(branch, mversion, 'Optimisations')
 
         if pdir.exists() and safemode:
             temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
@@ -160,28 +194,24 @@ if __name__ == '__main__':
                 shutil.rmtree(fn)
             else:
                 fn.unlink()
-        pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50,
-                             model_template_dir=test_path)
+        pest_file, pst = raw_pest(name='opt', pst_dir=pdir, noptmax=100,
+                                  model_template_dir=test_path, start_param_vals=start_param)
         man = BeopestManager(
             pest_file=pest_file,
             num_cores={
-                '100.124.148.71': None,
+                '100.124.148.71': 4,
                 '100.121.150.68': None,
             },
             base_path={
                 '100.124.148.71': None,
-                '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(pdir.name),
+                '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(
+                    pdir.relative_to(unbacked_dir)),
             },
         )
         man.write_beopest_run_manager()
+        man.write_pest_check_sh(pst, test_parfiles=[pdir.joinpath('trial.par')])
         # copy across version and notes
         with open(pdir.joinpath('1_opt_notes_version.txt'), 'w') as f:
             f.write(f'version = {test_path.name}\n')
             f.write(test_notes)
-
-    # todo thoughts after first round:
-    #  I need to see what is causing the model to fall over as it is not suitably optimised
-    #  I should consider removing some of near river pumping wells as I think this may be causing a lot of my challenges
-    #  carpet drains in mangawera, talk to Jens about streams
-
-# todo time for optimisation???
+        print(f'pest files written, pest dir: {pdir}')

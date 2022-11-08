@@ -49,7 +49,8 @@ def test_times():
 def build_initial_model(model_name, model_ws,
                         exe_name='mfnwt', run_model=False):
     t = time.time()
-    oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
+    oc_spd = {(0, 0): ['save head', 'save budget']}
+    oc_spd.update({(p, 6): ['save head', 'save budget'] for p in tdis.pers[1:]})
     write_base_param_file(outdir=model_ws)
     # keynote other steps if I end up with them
     build_run_model(

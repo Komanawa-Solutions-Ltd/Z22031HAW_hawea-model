@@ -10,4 +10,4 @@ git reset --hard origin/Z22031HAW_hawea-model
 
 cd ~/PycharmProjects/Z22031HAW_hawea-model
 git fetch --all
-git reset --hard origin/structure_v2  # todo up date this
+git reset --hard origin/structure_v4  # todo up date this

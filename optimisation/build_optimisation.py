@@ -142,7 +142,7 @@ def set_control_data(pst, noptmax):
     # end hack
 
 
-def set_parameter_data_groups(pst):
+def set_parameter_data_groups(pst, start_param_vals):
     assert isinstance(pst, pyemu.Pst)
     # set tranformation
     # sy, hill, race = none; kh, riv = log
@@ -153,7 +153,13 @@ def set_parameter_data_groups(pst):
     param_data = _get_param_data().set_index('name')
     # set inital values, lower, upper bounds
     all_params = pst.parameter_data.index
-    pst.parameter_data.loc[all_params, 'parval1'] = param_data.loc[all_params, 'start']
+    if start_param_vals is None:
+        start_vals = param_data.loc[all_params, 'start']
+    else:
+        assert isinstance(start_param_vals, dict)
+        assert set(all_params) == set(start_param_vals.keys())
+        start_vals = [start_param_vals[k] for k in all_params]
+    pst.parameter_data.loc[all_params, 'parval1'] = start_vals
     pst.parameter_data.loc[all_params, 'parlbnd'] = param_data.loc[all_params, 'low']
     pst.parameter_data.loc[all_params, 'parubnd'] = param_data.loc[all_params, 'up']
     pst.parameter_data.loc[all_params, 'pargp'] = all_params.str.split('_').str.get(0)
@@ -184,7 +190,7 @@ def set_obs_data(pst, obs_path):
     assert isinstance(pst, pyemu.Pst)
     base_obs = _get_base_obs(obs_path).set_index('name')
     all_obs = pst.observation_data.index
-    pst.observation_data.loc[:, 'obgnme'] = base_obs.loc[all_obs, 'group'].str.split('_').str.get(0)
+    pst.observation_data.loc[:, 'obgnme'] = base_obs.loc[all_obs, 'group']
     pst.observation_data.loc[:, 'obsval'] = base_obs.loc[all_obs, 'measured']
 
     # keynote group weighting happens here
@@ -193,24 +199,24 @@ def set_obs_data(pst, obs_path):
     # double impact of single_3 relative to single_1
     pst.observation_data.loc[base_obs.loc[all_obs, 'group'] == 'single_3', 'weight'] *= 2
 
-    # increase weights on normals near river
-    near_river_reg = ['g40_0041', 'g40_0416']
-    fac = 10
-    for r in near_river_reg:
-        pst.observation_data.loc[pst.observation_data.obsnme.str.contains(r), 'weight'] *= 1 / fac
-
     # normalise weights by group totals  (total weight sums to 1) for each group
     weight_totals = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight'].to_dict()
     for g in pst.nnz_obs_groups:
         pst.observation_data.loc[pst.observation_data.obgnme == g, 'weight'] *= 1 / weight_totals[g]
 
     # increase weight of specific groups
-    group_wts = {
-        'regular': 25,
+    group_wts = {  # todo set weights for groups!, currently set for regular
+        'rwh_hf': 25,
+        'rwh_hf_riv': 25,
+        'h_hf': 25,
+        'h_hf_riv': 25,
+        'h_lf': 25,
         'riv': 5e-4,
-        'piezo': 5,
-        'single': 1,
+        'h_piezo': 5,
+        'h_single_1': 1,
+        'h_single_3': 1,
     }
+    assert set(group_wts.keys()) == set(pst.observation_data.loc[:, 'obgnme'])
     group_wts_summary = pd.Series(group_wts)
 
     for g in pst.nnz_obs_groups:
@@ -231,7 +237,8 @@ def hack_for_absparmax(file):
 
 
 def raw_pest(name, pst_dir, noptmax,
-             model_template_dir=default_output_path.parent):
+             model_template_dir=default_output_path.parent,
+             start_param_vals=None):
     """
 
     :param name: name for the pest object  e.g. {name}.pst
@@ -253,9 +260,13 @@ def raw_pest(name, pst_dir, noptmax,
                        0:PEST will not estimate parameters, nor even calculate a Jacobian matrix. Instead it will
                          terminate execution after just one model run.
     :param model_template_dir: path to the model direcory that holds the base template data
+    :param start_param_vals: dictionary of start parameter values to apply (e.g. from previous pest run).  It is
+                             assumed that changes in parameter limits requires an optimisation re-start., but this
+                             facilitates changes in weighting, numopt, and other control options midway through a
+                             pest optimisation
     :return:
     """
-    pst_dir.mkdir(exist_ok=True)
+    pst_dir.mkdir(exist_ok=True, parents=True)
     obs_template_path = model_template_dir.joinpath('observations.dat')
     # make parameter files
     input_files, tpl_files = make_template_and_infiles(pst_dir)
@@ -281,7 +292,7 @@ def raw_pest(name, pst_dir, noptmax,
     # No svd assist
 
     # add parameter details
-    set_parameter_data_groups(pst)
+    set_parameter_data_groups(pst, start_param_vals)
 
     # add observation details
     group_wt_summary = set_obs_data(pst, obs_template_path)
@@ -312,16 +323,7 @@ def raw_pest(name, pst_dir, noptmax,
         f.write('single point\n')
         trial_data.to_csv(f, sep='\t', header=False)
 
-    # todo create pest check bash file
-    write_pest_check_sh(pst_dir, pstname=name, insfiles=ins_files, modfiles=output_files,
-                        templates=tpl_files, test_parfiles=[pst_dir.joinpath('trial.par')]
-
-                        )
-    # run pestcheck
-    # got warning, It appears that the PEST control file contains a "rsi" section. but I don't think this will impact anything
-    # passed IN Scheck'
-    # passed tempchek
-    return pest_file
+    return pest_file, pst
 
 
 def determine_max_str_size():
@@ -336,29 +338,6 @@ def determine_max_str_size():
     print('line lengths')
     print(pd.Series(line_len).describe())
     shutil.rmtree(tempdir)
-
-
-def write_pest_check_sh(pst_dir, pstname, insfiles, modfiles, templates, test_parfiles):
-    """
-
-    :param pst_dir: pest directory
-    :param pstname: name of the pest optimisation
-    :param insfiles: instruction files
-    :param modfiles: model output file for reading
-    :param templates: template files
-    :param test_parfiles: test parameter files
-    :return:
-    """
-    assert isinstance(pst_dir, Path)
-    outfile = pst_dir.joinpath('0_pest_check_results')
-    outfile.unlink(missing_ok=True)
-    with open(pst_dir.joinpath('0_run_pest_checks.sh'), 'w') as f:
-        f.write(f'pestchek {pstname} &> {outfile.name}\n')
-        for infile, mod_outfile in zip(insfiles, modfiles):
-            f.write(f'inschek {Path(infile).name} {Path(mod_outfile).name} &>> {outfile.name}\n')
-        for tempfile, test_parfile in zip(templates, test_parfiles):
-            modfile = pst_dir.joinpath(f'{Path(tempfile).name}.tempcheck.dat')
-            f.write(f'tempchek {Path(tempfile).name} {Path(modfile).name} {test_parfile.name} &>> {outfile}\n')
 
 
 if __name__ == '__main__':

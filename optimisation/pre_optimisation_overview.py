@@ -770,7 +770,7 @@ def make_all_preopt(save):
 
 if __name__ == '__main__':
     save = True
-    for extension in ['.pdf', '.png']:
+    for extension in ['.png']:
         if extension == '.png':
             save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_png')
         elif extension == '.pdf':

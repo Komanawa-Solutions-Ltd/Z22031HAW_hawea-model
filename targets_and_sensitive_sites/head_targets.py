@@ -18,6 +18,8 @@ from targets_and_sensitive_sites.get_raw_target_data import get_single_target_da
 from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
 from model_build.zones import get_model_zones
 
+base_regular_groupnames = ['h_hf', 'h_hf_riv', 'h_lf']  # ensures coheriance across functions
+
 
 def get_single_head_targets():
     all_wells = get_single_target_data()
@@ -236,30 +238,37 @@ def get_all_hds_targets(tdis, recalc=False):
     need_keys = ['k', 'i', 'j', 'use_datetime', 'head', 'group', 'name']
     all_head_targets = []
     piezo = get_2011_piezo_survey(recalc=recalc).rename(columns={'Site': 'name'})
-    piezo.loc[:, 'name'] = piezo.loc[:, 'name'].str.replace('/', '_').str.replace('bore','')
-    piezo.loc[:, 'group'] = 'piezo'
+    piezo.loc[:, 'name'] = piezo.loc[:, 'name'].str.replace('/', '_').str.replace('bore', '')
+    piezo.loc[:, 'group'] = 'h_piezo'
     all_head_targets.append(piezo.loc[:, need_keys])
 
     single = get_single_head_targets().rename(columns={'well_name': 'name'})
-    single.loc[:, 'group'] = 'single_' + single.quality_code.astype(str)
+    single.loc[:, 'group'] = 'h_single_' + single.quality_code.astype(str)
     all_head_targets.append(single.loc[:, need_keys])
 
     low = get_low_freq_head_targets(*tdis.date_limits, 'W')
-    high = get_high_freq_head_targets(*tdis.date_limits, 'W')
+    all_high = get_high_freq_head_targets(*tdis.date_limits, 'W')
+    high_near_riv = all_high.loc[:, ['g40_0041', 'g40_0416']]
+    high_far_riv = all_high.loc[:, ['g40_0367', 'g40_0366', 'g40_0415']]
 
     all_wells = get_all_wells()
-    regular = pd.merge(low, high, right_index=True, left_index=True, how='outer')
-    regular.index.name = 'use_datetime'
-    for k in regular.columns:
-        temp = pd.DataFrame(regular.loc[:, k]).reset_index().dropna()
-        temp.rename(columns={k: 'head'}, inplace=True)
-        i, j = all_wells.loc[k, ['i', 'j']]
-        temp.loc[:, 'name'] = k
-        temp.loc[:, 'k'] = 0
-        temp.loc[:, 'i'] = i
-        temp.loc[:, 'j'] = j
-        temp.loc[:, 'group'] = 'regular'
-        all_head_targets.append(temp)
+
+    regular_datasets = [high_near_riv, high_far_riv, low]
+    regular_groupnames = ['h_hf', 'h_hf_riv', 'h_lf']
+    assert regular_groupnames == base_regular_groupnames
+
+    for hdatset, group_name in zip(regular_datasets, regular_groupnames):
+        hdatset.index.name = 'use_datetime'
+        for k in hdatset.columns:
+            temp = pd.DataFrame(hdatset.loc[:, k]).reset_index().dropna()
+            temp.rename(columns={k: 'head'}, inplace=True)
+            i, j = all_wells.loc[k, ['i', 'j']]
+            temp.loc[:, 'name'] = k
+            temp.loc[:, 'k'] = 0
+            temp.loc[:, 'i'] = i
+            temp.loc[:, 'j'] = j
+            temp.loc[:, 'group'] = group_name
+            all_head_targets.append(temp)
     all_head_targets = pd.concat(all_head_targets).reset_index(drop=True)
     all_head_targets = all_head_targets.loc[all_head_targets.loc[:, 'head'].notna()]
 
@@ -324,6 +333,35 @@ def plot_hds_zone_locator(ax, colors_dict, default_zone='east'):
         handles.append(Patch(facecolor=c))
         labels.append(n.capitalize())
     ax.legend(handles, labels, loc='lower left')
+
+
+def get_annual_mean_head_targets(hds_df):
+    """
+
+    :param hds_df: from get_all_hds_targets(tdis)
+    :return:
+    """
+    assert isinstance(hds_df, pd.DataFrame)
+    hds_df = hds_df.copy(deep=True).loc[np.in1d(hds_df.group, base_regular_groupnames[0:-1])]
+
+    t = hds_df.name.str.split('_')
+    hds_df.loc[:, 'well_name'] = t.str.get(1) + '_' + t.str.get(2)
+    hds_df.loc[:, 'week'] = hds_df.use_datetime.dt.isocalendar().loc[:, 'week']
+    out = hds_df.groupby(['well_name', 'week']).agg({
+        'group': 'first',
+        'zone': 'first',
+        'head': 'mean',
+        'modelled': 'mean',
+    })
+    out = out.reset_index()
+    out.loc[:, 'nper'] = out.week * -1
+    out.loc[:, 'name'] = 'h_' + out.well_name + '_rw' + pd.Series([f'{e:02d}' for e in out.week])
+    out = out.replace({
+        'h_hf': 'rwh_hf',
+        'h_hf_riv': 'rwh_hf_riv',
+    })
+
+    return out
 
 
 if __name__ == '__main__':

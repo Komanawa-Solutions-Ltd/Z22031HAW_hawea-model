@@ -18,7 +18,7 @@ from model_tools.util_functions.list_file_utils import ListSolverInfo
 import py7zr
 
 
-def plot_opt(pest_dir, replot=False):
+def plot_opt(pest_dir, replot=False, plot_failure_points=True):
     base_plot_dir = Path(pest_dir).joinpath('Base_Optimisation_plots')
     if base_plot_dir.exists() and not replot:
         print('optimisation plots already present')
@@ -129,30 +129,31 @@ def plot_opt(pest_dir, replot=False):
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('parameter_norm_sy_kh.png'))
 
-    # location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
-    all_overs, all_itters = get_all_list_data(pest_dir, 50, 0)
+    if plot_failure_points:
+        # location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
+        all_overs, all_itters = get_all_list_data(pest_dir, 50, 0)
 
-    limits = [50, 100, 300, 500, 800]
-    for l in limits:
-        temp = all_overs.loc[all_overs.outer_iter >= l]
-        temp = temp.drop_duplicates(subset=['layer', 'row', 'column', 'nper', 'nstp'])
-        plt_data = temp.groupby(['layer', 'row', 'column']).count().outer_iter.reset_index()
-        fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
-        ax.scatter(*smt.convert_matrix_to_coords(plt_data.row, plt_data.column), s=plt_data.outer_iter, color='r')
+        limits = [50, 100, 300, 500, 800]
+        for l in limits:
+            temp = all_overs.loc[all_overs.outer_iter >= l]
+            temp = temp.drop_duplicates(subset=['layer', 'row', 'column', 'nper', 'nstp'])
+            plt_data = temp.groupby(['layer', 'row', 'column']).count().outer_iter.reset_index()
+            fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+            ax.scatter(*smt.convert_matrix_to_coords(plt_data.row, plt_data.column), s=plt_data.outer_iter, color='r')
+            fig.tight_layout()
+            fig.savefig(base_plot_dir.joinpath(f'more_than_{l}_outers.png'))
+
+        t = all_itters.loc[:, ['nper', 'outer_itts']].groupby('nper').describe().loc[:, 'outer_itts']
+        fig, ax = plt.subplots(figsize=(8, 10))
+        t.loc[:, ['min', 'mean', 'max']].plot(ax=ax)
+        ax.set_xlabel('nper')
+        ax.set_ylabel('outer iterations')
         fig.tight_layout()
-        fig.savefig(base_plot_dir.joinpath(f'more_than_{l}_outers.png'))
+        fig.savefig(base_plot_dir.joinpath('iterations_per_nper.png'))
+        t = t.sort_values('mean', ascending=False)
 
-    t = all_itters.loc[:, ['nper', 'outer_itts']].groupby('nper').describe().loc[:, 'outer_itts']
-    fig, ax = plt.subplots(figsize=(8, 10))
-    t.loc[:, ['min', 'mean', 'max']].plot(ax=ax)
-    ax.set_xlabel('nper')
-    ax.set_ylabel('outer iterations')
-    fig.tight_layout()
-    fig.savefig(base_plot_dir.joinpath('iterations_per_nper.png'))
-    t = t.sort_values('mean', ascending=False)
-
-    with open(base_plot_dir.joinpath('num_outer_itts.txt'), 'w') as f:
-        f.write(t.to_string())
+        with open(base_plot_dir.joinpath('num_outer_itts.txt'), 'w') as f:
+            f.write(t.to_string())
 
 
 def _dummy(x):
@@ -185,11 +186,11 @@ def get_all_list_data(pest_dir, outer, inner):
 
 if __name__ == '__main__':
     from project_base import unbacked_dir
-    from optimisation.a_build_run_optimisation_version import branch
 
-    re_plot = False
+    plot_failures = False  # keynote this can take a really long time with a long optimisation
+    re_plot = False  # keynote don't set this to True!
     pest_runs = unbacked_dir.joinpath(branch).glob('*/Optimisations')
 
     for d in pest_runs:
         print(f'plotting: {d}')
-        plot_opt(d, replot=re_plot)
+        plot_opt(d, replot=re_plot, plot_failure_points=False)

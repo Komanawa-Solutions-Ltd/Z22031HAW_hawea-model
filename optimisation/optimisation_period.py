@@ -21,7 +21,7 @@ tdis = TimeDis(
     tsmult=1.2,
     steady=steady,
     dates=indates,
-    nstp=1,
+    nstp=[1 if e else 7 for e in steady],
     tunit='day',
     check_dates_in_order=False
 )

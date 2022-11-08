@@ -37,8 +37,9 @@ def _get_param_data():
     return param_data
 
 
-def read_param_data(model_ws, parameter_file=None, format='model'):
+def read_param_data(model_ws=None, parameter_file=None, format='model', return_individual=True):
     if parameter_file is None:
+        assert model_ws is not None
         parameter_file = model_ws.joinpath('parameters.dat')
 
     if format == 'model':
@@ -48,17 +49,20 @@ def read_param_data(model_ws, parameter_file=None, format='model'):
     else:
         raise ValueError('bad format for parameter file')
 
-    kh_param = {k: data[f'kh_{k}'] for k in get_inital_kh().keys()}
-    sy_param = {k: data[f'sy_{k}'] for k in get_inital_sy().keys()}
-    riv_params = {k: data[f'riv_{k}'] for k in get_initial_riv_conductance().keys()}
-    hill_param = {k: data[f'hill_{k}'] for k in get_hillslope_multiplier().keys()}
-    race_param = {k: data[f'race_{k}'] for k in get_race_multiplier().keys()}
-    rch_param = {k: data[f'rch_{k}'] for k in get_initial_rch_mult().keys()}
+    if return_individual:
+        kh_param = {k: data[f'kh_{k}'] for k in get_inital_kh().keys()}
+        sy_param = {k: data[f'sy_{k}'] for k in get_inital_sy().keys()}
+        riv_params = {k: data[f'riv_{k}'] for k in get_initial_riv_conductance().keys()}
+        hill_param = {k: data[f'hill_{k}'] for k in get_hillslope_multiplier().keys()}
+        race_param = {k: data[f'race_{k}'] for k in get_race_multiplier().keys()}
+        rch_param = {k: data[f'rch_{k}'] for k in get_initial_rch_mult().keys()}
 
-    return kh_param, sy_param, riv_params, hill_param, race_param, rch_param
+        return kh_param, sy_param, riv_params, hill_param, race_param, rch_param
+    else:
+        return data
 
 
-def write_base_param_file(outdir):  # todo
+def write_base_param_file(outdir):
     input_file = outdir.joinpath('parameters.dat')
     param_data = _get_param_data()
     param_data.to_csv(input_file, sep='\t', header=False, index=False)
@@ -68,7 +72,8 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
     exe_name = 'mfnwt'
     run_model = True
     t = time.time()
-    oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
+    oc_spd = {(1, 0): ['save head', 'save budget']}
+    oc_spd.update({(p, 4) for p in tdis.pers[1:]})  # todo in future could make the oc data to save every step then mean of all
     # keynote other steps if I end up with them
     sy = interpolate_sy_pilot_points(sy_param)
     out = build_model(smt=smt,
@@ -99,3 +104,4 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       t=t,
                       noprint=True)
     print(out)
+    return out
