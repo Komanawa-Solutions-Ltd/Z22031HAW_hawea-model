@@ -31,6 +31,12 @@ how to manage dry cells... weight misfit higher???
 
 """
 
+import inspect
+
+
+def myself():
+    return inspect.stack()[1][3]
+
 
 def generate_outputs(hds_path, cbc_path):
     all_hds = flopy.utils.HeadFile(hds_path).get_alldata()
@@ -58,13 +64,9 @@ def generate_outputs(hds_path, cbc_path):
     # extract riv targets
     riv = get_hawea_gain_loss_nper(tdis).reset_index()
     riv_locs = get_riv_target_locs()
-    # keynote change if multiple steps
-    pers = riv.nper.unique()
+    # keynote change if saving multiple steps
     all_riv = np.array(flopy.utils.CellBudgetFile(cbc_path).get_data(text='RIVER LEAKAGE', full3D=True))[:, 0]
 
-    for per in pers:
-        riv_leak = flopy.utils.CellBudgetFile(cbc_path).get_data(kstpkper=(0, per), text='RIVER LEAKAGE', full3D=True)
-        all_riv[per] = np.array(riv_leak[0])[0]
     for i, target_key, nper in riv.loc[:, ['target_key', 'nper']].itertuples(True, None):
         riv.loc[i, 'modelled'] = all_riv[nper][riv_locs[target_key]].sum()
 
@@ -92,30 +94,8 @@ def generate_outputs(hds_path, cbc_path):
     return out_obs, all_riv_obs, dry_hds.sum(axis=(0, 1)), flooded_cells.sum(axis=(0, 1)), all_hds
 
 
-def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file,
-                    plot_transient_budget=False, plot_dir=None):
-    assert isinstance(model_ws, Path)
-    if plot_dir is None:
-        plot_dir = model_ws.joinpath('plots')
-    plot_dir.mkdir(exist_ok=True)
-    ibound = smt.get_no_flow(0)
-    hds_groups = ['h_piezo', 'h_single_3', 'h_single_1', 'regular']
-    hds_colors = get_colors(hds_groups)
-    reg_colormap = 'tab10'
-
-    hds_obs = out_obs.loc[np.in1d(out_obs.group, hds_groups + base_regular_groupnames)]
-    mapper = {'h_piezo': 'h_piezo',
-              'h_single_3': 'h_single_3',
-              'h_single_1': 'h_single_1'}
-    mapper.update({k: 'regular' for k in base_regular_groupnames})
-    hds_obs.loc[:, 'group'] = hds_obs.loc[:, 'group'].replace(mapper)
-    hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
-    hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.loc[:, 'nper'])
-    hds_obs.loc[:, 'week'] = hds_obs.date.dt.isocalendar().loc[:, 'week']
-    regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
-    regular_wells = sorted(regular_hds.well_name.unique())
-    regular_colors = get_colors(regular_wells, reg_colormap)
-
+def _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells):
+    print(myself())
     # plot hds (ss, min, max, range)
     all_plt_hds = {
         'Steady state heads': all_hds[0, 0],
@@ -148,10 +128,11 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     fig.savefig(plot_dir.joinpath('flooded_cells.png'))
     plt.close(fig)
 
+
+def _plot_all_riv_obs(all_riv_obs, plot_dir, riv_keys, riv_colors):
+    print(myself())
     # plot all river observations
     fig, axs = plt.subplots(4, sharex=True, figsize=(12, 9))
-    riv_keys = all_riv_obs.keys()
-    riv_colors = get_colors(riv_keys)
     for ax, k, c in zip(axs, riv_keys, riv_colors):
         ax.plot(all_riv_obs.index, all_riv_obs.loc[:, k], color=c, marker='.', label=k)
         ax.axhline(0, ls=':', color='k')
@@ -163,8 +144,10 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     fig.savefig(plot_dir.joinpath('all_river_fluxes.png'))
     plt.close(fig)
 
-    # plot observations/objectiv function
 
+def _plot_hds_modelled_v_measured(hds_groups, hds_colors, hds_obs, plot_dir, regular_wells, regular_colors, zones,
+                                  zcolors):
+    print(myself())
     # all hds (color by group)
     fig, ax = plt.subplots(figsize=(9, 9))
     ax.set_aspect('equal')
@@ -181,8 +164,6 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     plt.close(fig)
 
     # all hds by group, color by zone/name
-    zones = hds_obs.zone.unique()
-    zcolors = get_colors(zones)
     for g in hds_groups:
         fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
         temp = hds_obs.loc[hds_obs.group == g]
@@ -207,6 +188,10 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         fig.savefig(plot_dir.joinpath(f'hds_{g}_mod_v_meas.png'))
         plt.close(fig)
 
+
+def _plot_hds_temporal_residuals(hds_groups, hds_colors, hds_obs, plot_dir, regular_wells, regular_colors, zones,
+                                 zcolors):
+    print(myself())
     # residuals by time(color by group)
     fig, ax = plt.subplots(figsize=(9, 9))
     for g, c in zip(hds_groups, hds_colors):
@@ -246,6 +231,9 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         fig.savefig(plot_dir.joinpath(f'hds_{g}_residual_time.png'))
         plt.close(fig)
 
+
+def _plot_regular_hds_closeup(regular_wells, regular_colors, regular_hds, plot_dir):
+    print(myself())
     # extra plots for regular heads
     # plot each regular heads
     for n, nc in zip(regular_wells, regular_colors):
@@ -263,20 +251,15 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         fig.savefig(plot_dir.joinpath(f'hds_closeup_{n}.png'))
         plt.close(fig)
 
-    # plot annual average data
 
-    aaverage_data = out_obs.loc[out_obs.group.str.contains('rwh_')]
-    aaverage_data.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in aaverage_data.loc[:, 'name']]
-    aaverage_data.loc[:, 'nper'] *= -1
-    pass
-
-    # modelled vs measured plot
+def _plot_aaverage_modelled_vs_measured(aaverage_data, regular_wells, regular_colors, plot_dir):
+    print(myself())
     fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
     temp = aaverage_data
     ax.set_aspect('equal')
     for n, nc in zip(regular_wells, regular_colors):
-            temp2 = temp.loc[temp.name.str.contains(n)]
-            ax.scatter(temp2.modelled, temp2.measured, color=nc, label=n.capitalize())
+        temp2 = temp.loc[temp.name.str.contains(n)]
+        ax.scatter(temp2.modelled, temp2.measured, color=nc, label=n.capitalize())
     plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(regular_wells, regular_colors)})
     ax.set_title(f'Normal year hds measured vs modelled')
     ax.set_xlabel('Modelled (m)')
@@ -287,18 +270,21 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     fig.savefig(plot_dir.joinpath(f'hds_normal_year_mod_v_meas.png'))
     plt.close(fig)
 
+
+def _plot_aaverage_temporal(regular_wells, regular_colors, aaverage_data, plot_dir):
+    print(myself())
     # full dataset plots
     fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
     temp = aaverage_data
     ax.set_aspect('equal')
     for n, nc in zip(regular_wells, regular_colors):
-            temp2 = temp.loc[temp.name.str.contains(n)]
-            ax.scatter(temp2.nper, temp2.measured, color=nc, label=n.capitalize())
+        temp2 = temp.loc[temp.name.str.contains(n)]
+        ax.scatter(temp2.nper, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+        ax.plot(temp2.nper, temp2.modelled, color=nc, label=f'{n.capitalize()} modelled')
     plot_hds_regular_locator(ax_loc, {n: nc for n, nc in zip(regular_wells, regular_colors)})
-    ax.set_title(f'Normal year hds measured vs modelled')
+    ax.set_title(f'Normal year hds temporal')
     ax.set_xlabel('Week of year')
     ax.set_ylabel('Head (m)')
-    plot_1_to_1(ax, ls=':', c='k', label='1:1 line')
     ax.legend()
     fig.tight_layout()
     fig.savefig(plot_dir.joinpath(f'hds_normal_year_all.png'))
@@ -306,7 +292,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
 
     # individaul plots
     for n, nc in zip(regular_wells, regular_colors):
-        if n not in aaverage_data.well_name:
+        if n not in aaverage_data.well_name.unique():
             continue
         fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
         temp2 = aaverage_data.loc[aaverage_data.well_name == n].sort_values('nper')
@@ -321,6 +307,9 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
         fig.savefig(plot_dir.joinpath(f'hds_regyear_{n}.png'))
         plt.close(fig)
 
+
+def _plot_riv_obs(riv_keys, riv_colors, out_obs, plot_dir):
+    print(myself())
     # river observations
     fig, ax = plt.subplots(figsize=(9, 9))
     for n, c in zip(riv_keys, riv_colors):
@@ -354,6 +343,9 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     fig.savefig(plot_dir.joinpath('all_riv_targets.png'))
     plt.close(fig)
 
+
+def _plot_budget(list_file, plot_dir, plot_transient_budget):
+    print(myself())
     # pull out budgets and plot
     bud_names = [
         'STORAGE', 'CONSTANT_HEAD', 'WELLS', 'RIVER_LEAKAGE', 'HEAD_DEP_BOUNDS', 'RECHARGE', 'TOTAL'
@@ -424,6 +416,63 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
             plt.close(fig)
 
 
+def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file,
+                    plot_transient_budget=False, plot_dir=None):
+    assert isinstance(model_ws, Path)
+
+    # data management
+    if plot_dir is None:
+        plot_dir = model_ws.joinpath('plots')
+    plot_dir.mkdir(exist_ok=True)
+    ibound = smt.get_no_flow(0)
+    hds_groups = ['h_piezo', 'h_single_3', 'h_single_1', 'regular']
+    hds_colors = get_colors(hds_groups)
+    reg_colormap = 'tab10'
+
+    hds_obs = out_obs.loc[np.in1d(out_obs.group, hds_groups + base_regular_groupnames)]
+    mapper = {'h_piezo': 'h_piezo',
+              'h_single_3': 'h_single_3',
+              'h_single_1': 'h_single_1'}
+    mapper.update({k: 'regular' for k in base_regular_groupnames})
+    hds_obs.loc[:, 'group'] = hds_obs.loc[:, 'group'].replace(mapper)
+    hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
+    hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.loc[:, 'nper'])
+    hds_obs.loc[:, 'week'] = hds_obs.date.dt.isocalendar().loc[:, 'week']
+    regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
+    aaverage_data = out_obs.loc[out_obs.group.str.contains('rwh_')]
+    aaverage_data.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in aaverage_data.loc[:, 'name']]
+    aaverage_data.loc[:, 'nper'] *= -1
+
+    # names and colors
+    regular_wells = sorted(regular_hds.well_name.unique())
+    regular_colors = get_colors(regular_wells, reg_colormap)
+    zones = hds_obs.zone.unique()
+    zcolors = get_colors(zones)
+    riv_keys = all_riv_obs.keys()
+    riv_colors = get_colors(riv_keys)
+
+    ## Plotting ##
+    _plot_aaverage_modelled_vs_measured(aaverage_data, regular_wells, regular_colors, plot_dir)
+
+    _plot_aaverage_temporal(regular_wells, regular_colors, aaverage_data, plot_dir)
+
+    _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells)
+
+    _plot_all_riv_obs(all_riv_obs, plot_dir, riv_keys, riv_colors)
+
+    _plot_hds_modelled_v_measured(hds_groups, hds_colors, hds_obs, plot_dir, regular_wells, regular_colors, zones,
+                                  zcolors)
+
+    _plot_hds_temporal_residuals(hds_groups, hds_colors, hds_obs, plot_dir, regular_wells, regular_colors, zones,
+                                 zcolors)
+
+    _plot_regular_hds_closeup(regular_wells, regular_colors, regular_hds, plot_dir)
+
+    _plot_riv_obs(riv_keys, riv_colors, out_obs, plot_dir)
+
+    _plot_budget(list_file, plot_dir, plot_transient_budget)
+
+
 def modflow_converged(list_path):
     """
     returned convergence of the model
@@ -486,7 +535,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
 if __name__ == '__main__':
     t = time.time()
-    test_hds = Path('/home/matt_dumont/unbacked/hawea/structure_v2/increase_steps/base_model/opt_model.hds')
+    test_hds = Path('/home/matt_dumont/unbacked/hawea/structure_v4/init_structure_v4/base_model/opt_model.hds')
     process_model_output(test_hds.parent,
                          test_hds,
                          plot=True)
