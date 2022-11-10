@@ -135,10 +135,11 @@ notes = f"""
 as per v4 but remove near river pumping
 """
 
-recalc = True
-build_model = True
+recalc = False
+build_model = False
 build_pest = True
 safemode = True
+local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
 
 # todo fill above here
 
@@ -198,7 +199,7 @@ if __name__ == '__main__':
         man = BeopestManager(
             pest_file=pest_file,
             num_cores={
-                '100.124.148.71': 4,
+                '100.124.148.71': local_cores,
                 '100.121.150.68': None,
             },
             base_path={
