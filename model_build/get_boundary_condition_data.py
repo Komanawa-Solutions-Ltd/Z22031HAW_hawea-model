@@ -64,6 +64,7 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
         pumping_flow = get_historical_pumping_data(*tdis.date_limits)
         pumping_flow *= -1
         pumping_flow.fillna(0, inplace=True)
+        pumping_flow = pumping_flow.loc[:, pumping_locs.index]
         pumping_spd = tdis.map_data_locations(pumping_locs, {'flux': pumping_flow},
                                               flopy.modflow.ModflowWel.get_default_dtype(),
                                               group_cells=True,
