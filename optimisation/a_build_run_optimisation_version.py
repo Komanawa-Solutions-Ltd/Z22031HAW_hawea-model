@@ -167,10 +167,8 @@ unique start prams:
 if __name__ == '__main__':
     # todos for current version
     # todo look at river stage interpolation, particularly at the clutha near the bottom.
-    # todo remove near river abstraction... its problematic and stopping the river conductnace from changing
-    # todo consider making a new hds group (problematic vs non-problematic regular)
-    # todo H_g40_0120  (mean c. 314m) is very close (1808m) to H_g40_0367 (mean 319)
     # todo could look at setting inital kh from scott (roughly)
+    # todo H_g40_0120  (mean c. 314m) is very close (1808m) to H_g40_0367 (mean 319)
     #   elevation between the two are 5 m different  all_wells.loc[['g40_0367', 'g40_0120']].transpose()
     #   might be fine???
 

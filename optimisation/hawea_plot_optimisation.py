@@ -58,7 +58,7 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
     # add from model tools
     plot_optimisation_and_extract_info(pest_dir=pest_dir, base_plot_dir=base_plot_dir)
 
-    # location of parameters at bound #todo not working right???, check
+    # location of parameters at bound # todo not working right???, check
     init_sy_param = get_inital_sy()
     init_kh_param = get_inital_kh()
     init_race_param = get_race_multiplier()
