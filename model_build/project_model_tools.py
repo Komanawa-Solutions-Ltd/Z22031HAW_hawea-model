@@ -20,7 +20,7 @@ sdp.mkdir(exist_ok=True)
 
 # keynote if this is true then the model build excludes all of the pumping in the "near_river" zone (near_river.shp)
 #  note the abstraction is also added to the river targets
-exclude_near_river_pumping = False
+exclude_near_river_pumping = True
 
 
 boundary_path = base_model_build_data_dir.joinpath('model_boundary.shp')
