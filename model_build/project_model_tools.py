@@ -18,6 +18,11 @@ temp_file_dir.mkdir(exist_ok=True)
 sdp = unbacked_dir.joinpath('sdp')
 sdp.mkdir(exist_ok=True)
 
+# keynote if this is true then the model build excludes all of the pumping in the "near_river" zone (near_river.shp)
+#  note the abstraction is also added to the river targets
+exclude_near_river_pumping = False
+
+
 boundary_path = base_model_build_data_dir.joinpath('model_boundary.shp')
 temp = gpd.read_file(boundary_path)
 ulx = np.floor(temp.bounds.loc[0, 'minx'])
