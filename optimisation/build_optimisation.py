@@ -206,16 +206,17 @@ def set_obs_data(pst, obs_path):
 
     # increase weight of specific groups
     group_wts = {
-        'rwh_hf': 100,
-        'rwh_hf_riv': 50,
+        'rwh_hf': 200,
+        'rwh_hf_riv': 20,
         'h_hf': 75,
-        'h_hf_riv': 30,
-        'h_lf': 30,
-        'riv': 5e-4,
+        'h_hf_riv': 10,
+        'h_lf': 20,
+        'riv': 5e-3,
         'h_piezo': 10,
         'h_single_1': 5,
         'h_single_3': 5,
     }
+
     assert set(group_wts.keys()) == set(pst.observation_data.loc[:, 'obgnme'])
     group_wts_summary = pd.Series(group_wts)
 

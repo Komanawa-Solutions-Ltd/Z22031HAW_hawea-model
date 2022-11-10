@@ -134,7 +134,7 @@ param_file = None
 notes = f"""
 as per v4 but remove near river pumping
 """
-noptmax=150
+noptmax = 150
 recalc = True
 build_model = True
 build_pest = True
