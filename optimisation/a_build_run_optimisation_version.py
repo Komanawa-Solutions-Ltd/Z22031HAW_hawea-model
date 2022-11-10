@@ -207,6 +207,14 @@ if __name__ == '__main__':
                 '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(
                     pdir.relative_to(unbacked_dir)),
             },
+            prepend_bash_commands={
+                '100.124.148.71': ['default'],
+                '100.121.150.68': [
+                    'default',
+                    "cd ~/PycharmProjects/modflow_tools_haw ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+                    f"cd ~/PycharmProjects/Z22031HAW_hawea-model ; git fetch --all ; git reset --hard origin/{branch}"
+                ]
+            }
         )
         man.write_beopest_run_manager()
         man.write_pest_check_sh(pst, test_parfiles=[pdir.joinpath('trial.par')])
