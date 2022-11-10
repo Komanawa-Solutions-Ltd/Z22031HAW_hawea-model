@@ -205,16 +205,16 @@ def set_obs_data(pst, obs_path):
         pst.observation_data.loc[pst.observation_data.obgnme == g, 'weight'] *= 1 / weight_totals[g]
 
     # increase weight of specific groups
-    group_wts = {  # todo set weights for groups!, currently set for regular
-        'rwh_hf': 25,
-        'rwh_hf_riv': 25,
-        'h_hf': 25,
-        'h_hf_riv': 25,
-        'h_lf': 25,
+    group_wts = {
+        'rwh_hf': 100,
+        'rwh_hf_riv': 50,
+        'h_hf': 75,
+        'h_hf_riv': 30,
+        'h_lf': 30,
         'riv': 5e-4,
-        'h_piezo': 5,
-        'h_single_1': 1,
-        'h_single_3': 1,
+        'h_piezo': 10,
+        'h_single_1': 5,
+        'h_single_3': 5,
     }
     assert set(group_wts.keys()) == set(pst.observation_data.loc[:, 'obgnme'])
     group_wts_summary = pd.Series(group_wts)
