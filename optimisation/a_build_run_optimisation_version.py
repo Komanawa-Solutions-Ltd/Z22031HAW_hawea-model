@@ -135,7 +135,7 @@ notes = f"""
 set nsteps to 7, add annual mean high frequency targets 
 """
 
-recalc = False
+recalc = True
 build_model = True
 build_pest = True
 safemode = True
