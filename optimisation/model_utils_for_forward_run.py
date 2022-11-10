@@ -73,7 +73,8 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
     run_model = True
     t = time.time()
     oc_spd = {(0, 0): ['save head', 'save budget']}
-    oc_spd.update({(p, 4): ['save head', 'save budget'] for p in tdis.pers[1:]})  # todo in future could make the oc data to save every step then mean of all
+    oc_spd.update({(p, 4): ['save head', 'save budget'] for p in
+                   tdis.pers[1:]})  # todo in future could make the oc data to save every step then mean of all
     # keynote other steps if I end up with them
     sy = interpolate_sy_pilot_points(sy_param)
     out = build_model(smt=smt,
@@ -82,11 +83,11 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       exe_name=exe_name,
                       model_name=model_name,
                       model_ws=model_ws,
-                      hk=interpolate_kh_pilot_points(kh_param),
+                      hk=np.repeat(interpolate_kh_pilot_points(kh_param),2,axis=0),
                       vka=vka,
                       layer_avg=0,
-                      ss=ss,
-                      sy=sy,
+                      ss=np.repeat(ss, 2, axis=0),
+                      sy=np.repeat(sy, 2, axis=0),
                       strt=get_starting_heads(),
                       chani=1,
                       rch=get_rch_data(tdis, rch_param),

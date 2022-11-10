@@ -125,14 +125,14 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_structure_v5'
-previous_mversion = 'init_structure_v4'
-branch = 'structure_v5'
-previous_branch = 'structure_v4'
+mversion = 'init_structure_v6'
+previous_mversion = 'init_structure_v5'
+branch = 'structure_v6'
+previous_branch = 'structure_v5'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-as per v4 but remove near river pumping
+as per 5 but with a 1m confined layer below the layer to see if this improves stability
 """
 
 recalc = False

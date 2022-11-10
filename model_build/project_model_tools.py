@@ -22,7 +22,6 @@ sdp.mkdir(exist_ok=True)
 #  note the abstraction is also added to the river targets
 exclude_near_river_pumping = True
 
-
 boundary_path = base_model_build_data_dir.joinpath('model_boundary.shp')
 temp = gpd.read_file(boundary_path)
 ulx = np.floor(temp.bounds.loc[0, 'minx'])
@@ -37,8 +36,8 @@ grid_space = 100  #
 cols = int(abs(ulx - lrx) // grid_space) + 1
 rows = int(abs(uly - lry) // grid_space) + 1
 
-layers = 1
-layer_type = [1]
+layers = 2
+layer_type = [1, 0]
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,
@@ -121,7 +120,7 @@ def no_flow():
     # remove camphill and the camphill moraine from the model
     camphill = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('camp_hill_moraine.shp'), 'id',
                                                      alltouched=True)
-    assert temp_smt.layers == 1
+    assert temp_smt.layers == 2
     ibound[0][np.isfinite(active)] = 1
     ibound[0][np.isfinite(camphill)] = 0
     # remove cameron hill
@@ -136,7 +135,7 @@ def no_flow():
     ibound[0][np.isfinite(sp_rm)] = 0
 
     np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound[0])
-    return ibound
+    return np.repeat(ibound, 2, axis=0)
 
 
 def get_lake_array(recalc=False):
@@ -283,10 +282,12 @@ def elv_calc():
     thick = top - bot
     bot[thick < 2] = top[thick < 2] - 2  # set min thickness to 2m
 
-    out = np.concatenate((top[np.newaxis], bot[np.newaxis]))
+    out = np.concatenate((top[np.newaxis], bot[np.newaxis], bot[np.newaxis] - 1))
     np.save(processed_model_build_data_dir.joinpath('elv_db.npy'), out)
     np.savetxt(processed_model_build_data_dir.joinpath('elv_db_top.txt'), out[0])
     np.savetxt(processed_model_build_data_dir.joinpath('elv_db_bot.txt'), out[1])
+    # keynote confined 1m thick to improve stability?
+    np.savetxt(processed_model_build_data_dir.joinpath('elv_db_bot2.txt'), out[2])
 
     return out
 
@@ -305,15 +306,24 @@ def get_bottom(recalc=False):
     return out
 
 
+def get_confined_bottom(recalc=False):
+    if recalc:
+        elv_calc()
+    out = np.loadtxt(processed_model_build_data_dir.joinpath('elv_db_bot2.txt'))
+    return out
+
+
 def get_elv_db(recalc=False):
-    return np.concatenate((get_top(recalc)[np.newaxis], get_bottom(recalc)[np.newaxis]), axis=0)
+    return np.concatenate((get_top(recalc)[np.newaxis],
+                           get_bottom(recalc)[np.newaxis],
+                           get_confined_bottom(recalc)[np.newaxis]), axis=0)
 
 
 def get_ibound(recalc=False):
     if recalc:
         no_flow()
     out = np.loadtxt(processed_model_build_data_dir.joinpath('ibound.txt'))
-    return out[np.newaxis]
+    return np.repeat(out[np.newaxis], 2, axis=0)
 
 
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
@@ -326,14 +336,14 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
 def get_starting_heads(recalc=False):
     save_path = processed_model_build_data_dir.joinpath('start_heads.txt')
     if save_path.exists() and not recalc:
-        return np.loadtxt(save_path)[np.newaxis]
+        return np.repeat(np.loadtxt(save_path)[np.newaxis], 2, axis=0)
     strt_hds = smt.get_tops()[0]
     scott_hds = smt.io.raster_to_array(proj_root.joinpath('scott_model/scott_model_files/scott_hds.tif'),
                                        'average')
     idx = scott_hds < strt_hds
     strt_hds[idx] = scott_hds[idx]
     np.savetxt(save_path, strt_hds)
-    return strt_hds[np.newaxis]
+    return np.repeat(strt_hds[np.newaxis], 2, axis=0)
 
 
 def data_checks():
