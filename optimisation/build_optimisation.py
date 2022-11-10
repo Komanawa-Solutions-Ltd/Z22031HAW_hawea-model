@@ -206,11 +206,11 @@ def set_obs_data(pst, obs_path):
 
     # increase weight of specific groups
     group_wts = {
-        'rwh_hf': 150,
+        'rwh_hf': 200,
         'rwh_hf_riv': 20,
         'h_hf': 75,
-        'h_hf_riv': 20,
-        'h_lf': 30,
+        'h_hf_riv': 10,
+        'h_lf': 20,
         'riv': 5e-3,
         'h_piezo': 10,
         'h_single_1': 5,

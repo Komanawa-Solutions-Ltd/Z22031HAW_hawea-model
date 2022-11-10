@@ -134,7 +134,7 @@ param_file = None
 notes = f"""
 as per 5 but with a 1m confined layer below the layer to see if this improves stability
 """
-noptmax=100
+noptmax = 100
 recalc = True
 build_model = True
 build_pest = True
