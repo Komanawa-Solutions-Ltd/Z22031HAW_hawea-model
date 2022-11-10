@@ -134,9 +134,9 @@ param_file = None
 notes = f"""
 as per v4 but remove near river pumping
 """
-
-recalc = False
-build_model = False
+noptmax=100
+recalc = True
+build_model = True
 build_pest = True
 safemode = True
 local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
@@ -194,7 +194,7 @@ if __name__ == '__main__':
                 shutil.rmtree(fn)
             else:
                 fn.unlink()
-        pest_file, pst = raw_pest(name='opt', pst_dir=pdir, noptmax=100,
+        pest_file, pst = raw_pest(name='opt', pst_dir=pdir, noptmax=noptmax,
                                   model_template_dir=test_path, start_param_vals=start_param)
         man = BeopestManager(
             pest_file=pest_file,
