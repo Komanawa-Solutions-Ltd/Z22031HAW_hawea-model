@@ -125,18 +125,18 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_structure_v5'
-previous_mversion = 'init_structure_v4'
-branch = 'structure_v5'
-previous_branch = 'structure_v4'
+mversion = 'init_structure_v7'
+previous_mversion = 'init_structure_v5'
+branch = 'structure_v7'
+previous_branch = 'structure_v5'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
 as per v4 but remove near river pumping
 """
-
-recalc = False
-build_model = False
+noptmax=150
+recalc = True
+build_model = True
 build_pest = True
 safemode = True
 local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
@@ -194,7 +194,7 @@ if __name__ == '__main__':
                 shutil.rmtree(fn)
             else:
                 fn.unlink()
-        pest_file, pst = raw_pest(name='opt', pst_dir=pdir, noptmax=100,
+        pest_file, pst = raw_pest(name='opt', pst_dir=pdir, noptmax=noptmax,
                                   model_template_dir=test_path, start_param_vals=start_param)
         man = BeopestManager(
             pest_file=pest_file,

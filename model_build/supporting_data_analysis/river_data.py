@@ -298,6 +298,7 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    data_checks()
     _print_flowlengths()
     t = get_river_loc_data(True)
     smt.get_elv_db(recalc=True)

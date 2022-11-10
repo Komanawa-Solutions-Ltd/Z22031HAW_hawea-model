@@ -62,25 +62,30 @@ def covert_scott_df_to_reg(data: pd.DataFrame):
     idx = (data.i < rows) & (data.i >= 0) & (data.j >= 0) & (data.j < cols)
     return data.loc[idx]
 
+
 def run_scott():
     m = get_full_scott_model()
     m.change_model_ws(base_scott_dir.joinpath('run'))
-    m.exe_name='mfnwt'
+    m.exe_name = 'mfnwt'
     m.write_input()
     m.run_model()
+
 
 def plot_ibound():
     m = get_full_scott_model()
     smt_scott.plot.plt_matrix(convert_scott_array_to_reg_grid(m.bas6.ibound.array[0]), base_map=True)
     smt_scott.plot.show()
 
-def get_scott_hds():
+
+def get_scott_hds(plot=False):
     hds = flopy.utils.HeadFile(base_scott_dir.joinpath('run/gv10.hds')).get_alldata()[0]
-    hds[hds==999] = np.nan
+    hds[hds == 999] = np.nan
     hds = convert_scott_array_to_reg_grid(hds[0])
     smt_scott.plot.plt_matrix(hds, base_map=True)
-    smt_scott.plot.show()
-    smt_scott.io.array_to_raster(base_scott_dir.joinpath('scott_hds.tif'),hds)
+    if plot:
+        smt_scott.plot.show()
+    smt_scott.io.array_to_raster(base_scott_dir.joinpath('scott_hds.tif'), hds)
+    return hds
 
 
 def plot_hk():
@@ -96,7 +101,7 @@ def plot_hk():
     print(pd.Series(np.log10(t).flatten()).describe())
 
     print('log describe and re-mapped')
-    print(10**pd.Series(np.log10(t).flatten()).describe())
+    print(10 ** pd.Series(np.log10(t).flatten()).describe())
 
 
 def plot_riv_conductances():
@@ -107,7 +112,24 @@ def plot_riv_conductances():
     print(np.unique(riv_data))
 
 
+def get_saturated_thickness(plot=False):  # todo make this a pickle
+    hds = get_scott_hds()
+    m = get_full_scott_model()
+    bots = m.dis.getbotm(0)
+    bots = convert_scott_array_to_reg_grid(bots)
+    sat_thickness = hds - bots
+    if plot:
+        print('sat thickness')
+        print(pd.Series(sat_thickness.flatten()).describe())
+        smt_scott.plot.plt_matrix(sat_thickness, base_map=True, title='sat_thickness', contour=True, contour_levels=5,
+                                  label_contours=True)
+        smt_scott.plot.show()
+    smt_scott.io.array_to_raster(base_scott_dir.joinpath('scott_sat_thick.tif'), sat_thickness)
+    return sat_thickness
+
+
 if __name__ == '__main__':
+    get_saturated_thickness(plot=False)
     plot_hk()
     smt_scott.plot.show()
     get_scott_hds()

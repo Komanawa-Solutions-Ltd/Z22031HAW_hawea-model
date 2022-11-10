@@ -22,7 +22,6 @@ sdp.mkdir(exist_ok=True)
 #  note the abstraction is also added to the river targets
 exclude_near_river_pumping = True
 
-
 boundary_path = base_model_build_data_dir.joinpath('model_boundary.shp')
 temp = gpd.read_file(boundary_path)
 ulx = np.floor(temp.bounds.loc[0, 'minx'])
@@ -38,7 +37,7 @@ cols = int(abs(ulx - lrx) // grid_space) + 1
 rows = int(abs(uly - lry) // grid_space) + 1
 
 layers = 1
-layer_type = [1]
+layer_type = [0]
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,
@@ -61,6 +60,33 @@ def simplify_hawea_dem(recalc=False):
     data = temp_smt.io.raster_to_array(dem_path, 'med')
     np.savetxt(outpath, data)
     return data
+
+
+def examine_scott_sat_thickness():
+    scott_path = proj_root.joinpath('scott_model/scott_model_files/scott_sat_thick.tif')
+    scott_sat = temp_smt.io.raster_to_array(scott_path, 'average')
+    thick = smt.get_thickness()[0]
+    # todo manage saturated thickness for confined model
+    scott_sat[scott_sat > thick] = np.nan
+    temp_thick = deepcopy(thick)
+    temp_thick[scott_sat < temp_thick] = scott_sat[scott_sat < temp_thick]
+    ibound = smt.get_no_flow(0)
+    temp_thick[ibound != 1] = np.nan
+    temp_thick[temp_thick > 40] = 40
+    print('temp thickness options')
+    print(pd.Series(temp_thick.flatten()).describe())
+    use_thick = deepcopy(thick)
+    use_thick[use_thick > 30] = 30
+
+    smt.plot.plt_matrix(scott_sat, title='scott thick', base_map=True, no_flow_layer=0, contour=True,
+                        label_contours=True, contour_levels=5)
+    smt.plot.plt_matrix(thick, title='org thick', base_map=True, no_flow_layer=0, contour=True, label_contours=True,
+                        contour_levels=5)
+    smt.plot.plt_matrix(temp_thick, title='temp thick', base_map=True, no_flow_layer=0, contour=True,
+                        label_contours=True, contour_levels=5)
+    smt.plot.plt_matrix(use_thick, title='use thick?', base_map=True, no_flow_layer=0, contour=True,
+                        label_contours=True, contour_levels=5)
+    smt.plot.show()
 
 
 def simplify_upper_clutha_dem(recalc=False):
@@ -261,11 +287,6 @@ def elv_calc():
         temp2 = (temp - temp.min()) / (temp.max() - temp.min())
         bot[idx] = temp2 * diff / 3 + temp.min()
 
-    # adjust top so it is above rbot
-    temp = top[river.loc[:, 'i'], river.loc[:, 'j']]
-    idx = temp <= rbots
-    temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
-    top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
     # adjust the bottoms near the river which are causing dry cells
     fixer = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('bottoms_fixer_flat.shp'),
@@ -280,6 +301,20 @@ def elv_calc():
 
     assert np.isfinite(top).all()
     assert np.isfinite(bot).all()
+    thick = top - bot
+
+    # keynote setting saturated thickness to a maximum of 30m for confined run
+    #  remember to check the river profile if adjustments are made here
+    #  plots for checking and evaluating this are in examine_scott_sat_thickness()
+    idx = thick > 30
+    top[idx] = bot[idx] + 30
+
+    # adjust top so it is above rbot
+    temp = top[river.loc[:, 'i'], river.loc[:, 'j']]
+    idx = temp <= rbots
+    temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
+    top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
+
     thick = top - bot
     bot[thick < 2] = top[thick < 2] - 2  # set min thickness to 2m
 
@@ -376,6 +411,7 @@ def export_model_boundary():
 
 
 if __name__ == '__main__':
+    examine_scott_sat_thickness()
     elv_calc()
     bot = get_bottom(True)
     smt.plot.plt_matrix(bot, base_map=True, contour=True, contour_levels=np.arange(bot.min(), bot.max(), 10),
