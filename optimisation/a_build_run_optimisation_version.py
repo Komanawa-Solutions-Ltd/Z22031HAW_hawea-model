@@ -65,13 +65,14 @@ def recalc_model_build(rerun_rushton=False):
 
 def recalc_param_targets():
     from model_parameterisation.pilot_points import get_pilot_point_locations, get_rch_pilot_point_locations
-    from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs
+    from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
     from targets_and_sensitive_sites.head_targets import get_2011_piezo_survey, get_all_hds_targets
     from targets_and_sensitive_sites.senstive_sites import get_wetlands
     from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
     from optimisation.optimisation_period import tdis
 
     get_riv_target_locs(recalc=True)
+    get_hawea_gain_loss_nper(tdis, recalc=True)
     get_2011_piezo_survey(recalc=True)
     get_wetlands(recalc=True)
     get_indicative_times_v2(recalc=True)
@@ -134,7 +135,7 @@ notes = f"""
 set nsteps to 7, add annual mean high frequency targets 
 """
 
-recalc = True
+recalc = False
 build_model = True
 build_pest = True
 safemode = True
