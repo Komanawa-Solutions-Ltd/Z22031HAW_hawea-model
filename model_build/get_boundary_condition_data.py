@@ -45,17 +45,18 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
         hillside_flow = get_hillside_flows(*tdis.date_limits)
 
         # remove flows from south of lugate tarras rd.
-        hillside_flow = hillside_flow.loc[:, hillside_locs.index]
+        hillside_flow = hillside_flow.loc[:, hillside_locs.index.unique()]
         # add parameter
         for k, v in hill_param.items():
-            use_keys = hillside_locs.loc[hillside_locs.param == k].index
+            use_keys = hillside_locs.loc[hillside_locs.param == k].index.unique()
             hillside_flow.loc[:, use_keys] *= v
             assert set(hill_param.keys()) == set(hillside_locs.param)
         hill_spd = tdis.map_data_locations(hillside_locs, {'flux': hillside_flow},
                                            flopy.modflow.ModflowWel.get_default_dtype(),
                                            group_cells=False,
                                            grouper='sum',
-                                           manage_datatypes=False
+                                           manage_datatypes=False,
+                                           loc_duplicate_action='apportion'
                                            )
 
         # pumping data
@@ -150,13 +151,9 @@ def get_riv_data(tdis, riv_params):
 
 if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
-    from model_parameterisation.inital_parametersiation import get_initial_riv_conductance
+    from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_hillslope_multiplier
 
-    b = get_well_data(tdis, hill_param={
-        # k: (initial, (low, high),
-        'south_east': 1,
-        'main': 1,
-        'maungawera': 1, }
+    b = get_well_data(tdis, hill_param=get_hillslope_multiplier(True)
                       , race_param={'all': 1}, recalc=True)
     get_riv_data(tdis, get_initial_riv_conductance(return_just_start=True))
     get_ghb_data(tdis)

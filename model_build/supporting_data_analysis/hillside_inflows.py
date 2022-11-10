@@ -51,6 +51,7 @@ def get_hillside_catchment_locs(recalc=False, show=False):
     x, y = 1308110, 5039985
     outdata = outdata.loc[outdata.py >= y]
 
+    # move all cells into active domain
     move_direction = {
         'maungawera': ('i', 1),
         'flat_west': ('j', 1),
@@ -59,6 +60,7 @@ def get_hillside_catchment_locs(recalc=False, show=False):
         'south_east': ('j', -1),
         'mt_brown': ('j', 1),
     }
+
     temp = (ibound[outdata.loc[:, 'i'], outdata.loc[:, 'j']]) == 0
     while temp.any():
         if smt.matrix_out_bounds(i=outdata.loc[:, 'i'], j=outdata.loc[:, 'j']).any():
@@ -66,8 +68,30 @@ def get_hillside_catchment_locs(recalc=False, show=False):
         for g, (k, v) in move_direction.items():
             idx = temp & (outdata.group == g)
             outdata.loc[idx, k] += v
-
         temp = (ibound[outdata.loc[:, 'i'], outdata.loc[:, 'j']]) == 0
+
+    # move all cells in 1 more in
+    for g, (k, v) in move_direction.items():
+        idx = outdata.group == g
+        outdata.loc[idx, k] += v
+
+    # expand locations to all around
+
+    use_outdata = []
+    for rname, (px, py, group, i, j) in outdata.iterrows():
+        iss, jss = smt.get_all_adjacent_cells((i, j), return_paired=False, include_diagonal=True, return_flattened=True,
+                                              no_flow_layer=0, exclude_noflow=True)
+        idx = ibound[iss, jss] == 1
+        iss = iss[idx]
+        jss = jss[idx]
+        temp = pd.DataFrame(index=np.repeat(rname, len(iss)), columns=['px', 'py', 'group', 'i', 'j'])
+        for k in ['px', 'py', 'group']:
+            temp.loc[:, k] = eval(k)
+        temp.loc[:, 'i'] = iss
+        temp.loc[:, 'j'] = jss
+        use_outdata.append(temp)
+    outdata = pd.concat(use_outdata)
+
     outdata = smt.io.add_mxmy_to_df(outdata)
     fig, ax = smt.plot.plt_matrix(smt.get_model_zeros() * np.nan, no_flow_layer=0, base_map=True, title='moved points')
     ax.scatter(outdata.px, outdata.py, c='r', label='first')
@@ -664,5 +688,6 @@ def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
 
 
 if __name__ == '__main__':
-    t = get_hillside_catchment_locs(recalc=True)
+    t = get_hillside_catchment_locs(recalc=True,show=True)
+    raise NotImplementedError
     get_hillside_flows(None, None, recalc=True)
