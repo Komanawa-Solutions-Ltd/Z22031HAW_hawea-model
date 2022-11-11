@@ -81,7 +81,7 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('sy_array.png'))
 
-    fig, (ax, ax1) = plt.subplots(ncols=2)
+    fig, (ax, ax1) = plt.subplots(ncols=2, figsize=(10,8))
     smt.plot.plt_matrix(kh_array[0], base_map=True, no_flow_layer=0, title='Kh field', ax=ax)
     smt.plot.plt_matrix(np.log10(kh_array[0]), base_map=True, no_flow_layer=0, title='log10 Kh field', ax=ax1)
     fig.tight_layout()
@@ -188,10 +188,10 @@ if __name__ == '__main__':
     from project_base import unbacked_dir
     from optimisation.a_build_run_optimisation_version import branch
 
-    plot_failures = True  # keynote this can take a really long time with a long optimisation
+    plot_failures = False  # keynote this can take a really long time with a long optimisation
     re_plot = False  # keynote don't set this to True!
     pest_runs = unbacked_dir.joinpath(branch).glob('*/Optimisations')
 
     for d in pest_runs:
         print(f'plotting: {d}')
-        plot_opt(d, replot=re_plot, plot_failure_points=False)
+        plot_opt(d, replot=re_plot, plot_failure_points=plot_failures)
