@@ -165,11 +165,6 @@ def get_all_list_data(pest_dir, outer, inner):
     listfiles = []
     temp = [open(e, 'r') for e in pest_dir.rglob("**/*.list")]
     listfiles.extend(temp)
-    for i, p in enumerate(pest_dir.rglob('**/list_*.7z')):
-        if i % 100 == 0:
-            print(f'reading file {i}: {p}')
-        with py7zr.SevenZipFile(p, 'r') as zip:
-            listfiles.extend(zip.readall().values())
     outdata_solver = []
     outdata_itters = []
     nfailed = 0
@@ -184,10 +179,25 @@ def get_all_list_data(pest_dir, outer, inner):
             nfailed += 1
             print(f'{nfailed} total lists have failed to be read')
         f.close()
+
+    for i, p in enumerate(pest_dir.rglob('**/list_*.7z')):
+        if i % 100 == 0:
+            print(f'reading and extracting zipped file {i}: {p}')
+        temp_listfiles = []
+        with py7zr.SevenZipFile(p, 'r') as zip:
+            temp_listfiles.extend(zip.readall().values())
+        for f in temp_listfiles:
+            try:
+                temp = ListSolverInfo(f)
+                outdata_solver.append(temp.get_over(outer, inner))
+                outdata_itters.append(temp.itteration_overview)
+            except Exception:
+                nfailed += 1
+                print(f'{nfailed} total lists have failed to be read')
+            f.close()
     outdata_solver = pd.concat(outdata_solver).reset_index()
     outdata_itters = pd.concat(outdata_itters).reset_index()
     return outdata_solver, outdata_itters
-
 
 if __name__ == '__main__':
     from project_base import unbacked_dir
