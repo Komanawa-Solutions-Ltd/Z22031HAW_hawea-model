@@ -172,12 +172,17 @@ def get_all_list_data(pest_dir, outer, inner):
             listfiles.extend(zip.readall().values())
     outdata_solver = []
     outdata_itters = []
+    nfailed = 0
     for i, f in enumerate(listfiles):
         if i % 100 == 0:
             print(f'extracting file {i}')
-        temp = ListSolverInfo(f)
-        outdata_solver.append(temp.get_over(outer, inner))
-        outdata_itters.append(temp.itteration_overview)
+        try:
+            temp = ListSolverInfo(f)
+            outdata_solver.append(temp.get_over(outer, inner))
+            outdata_itters.append(temp.itteration_overview)
+        except Exception:
+            nfailed += 1
+            print(f'{nfailed} total lists have failed to be read')
         f.close()
     outdata_solver = pd.concat(outdata_solver).reset_index()
     outdata_itters = pd.concat(outdata_itters).reset_index()
