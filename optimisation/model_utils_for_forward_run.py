@@ -83,10 +83,10 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       exe_name=exe_name,
                       model_name=model_name,
                       model_ws=model_ws,
-                      hk=np.repeat(interpolate_kh_pilot_points(kh_param),2,axis=0),
+                      hk=np.repeat(interpolate_kh_pilot_points(kh_param), 2, axis=0),
                       vka=vka,
                       layer_avg=0,
-                      ss=np.repeat(ss, 2, axis=0),
+                      ss=np.repeat(sy, 2, axis=0),  # keynote set ss to sy
                       sy=np.repeat(sy, 2, axis=0),
                       strt=get_starting_heads(),
                       chani=1,
