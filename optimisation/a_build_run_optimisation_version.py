@@ -127,8 +127,8 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 # make a new branch on major structural shifts
 mversion = 'ss_sy'
 previous_mversion = 'init_structure_v6'
-branch = 'structure_v6'
-previous_branch = 'structure_v5'
+branch = 'structure_v6a'
+previous_branch = 'structure_v6'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""

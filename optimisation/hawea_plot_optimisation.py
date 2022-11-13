@@ -131,7 +131,9 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
 
     if plot_failure_points:
         # location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
-        all_overs, all_itters = get_all_list_data(pest_dir, 50, 0)
+        all_overs, all_itters, model_converged = get_all_list_data(pest_dir, 50, 0)
+        with open(base_plot_dir.joinpath('convergence_record.txt'), 'w') as f:
+            f.write(f'model convergence percentage: {np.array(model_converged).sum() / len(model_converged) * 100}')
 
         limits = [50, 100, 300, 500, 800]
         for l in limits:
@@ -156,6 +158,7 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
             f.write(t.to_string())
 
 
+
 def _dummy(x):
     return x
 
@@ -167,6 +170,7 @@ def get_all_list_data(pest_dir, outer, inner):
     listfiles.extend(temp)
     outdata_solver = []
     outdata_itters = []
+    model_converged = []
     nfailed = 0
     for i, f in enumerate(listfiles):
         if i % 100 == 0:
@@ -175,9 +179,10 @@ def get_all_list_data(pest_dir, outer, inner):
             temp = ListSolverInfo(f)
             outdata_solver.append(temp.get_over(outer, inner))
             outdata_itters.append(temp.itteration_overview)
-        except Exception:
+            model_converged.append(smt.modelchecks.modflow_converged(lines=temp.lines))
+        except Exception as val:
             nfailed += 1
-            print(f'{nfailed} total lists have failed to be read')
+            print(f'{nfailed} total lists have failed to be read: {val}')
         f.close()
 
     for i, p in enumerate(pest_dir.rglob('**/list_*.7z')):
@@ -189,15 +194,17 @@ def get_all_list_data(pest_dir, outer, inner):
         for f in temp_listfiles:
             try:
                 temp = ListSolverInfo(f)
+                model_converged.append(smt.modelchecks.modflow_converged(lines=temp.lines))
                 outdata_solver.append(temp.get_over(outer, inner))
                 outdata_itters.append(temp.itteration_overview)
-            except Exception:
+            except Exception as val:
                 nfailed += 1
-                print(f'{nfailed} total lists have failed to be read')
+                print(f'{nfailed} total lists have failed to be read: {val}')
             f.close()
     outdata_solver = pd.concat(outdata_solver).reset_index()
     outdata_itters = pd.concat(outdata_itters).reset_index()
-    return outdata_solver, outdata_itters
+    return outdata_solver, outdata_itters, model_converged
+
 
 if __name__ == '__main__':
     from project_base import unbacked_dir
