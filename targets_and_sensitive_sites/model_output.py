@@ -442,7 +442,6 @@ def _plot_spatial_riv(all_riv, plot_dir):  # todo
         plt.close(fig)
 
 
-
 def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                     plot_transient_budget=False, plot_dir=None):
     assert isinstance(model_ws, Path)
@@ -561,8 +560,6 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
         visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                         plot_dir=plot_dir)
 
-
-# todo export changes to other branches
 
 if __name__ == '__main__':
     t = time.time()
