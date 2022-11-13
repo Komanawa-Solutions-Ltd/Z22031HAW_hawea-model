@@ -17,6 +17,7 @@ from optimisation.optimisation_period import tdis
 from model_build.supporting_data_analysis import get_river_loc_data
 from model_build.utils import get_colors, plot_1_to_1
 from model_build.project_model_tools import get_bottom, get_top, get_ibound, smt
+from matplotlib.colors import SymLogNorm
 
 # thoughts target groups
 """
@@ -65,7 +66,10 @@ def generate_outputs(hds_path, cbc_path):
     riv = get_hawea_gain_loss_nper(tdis).reset_index()
     riv_locs = get_riv_target_locs()
     # keynote change if saving multiple steps
-    all_riv = np.array(flopy.utils.CellBudgetFile(cbc_path).get_data(text='RIVER LEAKAGE', full3D=True))[:, 0]
+    t = flopy.utils.CellBudgetFile(cbc_path).get_data(text='RIVER LEAKAGE', full3D=True)
+    mask = t[0].mask[np.newaxis, 0]
+    all_riv = np.array(t)[:, 0]
+    all_riv[np.repeat(mask, all_riv.shape[0], axis=0)] = np.nan
 
     for i, target_key, nper in riv.loc[:, ['target_key', 'nper']].itertuples(True, None):
         riv.loc[i, 'modelled'] = all_riv[nper][riv_locs[target_key]].sum()
@@ -91,7 +95,7 @@ def generate_outputs(hds_path, cbc_path):
     out_obs.append(riv.rename(columns={'target_val': 'measured'}).loc[:, need_keys])
 
     out_obs = pd.concat(out_obs)
-    return out_obs, all_riv_obs, dry_hds.sum(axis=(0, 1)), flooded_cells.sum(axis=(0, 1)), all_hds
+    return out_obs, all_riv_obs, dry_hds.sum(axis=(0, 1)), flooded_cells.sum(axis=(0, 1)), all_hds, all_riv
 
 
 def _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells):
@@ -416,7 +420,30 @@ def _plot_budget(list_file, plot_dir, plot_transient_budget):
             plt.close(fig)
 
 
-def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file,
+def _plot_spatial_riv(all_riv, plot_dir):  # todo
+    assert isinstance(plot_dir, Path)
+    outdir = plot_dir.joinpath('spatial_riv')
+    outdir.mkdir(exist_ok=True)
+    to_plots = {
+        'min': np.nanmin(all_riv, axis=0),
+        'mean': np.nanmean(all_riv, axis=0),
+        'max': np.nanmax(all_riv, axis=0)
+
+    }
+
+    for p in [5, 25, 50, 75, 95]:
+        to_plots[f'{p:02d} percentile'] = np.nanpercentile(all_riv, p, axis=0)
+
+    for k, to_plot in to_plots.items():
+        norm = SymLogNorm(100, 1, vmin=np.nanmin(to_plot), vmax=np.nanmax(to_plot))
+        fig, ax = smt.plot.plt_matrix(to_plot, base_map=True, alpha=1, cmap='RdBu', norm=norm, title=k)
+        fig.tight_layout()
+        fig.savefig(outdir.joinpath(f'riv_{k.replace(" ", "_")}.png'))
+        plt.close(fig)
+
+
+
+def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                     plot_transient_budget=False, plot_dir=None):
     assert isinstance(model_ws, Path)
 
@@ -470,6 +497,8 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
 
     _plot_riv_obs(riv_keys, riv_colors, out_obs, plot_dir)
 
+    _plot_spatial_riv(all_riv, plot_dir)
+
     _plot_budget(list_file, plot_dir, plot_transient_budget)
 
 
@@ -520,7 +549,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
         return
 
     # output information
-    out_obs, all_riv_obs, dry_hds, flooded_cells, all_hds, = generate_outputs(hds_file, cbc_file)
+    out_obs, all_riv_obs, dry_hds, flooded_cells, all_hds, all_riv = generate_outputs(hds_file, cbc_file)
 
     # save output
     out_obs.to_csv(model_ws.joinpath('observations.dat'), sep='\t', index=False)
@@ -529,9 +558,11 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
     # plot stuff
     if plot:
-        visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, list_file,
+        visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                         plot_dir=plot_dir)
 
+
+# todo export changes to other branches
 
 if __name__ == '__main__':
     t = time.time()
