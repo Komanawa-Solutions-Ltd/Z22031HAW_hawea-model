@@ -42,7 +42,6 @@ def compare_parameterisations(*parfiles, outdir=None):
         if g in ['kh', 'riv', 'sy']:
             ax.set_yscale('log')
 
-        # todo plot parameter limits, start
         for k in ['low', 'start', 'up']:
             ys = [iparam_data[k].loc[e] for e in use_cols]
             ax.plot(range(len(use_cols)), ys, ls=':', label=k, )
