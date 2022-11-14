@@ -111,11 +111,10 @@ def get_rch_data(tdis, rch_param, recalc=False):
         out = tdis.map_array_to_spd(rch_dates, rch_raw)
         pickle.dump(out, open(save_path, 'wb'))
 
-    # add rch mult  # todo update
+    # add rch mult
     rch_mult = get_spatial_temporal_rch_mult(rch_param, tdis)
     assert rch_mult.shape[0] == len(out.keys())
     out = {k: v * rmult for (k, v), rmult in zip(out.items(), rch_mult)}
-    raise NotImplementedError
     return out
 
 

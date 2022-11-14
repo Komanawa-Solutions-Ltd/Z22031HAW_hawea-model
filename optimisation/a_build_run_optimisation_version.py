@@ -136,14 +136,13 @@ notes = f"""
 as per init_v6a (a 1m confined layer below the layer to see if this improves stability and set ss=sy) with
  * rch multiplier moved to 2 multipliers (1 for irrigated, 1 for dryland)
  * initial conductivity set to 100
- * river managment??? or later?
 """
 noptmax = 100
 recalc = True
 build_model = True
 build_pest = True
 safemode = True
-local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
+local_cores = 8  # set to a lower number of core if you plan on using the local machine at the same time as a run
 
 # todo fill above here
 
@@ -170,13 +169,6 @@ unique start prams:
 
 """
 if __name__ == '__main__':
-    # todos for current version
-    # todo look at river stage interpolation, particularly at the clutha near the bottom.
-    # todo could look at setting inital kh from scott (roughly)
-    # todo H_g40_0120  (mean c. 314m) is very close (1808m) to H_g40_0367 (mean 319)
-    #   elevation between the two are 5 m different  all_wells.loc[['g40_0367', 'g40_0120']].transpose()
-    #   might be fine???
-
     test_path = unbacked_dir.joinpath(branch, mversion, 'base_model')
     test_path.parent.mkdir(exist_ok=True, parents=True)
     # build base model

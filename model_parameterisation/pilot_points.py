@@ -4,13 +4,12 @@ on: 2/09/22
 """
 import numpy as np
 import pandas as pd
-from scipy.interpolate import RBFInterpolator, griddata
+from scipy.interpolate import RBFInterpolator
 from project_base import base_param_dir, processed_param_dir
 from model_build.project_model_tools import smt, get_lake_array
 from model_build.supporting_data_analysis import get_irrigation_code
 from model_tools.time_discretization import TimeDis
 from model_parameterisation.static_params import lake_sy
-from model_build.zones import get_param_zones
 import geopandas as gpd
 
 
