@@ -2,7 +2,7 @@
 created matt_dumont 
 on: 1/09/22
 """
-from model_parameterisation.pilot_points import get_pilot_point_locations, get_rch_pilot_point_locations
+from model_parameterisation.pilot_points import get_pilot_point_locations
 import numpy as np
 
 
@@ -12,14 +12,12 @@ import numpy as np
 def get_initial_rch_mult(return_just_start=False):
     # keynote do not use log values
     # keynote one value for the whole model
-    start_val = (1, (0.7, 1.2))
+    start_val = (1, (0.5, 1.2))
     if return_just_start:
         start_val = start_val[0]
-    pps = get_rch_pilot_point_locations()
-    rch_mult = {}
 
-    for i in pps.index:
-        rch_mult[i] = start_val
+    rch_mult = {'irr': start_val,
+                'dry': start_val}
 
     return rch_mult
 
@@ -42,8 +40,8 @@ def get_initial_riv_conductance(return_just_start=False):
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model based on the 10**mean(log10(scotts parameters))
     # keynote use log values
-    start_val = (30, (0.01, 1000))
-    lake_val = (30, (0.01, 1000))
+    start_val = (100, (0.01, 1000))
+    lake_val = (100, (0.01, 1000))
 
     # for reference scott's model ha min = 0.09, max = 300, median = 14
     if return_just_start:

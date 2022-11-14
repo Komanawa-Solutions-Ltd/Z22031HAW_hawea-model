@@ -198,15 +198,6 @@ def plot_parameterisation(save=False):
     if save:
         fig.savefig(outdir.joinpath(f'kh_sy_params{extension}'))
 
-    # plot rch mult pilot points
-    rch_pilots = get_rch_pilot_point_locations()
-    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
-    ax.scatter(rch_pilots.x, rch_pilots.y, color='r', marker='o')
-    ax.set_title('Rch multiplier points (linear interpolation)')
-    fig.tight_layout()
-    if save:
-        fig.savefig(outdir.joinpath(f'kh_sy_params{extension}'))
-
 
 def plot_thickness_top_bot(save=False):
     data = {'Model tops': smt.get_tops()[0],

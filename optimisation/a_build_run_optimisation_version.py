@@ -64,7 +64,8 @@ def recalc_model_build(rerun_rushton=False):
 
 
 def recalc_param_targets():
-    from model_parameterisation.pilot_points import get_pilot_point_locations, get_rch_pilot_point_locations
+    from model_parameterisation.pilot_points import get_pilot_point_locations, get_spatial_temporal_rch_mult
+    from model_parameterisation.inital_parametersiation import get_initial_rch_mult
     from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
     from targets_and_sensitive_sites.head_targets import get_2011_piezo_survey, get_all_hds_targets
     from targets_and_sensitive_sites.senstive_sites import get_wetlands
@@ -78,7 +79,7 @@ def recalc_param_targets():
     get_indicative_times_v2(recalc=True)
     get_all_hds_targets(tdis, recalc=True)
     get_pilot_point_locations(recalc=True)
-    get_rch_pilot_point_locations(recalc=True)
+    get_spatial_temporal_rch_mult(get_initial_rch_mult(True), tdis, recalc=False)
 
 
 def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
@@ -125,14 +126,17 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'ss_sy'
-previous_mversion = 'init_structure_v6'
-branch = 'structure_v6a'
-previous_branch = 'structure_v6'
+mversion = 'init_v8'
+previous_mversion = 'ss_sy'
+branch = 'structure_v8'
+previous_branch = 'structure_v6a'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-as per init_v6 (a 1m confined layer below the layer to see if this improves stability), but set ss=sy
+as per init_v6a (a 1m confined layer below the layer to see if this improves stability and set ss=sy) with
+ * rch multiplier moved to 2 multipliers (1 for irrigated, 1 for dryland)
+ * initial conductivity set to 100
+ * river managment??? or later?
 """
 noptmax = 100
 recalc = True

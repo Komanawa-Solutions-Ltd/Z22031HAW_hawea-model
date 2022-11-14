@@ -12,8 +12,7 @@ from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 from model_tools.plot_optimisation import plot_optimisation_and_extract_info
 from model_parameterisation.inital_parametersiation import *
-from model_parameterisation.pilot_points import interpolate_rch_pilot_points, interpolate_sy_pilot_points, \
-    interpolate_kh_pilot_points
+from model_parameterisation.pilot_points import interpolate_sy_pilot_points,   interpolate_kh_pilot_points
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 import py7zr
 
@@ -66,16 +65,10 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
     init_riv_param = get_initial_riv_conductance()
     init_rch_param = get_initial_rch_mult()
     pp_locs = get_pilot_point_locations()
-    rch_pp_locs = get_rch_pilot_point_locations()
 
     # plot rch multiplier array, kh, sy array
-    rch_mult_array = interpolate_rch_pilot_points(rch_param)
     sy_array = interpolate_sy_pilot_points(sy_param)
     kh_array = interpolate_kh_pilot_points(kh_param)
-
-    fig, ax = smt.plot.plt_matrix(rch_mult_array, base_map=True, no_flow_layer=0, title='Rch multiplier')
-    fig.tight_layout()
-    fig.savefig(base_plot_dir.joinpath('rch_mult_array.png'))
 
     fig, ax = smt.plot.plt_matrix(sy_array[0], base_map=True, no_flow_layer=0, title='Sy field')
     fig.tight_layout()

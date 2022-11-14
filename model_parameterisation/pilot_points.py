@@ -7,6 +7,8 @@ import pandas as pd
 from scipy.interpolate import RBFInterpolator, griddata
 from project_base import base_param_dir, processed_param_dir
 from model_build.project_model_tools import smt, get_lake_array
+from model_build.supporting_data_analysis import get_irrigation_code
+from model_tools.time_discretization import TimeDis
 from model_parameterisation.static_params import lake_sy
 from model_build.zones import get_param_zones
 import geopandas as gpd
@@ -48,37 +50,6 @@ def get_pilot_point_locations(recalc=False):
     outdata.loc[:, 'i'] = i
     outdata.loc[:, 'j'] = j
     outdata.loc[:, 'name'] = outdata.group.astype(str) + outdata.id.astype(str)
-    outdata.set_index('name', inplace=True)
-    outdata.to_csv(processed_path)
-    return outdata
-
-
-def get_rch_pilot_point_locations(recalc=False):
-    data_path = base_param_dir.joinpath('rch_pilot_points.shp')
-    processed_path = processed_param_dir.joinpath('rch_pilot_points.csv')
-
-    if processed_path.exists() and not recalc:
-        outdata = pd.read_csv(processed_path, index_col=0)
-        dtypes = {
-            'i': 'int64',
-            'j': 'int64',
-        }
-
-        for k, v in dtypes.items():
-            outdata.loc[:, k] = outdata.loc[:, k].astype(v)
-        return outdata
-
-    data = gpd.read_file(data_path)
-    x, y = data.geometry.x, data.geometry.y
-
-    outdata = data.loc[:, ['id', 'group']]
-    assert len(outdata.id.unique()) == len(outdata)
-    outdata.loc[:, 'x'] = x
-    outdata.loc[:, 'y'] = y
-    i, j = smt.convert_coords_to_matix(x, y)
-    outdata.loc[:, 'i'] = i
-    outdata.loc[:, 'j'] = j
-    outdata.loc[:, 'name'] = outdata.group.astype(str)
     outdata.set_index('name', inplace=True)
     outdata.to_csv(processed_path)
     return outdata
@@ -276,63 +247,22 @@ def examine_sy_interpolation(log_before=False):
     smt.plot.show()
 
 
-def interpolate_rch_pilot_points(rch_data, return_df=False):
-    # keynote do not interpolate on log values
-    # set pilot point values
+def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
+    assert isinstance(tdis, TimeDis)
+    assert isinstance(rch_data, dict)
+    assert set(rch_data.keys()) == {'irr', 'dry'}
+    save_path = processed_param_dir.joinpath(f'irrigated_area_{tdis.name}.npy')
+    if save_path.exists() and not recalc:
+        out = np.load(save_path).astype(bool)
+    else:
+        out = np.concatenate(
+            [get_irrigation_code(y)[np.newaxis] >= 0 for y in pd.to_datetime(tdis.per_middle_dates).year], axis=0)
+        np.save(save_path, out)
+    rch_mult = np.full(out.shape, rch_data['dry'])  # set dryland values
+    rch_mult[out] = rch_data['irr']  # set irrigated values
 
-    pilot_locs = get_rch_pilot_point_locations()
-    pilot_locs.loc[:, 'value'] = [rch_data.get(n) for n in pilot_locs.index]
-    assert pilot_locs.loc[:, 'value'].notnull().all()
-
-    # interpolate rch
-    ibound = smt.get_no_flow(layer=0)
-    x, y = smt.get_model_x_y()
-    idx = ibound == 1
-
-    rch_mult = griddata(
-        pilot_locs.loc[:, ['x', 'y']].values, pilot_locs.loc[:, 'value'].values,
-        (x, y),
-        method='linear'
-    )
-    rch_mult[~idx] = 1
-    assert np.isfinite(rch_mult).all()
-
-    if return_df:
-        return rch_mult, pilot_locs
     return rch_mult
 
 
-def examine_rch_mult():
-    pps = get_rch_pilot_point_locations(recalc=True)
-    pps.loc[:, 'value'] = np.random.uniform(0.8, 1.2, len(pps))
-    rch_mult = {}
-
-    for i in pps.index:
-        rch_mult[i] = pps.loc[i, 'value']
-
-    rch_mult = {
-        'r1c1': 0.93,
-        'r1c2': 1.137,
-        'r1c3': 0.943,
-        'r1c4': 0.887,
-        'r2c1': 0.923,
-        'r2c2': 1.199,
-        'r2c3': 1.119,
-        'r2c4': 1.0,
-        'r3c1': 1.165,
-        'r3c2': 0.923,
-        'r3c3': 1.07,
-        'r3c4': 1.038,
-        'r4c2': 0.854,
-        'r4c3': 0.944,
-        'r4c4': 0.847,
-        'r5c3': 0.895,
-    }
-    out = interpolate_rch_pilot_points(rch_mult)
-    smt.plot.plt_matrix(out, no_flow_layer=0, base_map=True)
-    smt.plot.show()
-
-
 if __name__ == '__main__':
-    examine_rch_mult()
     pass

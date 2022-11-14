@@ -8,7 +8,7 @@ import time
 from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
     get_river_loc_data, get_lake_hawea_loc, get_lake_heads
-from model_parameterisation.pilot_points import interpolate_rch_pilot_points
+from model_parameterisation.pilot_points import get_spatial_temporal_rch_mult
 from model_parameterisation.static_params import lake_conduct
 import flopy
 from project_base import processed_model_build_data_dir
@@ -111,9 +111,11 @@ def get_rch_data(tdis, rch_param, recalc=False):
         out = tdis.map_array_to_spd(rch_dates, rch_raw)
         pickle.dump(out, open(save_path, 'wb'))
 
-    # add rch mult
-    rch_mult = interpolate_rch_pilot_points(rch_param)
-    out = {k: v * rch_mult for k, v in out.items()}
+    # add rch mult  # todo update
+    rch_mult = get_spatial_temporal_rch_mult(rch_param, tdis)
+    assert rch_mult.shape[0] == len(out.keys())
+    out = {k: v * rmult for (k, v), rmult in zip(out.items(), rch_mult)}
+    raise NotImplementedError
     return out
 
 
@@ -152,8 +154,13 @@ def get_riv_data(tdis, riv_params):
 
 if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
-    from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_hillslope_multiplier
+    from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_hillslope_multiplier, \
+        get_initial_rch_mult
 
+    t = get_initial_rch_mult(True)
+    t['dry'] = 1.1
+    t['irr'] = 0
+    get_rch_data(tdis, t)
     b = get_well_data(tdis, hill_param=get_hillslope_multiplier(True)
                       , race_param={'all': 1}, recalc=True)
     get_riv_data(tdis, get_initial_riv_conductance(return_just_start=True))

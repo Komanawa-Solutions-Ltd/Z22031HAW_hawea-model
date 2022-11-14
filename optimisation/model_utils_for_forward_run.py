@@ -8,10 +8,8 @@ from model_build.modflow_model import build_model
 from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
 from model_parameterisation.static_params import ss, vka
-from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points, \
-    interpolate_rch_pilot_points
+from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
-from targets_and_sensitive_sites.model_output import process_model_output
 from model_parameterisation.inital_parametersiation import *
 
 
