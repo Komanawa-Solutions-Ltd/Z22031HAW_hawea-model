@@ -106,7 +106,7 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
             norm_val = (imesure - lower) / (upper - lower)
             plocs.loc[k, pref] = norm_val
 
-    fig, (ax1, ax2) = plt.subplots(ncols=3, figsize=(10, 8))
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 8))
     smt.plot.plt_basemap(ax1)
     smt.plot.plt_basemap(ax2)
     ax1.set_title('Kh normalised')
@@ -200,7 +200,7 @@ if __name__ == '__main__':
     from project_base import unbacked_dir
     from optimisation.a_build_run_optimisation_version import branch
 
-    plot_failures = True  # keynote this can take a really long time with a long optimisation
+    plot_failures = False  # keynote this can take a really long time with a long optimisation
     re_plot = False  # keynote don't set this to True!
     pest_runs = unbacked_dir.joinpath(branch).glob('*/Optimisations')
 
