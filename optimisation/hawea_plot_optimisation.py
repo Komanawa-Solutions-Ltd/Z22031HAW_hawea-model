@@ -96,8 +96,8 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
         f.write(out.to_string())
 
     # pps at locs
-    prefs = ['sy', 'kh', 'rch']
-    locs = [pp_locs, pp_locs, rch_pp_locs]
+    prefs = ['sy', 'kh', ]
+    locs = [pp_locs, pp_locs]
     for pref, plocs in zip(prefs, locs):
         init = eval(f'init_{pref}_param')
         meas = eval(f'{pref}_param')
@@ -106,18 +106,15 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
             norm_val = (imesure - lower) / (upper - lower)
             plocs.loc[k, pref] = norm_val
 
-    fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=(10, 8))
+    fig, (ax1, ax2) = plt.subplots(ncols=3, figsize=(10, 8))
     smt.plot.plt_basemap(ax1)
     smt.plot.plt_basemap(ax2)
-    smt.plot.plt_basemap(ax3)
     ax1.set_title('Kh normalised')
     ax2.set_title('Sy normalised')
-    ax3.set_title('Rch mult normalised')
     norm = FuncNorm((_dummy, _dummy), vmin=0, vmax=1)
 
     ax1.scatter(pp_locs.x, pp_locs.y, c=pp_locs.kh, cmap='plasma', norm=norm)
     sc = ax2.scatter(pp_locs.x, pp_locs.y, c=pp_locs.sy, cmap='plasma', norm=norm)
-    ax3.scatter(rch_pp_locs.x, rch_pp_locs.y, c=rch_pp_locs.rch, cmap='plasma', norm=norm)
     fig.colorbar(sc, location='bottom')
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('parameter_norm_sy_kh.png'))

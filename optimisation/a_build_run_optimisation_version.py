@@ -126,16 +126,16 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_v8'
-previous_mversion = 'ss_sy'
+mversion = 'v8_lowerk'
+previous_mversion = 'init_v8'
 branch = 'structure_v8'
-previous_branch = 'structure_v6a'
+previous_branch = 'structure_v8'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
 as per init_v6a (a 1m confined layer below the layer to see if this improves stability and set ss=sy) with
  * rch multiplier moved to 2 multipliers (1 for irrigated, 1 for dryland)
- * initial conductivity set to 100
+ * initial conductivity set to 50 (100, 70 too unstable)
 """
 noptmax = 100
 recalc = True
