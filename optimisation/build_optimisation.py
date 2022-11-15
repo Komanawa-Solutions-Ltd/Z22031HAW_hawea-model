@@ -84,7 +84,7 @@ def set_control_data(pst, noptmax):
     pst.control_data.rlambda1 = 10
     pst.control_data.rlamfac = -3
     pst.control_data.phiratsuf = 0.3
-    pst.control_data.phiredlam = 0.1
+    pst.control_data.phiredlam = 0.01
     pst.control_data.numlam = 10
     # what happens if modflow dies, no output files written
     pst.control_data.lamforgive = 'lamforgive'
@@ -102,7 +102,7 @@ def set_control_data(pst, noptmax):
 
     # line 7
     pst.control_data.phiredswh = 0.1  # switch to 3 point at 10% reduction
-    pst.control_data.noptswitch = 1  # wait n itertations to switch to 3 point
+    pst.control_data.noptswitch = 3  # wait n itertations to switch to 3 point
     pst.control_data.doaui = 'noaui'  # no automatic user inter
     pst.control_data.boundscale = 'noboundscale'  # treat the boundaries as confidence intervals for parameter scaling
 
@@ -112,10 +112,10 @@ def set_control_data(pst, noptmax):
     pst.control_data.noptmax = noptmax  # max iterations, set to 0 for trial run
 
     pst.control_data.phiredstp = 0.005  # relative phi change to be 'optimised'
-    pst.control_data.nphistp = 4  # min number of iterations with relative phi change before optimisation is complete
-    pst.control_data.nphinored = 4  # no reduction in phi for n iterations, complete
+    pst.control_data.nphistp = 6  # min number of iterations with relative phi change before optimisation is complete
+    pst.control_data.nphinored = 6  # no reduction in phi for n iterations, complete
     pst.control_data.relparstp = 0.005  # maximum parameter change to finish
-    pst.control_data.nrelpar = 4  # number of iterations below maximum parameter change to finish
+    pst.control_data.nrelpar = 6  # number of iterations below maximum parameter change to finish
 
     # do not include
     # phistopthresh
