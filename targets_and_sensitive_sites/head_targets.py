@@ -84,7 +84,7 @@ def get_2011_piezo_survey(recalc=False):
     return outdata
 
 
-def get_low_freq_head_targets(start_date, end_date, freq='D'):
+def get_low_freq_head_targets(start_date, end_date, freq='D'):  # todo check that these make sense!
     data_path = base_target_dir.joinpath('NGMP bore fluctuations 1996 - 2019.csv')
     data = pd.read_csv(data_path)
     outdata = []

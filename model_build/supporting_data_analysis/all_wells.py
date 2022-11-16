@@ -39,6 +39,7 @@ def get_all_wells(recalc=False):
     well_data.loc['g40_0041', 'Depth'] = 20
 
     well_data.dropna(subset=['Depth', 'DepthToWater'], how='all', inplace=True)
+    well_data.loc[:, 'missing_elv'] = False
 
     # setting up quality code for elevation data
     # 1 = no elv data, 2 = elv data
@@ -58,6 +59,7 @@ def get_all_wells(recalc=False):
     t = raster.sample(xy)
     t = np.array(list(t)).flatten()
     well_data.loc[idx, 'Elevation'] = t
+    well_data.loc[idx, 'missing_elv'] = True
 
     # changing depth to elevation
     # first filling all the NaNs in Ground_RL with zero

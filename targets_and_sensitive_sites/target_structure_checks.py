@@ -4,10 +4,10 @@ on: 16/11/22
 """
 import matplotlib.pyplot as plt
 import pandas as pd
-
+from modflow_tools_gen_utils import get_colors
 from model_build.project_model_tools import smt
 from targets_and_sensitive_sites.head_targets import get_high_freq_head_targets, get_low_freq_head_targets, \
-    get_all_wells
+    get_all_wells, plot_hds_regular_locator
 from model_build.supporting_data_analysis import get_lake_heads, get_river_stage_data, get_river_loc_data
 from optimisation.optimisation_period import tdis
 
@@ -70,7 +70,48 @@ def Lake_stage_vs_g40_0415():
     plt.show()
 
 
+def check_target_datums():  # todo
+    bottoms = smt.get_bottoms()[0]
+    tops = smt.get_tops()[0]
+    high = get_high_freq_head_targets(*tdis.date_limits)
+    low = get_low_freq_head_targets(*tdis.date_limits)
+    hds = pd.merge(high, low, right_index=True, left_index=True, how='outer')
+    all_wells = get_all_wells()
+    all_wells = all_wells.loc[hds.columns]
+    all_wells.loc[hds.columns, 'mean_hd'] = hds.mean()
+    all_wells.loc[:, 'top'] = tops[all_wells.i, all_wells.j]
+    all_wells.loc[:, 'bot'] = bottoms[all_wells.i, all_wells.j]
+
+    fig, ax = plt.subplots()
+    x = range(len(all_wells))
+    keys = [
+        'top',
+        'elevation',
+        'depth_to_water_elv',
+        'depth_elevation',
+        'mean_hd',
+        'bot',
+    ]
+    colors = get_colors(keys)
+    for k, c in zip(keys, colors):
+        ax.scatter(x, all_wells.loc[:, k], label=k, color=c)
+    ax.legend()
+    ax.set_xticks(x)
+    mapper = {True: 'miselv',
+              False: ''}
+    xlabs = [f'{e}_{mapper[i]}' for e, i in zip(all_wells.index, all_wells.missing_elv)]
+    ax.set_xticklabels(xlabs, rotation=-40)
+    fig.tight_layout()
+
+    fig, ax  = plt.subplots()
+    plot_hds_regular_locator(ax, {n: nc for n, nc in zip(all_wells.index, get_colors(all_wells.index))})
+    plt.show()
+    # todo g40_0366 is weird, dont know if makes a difference, may need to increase the model depth in this area  to maintain
+    #  saturated thickness
+
+
 if __name__ == '__main__':
+    check_target_datums()
     check_riv_stage_near_g40_0366()
     Lake_stage_vs_g40_0415()
     bottom_vs_mean_for_all_regular_targets()
