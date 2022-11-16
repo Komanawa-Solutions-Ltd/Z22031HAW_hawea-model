@@ -133,17 +133,21 @@ def _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells):
     plt.close(fig)
 
 
-def _plot_all_riv_obs(all_riv_obs, plot_dir, riv_keys, riv_colors):
+def _plot_all_riv_obs(all_riv_obs, plot_dir, riv_keys, riv_colors, out_obs):
     print(myself())
     # plot all river observations
     fig, axs = plt.subplots(4, sharex=True, figsize=(12, 9))
     for ax, k, c in zip(axs, riv_keys, riv_colors):
         ax.plot(all_riv_obs.index, all_riv_obs.loc[:, k], color=c, marker='.', label=k)
+        temp = out_obs.loc[(out_obs.name.str.contains(k)) & (out_obs.group == 'riv')]
+        ax.scatter(temp.nper, temp.measured, color=c, label=f'{k.capitalize()} target',
+                   marker="X"
+                          "")
         ax.axhline(0, ls=':', color='k')
         ax.set_yscale('symlog')
         ax.legend()
     fig.supxlabel('Period')
-    fig.supylabel('River Gain/loss(-)')
+    fig.supylabel('River Gain(+)/loss(-)')
     fig.tight_layout()
     fig.savefig(plot_dir.joinpath('all_river_fluxes.png'))
     plt.close(fig)
@@ -328,7 +332,7 @@ def _plot_riv_obs(riv_keys, riv_colors, out_obs, plot_dir):
     plot_1_to_1(ax, ls=':', c='k', label='1:1 line')
     ax.legend()
     fig.tight_layout()
-    fig.savefig(plot_dir.joinpath('all_riv_targets.png'))
+    fig.savefig(plot_dir.joinpath('all_riv_targets_mes_mod.png'))
     plt.close(fig)
 
     # riv obs by time
@@ -344,7 +348,7 @@ def _plot_riv_obs(riv_keys, riv_colors, out_obs, plot_dir):
     fig.supxlabel('Model period')
     fig.supylabel('Residual (modelled - measured, m3/day)')
     fig.tight_layout()
-    fig.savefig(plot_dir.joinpath('all_riv_targets.png'))
+    fig.savefig(plot_dir.joinpath('all_riv_targets_residual.png'))
     plt.close(fig)
 
 
@@ -420,10 +424,11 @@ def _plot_budget(list_file, plot_dir, plot_transient_budget):
             plt.close(fig)
 
 
-def _plot_spatial_riv(all_riv, plot_dir):  # todo
-    assert isinstance(plot_dir, Path)
-    outdir = plot_dir.joinpath('spatial_riv')
-    outdir.mkdir(exist_ok=True)
+def _plot_spatial_riv(all_riv, plot_dir):
+    if plot_dir is not None:
+        assert isinstance(plot_dir, Path)
+        outdir = plot_dir.joinpath('spatial_riv')
+        outdir.mkdir(exist_ok=True)
     to_plots = {
         'min': np.nanmin(all_riv, axis=0),
         'mean': np.nanmean(all_riv, axis=0),
@@ -434,12 +439,16 @@ def _plot_spatial_riv(all_riv, plot_dir):  # todo
     for p in [5, 25, 50, 75, 95]:
         to_plots[f'{p:02d} percentile'] = np.nanpercentile(all_riv, p, axis=0)
 
+    discriptor = '\n- is gaining stream (water out of model)\n+ is losing stream (water into model)'
     for k, to_plot in to_plots.items():
         norm = SymLogNorm(100, 1, vmin=np.nanmin(to_plot), vmax=np.nanmax(to_plot))
-        fig, ax = smt.plot.plt_matrix(to_plot, base_map=True, alpha=1, cmap='RdBu', norm=norm, title=k)
+        fig, ax = smt.plot.plt_matrix(to_plot, base_map=True, alpha=1, cmap='RdBu', norm=norm, title=k + discriptor)
         fig.tight_layout()
-        fig.savefig(outdir.joinpath(f'riv_{k.replace(" ", "_")}.png'))
-        plt.close(fig)
+        if plot_dir is not None:
+            fig.savefig(outdir.joinpath(f'riv_{k.replace(" ", "_")}.png'))
+            plt.close(fig)
+    if plot_dir is None:
+        plt.show()
 
 
 def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
@@ -484,7 +493,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
 
     _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells)
 
-    _plot_all_riv_obs(all_riv_obs, plot_dir, riv_keys, riv_colors)
+    _plot_all_riv_obs(all_riv_obs, plot_dir, riv_keys, riv_colors, out_obs)
 
     _plot_hds_modelled_v_measured(hds_groups, hds_colors, hds_obs, plot_dir, regular_wells, regular_colors, zones,
                                   zcolors)
@@ -563,7 +572,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
 if __name__ == '__main__':
     t = time.time()
-    test_hds = Path('/home/matt_dumont/unbacked/hawea/structure_v4/init_structure_v4/base_model/opt_model.hds')
+    test_hds = Path('/home/matt_dumont/unbacked/hawea/structure_v5/init_structure_v5/base_model/opt_model.hds')
     process_model_output(test_hds.parent,
                          test_hds,
                          plot=True)

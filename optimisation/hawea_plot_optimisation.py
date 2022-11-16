@@ -12,7 +12,7 @@ from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 from model_tools.plot_optimisation import plot_optimisation_and_extract_info
 from model_parameterisation.inital_parametersiation import *
-from model_parameterisation.pilot_points import interpolate_sy_pilot_points,   interpolate_kh_pilot_points
+from model_parameterisation.pilot_points import interpolate_sy_pilot_points, interpolate_kh_pilot_points
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 import py7zr
 
@@ -88,7 +88,11 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
         for k, (start, (upper, lower)) in init.items():
             imesure = meas[k]
             out.loc[k, 'group'] = pref
-            out.loc[k, 'norm_param_val'] = (imesure - lower) / (upper - lower)
+            if pref in ['riv', 'kh']:
+                out.loc[k, 'norm_param_val'] = ((np.log10(imesure) - np.log10(lower))
+                                                / (np.log10(upper) - np.log10(lower)))
+            else:
+                out.loc[k, 'norm_param_val'] = (imesure - lower) / (upper - lower)
     with open(base_plot_dir.joinpath('parameters_norm_to_bounds.txt'), 'w') as f:
         f.write(out.to_string())
     out = out.loc[(out.norm_param_val >= 0.9) | (out.norm_param_val <= 0.1)]
@@ -103,7 +107,11 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
         meas = eval(f'{pref}_param')
         for k, (start, (upper, lower)) in init.items():
             imesure = meas[k]
-            norm_val = (imesure - lower) / (upper - lower)
+            if pref == 'kh':
+                norm_val = ((np.log10(imesure) - np.log10(lower))
+                            / (np.log10(upper) - np.log10(lower)))
+            else:
+                norm_val = (imesure - lower) / (upper - lower)
             plocs.loc[k, pref] = norm_val
 
     fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 8))
@@ -146,7 +154,6 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
 
         with open(base_plot_dir.joinpath('num_outer_itts.txt'), 'w') as f:
             f.write(t.to_string())
-
 
 
 def _dummy(x):

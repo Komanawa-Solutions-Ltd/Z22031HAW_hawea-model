@@ -45,6 +45,7 @@ def get_hawea_gain_loss_targets():
     data.loc[:, 'datetime'] = pd.to_datetime(data.loc[:, 'date'], '%Y-%m-%d').dt.date
     data.set_index('datetime', inplace=True)
     data.loc[:, 'target_val'] = data.loc[:, 'gain_loss'] * 60 * 60 * 24  # convert from m3/s to m3/day
+    data.loc[:, 'target_val'] *= -1  # switch from river gain to model gain
     data.loc[:, 'target_key'] = data.shortname.str.strip('S').astype(int)
     return data.loc[:, ['target_val', 'target_key']]
 
