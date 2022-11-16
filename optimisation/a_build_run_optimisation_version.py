@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from optimisation.model_utils_for_forward_run import _get_param_data, read_param_data
-from project_base import unbacked_dir
+from project_base import unbacked_dir, opt_proj_root, opt_model_tools
 import shutil
 import matplotlib.pyplot as plt
 
@@ -126,17 +126,21 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'v8_lowerk'
-previous_mversion = 'init_v8'
-branch = 'structure_v8'
+mversion = 'init_v9'
+previous_mversion = 'lowerk_v8'
+branch = 'structure_v9'
 previous_branch = 'structure_v8'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-as per init_v6a (a 1m confined layer below the layer to see if this improves stability and set ss=sy) with
- * rch multiplier moved to 2 multipliers (1 for irrigated, 1 for dryland)
- * initial conductivity set to 50 (100, 70 too unstable)
+* fix river targets (they were backwards) and change weights
+* implement grandview and john creek as str packages
+* Lower basement around g40_0366
 """
+# TODO check new git repo is being used!
+# todo and change river weights
+# todo implement grandview and john creek as str packages
+# todo Lower basement around g40_0366
 noptmax = 100
 recalc = True
 build_model = True
@@ -204,11 +208,15 @@ if __name__ == '__main__':
                     pdir.relative_to(unbacked_dir)),
             },
             prepend_bash_commands={
-                '100.124.148.71': ['default'],
+                '100.124.148.71': [
+                    'default',
+                    f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+                    f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+                ],
                 '100.121.150.68': [
                     'default',
-                    "cd ~/PycharmProjects/modflow_tools_haw ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
-                    f"cd ~/PycharmProjects/Z22031HAW_hawea-model ; git fetch --all ; git reset --hard origin/{branch}"
+                    f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+                    f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
                 ]
             }
         )
