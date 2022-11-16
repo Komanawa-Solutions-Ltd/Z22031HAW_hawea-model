@@ -2,6 +2,8 @@
 created matt_dumont 
 on: 19/07/22
 """
+import matplotlib.pyplot as plt
+
 from model_tools.regular_modeltools import ModelTools_RegularGrid
 from project_base import proj_root, modelling_dir, unbacked_dir, base_model_build_data_dir, \
     processed_model_build_data_dir
@@ -226,6 +228,34 @@ def _river_locs():
     return outdata
 
 
+def _slope_fix_southern(bottoms):
+    bottoms = deepcopy(bottoms)
+    riv = _river_locs()
+    fixer_path = base_model_build_data_dir.joinpath('bottoms_fixer_line.shp')
+    fixer = temp_smt.io.shape_file_to_model_array(fixer_path, 'id', alltouched=True)
+    idxs = smt.model_where(np.isfinite(fixer))
+    start_row = {}
+    stop_row = {}
+    for row, col in idxs:
+        start_row[col] = row
+        temp = riv.loc[(riv.j == col) & (riv.i >= row)].i.min()
+        stop_row[col] = temp
+
+    for col in start_row:
+        sr_row = start_row[col]
+        st_row = stop_row[col]
+        top_bot = bottoms[sr_row, col]
+        bot_bot = bottoms[st_row, col]
+        nrows = st_row - sr_row
+        if top_bot > bot_bot:
+            new_bots = -1 * np.arange(nrows) * (top_bot - bot_bot) / nrows + top_bot
+        else:
+            new_bots = np.arange(nrows) * (top_bot - bot_bot) / nrows + bot_bot
+
+        bottoms[sr_row:st_row, col] = new_bots
+    return bottoms
+
+
 def elv_calc():
     bot_path = base_model_build_data_dir.joinpath('Model_bot.tif')
     top = simplify_hawea_dem()
@@ -281,6 +311,7 @@ def elv_calc():
     assert np.isfinite(bot).all()
     thick = top - bot
     bot[thick < 2] = top[thick < 2] - 2  # set min thickness to 2m
+    bot = _slope_fix_southern(bot)
 
     out = np.concatenate((top[np.newaxis], bot[np.newaxis], bot[np.newaxis] - 1))
     np.save(processed_model_build_data_dir.joinpath('elv_db.npy'), out)
@@ -388,9 +419,17 @@ def export_model_boundary():
 if __name__ == '__main__':
     elv_calc()
     bot = get_bottom(True)
-    smt.plot.plt_matrix(bot, base_map=True, contour=True, contour_levels=np.arange(bot.min(), bot.max(), 10),
-                        label_contours=True, no_flow_layer=0)
-    smt.plot.show()
+    new_bot = _slope_fix_southern(bot)
+    fig, (ax1, ax2) = plt.subplots(ncols=2, sharex=True, sharey=True)
+    smt.plot.plt_matrix(bot, base_map=True, contour=True, contour_levels=2,
+                        label_contours=True, no_flow_layer=0, title='old_bot', ax=ax1)
+    smt.plot.plt_matrix(new_bot, base_map=True, contour=True, contour_levels=2,
+                        label_contours=True, no_flow_layer=0, title='new_bot', ax=ax2)
+    fig.tight_layout()
+    smt.plot.plt_matrix(bot - new_bot, base_map=True, contour=True, contour_levels=2,
+                        label_contours=True, no_flow_layer=0, title='dif (old-new)')
+
+    smt.plot.show()  # todo keep looking at bottoms around clutha riv
     raise NotImplementedError
     data_checks()
     get_starting_heads(True)

@@ -106,12 +106,10 @@ def check_target_datums():  # todo
     fig, ax  = plt.subplots()
     plot_hds_regular_locator(ax, {n: nc for n, nc in zip(all_wells.index, get_colors(all_wells.index))})
     plt.show()
-    # todo g40_0366 is weird, dont know if makes a difference, may need to increase the model depth in this area  to maintain
-    #  saturated thickness
 
 
 if __name__ == '__main__':
+    bottom_vs_mean_for_all_regular_targets()
     check_target_datums()
     check_riv_stage_near_g40_0366()
     Lake_stage_vs_g40_0415()
-    bottom_vs_mean_for_all_regular_targets()
