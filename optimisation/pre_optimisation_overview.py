@@ -16,7 +16,7 @@ from model_parameterisation.pilot_points import get_pilot_point_locations, inter
     interpolate_kh_pilot_points, get_param_zones, get_lake_array
 from model_parameterisation.static_params import *
 from model_tools.model_plotting import plot_spd, first, last, FakePath
-from model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_riv_data
+from model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_str_data
 from model_parameterisation.inital_parametersiation import *
 from optimisation.optimisation_period import tdis
 from project_base import proj_root, base_model_build_data_dir
@@ -243,10 +243,10 @@ def plot_all_spd(save=False):
              key='bhead', title='lake heads', outpath=outdir.joinpath(f'lake_time{extension}'))
 
     # river
-    plot_spd(get_riv_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
+    plot_spd(get_str_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
              func=first, key='stage', title='first river cell stage',
              outpath=outdir.joinpath(f'riv_first_cell_time{extension}'))
-    plot_spd(get_riv_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
+    plot_spd(get_str_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
              func=last, key='stage', title='last river cell stage',
              outpath=outdir.joinpath(f'riv_last_cell_time{extension}'))
 

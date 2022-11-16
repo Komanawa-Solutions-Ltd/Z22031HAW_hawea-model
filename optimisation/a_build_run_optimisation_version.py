@@ -28,7 +28,7 @@ def recalc_model_build(rerun_rushton=False):
     from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
     from model_build.supporting_data_analysis.all_wells import get_all_wells
     from model_build.zones import get_param_zones, get_model_zones
-    from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
+    from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
     from optimisation.optimisation_period import tdis
     from model_parameterisation.inital_parametersiation import get_initial_rch_mult
 

@@ -18,7 +18,7 @@ riv_loc_data_path = processed_model_build_data_dir.joinpath('river_loc_data.csv'
 riv_stage_data_path = processed_model_build_data_dir.joinpath('river_stage_data.csv')
 
 
-def get_river_loc_data(recalc=default_recalc):
+def get_river_loc_data(recalc=default_recalc):  # todo need to add john and grandview ck, move to str package
     if not recalc and riv_loc_data_path.exists():
         outdata = pd.read_csv(riv_loc_data_path, index_col=0)
         dtypes = {
@@ -44,6 +44,11 @@ def get_river_loc_data(recalc=default_recalc):
     for g in range(1, 4):
         outdata.loc[outdata.gage == g, 'param'] = f'h{g}'
     outdata.loc[:, 'k'] = 0
+
+    # todo need to add john and grandview ck
+    hill_crks = {}
+
+
     outdata.to_csv(riv_loc_data_path)
     return outdata
 

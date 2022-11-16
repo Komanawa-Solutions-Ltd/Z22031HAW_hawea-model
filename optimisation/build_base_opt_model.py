@@ -12,7 +12,7 @@ from model_parameterisation.static_params import ss, vka
 from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
 from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh, \
     get_initial_riv_conductance, get_race_multiplier, get_hillslope_multiplier, get_initial_rch_mult
-from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
+from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
 from targets_and_sensitive_sites.model_output import process_model_output
 from project_base import proj_root
 import py7zr
@@ -36,7 +36,7 @@ def test_times():
     get_ghb_data(tdis)
     print(f'took {time.time() - t}s for get_ghb_data')
     t = time.time()
-    get_riv_data(tdis, riv_params=get_initial_riv_conductance(True))
+    get_str_data(tdis, riv_params=get_initial_riv_conductance(True))
     print(f'took {time.time() - t}s for get_riv_data')
     t = time.time()
     get_well_data(tdis,

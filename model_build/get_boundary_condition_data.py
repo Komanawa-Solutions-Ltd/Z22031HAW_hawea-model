@@ -137,7 +137,7 @@ def get_ghb_data(tdis, recalc=False):
     return out
 
 
-def get_riv_data(tdis, riv_params):
+def get_str_data(tdis, riv_params): # todo change to river data for everything
     riv_locs = get_river_loc_data()
     # add conductance value
     riv_locs.loc[:, 'cond'] = riv_locs.param.replace(riv_params)
@@ -148,6 +148,7 @@ def get_riv_data(tdis, riv_params):
                                   {'stage': riv_stage},
                                   flopy.modflow.ModflowRiv.get_default_dtype(),
                                   )
+    raise NotImplementedError
     return out
 
 
@@ -162,5 +163,5 @@ if __name__ == '__main__':
     get_rch_data(tdis, t)
     b = get_well_data(tdis, hill_param=get_hillslope_multiplier(True)
                       , race_param={'all': 1}, recalc=True)
-    get_riv_data(tdis, get_initial_riv_conductance(return_just_start=True))
+    get_str_data(tdis, get_initial_riv_conductance(return_just_start=True))
     get_ghb_data(tdis)

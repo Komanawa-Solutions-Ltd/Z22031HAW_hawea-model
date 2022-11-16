@@ -9,7 +9,7 @@ from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
 from model_parameterisation.static_params import ss, vka
 from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
-from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
+from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
 from model_parameterisation.inital_parametersiation import *
 
 
@@ -90,7 +90,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       chani=1,
                       rch=get_rch_data(tdis, rch_param),
                       ghb_spd=get_ghb_data(tdis),
-                      riv_spd=get_riv_data(tdis, riv_params=riv_params),
+                      str_spd=get_str_data(tdis, riv_params=riv_params),
                       well_spd=get_well_data(tdis,
                                              hill_param=hill_param,
                                              race_param=race_param),

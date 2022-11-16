@@ -22,6 +22,7 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
                 rch=None,
                 ghb_spd=None,
                 riv_spd=None,
+                str_spd=None,
                 options='COMPLEX',
                 drn_spd=None, well_spd=None, nwt_kwargs={},
                 hani=None, mfv='mfnwt', run_model=False,
@@ -110,6 +111,8 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
     if riv_spd is not None:
         assert isinstance(riv_spd, dict)
         _create_riv_package(m, riv_data=riv_spd, noprint=noprint)
+    if str_spd is not None:
+        _create_str_package(m, str_data=str_spd, noprint=noprint)
     if ghb_spd is not None:
         _create_ghb_package(m, ghb_spd, noprint)
     flopy.modflow.ModflowOc(m, stress_period_data=oc_spd)
@@ -408,6 +411,10 @@ def _create_riv_package(m, riv_data, noprint):
         unitnumber=718,
         options=options
     )
+
+def _create_str_package(m, str_data, noprint): # todo!!!!
+    raise NotImplementedError
+
 
 
 def _create_wel_package(m, well_spd, noprint=False):
