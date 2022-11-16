@@ -8,7 +8,7 @@ import pandas as pd
 import pyemu
 from pathlib import Path
 from optimisation.model_utils_for_forward_run import _get_param_data
-from project_base import proj_root, opt_proj_root
+from project_base import proj_root, opt_proj_root, opt_model_tools
 from model_tools.beopest_manager import BeopestManager
 
 base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
@@ -27,7 +27,8 @@ def copy_forward_run(pst_dir):
     with open(base_pst_data.joinpath("forward_run.py")) as f:
         data = f.read()
 
-    data = data.replace('$$$$$USE_PATH$$$$$', str(opt_proj_root))
+    data = data.replace('$$$$$USE_MODEL_PATH$$$$$', str(opt_proj_root))
+    data = data.replace('$$$$$USE_TOOLS_PATH$$$$$', str(opt_model_tools))
 
     with open(forward_run_path, 'w') as f:
         f.write(data)

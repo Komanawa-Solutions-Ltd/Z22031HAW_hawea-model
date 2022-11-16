@@ -5,9 +5,10 @@ on: 11/10/22
 import sys
 from pathlib import Path
 
-t = Path('$$$$$USE_PATH$$$$$')
+t = Path('$$$$$USE_MODEL_PATH$$$$$')
 sys.path.append(str(t))
-sys.path.append(str(t.parent.joinpath('modflow_tools_haw')))  # supporting KSL package
+t = Path('$$$$$USE_TOOLS_PATH$$$$$')
+sys.path.append(str(t))
 print(f'pythonpath: {sys.path}')
 from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model

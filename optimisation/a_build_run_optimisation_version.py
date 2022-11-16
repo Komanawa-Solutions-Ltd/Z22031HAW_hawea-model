@@ -137,12 +137,12 @@ notes = f"""
 * implement grandview and john creek as str packages
 * Lower basement around g40_0366
 """
-# TODO check new git repo is being used!, setting up on Wanganui, not started on Tuke
+# TODO dbl check new git repo is being used!
 # todo review and change river weights
 # todo implement grandview and john creek as str packages
 noptmax = 100
-recalc = True
-build_model = True
+recalc = False
+build_model = False
 build_pest = True
 safemode = True
 local_cores = 8  # set to a lower number of core if you plan on using the local machine at the same time as a run
