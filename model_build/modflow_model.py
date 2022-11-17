@@ -428,7 +428,7 @@ def _create_str_package(m, str_data, noprint):  # todo!!!!
         ipakcb=740,
         istcb2=740,
         stress_period_data=str_data,
-        segment_data=None,  # todo my need to pass dummy values, routing of segments
+        segment_data=None,  # todo may need to pass dummy values, routing of segments
         options=options,
 
     )

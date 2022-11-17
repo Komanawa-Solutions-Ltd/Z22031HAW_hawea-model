@@ -137,7 +137,7 @@ def get_ghb_data(tdis, recalc=False):
     return out
 
 
-def get_str_data(tdis, riv_params): # todo change to river data for everything
+def get_str_data(tdis, riv_params): # todo change to str package data for everything
     riv_locs = get_river_loc_data()
     # add conductance value
     riv_locs.loc[:, 'cond'] = riv_locs.param.replace(riv_params)

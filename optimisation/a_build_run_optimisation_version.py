@@ -139,7 +139,7 @@ notes = f"""
 """
 # TODO dbl check new git repo is being used!
 # todo review and change river weights
-# todo implement grandview and john creek as str packages
+# todo implement grandview and john creek as str packages (in progress)
 noptmax = 100
 recalc = False
 build_model = False

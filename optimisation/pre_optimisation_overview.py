@@ -760,6 +760,8 @@ def make_all_preopt(save):
 
 
 if __name__ == '__main__':
+
+    # todo need to incorpoate changes to stream package (grandview and john creek)
     save = True
     for extension in ['.png']:
         if extension == '.png':

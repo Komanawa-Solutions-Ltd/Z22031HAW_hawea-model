@@ -219,6 +219,10 @@ def _river_locs():
     hawea.loc[:, 'seg'] = 1
     clutha.loc[:, 'rname'] = 'clutha'
     clutha.loc[:, 'seg'] = 2
+    # fix rbot so consecutively below
+    roll_size = 5
+    clutha.loc[:, 'rbot'] = clutha.loc[:, 'rbot'].rolling(roll_size, min_periods=1, center=True).mean()
+    hawea.loc[:, 'rbot'] = hawea.loc[:, 'rbot'].rolling(roll_size, min_periods=1, center=True).mean()
     hawea.sort_values('dist', inplace=True)
     clutha.sort_values('dist', inplace=True)
     hawea.loc[:, 'reach'] = np.arange(len(hawea))
@@ -433,7 +437,7 @@ if __name__ == '__main__':
     smt.plot.plt_matrix(bot - new_bot, base_map=True, contour=True, contour_levels=2,
                         label_contours=True, no_flow_layer=0, title='dif (old-new)')
 
-    smt.plot.show()  # todo keep looking at bottoms around clutha riv
+    smt.plot.show()
     raise NotImplementedError
     data_checks()
     get_starting_heads(True)

@@ -72,8 +72,17 @@ def get_river_loc_data(recalc=default_recalc):
         temp.loc[:, 'seg'] = outdata.seg.max() + 1
         outdata = pd.concat((outdata, temp))
 
-    # todo rbottom for clutha/hawea is not always falling Does this matter?, I don't think so.
     outdata.loc[:, 'rtop'] = outdata.loc[:, 'rbot'] + 2
+    for n in outdata.rname.unique():
+        temp = outdata.loc[outdata.rname == n]
+        above = []
+        for r in temp.reach:
+            t = temp.loc[temp.reach < r]
+            t2 = temp.loc[temp.reach==r]
+            above.append(t2.rbot.min() > t.rbot.min())
+        outdata.loc[outdata.rname == n, 'above_upstream'] = above
+    assert not outdata.above_upstream.any(), 'upstream values above downstream values'
+
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
@@ -339,12 +348,17 @@ def data_checks():
     smt.plot.plt_discrete_matrix(seg_array, alpha=1, no_flow_layer=0, base_map=True, title='segments', cmap='tab10')
     for n in riv_locs.rname.unique():
         temp = riv_locs.loc[riv_locs.rname == n]
+        above = []
+        for r in temp.reach:
+            t = temp.loc[temp.reach < r]
+            above.append(r > t.rbot.min())
+        temp.loc[:, 'above_upstream'] = np.array(above) * temp.rbot.min()
         reacj_array = smt.io.df_to_array(temp, 'reach')
         smt.plot.plt_matrix(reacj_array, alpha=1, no_flow_layer=0, base_map=True, title=f'reach: {n}')
 
         # plot river top bottom, etc.
         fig, ax = plt.subplots(figsize=(10, 8))
-        keys = ['m_top', 'rtop', 'rbot', 'm_bot']
+        keys = ['m_top', 'rtop', 'rbot', 'm_bot', 'above_upstream']
         colors = get_colors(keys)
         for c, k in zip(colors, keys):
             ax.plot(temp.reach, temp.loc[:, k], color=c, marker='.', label=k)
