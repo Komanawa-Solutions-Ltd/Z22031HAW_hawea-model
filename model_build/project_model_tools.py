@@ -264,7 +264,12 @@ def _slope_fix_southern(bottoms):
     return bottoms
 
 
-def elv_calc():
+def elv_calc(fix_southern=True):
+    """
+
+    :param fix_southern: should always be True (except in debugging issues)
+    :return:
+    """
     bot_path = base_model_build_data_dir.joinpath('Model_bot.tif')
     top = simplify_hawea_dem()
     top[top > 600] = 600  # for easy viewing of noflow area
@@ -304,6 +309,7 @@ def elv_calc():
     temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
     top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
+
     # adjust the bottoms near the river which are causing dry cells
     fixer = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('bottoms_fixer_flat.shp'),
                                              'id', alltouched=True)
@@ -319,7 +325,13 @@ def elv_calc():
     assert np.isfinite(bot).all()
     thick = top - bot
     bot[thick < 2] = top[thick < 2] - 2  # set min thickness to 2m
-    bot = _slope_fix_southern(bot)
+    if fix_southern:
+        bot = _slope_fix_southern(bot)
+    # adjust top so it is above rbot
+    temp = top[river.loc[:, 'i'], river.loc[:, 'j']]
+    idx = temp <= rbots
+    temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
+    top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
     out = np.concatenate((top[np.newaxis], bot[np.newaxis], bot[np.newaxis] - 1))
     np.save(processed_model_build_data_dir.joinpath('elv_db.npy'), out)
@@ -425,10 +437,11 @@ def export_model_boundary():
 
 
 if __name__ == '__main__':
-    elv_calc()
-    bot = get_bottom(True)
-    new_bot = _slope_fix_southern(bot)
-    fig, (ax1, ax2) = plt.subplots(ncols=2, sharex=True, sharey=True)
+    elv = elv_calc(False)
+    bot = elv[1]
+    new_bot = elv_calc(True)[1]
+    elv2 = elv_calc()
+    fig, (ax1, ax2) = plt.subplots(ncols=2, sharex=True, sharey=True, figsize=(16,9.5))
     smt.plot.plt_matrix(bot, base_map=True, contour=True, contour_levels=2,
                         label_contours=True, no_flow_layer=0, title='old_bot', ax=ax1)
     smt.plot.plt_matrix(new_bot, base_map=True, contour=True, contour_levels=2,

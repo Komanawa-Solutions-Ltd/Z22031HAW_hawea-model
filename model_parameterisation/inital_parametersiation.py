@@ -29,7 +29,9 @@ def get_initial_riv_conductance(return_just_start=False):
         'h1': (1000, (100, 10000)),
         'h2': (1000, (100, 10000)),
         'h3': (1000, (100, 10000)),
-        'c1': (1000, (100, 10000))
+        'c1': (1000, (100, 10000)),
+        'gview': (500, (50, 5000)),
+        'john': (500, (50, 5000)),
     }
     if return_just_start:
         for k, v in params.items():

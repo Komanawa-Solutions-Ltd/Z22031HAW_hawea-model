@@ -7,7 +7,7 @@ import time
 
 from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
-    get_river_loc_data, get_lake_hawea_loc, get_lake_heads
+    get_river_loc_data, get_lake_hawea_loc, get_lake_heads, get_river_flow_data
 from model_parameterisation.pilot_points import get_spatial_temporal_rch_mult
 from model_parameterisation.static_params import lake_conduct
 import flopy
@@ -137,18 +137,30 @@ def get_ghb_data(tdis, recalc=False):
     return out
 
 
-def get_str_data(tdis, riv_params): # todo change to str package data for everything
+def get_str_data(tdis, riv_params):
     riv_locs = get_river_loc_data()
     # add conductance value
     riv_locs.loc[:, 'cond'] = riv_locs.param.replace(riv_params)
-
+    riv_locs = riv_locs.rename(columns={
+        'seg': 'segment',
+        'rbot': 'sbot',
+        'rtop': 'stop',
+    })
+    riv_locs.loc[:, ['width', 'slope', 'rough']] = 1.  # Keynote dummy values as I am not calculating stage
     riv_stage = get_river_stage_data(*tdis.date_limits)
+    riv_flow = get_river_flow_data(*tdis.date_limits)
+    use_riv_flow = riv_stage.copy(deep=True) * 0
+    for k in riv_locs.rname.unique():
+        sreach = int(riv_locs.loc[riv_locs.rname==k,'dist'].min())
+        use_riv_flow.loc[:, f"{k}_{sreach:05d}"] = riv_flow.loc[:, k]
 
+    spd_dtype, seg_dtype = flopy.modflow.ModflowStr.get_default_dtype()
     out = tdis.map_data_locations(riv_locs,
-                                  {'stage': riv_stage},
-                                  flopy.modflow.ModflowRiv.get_default_dtype(),
+                                  {'stage': riv_stage,
+                                   'flow': use_riv_flow,
+                                   },
+                                  spd_dtype,
                                   )
-    raise NotImplementedError
     return out
 
 
@@ -157,6 +169,7 @@ if __name__ == '__main__':
     from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_hillslope_multiplier, \
         get_initial_rch_mult
 
+    get_str_data(tdis, get_initial_riv_conductance(True))
     t = get_initial_rch_mult(True)
     t['dry'] = 1.1
     t['irr'] = 0

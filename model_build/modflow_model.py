@@ -415,12 +415,21 @@ def _create_riv_package(m, riv_data, noprint):
 
 def _create_str_package(m, str_data, noprint):  # todo!!!!
     options = None
+    noprint = False # todo DADB
     if noprint:
         options = ['NOPRINT']
+    t = flopy.modflow.ModflowStr.get_empty()[1]
+    nsss = []
+    mxactss = []
+    for v in str_data.values():
+        mxactss.append(len(v))
+        nsss.append(len(pd.unique(v['segment'])))
+        pass
+    dummy_seg_data = {p: t for p in str_data.keys()}
     str = flopy.modflow.ModflowStr(
         m,
-        mxacts=0,  # todo probably don't need to calculate, but dbl check!
-        nss=0,  # todo probably don't need to calculate, but dbl check!
+        mxacts=max(mxactss),  # todo do a pull request to read this from these data... this is dumb
+        nss=max(nsss),  # todo do a pull request to read this from these data... this is dumb
         ntrib=0,
         ndiv=0,
         icalc=0,
@@ -428,11 +437,11 @@ def _create_str_package(m, str_data, noprint):  # todo!!!!
         ipakcb=740,
         istcb2=740,
         stress_period_data=str_data,
-        segment_data=None,  # todo may need to pass dummy values, routing of segments
+        segment_data=dummy_seg_data,
         options=options,
 
     )
-    raise NotImplementedError
+    pass
 
 
 def _create_wel_package(m, well_spd, noprint=False):

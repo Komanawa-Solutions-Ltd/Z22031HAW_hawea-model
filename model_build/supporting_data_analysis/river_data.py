@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from model_build.utils import select_resample, get_colors
-from model_build.project_model_tools import smt, _river_locs
+from model_build.project_model_tools import smt, _river_locs, get_lake_array
 from project_base import base_model_build_data_dir, processed_model_build_data_dir
+from model_build.supporting_data_analysis.hillside_inflows import get_hillside_flows
 
 default_recalc = False
 hawea_shp_path = base_model_build_data_dir.joinpath('hawea_river.shp')
@@ -55,7 +56,7 @@ def get_river_loc_data(recalc=default_recalc):
         top = smt.get_tops()[0]
         temp.loc[:, 'top'] = top[temp.i, temp.j]
         temp.sort_values('dist', inplace=True)
-        temp.index = [f'{k}_{e:05d}' for e in range(len(temp))]
+        temp.index = [f'{k}_{int(e):05d}' for e in temp.dist]
         temp.loc[:, 'reach'] = np.arange(len(temp))
         temp.loc[:, 'rname'] = k
         temp.loc[:, 'param'] = k
@@ -78,10 +79,22 @@ def get_river_loc_data(recalc=default_recalc):
         above = []
         for r in temp.reach:
             t = temp.loc[temp.reach < r]
-            t2 = temp.loc[temp.reach==r]
+            t2 = temp.loc[temp.reach == r]
             above.append(t2.rbot.min() > t.rbot.min())
         outdata.loc[outdata.rname == n, 'above_upstream'] = above
     assert not outdata.above_upstream.any(), 'upstream values above downstream values'
+
+    ibound = smt.get_no_flow(0)
+    lake = get_lake_array()
+    idx = (ibound[outdata.i, outdata.j] == 1) & (np.isnan(lake[outdata.i, outdata.j]))
+    outdata = outdata.loc[idx]
+
+    # reset reach
+    # set reach to 1 based
+    for r in outdata.rname.unique():
+        idx = outdata.rname == r
+        outdata.loc[idx, 'reach'] = np.arange(idx.sum()) + 1  # keynote the str package is 1 indexed for stream reach
+        # todo add stream reach == 0  check to flopy
 
     outdata.to_csv(riv_loc_data_path)
     return outdata
@@ -183,8 +196,18 @@ def _print_flowlengths():
         print(f'length of record {k}: {temp.min().date()} to {temp.max().date()}')
 
 
-def get_river_stage_data(start_date, end_date, frequency='D', recalc=False,
-                         plot=False):  # todo need to add grandview and john, then check!
+def get_river_flow_data(start_date, end_date, frequency='D'):
+    hills = get_hillside_flows(start_date, end_date, frequency, include_hill_str=True)
+    rflow = get_historical_stage_flow(start_date, end_date, frequency)
+    hills = hills.rename(columns={'Grandview Creek': 'gview', 'John Creek': 'john'})
+    outdata = hills.loc[:, ['gview', 'john']]
+    temp = pd.DataFrame({'hawea': rflow.loc[:, 'camphill_flow'], 'clutha': rflow.loc[:, 'camphill_flow'] * 10})
+    temp *= 86400 * 0.001  # convert flow from L/s to m3/day
+    outdata = pd.merge(outdata, temp, right_index=True, left_index=True, how='outer')
+    return outdata
+
+
+def get_river_stage_data(start_date, end_date, frequency='D', recalc=False, plot=False):
     if riv_stage_data_path.exists() and not recalc:
         outdata = pd.read_csv(riv_stage_data_path, index_col=0).astype(float)
         outdata.index = pd.to_datetime(outdata.index)
@@ -241,13 +264,19 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False,
     t = (loc_data.loc[clutha_keys, 'rbot'].values + clutha_deltas)
     outdata.loc[:, clutha_keys] = t
 
+    # set john and grandview stage to model top (smoothed)
+    temp = loc_data.loc[np.in1d(loc_data.rname, ['john', 'gview'])]
+    outdata.loc[:, temp.index] = temp.rtop.values[np.newaxis]
+
+    assert np.isclose(outdata.loc[:, temp.index].mean(), temp.rtop).all()
     assert (outdata.min() >= loc_data.loc[:, 'rbot']).all(), 'some stages are below rbot, address this'
 
-    plt_stg_data = outdata.dropna().describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
+    use_cols = [e for e in outdata.columns if (('hawea' in e) or ('clutha' in e))]
+    plt_stg_data = outdata.loc[:, use_cols].dropna().describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
     k_cs = ['min', '5%', '25%', '50%', '75%', '95%', 'max', ]
     colors = get_colors(k_cs, cmap_name='winter')
 
-    temp_data = loc_data.copy(deep=True)
+    temp_data = loc_data.copy(deep=True).loc[np.in1d(loc_data.rname, ['hawea', 'clutha'])]
     tops = smt.get_tops()[0]
     bottoms = smt.get_bottoms()[0]
     temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
@@ -276,6 +305,9 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False,
 def data_checks():
     import matplotlib.pyplot as plt
 
+    flow = get_river_flow_data('2009', None) / 86400
+    flow.plot(logy=True)
+
     # look at riv locations, make sure none of the locations are in the lake!!!
     ibound = smt.get_no_flow(0)
     hawea = smt.io.shape_file_to_model_array(hawea_shp_path, 'dist_top', alltouched=True)
@@ -293,7 +325,7 @@ def data_checks():
     river_locs.loc[:, 'model_bot'] = bottoms[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
     for r in ['clutha', 'hawea', 'both']:
         if r == 'both':
-            temp_data = river_locs.copy(deep=True)
+            temp_data = river_locs.loc[np.in1d(river_locs.rname, ['hawea', 'clutha'])].copy(deep=True)
             temp_data.loc[temp_data.rname == 'clutha', 'dist'] += temp_data.loc[
                 temp_data.rname == 'hawea', 'dist'].max()
         else:
@@ -370,7 +402,8 @@ def data_checks():
 
 
 if __name__ == '__main__':
-    _print_flowlengths()
     t = get_river_loc_data(True)
-    data_checks()
+    t = get_river_flow_data(None, None)
     t = get_river_stage_data(None, None, recalc=True)
+    _print_flowlengths()
+    data_checks()

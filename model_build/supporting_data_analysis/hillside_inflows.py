@@ -24,7 +24,7 @@ catchment_loc_path = processed_model_build_data_dir.joinpath('catchment_locs.csv
 flow_data_path = processed_model_build_data_dir.joinpath('hillside_flows.csv')
 
 
-def get_hillside_catchment_locs(recalc=False, show=False):
+def get_hillside_catchment_locs(recalc=False, show=False, include_hill_str=False):
     if not recalc and catchment_loc_path.exists():
         outdata = pd.read_csv(catchment_loc_path, index_col=0)
         dtypes = {
@@ -39,6 +39,10 @@ def get_hillside_catchment_locs(recalc=False, show=False):
 
         for k, v in dtypes.items():
             outdata.loc[:, k] = outdata.loc[:, k].astype(v)
+        if include_hill_str:
+            pass
+        else:
+            outdata = outdata.drop(index=['Grandview Creek', 'John Creek'])
         return outdata
     catchments = get_catchment_areas()
     ibound = smt.get_no_flow(0)
@@ -110,6 +114,12 @@ def get_hillside_catchment_locs(recalc=False, show=False):
 
     outdata.loc[:, 'k'] = 0
     outdata.to_csv(catchment_loc_path)
+
+    if include_hill_str:
+        pass
+    else:
+        outdata = outdata.drop(index=['Grandview Creek', 'John Creek'])
+
     return outdata
 
 
@@ -667,13 +677,14 @@ def lindis_correlation_with_malf(return_figs=False):
 
 
 def get_hillside_flows(start_date, end_date, frequency='D',
-                       recalc=False):  # TODO need to remove grandview and john (here or in other?)
+                       recalc=False, include_hill_str=False):
     """
     get hillside flow records from start to end dates (inclusive),
      data is available from 2012-01-01 to 2021-12-31
     :param start_date: none or dates
     :param end_date: none or dates
     :param frequency: pd frequnecy code
+    :param include_hill_str: bool If True include John and Grandview Creek, which are now implemented in the STR package
     :return:
     """
     if flow_data_path.exists() and not recalc:
@@ -685,10 +696,14 @@ def get_hillside_flows(start_date, end_date, frequency='D',
         data, (figs, names) = lindis_correlation_with_malf(return_figs=True)
         data.to_csv(flow_data_path)
 
+    if include_hill_str:
+        pass
+    else:
+        data = data.drop(columns=['Grandview Creek', 'John Creek'])
     return select_resample(data, start_date, end_date, frequency, 'mean')
 
 
 if __name__ == '__main__':
+    get_hillside_flows(None, None, recalc=False)
     t = get_hillside_catchment_locs(recalc=True, show=True)
     raise NotImplementedError
-    get_hillside_flows(None, None, recalc=True)

@@ -140,9 +140,12 @@ notes = f"""
 # TODO dbl check new git repo is being used!
 # todo review and change river weights
 # todo implement grandview and john creek as str packages (in progress)
-noptmax = 100
-recalc = False
-build_model = False
+# todo check str package (in pogresse)
+# todo check cbc package (in progress)
+# todo rework model visualisation/opt visualisation as needed (in progress)
+noptmax = 300
+recalc = True
+build_model = True
 build_pest = True
 safemode = True
 local_cores = 8  # set to a lower number of core if you plan on using the local machine at the same time as a run
