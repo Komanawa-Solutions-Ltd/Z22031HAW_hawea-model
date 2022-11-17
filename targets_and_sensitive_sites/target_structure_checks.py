@@ -70,7 +70,7 @@ def Lake_stage_vs_g40_0415():
     plt.show()
 
 
-def check_target_datums():  # todo
+def check_target_datums():
     bottoms = smt.get_bottoms()[0]
     tops = smt.get_tops()[0]
     high = get_high_freq_head_targets(*tdis.date_limits)

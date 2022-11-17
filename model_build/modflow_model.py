@@ -413,9 +413,8 @@ def _create_riv_package(m, riv_data, noprint):
     )
 
 
-def _create_str_package(m, str_data, noprint):  # todo!!!!
+def _create_str_package(m, str_data, noprint):
     options = None
-    noprint = False # todo DADB
     if noprint:
         options = ['NOPRINT']
     t = flopy.modflow.ModflowStr.get_empty()[1]

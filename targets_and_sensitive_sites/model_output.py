@@ -519,7 +519,7 @@ def _plot_spatial_strflow_out(all_str_flow, plot_dir):
         plt.show()
 
 
-def _plot_str_along_str(all_str_flow, plot_dir):  # todo and then implemnt
+def _plot_str_along_str(all_str_flow, plot_dir):
     print(myself())
     if plot_dir is not None:
         assert isinstance(plot_dir, Path)
