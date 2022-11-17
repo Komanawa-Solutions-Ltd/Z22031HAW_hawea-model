@@ -666,7 +666,8 @@ def lindis_correlation_with_malf(return_figs=False):
     return outdata
 
 
-def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
+def get_hillside_flows(start_date, end_date, frequency='D',
+                       recalc=False):  # TODO need to remove grandview and john (here or in other?)
     """
     get hillside flow records from start to end dates (inclusive),
      data is available from 2012-01-01 to 2021-12-31
@@ -688,6 +689,6 @@ def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
 
 
 if __name__ == '__main__':
-    t = get_hillside_catchment_locs(recalc=True,show=True)
+    t = get_hillside_catchment_locs(recalc=True, show=True)
     raise NotImplementedError
     get_hillside_flows(None, None, recalc=True)

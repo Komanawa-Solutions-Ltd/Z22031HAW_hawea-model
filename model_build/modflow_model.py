@@ -412,9 +412,27 @@ def _create_riv_package(m, riv_data, noprint):
         options=options
     )
 
-def _create_str_package(m, str_data, noprint): # todo!!!!
-    raise NotImplementedError
 
+def _create_str_package(m, str_data, noprint):  # todo!!!!
+    options = None
+    if noprint:
+        options = ['NOPRINT']
+    str = flopy.modflow.ModflowStr(
+        m,
+        mxacts=0,  # todo probably don't need to calculate, but dbl check!
+        nss=0,  # todo probably don't need to calculate, but dbl check!
+        ntrib=0,
+        ndiv=0,
+        icalc=0,
+        const=86400.0,
+        ipakcb=740,
+        istcb2=740,
+        stress_period_data=str_data,
+        segment_data=None,  # todo my need to pass dummy values, routing of segments
+        options=options,
+
+    )
+    raise NotImplementedError
 
 
 def _create_wel_package(m, well_spd, noprint=False):

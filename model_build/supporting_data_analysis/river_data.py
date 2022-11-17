@@ -18,7 +18,7 @@ riv_loc_data_path = processed_model_build_data_dir.joinpath('river_loc_data.csv'
 riv_stage_data_path = processed_model_build_data_dir.joinpath('river_stage_data.csv')
 
 
-def get_river_loc_data(recalc=default_recalc):  # todo need to add john and grandview ck, move to str package
+def get_river_loc_data(recalc=default_recalc):
     if not recalc and riv_loc_data_path.exists():
         outdata = pd.read_csv(riv_loc_data_path, index_col=0)
         dtypes = {
@@ -45,10 +45,35 @@ def get_river_loc_data(recalc=default_recalc):  # todo need to add john and gran
         outdata.loc[outdata.gage == g, 'param'] = f'h{g}'
     outdata.loc[:, 'k'] = 0
 
-    # todo need to add john and grandview ck
-    hill_crks = {}
+    # add john and grandview ck
+    hill_crks = {
+        'gview': base_model_build_data_dir.joinpath('grandview_creek_points.shp'),
+        'john': base_model_build_data_dir.joinpath('John_creek_points.shp'),
+    }
+    for i, (k, path) in enumerate(hill_crks.items()):
+        temp = smt.io.array_to_df(smt.io.shape_file_to_model_array(path, 'distance', alltouched=True), 'dist')
+        top = smt.get_tops()[0]
+        temp.loc[:, 'top'] = top[temp.i, temp.j]
+        temp.sort_values('dist', inplace=True)
+        temp.index = [f'{k}_{e:05d}' for e in range(len(temp))]
+        temp.loc[:, 'reach'] = np.arange(len(temp))
+        temp.loc[:, 'rname'] = k
+        temp.loc[:, 'param'] = k
+        temp.loc[:, 'k'] = 0
+        temp_rbot = temp.loc[:, 'top'] - 2
+        use_bot = []
+        prev = 1E15
+        for v in temp_rbot:
+            if v >= prev:
+                v = prev - 0.2
+            use_bot.append(v)
+            prev = v
+        temp.loc[:, 'rbot'] = use_bot
+        temp.loc[:, 'seg'] = outdata.seg.max() + 1
+        outdata = pd.concat((outdata, temp))
 
-
+    # todo rbottom for clutha/hawea is not always falling Does this matter?, I don't think so.
+    outdata.loc[:, 'rtop'] = outdata.loc[:, 'rbot'] + 2
     outdata.to_csv(riv_loc_data_path)
     return outdata
 
@@ -149,7 +174,8 @@ def _print_flowlengths():
         print(f'length of record {k}: {temp.min().date()} to {temp.max().date()}')
 
 
-def get_river_stage_data(start_date, end_date, frequency='D', recalc=False, plot=False):
+def get_river_stage_data(start_date, end_date, frequency='D', recalc=False,
+                         plot=False):  # todo need to add grandview and john, then check!
     if riv_stage_data_path.exists() and not recalc:
         outdata = pd.read_csv(riv_stage_data_path, index_col=0).astype(float)
         outdata.index = pd.to_datetime(outdata.index)
@@ -238,7 +264,6 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False, plot
     return select_resample(outdata, start_date, end_date, frequency, 'mean')
 
 
-
 def data_checks():
     import matplotlib.pyplot as plt
 
@@ -299,12 +324,39 @@ def data_checks():
     # look at gaging sites
     temp2 = smt.io.df_to_array(river_locs, 'gage')
     smt.plot.plt_matrix(temp2, base_map=True, title='gaging locs')
+
+    # look at str package data
+    riv_locs = get_river_loc_data()
+    tops = smt.get_tops()[0]
+    bottoms = smt.get_bottoms()[0]
+    riv_locs.loc[:, 'm_top'] = tops[riv_locs.i, riv_locs.j]
+    riv_locs.loc[:, 'm_bot'] = bottoms[riv_locs.i, riv_locs.j]
+    param_dict = {k: i for i, k in enumerate(riv_locs.param.unique())}
+    riv_locs.loc[:, 'iparam'] = riv_locs.param.replace(param_dict)
+    smt.plot.plt_discrete_matrix(smt.io.df_to_array(riv_locs, 'iparam'), names={v: k for k, v in param_dict.items()},
+                                 cmap='tab10')
+    seg_array = smt.io.df_to_array(riv_locs, 'seg')
+    smt.plot.plt_discrete_matrix(seg_array, alpha=1, no_flow_layer=0, base_map=True, title='segments', cmap='tab10')
+    for n in riv_locs.rname.unique():
+        temp = riv_locs.loc[riv_locs.rname == n]
+        reacj_array = smt.io.df_to_array(temp, 'reach')
+        smt.plot.plt_matrix(reacj_array, alpha=1, no_flow_layer=0, base_map=True, title=f'reach: {n}')
+
+        # plot river top bottom, etc.
+        fig, ax = plt.subplots(figsize=(10, 8))
+        keys = ['m_top', 'rtop', 'rbot', 'm_bot']
+        colors = get_colors(keys)
+        for c, k in zip(colors, keys):
+            ax.plot(temp.reach, temp.loc[:, k], color=c, marker='.', label=k)
+        ax.set_title(n)
+        ax.set_ylabel('elv')
+        ax.set_xlabel('reach')
+        ax.legend()
     plt.show()
 
 
 if __name__ == '__main__':
     _print_flowlengths()
     t = get_river_loc_data(True)
-    smt.get_elv_db(recalc=True)
-    t = get_river_stage_data(None, None, recalc=True)
     data_checks()
+    t = get_river_stage_data(None, None, recalc=True)

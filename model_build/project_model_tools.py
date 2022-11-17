@@ -216,9 +216,13 @@ def _river_locs():
 
     # label rivers
     hawea.loc[:, 'rname'] = 'hawea'
+    hawea.loc[:, 'seg'] = 1
     clutha.loc[:, 'rname'] = 'clutha'
+    clutha.loc[:, 'seg'] = 2
     hawea.sort_values('dist', inplace=True)
     clutha.sort_values('dist', inplace=True)
+    hawea.loc[:, 'reach'] = np.arange(len(hawea))
+    clutha.loc[:, 'reach'] = np.arange(len(clutha))
     outdata = pd.concat((hawea, clutha))
 
     # set the river river bottoms 3 m below top so that the stage is always higher than river bottom
