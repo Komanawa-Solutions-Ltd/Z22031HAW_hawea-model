@@ -175,6 +175,7 @@ if __name__ == '__main__':
     # build base model
     if build_model:
         build_test_model(model_ws=test_path, start_param_vals=start_param, notes=test_notes, recalc=recalc)
+        # todo assert that the model converged!
 
     # build pest
     if build_pest:
