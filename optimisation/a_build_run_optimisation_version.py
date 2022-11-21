@@ -126,20 +126,18 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_v9'
-previous_mversion = 'lowerk_v8'
-branch = 'structure_v9'
-previous_branch = 'structure_v8'
+mversion = 'init_v10'
+previous_mversion = 'init_v9'
+branch = 'structure_v10'
+previous_branch = 'structure_v9'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-* fix river targets (they were backwards) and change weights
-* implement grandview and john creek as str packages
-* Lower basement around g40_0366
+* 
 """
 # todo review and change river weights !!!!!!!!!!!, re-run and start long one
 noptmax = 300
-recalc = True
+recalc = False
 build_model = True
 build_pest = True
 safemode = True

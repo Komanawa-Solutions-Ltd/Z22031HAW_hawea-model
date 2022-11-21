@@ -200,6 +200,8 @@ def set_obs_data(pst, obs_path):
     # double impact of single_3 relative to single_1
     pst.observation_data.loc[base_obs.loc[all_obs, 'group'] == 'single_3', 'weight'] *= 2
 
+    # todo set weight of each well in regular heads to be the same despite number of records
+
     # normalise weights by group totals  (total weight sums to 1) for each group
     weight_totals = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight'].to_dict()
     for g in pst.nnz_obs_groups:
@@ -207,8 +209,8 @@ def set_obs_data(pst, obs_path):
 
     # increase weight of specific groups
     group_wts = {
-        'rwh_hf': 200,
-        'rwh_hf_riv': 25,
+        'rwh_hf': 0,
+        'rwh_hf_riv': 0,
         'h_hf': 100,
         'h_hf_riv': 25,
         'h_lf': 30,
