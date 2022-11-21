@@ -718,7 +718,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
     # save output
     out_obs.to_csv(model_ws.joinpath('observations.dat'), sep='\t', index=False)
     np.savetxt(model_ws.joinpath('dry_cells.txt'), dry_hds, fmt='%d')
-    np.savetxt(model_ws.joinpath('dry_cells.txt'), flooded_cells, fmt='%d')
+    np.savetxt(model_ws.joinpath('flooded_cells.txt'), flooded_cells, fmt='%d')
 
     # plot stuff
     if plot:

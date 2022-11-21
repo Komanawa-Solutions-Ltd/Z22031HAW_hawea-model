@@ -117,9 +117,17 @@ def plot_wells():
         temp = wells.loc[wells.quality_code == qc]
         ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'QC: {qc}')
     ax.legend()
+
+    # plot elv exists
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    temp = wells.loc[wells.missing_elv]
+    ax.scatter(temp.nztmx, temp.nztmy, c='r', label='missing elevation data')
+    temp = wells.loc[~wells.missing_elv]
+    ax.scatter(temp.nztmx, temp.nztmy, c='b', label='has elevation data')
+    ax.legend()
+
     smt.plot.show()
 
-
 if __name__ == '__main__':
-    t = get_all_wells(recalc=True)
     plot_wells()
+    t = get_all_wells(recalc=True)
