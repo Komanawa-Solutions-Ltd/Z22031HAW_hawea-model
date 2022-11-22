@@ -241,6 +241,8 @@ def _slope_fix_southern(bottoms):
     riv = _river_locs()
     fixer_path = base_model_build_data_dir.joinpath('bottoms_fixer_line.shp')
     fixer = temp_smt.io.shape_file_to_model_array(fixer_path, 'id', alltouched=True)
+    ibound = no_flow()
+    fixer[ibound[0] != 1] = np.nan
     idxs = smt.model_where(np.isfinite(fixer))
     start_row = {}
     stop_row = {}
@@ -252,6 +254,8 @@ def _slope_fix_southern(bottoms):
     for col in start_row:
         sr_row = start_row[col]
         st_row = stop_row[col]
+        if np.isnan(st_row):
+            continue
         top_bot = bottoms[sr_row, col]
         bot_bot = bottoms[st_row, col]
         nrows = st_row - sr_row
@@ -449,7 +453,7 @@ if __name__ == '__main__':
     temp = np.concatenate((old_bot, new_bot))
     vmax = np.nanmax(temp)
     vmin = np.nanmin(temp)
-    contour_levels=5
+    contour_levels = 2
     fig, (ax1, ax2) = plt.subplots(ncols=2, sharex=True, sharey=True, figsize=(16, 9.5))
     smt.plot.plt_matrix(old_bot, base_map=True, contour=True, contour_levels=contour_levels,
                         label_contours=True, no_flow_layer=0, title='old_bot', ax=ax1,

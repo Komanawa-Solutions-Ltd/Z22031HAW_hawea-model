@@ -135,10 +135,9 @@ param_file = None
 notes = f"""
 * 
 """
-# todo review and change river weights !!!!!!!!!!!, re-run and start long one
 noptmax = 300
-recalc = True  # todo flip this switch
-build_model = True # todo flip this switch
+recalc = True
+build_model = True
 build_pest = True
 safemode = True
 local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
