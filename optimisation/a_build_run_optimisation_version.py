@@ -7,7 +7,7 @@ on: 1/11/22
 from pathlib import Path
 
 import pandas as pd
-
+from model_build.project_model_tools import smt
 from optimisation.model_utils_for_forward_run import _get_param_data, read_param_data
 from project_base import unbacked_dir, opt_proj_root, opt_model_tools
 import shutil
@@ -119,6 +119,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),
                          plot=plot)
+    return model_ws.joinpath(f'{name}.list')
 
 
 # todo version here to run pest and base model
@@ -133,14 +134,27 @@ previous_branch = 'structure_v9'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-* 
+* Set weight of regular year targets to 0
+* set  each of the 'h_hf' targets equal weights despite different data lengths
+* look/lower basement in dry cells near model boundaries
+ * NE hillside area (done)
+ * Near clutha river  (done)
+* I think I need some more pilot points
+ * Near pt 402 on camp hill moraine (move mangawera south?) (todo) and another in the moraine (to interpolate with other river group
+   * To stop dry cells south of camp hill moraine
+  * Significant number in the hillslope area just off the bounds to allow conductivity to fall there if needed for stability. And to manage the change in geologic setting near hillslope
+  * Adjust some locations based on the new pilot point locations
+  * New rivergroup south of mangawera valley entrance to allow for the difference between the two settings
+  * Additional point in the middle of the terrace to manage near hillside environment.
+* Try lowering hillside conductance  → set to 100 vs 1000 for hawea/clutha, which means much of the peak flow does does not make it into the model.
+
 """
 noptmax = 300
 recalc = True
 build_model = True
 build_pest = True
 safemode = True
-local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
+local_cores = 8  # set to a lower number of core if you plan on using the local machine at the same time as a run
 
 # todo fill above here
 
@@ -171,8 +185,8 @@ if __name__ == '__main__':
     test_path.parent.mkdir(exist_ok=True, parents=True)
     # build base model
     if build_model:
-        build_test_model(model_ws=test_path, start_param_vals=start_param, notes=test_notes, recalc=recalc)
-        # todo assert that the model converged!
+        listf = build_test_model(model_ws=test_path, start_param_vals=start_param, notes=test_notes, recalc=recalc)
+        assert smt.modelchecks.modflow_converged(listf)
 
     # build pest
     if build_pest:
