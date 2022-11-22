@@ -5,6 +5,7 @@ on: 25/10/22
 import os.path
 from pathlib import Path
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.colors import FuncNorm
 import pandas as pd
 from model_build.project_model_tools import smt
@@ -17,7 +18,7 @@ from model_tools.util_functions.list_file_utils import ListSolverInfo
 import py7zr
 
 
-def plot_opt(pest_dir, replot=False, plot_failure_points=True):
+def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=False):
     base_plot_dir = Path(pest_dir).joinpath('Base_Optimisation_plots')
     if base_plot_dir.exists() and not replot:
         print('optimisation plots already present')
@@ -57,29 +58,30 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
     # add from model tools
     plot_optimisation_and_extract_info(pest_dir=pest_dir, base_plot_dir=base_plot_dir)
 
-    # location of parameters at bound # todo not working right???, check
+    pp_locs = get_pilot_point_locations()
+    pp_locs.loc[:, 'hk'] = [kh_param[e] for e in pp_locs.index]
+    pp_locs.loc[:, 'sy'] = [sy_param[e] for e in pp_locs.index]
+
+    _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs)
+    _plot_param_at_bounds(base_plot_dir, pp_locs, kh_param, sy_param, riv_param, hill_param, race_param, rch_param)
+
+    if plot_failure_points:
+        _plot_failures(pest_dir, base_plot_dir)
+    elif check_success:
+        _just_check_success(pest_dir, base_plot_dir)
+
+
+def _dummy(x):
+    return x
+
+
+def _plot_param_at_bounds(base_plot_dir, pp_locs, kh_param, sy_param, riv_param, hill_param, race_param, rch_param):
     init_sy_param = get_inital_sy()
     init_kh_param = get_inital_kh()
     init_race_param = get_race_multiplier()
     init_hill_param = get_hillslope_multiplier()
     init_riv_param = get_initial_riv_conductance()
     init_rch_param = get_initial_rch_mult()
-    pp_locs = get_pilot_point_locations()
-
-    # plot rch multiplier array, kh, sy array
-    sy_array = interpolate_sy_pilot_points(sy_param)
-    kh_array = interpolate_kh_pilot_points(kh_param)
-
-    fig, ax = smt.plot.plt_matrix(sy_array[0], base_map=True, no_flow_layer=0, title='Sy field')
-    fig.tight_layout()
-    fig.savefig(base_plot_dir.joinpath('sy_array.png'))
-
-    fig, (ax, ax1) = plt.subplots(ncols=2, figsize=(10, 8))
-    smt.plot.plt_matrix(kh_array[0], base_map=True, no_flow_layer=0, title='Kh field', ax=ax)
-    smt.plot.plt_matrix(np.log10(kh_array[0]), base_map=True, no_flow_layer=0, title='log10 Kh field', ax=ax1)
-    fig.tight_layout()
-    fig.savefig(base_plot_dir.joinpath('kh_array.png'))
-
     out = pd.DataFrame(columns=['group', 'norm_param_val'])
     out.index.name = 'pname'
     for pref in ['race', 'hill', 'riv', 'sy', 'kh', 'rch']:
@@ -127,37 +129,64 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True):
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('parameter_norm_sy_kh.png'))
 
-    if plot_failure_points:
-        # location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
-        all_overs, all_itters, model_converged = get_all_list_data(pest_dir, 50, 0)
-        with open(base_plot_dir.joinpath('convergence_record.txt'), 'w') as f:
-            f.write(f'model convergence percentage: {np.array(model_converged).sum() / len(model_converged) * 100}')
 
-        limits = [50, 100, 300, 500, 800]
-        for l in limits:
-            temp = all_overs.loc[all_overs.outer_iter >= l]
-            temp = temp.drop_duplicates(subset=['layer', 'row', 'column', 'nper', 'nstp'])
-            plt_data = temp.groupby(['layer', 'row', 'column']).count().outer_iter.reset_index()
-            fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
-            ax.scatter(*smt.convert_matrix_to_coords(plt_data.row, plt_data.column), s=plt_data.outer_iter, color='r')
-            fig.tight_layout()
-            fig.savefig(base_plot_dir.joinpath(f'more_than_{l}_outers.png'))
+def _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs):
+    # plot rch multiplier array, kh, sy array
+    sy_array = interpolate_sy_pilot_points(sy_param)
+    kh_array = interpolate_kh_pilot_points(kh_param)
 
-        t = all_itters.loc[:, ['nper', 'outer_itts']].groupby('nper').describe().loc[:, 'outer_itts']
-        fig, ax = plt.subplots(figsize=(8, 10))
-        t.loc[:, ['min', 'mean', 'max']].plot(ax=ax)
-        ax.set_xlabel('nper')
-        ax.set_ylabel('outer iterations')
+    fig, ax = smt.plot.plt_matrix(sy_array[0], base_map=True, no_flow_layer=0, title='Sy field')
+    fig.tight_layout()
+    fig.savefig(base_plot_dir.joinpath('sy_array.png'))
+
+    fig, (ax, ax1) = plt.subplots(ncols=2, figsize=(10, 8))
+    smt.plot.plt_matrix(kh_array[0], base_map=True, no_flow_layer=0, title='Kh field', ax=ax)
+    smt.plot.plt_matrix(np.log10(kh_array[0]), base_map=True, no_flow_layer=0, title='log10 Kh field', ax=ax1)
+    fig.tight_layout()
+    fig.savefig(base_plot_dir.joinpath('kh_array.png'))
+
+    for k in ['hk', 'sy']:
+        title_key = f'{k} data'
+        if k == 'kh':
+            title_key = f'{k} log10 data'
+
+        fig, ax = smt.plot.plt_basemap(base_map=True, no_flow_layer=0, title=title_key)
+        ax.scatter(pp_locs.x, pp_locs.y)
+        for x, y, s in pp_locs.loc[:, ['x', 'y', k]].itertuples(False, None):
+            if k == 'kh':
+                s = np.log10(s)
+            ax.text(x, y, str(round(s, 2)))
         fig.tight_layout()
-        fig.savefig(base_plot_dir.joinpath('iterations_per_nper.png'))
-        t = t.sort_values('mean', ascending=False)
-
-        with open(base_plot_dir.joinpath('num_outer_itts.txt'), 'w') as f:
-            f.write(t.to_string())
+        fig.savefig(base_plot_dir.joinpath(f'{k}_values.png'))
 
 
-def _dummy(x):
-    return x
+def _plot_failures(pest_dir, base_plot_dir):
+    # location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
+    all_overs, all_itters, model_converged = get_all_list_data(pest_dir, 50, 0)
+    with open(base_plot_dir.joinpath('convergence_record.txt'), 'w') as f:
+        f.write(f'model convergence percentage: {np.array(model_converged).sum() / len(model_converged) * 100}')
+
+    limits = [50, 100, 300, 500, 800]
+    for l in limits:
+        temp = all_overs.loc[all_overs.outer_iter >= l]
+        temp = temp.drop_duplicates(subset=['layer', 'row', 'column', 'nper', 'nstp'])
+        plt_data = temp.groupby(['layer', 'row', 'column']).count().outer_iter.reset_index()
+        fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+        ax.scatter(*smt.convert_matrix_to_coords(plt_data.row, plt_data.column), s=plt_data.outer_iter, color='r')
+        fig.tight_layout()
+        fig.savefig(base_plot_dir.joinpath(f'more_than_{l}_outers.png'))
+
+    t = all_itters.loc[:, ['nper', 'outer_itts']].groupby('nper').describe().loc[:, 'outer_itts']
+    fig, ax = plt.subplots(figsize=(8, 10))
+    t.loc[:, ['min', 'mean', 'max']].plot(ax=ax)
+    ax.set_xlabel('nper')
+    ax.set_ylabel('outer iterations')
+    fig.tight_layout()
+    fig.savefig(base_plot_dir.joinpath('iterations_per_nper.png'))
+    t = t.sort_values('mean', ascending=False)
+
+    with open(base_plot_dir.joinpath('num_outer_itts.txt'), 'w') as f:
+        f.write(t.to_string())
 
 
 def get_all_list_data(pest_dir, outer, inner):
@@ -203,14 +232,42 @@ def get_all_list_data(pest_dir, outer, inner):
     return outdata_solver, outdata_itters, model_converged
 
 
+def _just_check_success(pest_dir, base_plot_dir):
+    pest_dir = Path(pest_dir)
+    model_converged = []
+    raw_listfiles = [open(e, 'r') for e in pest_dir.rglob("**/*.list")]
+    nfailed = []
+    for i, f in enumerate(raw_listfiles):
+        if i % 100 == 0:
+            print(f'extracting file {i}')
+        model_converged.append(smt.modelchecks.modflow_converged(f))
+
+    for i, p in enumerate(pest_dir.rglob('**/list_*.7z')):
+        if i % 100 == 0:
+            print(f'reading and extracting zipped file {i}: {p}')
+        temp_listfiles = []
+        with py7zr.SevenZipFile(p, 'r') as zip:
+            temp_listfiles.extend(zip.readall().values())
+        for f in temp_listfiles:
+            try:
+                model_converged.append(smt.modelchecks.modflow_converged(f))
+            except Exception as val:
+                nfailed += 1
+                print(f'{nfailed} total lists have failed to be read: {val}')
+            f.close()
+    with open(base_plot_dir.joinpath('convergence_record.txt'), 'w') as f:
+        f.write(f'model convergence percentage: {np.array(model_converged).sum() / len(model_converged) * 100}')
+
+
 if __name__ == '__main__':
     from project_base import unbacked_dir
     from optimisation.a_build_run_optimisation_version import branch
 
     plot_failures = False  # keynote this can take a really long time with a long optimisation
+    check_success = True  # todo unsure how long this takes
     re_plot = False  # keynote don't set this to True!
     pest_runs = unbacked_dir.joinpath(branch).glob('*/Optimisations')
 
     for d in pest_runs:
         print(f'plotting: {d}')
-        plot_opt(d, replot=re_plot, plot_failure_points=plot_failures)
+        plot_opt(d, replot=re_plot, plot_failure_points=plot_failures, check_success=check_success)
