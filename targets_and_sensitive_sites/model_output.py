@@ -16,7 +16,7 @@ from targets_and_sensitive_sites.head_targets import get_all_hds_targets, plot_h
     plot_hds_regular_locator, get_annual_mean_head_targets, base_regular_groupnames
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
 from optimisation.optimisation_period import tdis
-from model_build.supporting_data_analysis import get_river_loc_data
+from model_build.supporting_data_analysis import get_river_loc_data, get_all_wells
 from model_build.utils import get_colors, plot_1_to_1
 from model_build.project_model_tools import get_bottom, get_top, get_ibound, smt
 from matplotlib.colors import SymLogNorm
@@ -576,6 +576,59 @@ def _plot_str_flow(str_flow_out, plot_dir):
         fig.savefig(outdir.joinpath(f'{r}_head_tail_flow.png'))
 
 
+def _plot_spatial_hd_misfit(hds_obs, plot_dir):
+    print(myself())
+    outdir = plot_dir.joinpath('spatial_hds')
+    outdir.mkdir(exist_ok=True)
+    hds_groups = ['regular', 'all', 'single', 'piezo']
+    base_groups = list(reversed(['regular', 'h_piezo', 'h_single_3', 'h_single_1']))
+    base_markers = list(reversed(['s', 'd', 'o', '.']))
+    hds_group_groups = [
+        ['regular'],
+        ['regular', 'h_single_1', 'h_single_3', 'h_piezo'],
+        ['h_single_1', 'h_single_3'],
+        ['h_piezo']
+    ]
+    funcs = ['min', 'mean', 'max', ]
+    from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+    all_wells = get_all_hds_targets(tdis).set_index('name')
+    i, j = all_wells.loc[hds_obs.name, ['i', 'j']].values.transpose()
+    hds_obs.loc[:, 'i'] = i
+    hds_obs.loc[:, 'j'] = j
+    hds_obs.loc[:, 'residual'] = hds_obs.modelled - hds_obs.measured
+    vmax = hds_obs.residual.max()
+    vmin = hds_obs.residual.min()
+    for g, ggs in zip(hds_groups, hds_group_groups):
+        temp = hds_obs.loc[np.in1d(hds_obs.group, ggs)]
+        grouper = temp.groupby(['i', 'j'])
+        fig = plt.figure(figsize=(16, 9))
+        gs = fig.add_gridspec(nrows=2, ncols=3, height_ratios=[20, 1])
+        cmap_ax = fig.add_subplot(gs[1, :])
+        cmap_ax.set_xticks([])
+        cmap_ax.set_yticks([])
+
+        # kill frame around ax..
+        cmap_ax.spines["top"].set_visible(False)
+        cmap_ax.spines["right"].set_visible(False)
+        cmap_ax.spines["left"].set_visible(False)
+        cmap_ax.spines["bottom"].set_visible(False)
+        axs = [fig.add_subplot(gs[0, i]) for i in range(3)]
+        for f, ax in zip(funcs, axs):
+            use_data = grouper.agg({'residual': f, 'group': 'first'}).reset_index()
+            use_data = smt.io.add_mxmy_to_df(use_data)
+            smt.plot.plt_basemap(no_flow_layer=0, ax=ax)
+            for bg, bm in zip(base_groups, base_markers):
+                use_temp = use_data.loc[use_data.group == bg]
+                sc = ax.scatter(use_temp.mx, use_temp.my, c=use_temp.residual, vmax=vmax, vmin=vmin, cmap='plasma',
+                                marker=bm, edgecolors='k', label=bg.replace('h_', ''), s=50)
+            ax.set_title(f.capitalize())
+            ax.legend()
+        fig.colorbar(sc, cax=cmap_ax, orientation="horizontal")
+        fig.suptitle(f'{g.capitalize()} residual (modelled - measured)')
+        fig.tight_layout()
+        fig.savefig(outdir.joinpath(f'spatial_hds_residual_{g}.png'))
+
+
 def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                     all_str_flow, str_flow_out, plot_transient_budget=False, plot_dir=None):
     assert isinstance(model_ws, Path)
@@ -612,6 +665,8 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     riv_colors = get_colors(riv_keys)
 
     ## Plotting ##
+    _plot_spatial_hd_misfit(hds_obs, plot_dir)
+
     _plot_str_along_str(all_str_flow, plot_dir)
 
     _plot_budget(list_file, plot_dir, plot_transient_budget)
@@ -730,6 +785,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 if __name__ == '__main__':
     t = time.time()
     test_hds = Path('/home/matt_dumont/unbacked/hawea/structure_v9/init_v9/base_model/opt_model.hds')
+
     process_model_output(test_hds.parent,
                          test_hds,
                          plot=True,
