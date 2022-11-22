@@ -309,7 +309,6 @@ def elv_calc(fix_southern=True):
     temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
     top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
-
     # adjust the bottoms near the river which are causing dry cells
     fixer = smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('bottoms_fixer_flat.shp'),
                                              'id', alltouched=True)
@@ -437,17 +436,29 @@ def export_model_boundary():
 
 
 if __name__ == '__main__':
-    elv = elv_calc(False)
-    bot = elv[1]
-    new_bot = elv_calc(True)[1]
-    elv2 = elv_calc()
-    fig, (ax1, ax2) = plt.subplots(ncols=2, sharex=True, sharey=True, figsize=(16,9.5))
-    smt.plot.plt_matrix(bot, base_map=True, contour=True, contour_levels=2,
-                        label_contours=True, no_flow_layer=0, title='old_bot', ax=ax1)
-    smt.plot.plt_matrix(new_bot, base_map=True, contour=True, contour_levels=2,
-                        label_contours=True, no_flow_layer=0, title='new_bot', ax=ax2)
+    from pathlib import Path
+
+    save_old = False
+    old_path = Path.home().joinpath('Downloads/previous_bot.txt')
+    if save_old:
+        old = get_bottom(False)
+        np.savetxt(old_path, old)
+
+    old_bot = np.loadtxt(old_path)
+    new_bot = elv_calc()[1]
+    temp = np.concatenate((old_bot, new_bot))
+    vmax = np.nanmax(temp)
+    vmin = np.nanmin(temp)
+    contour_levels=5
+    fig, (ax1, ax2) = plt.subplots(ncols=2, sharex=True, sharey=True, figsize=(16, 9.5))
+    smt.plot.plt_matrix(old_bot, base_map=True, contour=True, contour_levels=contour_levels,
+                        label_contours=True, no_flow_layer=0, title='old_bot', ax=ax1,
+                        vmin=vmin, vmax=vmax)
+    smt.plot.plt_matrix(new_bot, base_map=True, contour=True, contour_levels=contour_levels,
+                        label_contours=True, no_flow_layer=0, title='new_bot', ax=ax2,
+                        vmin=vmin, vmax=vmax)
     fig.tight_layout()
-    smt.plot.plt_matrix(bot - new_bot, base_map=True, contour=True, contour_levels=2,
+    smt.plot.plt_matrix(old_bot - new_bot, base_map=True, contour=True, contour_levels=2,
                         label_contours=True, no_flow_layer=0, title='dif (old-new)')
 
     smt.plot.show()
