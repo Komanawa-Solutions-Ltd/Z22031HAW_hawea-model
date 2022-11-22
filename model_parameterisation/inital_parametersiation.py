@@ -12,7 +12,7 @@ import numpy as np
 def get_initial_rch_mult(return_just_start=False):
     # keynote do not use log values
     # keynote one value for the whole model
-    start_val = (0.75, (0.5, 1.2))
+    start_val = (1.0, (0.5, 1.2))
     if return_just_start:
         start_val = start_val[0]
 

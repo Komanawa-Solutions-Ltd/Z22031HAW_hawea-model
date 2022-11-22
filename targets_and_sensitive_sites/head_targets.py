@@ -18,7 +18,7 @@ from targets_and_sensitive_sites.get_raw_target_data import get_single_target_da
 from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
 from model_build.zones import get_model_zones
 
-base_regular_groupnames = ['h_hf', 'h_hf_riv', 'h_lf']  # ensures coheriance across functions
+base_regular_groupnames = ['h_hf_riv', 'h_hf', 'h_lf']  # ensures coheriance across functions
 
 
 def get_single_head_targets():
@@ -254,7 +254,7 @@ def get_all_hds_targets(tdis, recalc=False):
     all_wells = get_all_wells()
 
     regular_datasets = [high_near_riv, high_far_riv, low]
-    regular_groupnames = ['h_hf', 'h_hf_riv', 'h_lf']
+    regular_groupnames = ['h_hf_riv', 'h_hf', 'h_lf']
     assert regular_groupnames == base_regular_groupnames
 
     for hdatset, group_name in zip(regular_datasets, regular_groupnames):

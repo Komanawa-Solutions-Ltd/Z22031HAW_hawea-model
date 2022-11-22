@@ -200,7 +200,16 @@ def set_obs_data(pst, obs_path):
     # double impact of single_3 relative to single_1
     pst.observation_data.loc[base_obs.loc[all_obs, 'group'] == 'single_3', 'weight'] *= 2
 
-    # todo set weight of each well in regular heads to be the same despite number of records
+    # set weight of each well in regular (far river) heads to be the same despite number of records
+    temp = pst.observation_data.copy(deep=True)
+    temp.loc[:, 'loc_name'] = ['_'.join(e.split('_')[1:-1]) for e in temp.obsnme]
+    idx = temp.obgnme == 'h_hf'
+    obs_num = temp.loc[idx].groupby('loc_name').count().loc[:, 'obgnme']
+    for n, v in obs_num.items():
+        use_idx = (temp.loc[:, 'loc_name'] == n) & idx
+        assert use_idx.sum == v
+        pst.observation_data.loc[use_idx, 'weight'] *= v/obs_num.sum()
+
 
     # normalise weights by group totals  (total weight sums to 1) for each group
     weight_totals = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight'].to_dict()
