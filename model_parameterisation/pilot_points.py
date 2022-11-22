@@ -38,7 +38,8 @@ def get_pilot_point_locations(recalc=False):
         'terrace': 'ter',
         'haweaflat': 'h_flat',
         'sandyhill': 'sandy',
-        'mangawera': 'mang'
+        'mangawera': 'mang',
+        'hillside': 'hill',
     })
 
     outdata = data.loc[:, ['id', 'group']]
@@ -165,10 +166,11 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
 def exampine_kh_interpolation():
     import matplotlib.pyplot as plt
     pps = get_pilot_point_locations()
-    options = [10, 50, 100, 200, 300, 500]
+    options = np.linspace(0.5, 3.5, 10)
     kh_data = {
         'sandy': np.random.choice(options),
         'mang': np.random.choice(options),
+        'lake': 1
     }
 
     ncols = 3
@@ -179,9 +181,6 @@ def exampine_kh_interpolation():
     randoms = np.random.choice(options, len(pps))
     for i, r in zip(pps.index, randoms):
         kh_data[i] = r
-
-    for k, v in kh_data.items():
-        kh_data[k] = np.log10(v)
 
     for i, kernal in enumerate(interpolation_techniques):
         kh, df = interpolate_kh_pilot_points(kh_data, return_df=True, kernal=kernal)
@@ -264,4 +263,6 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
 
 
 if __name__ == '__main__':
+    t = get_pilot_point_locations(recalc=True)
+    exampine_kh_interpolation()
     pass
