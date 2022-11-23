@@ -168,9 +168,9 @@ def set_parameter_data_groups(pst, start_param_vals):
     # 'dercom' # not using as only 1 model command (so far)
     # default is factor, just changing the multipliers to absolute.
     # hill, rch, race need to be set to absolute 1, for some reason this isnt happening
-    pst.parameter_data.loc[pst.parameter_data.index.str.contains('rch'), 'parchglim'] = 'absolute(1)'
-    pst.parameter_data.loc[pst.parameter_data.index.str.contains('hill'), 'parchglim'] = 'absolute(1)'
-    pst.parameter_data.loc[pst.parameter_data.index.str.contains('race'), 'parchglim'] = 'absolute(1)'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('rch_'), 'parchglim'] = 'absolute(1)'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('hill_'), 'parchglim'] = 'absolute(1)'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('race_'), 'parchglim'] = 'absolute(1)'
 
     # parameter group data
     parameter_groups = pd.DataFrame(index=pd.unique(pst.parameter_data.loc[all_params, 'pargp']))
