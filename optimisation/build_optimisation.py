@@ -207,7 +207,7 @@ def set_obs_data(pst, obs_path):
     obs_num = temp.loc[idx].groupby('loc_name').count().loc[:, 'obgnme']
     for n, v in obs_num.items():
         use_idx = (temp.loc[:, 'loc_name'] == n) & idx
-        assert use_idx.sum == v
+        assert use_idx.sum() == v
         pst.observation_data.loc[use_idx, 'weight'] *= v/obs_num.sum()
 
 
