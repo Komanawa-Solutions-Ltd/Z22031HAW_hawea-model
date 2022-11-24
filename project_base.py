@@ -26,6 +26,9 @@ processed_target_dir = proj_root.joinpath('targets_and_sensitive_sites/processed
 base_param_dir = proj_root.joinpath('model_parameterisation/base_data')
 processed_param_dir = proj_root.joinpath('model_parameterisation/processed_data')
 
+base_scen_dir = proj_root.joinpath('Scenarios/base_data')
+processed_scen_dir = proj_root.joinpath('Scenarios/processed_input_data')
+
 # todo check the ability to run this model without access to modelling_dir by setting modelling_dir=None
 # todo label all things that need the external datasets via docstring
 # todo write up a users guide in the README.md
