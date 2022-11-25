@@ -596,8 +596,11 @@ def _plot_spatial_hd_misfit(hds_obs, plot_dir):
     hds_obs.loc[:, 'i'] = i
     hds_obs.loc[:, 'j'] = j
     hds_obs.loc[:, 'residual'] = hds_obs.modelled - hds_obs.measured
-    vmax = hds_obs.residual.max()
-    vmin = hds_obs.residual.min()
+    c1 = hds_obs.residual.quantile(0.90)
+    c2 = hds_obs.residual.quantile(0.10)
+    from matplotlib.colors import CenteredNorm
+    norm = CenteredNorm(vcenter=0, halfrange=(np.abs([c1, c2])).max())
+
     for g, ggs in zip(hds_groups, hds_group_groups):
         temp = hds_obs.loc[np.in1d(hds_obs.group, ggs)]
         grouper = temp.groupby(['i', 'j'])
@@ -619,7 +622,7 @@ def _plot_spatial_hd_misfit(hds_obs, plot_dir):
             smt.plot.plt_basemap(no_flow_layer=0, ax=ax)
             for bg, bm in zip(base_groups, base_markers):
                 use_temp = use_data.loc[use_data.group == bg]
-                sc = ax.scatter(use_temp.mx, use_temp.my, c=use_temp.residual, vmax=vmax, vmin=vmin, cmap='plasma',
+                sc = ax.scatter(use_temp.mx, use_temp.my, c=use_temp.residual, cmap='RdBu', norm=norm,
                                 marker=bm, edgecolors='k', label=bg.replace('h_', ''), s=50)
             ax.set_title(f.capitalize())
             ax.legend()
@@ -784,10 +787,16 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
 if __name__ == '__main__':
     t = time.time()
-    test_hds = Path('/home/matt_dumont/unbacked/hawea/structure_v9/init_v9/base_model/opt_model.hds')
-
-    process_model_output(test_hds.parent,
-                         test_hds,
-                         plot=True,
-                         run_if_unconverged=True)
-    print(f'took {time.time() - t}s to process output')
+    test = False
+    if test:
+        plot_paths = [Path('/home/matt_dumont/unbacked/hawea/structure_v10/init_v10/base_model/opt_model.hds')]
+        save_param=True
+    else:
+        plot_paths = Path('/home/matt_dumont/unbacked/hawea/previous_optimisations').glob('**/*.hds')
+        save_param=False
+    for hds in plot_paths:
+        process_model_output(hds.parent,
+                             hds,
+                             plot=True,
+                             run_if_unconverged=True,save_param=save_param)
+        print(f'took {time.time() - t}s to process output')

@@ -6,9 +6,11 @@ import os.path
 from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import FuncNorm
+from matplotlib.colors import FuncNorm, Normalize
+from matplotlib.colorbar import ColorbarBase
 import pandas as pd
 from model_build.project_model_tools import smt
+from model_build.utils import get_colors
 from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 from model_tools.plot_optimisation import plot_optimisation_and_extract_info
@@ -16,6 +18,8 @@ from model_parameterisation.inital_parametersiation import *
 from model_parameterisation.pilot_points import interpolate_sy_pilot_points, interpolate_kh_pilot_points
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 import py7zr
+from targets_and_sensitive_sites.model_output import plot_hds_regular_locator, base_regular_groupnames
+from optimisation.optimisation_period import tdis
 
 
 def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=False):
@@ -57,6 +61,7 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=Fal
 
     # add from model tools
     plot_optimisation_and_extract_info(pest_dir=pest_dir, base_plot_dir=base_plot_dir)
+    _plot_high_freq_heads(pest_dir, base_plot_dir.joinpath('regular_hds_closeup'))
 
     pp_locs = get_pilot_point_locations()
     pp_locs.loc[:, 'hk'] = [kh_param[e] for e in pp_locs.index]
@@ -150,7 +155,8 @@ def _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs):
         if k == 'kh':
             title_key = f'{k} log10 data'
 
-        fig, ax = smt.plot.plt_basemap(base_map=True, no_flow_layer=0, title=title_key)
+        fig, ax = smt.plot.plt_basemap(base_map=True, no_flow_layer=0)
+        ax.set_title(title_key)
         ax.scatter(pp_locs.x, pp_locs.y)
         for x, y, s in pp_locs.loc[:, ['x', 'y', k]].itertuples(False, None):
             if k == 'kh':
@@ -259,12 +265,84 @@ def _just_check_success(pest_dir, base_plot_dir):
         f.write(f'model convergence percentage: {np.array(model_converged).sum() / len(model_converged) * 100}')
 
 
+def _plot_high_freq_heads(pest_dir, plot_dir):
+    plot_dir.mkdir(exist_ok=True)
+    regular_hds = {}
+    all_obs_files = pest_dir.glob('*.rei.*')
+    # read in all of the regualr heads
+    for f in all_obs_files:
+        i = int(f.name.split('.')[-1])
+        hds_obs = pd.read_fwf(f, skiprows=4)
+        hds_obs.rename(columns={e: e.lower() for e in hds_obs.keys()}, inplace=True)
+        hds_obs.loc[:, 'weight'] = pd.to_numeric(hds_obs.loc[:, 'weight'], 'coerce')
+        hds_obs.loc[:, 'residual'] = pd.to_numeric(hds_obs.loc[:, 'residual'], 'coerce')
+        hds_obs.loc[:, 'modelled'] = pd.to_numeric(hds_obs.loc[:, 'modelled'], 'coerce')
+        hds_obs.loc[:, 'measured'] = pd.to_numeric(hds_obs.loc[:, 'measured'], 'coerce')
+        hds_obs.loc[:, 'iphi'] = (hds_obs.loc[:, 'residual'] * hds_obs.loc[:, 'weight']) ** 2
+        mapper = {'h_piezo': 'h_piezo',
+                  'h_single_3': 'h_single_3',
+                  'h_single_1': 'h_single_1'}
+        mapper.update({k: 'regular' for k in base_regular_groupnames})
+        hds_obs.loc[:, 'group'] = hds_obs.loc[:, 'group'].replace(mapper)
+        hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
+        hds_obs = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
+        hds_obs.loc[:, 'nper'] = hds_obs.name.str.split('_').str.get(-1).astype(int)
+        hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.loc[:, 'nper'])
+        hds_obs.loc[:, 'week'] = hds_obs.date.dt.isocalendar().loc[:, 'week']
+
+        regular_hds[i] = hds_obs
+
+    opt_steps = sorted(list(regular_hds.keys()))
+    colors = get_colors(opt_steps, 'plasma')
+
+    reg_colormap = 'tab10'
+    regular_wells = sorted(regular_hds[opt_steps[0]].well_name.unique())
+    regular_colors = get_colors(regular_wells, reg_colormap)
+
+    for n, nc in zip(regular_wells, regular_colors):
+        # full dataset
+        fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(14, 9),
+                                gridspec_kw=dict(width_ratios=(2, 1), height_ratios=(50, 1)))
+        ax = axs[0, 0]
+        ax_loc = axs[0, 1]
+        cbar = axs[1, 0]
+        for k, c in zip(opt_steps, colors):
+            temp2 = regular_hds[k].loc[regular_hds[k].well_name == n].sort_values('date')
+            ax.plot(temp2.date, temp2.modelled, color=c)
+
+        ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+        ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=nc, label=f'{n.capitalize()} modelled')
+        plot_hds_regular_locator(ax_loc, {n: nc})
+        ax.set_title(f'{n.capitalize()} hds')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Weekly mean Head (m)')
+        ax.legend()
+        norm = Normalize(vmin=min(opt_steps), vmax=max(opt_steps))
+
+        cb1 = ColorbarBase(cbar, cmap='plasma',
+                           norm=norm,
+                           orientation='horizontal')
+        cb1.set_label('Opt step')
+        for cmap_ax in axs[:, 1]:
+            cmap_ax.set_xticks([])
+            cmap_ax.set_yticks([])
+
+            # kill frame around ax..
+            cmap_ax.spines["top"].set_visible(False)
+            cmap_ax.spines["right"].set_visible(False)
+            cmap_ax.spines["left"].set_visible(False)
+            cmap_ax.spines["bottom"].set_visible(False)
+        fig.tight_layout()
+        fig.savefig(plot_dir.joinpath(f'hds_closeup_{n}.png'))
+        plt.close(fig)
+
+
 if __name__ == '__main__':
     from project_base import unbacked_dir
     from optimisation.a_build_run_optimisation_version import branch
 
     plot_failures = False  # keynote this can take a really long time with a long optimisation
-    check_success = True  # todo unsure how long this takes
+    check_success = False  # takes too long
     re_plot = False  # keynote don't set this to True!
     pest_runs = unbacked_dir.joinpath(branch).glob('*/Optimisations')
 
