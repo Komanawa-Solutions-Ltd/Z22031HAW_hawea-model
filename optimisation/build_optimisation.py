@@ -220,9 +220,9 @@ def set_obs_data(pst, obs_path):
     group_wts = {
         'rwh_hf': 0,
         'rwh_hf_riv': 0,
-        'h_hf': 100,
-        'h_hf_riv': 25,
-        'h_lf': 30,
+        'h_hf': 150,
+        'h_hf_riv': 50,
+        'h_lf': 10,
         'riv': 1e-3,
         'h_piezo': 10,
         'h_single_1': 5,

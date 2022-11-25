@@ -127,26 +127,18 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_v10'
-previous_mversion = 'init_v9'
-branch = 'structure_v10'
-previous_branch = 'structure_v9'
+mversion = 'init_v11'
+previous_mversion = 'init_v11'
+branch = 'structure_v11'
+previous_branch = 'structure_v10'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-* Set weight of regular year targets to 0
-* set  each of the 'h_hf' targets equal weights despite different data lengths
-* look/lower basement in dry cells near model boundaries
- * NE hillside area (done)
- * Near clutha river  (done)
-* I think I need some more pilot points
- * Near pt 402 on camp hill moraine (move mangawera south?) (todo) and another in the moraine (to interpolate with other river group
-   * To stop dry cells south of camp hill moraine
-  * Significant number in the hillslope area just off the bounds to allow conductivity to fall there if needed for stability. And to manage the change in geologic setting near hillslope
-  * Adjust some locations based on the new pilot point locations
-  * New rivergroup south of mangawera valley entrance to allow for the difference between the two settings
-  * Additional point in the middle of the terrace to manage near hillside environment.
-* Try lowering hillside conductance  → set to 100 vs 1000 for hawea/clutha, which means much of the peak flow does does not make it into the model.
+* Move to 1 global recharge modifier (done)
+* Much higher initial kh (lake=5, rest = 300), lower lake kh bounds
+* Lower sy, and lower sy bounds
+* Change weights (lower low frequency targets)
+* Bit of a hail mary before the weekend
 
 """
 noptmax = 300
@@ -154,7 +146,7 @@ recalc = True
 build_model = True
 build_pest = True
 safemode = True
-local_cores = 8  # set to a lower number of core if you plan on using the local machine at the same time as a run
+local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
 
 # todo fill above here
 

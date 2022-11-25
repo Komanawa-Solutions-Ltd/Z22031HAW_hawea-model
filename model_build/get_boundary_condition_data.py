@@ -5,6 +5,8 @@ on: 1/08/22
 import pickle
 import time
 
+import numpy as np
+
 from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
     get_river_loc_data, get_lake_hawea_loc, get_lake_heads, get_river_flow_data

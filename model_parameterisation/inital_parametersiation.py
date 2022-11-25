@@ -12,12 +12,11 @@ import numpy as np
 def get_initial_rch_mult(return_just_start=False):
     # keynote do not use log values
     # keynote one value for the whole model
-    start_val = (1.0, (0.5, 1.2))
+    start_val = (1, (0.5, 1.2))
     if return_just_start:
         start_val = start_val[0]
 
-    rch_mult = {'irr': start_val,
-                'dry': start_val}
+    rch_mult = {'all': start_val}
 
     return rch_mult
 
@@ -42,8 +41,8 @@ def get_initial_riv_conductance(return_just_start=False):
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model based on the 10**mean(log10(scotts parameters))
     # keynote use log values
-    start_val = (50, (0.01, 1000))
-    lake_val = (50, (0.01, 1000))
+    start_val = (300, (0.01, 1000))
+    lake_val = (5, (0.001, 1000))
 
     # for reference scott's model ha min = 0.09, max = 300, median = 14
     if return_just_start:
@@ -63,14 +62,22 @@ def get_inital_kh(return_just_start=False):
 def get_inital_sy(return_just_start=False):
     # keynote do not use log values
     # keynote one value for the whole model
-    start_val = (0.02, (0.001, 0.3))
+    start_val = (0.005, (0.0001, 0.3))
+    # todo playing, don't take too seriously
+    temp = (0.001, (0.0001, 0.3))
     if return_just_start:
         start_val = start_val[0]
+        temp = temp[0]
     pps = get_pilot_point_locations()
     sy_data = {}
 
     for i in pps.index:
         sy_data[i] = start_val
+
+    # todo playing, don't take too seriously
+    sy_data['h_flat4'] = temp
+    sy_data['h_flat3'] = temp
+    sy_data['h_flat8'] = temp
 
     return sy_data
 

@@ -248,7 +248,6 @@ def examine_sy_interpolation(log_before=False):
 def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
     assert isinstance(tdis, TimeDis)
     assert isinstance(rch_data, dict)
-    assert set(rch_data.keys()) == {'irr', 'dry'}
     save_path = processed_param_dir.joinpath(f'irrigated_area_{tdis.name}.npy')
     if save_path.exists() and not recalc:
         out = np.load(save_path).astype(bool)
@@ -256,8 +255,7 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
         out = np.concatenate(
             [get_irrigation_code(y)[np.newaxis] >= 0 for y in pd.to_datetime(tdis.per_middle_dates).year], axis=0)
         np.save(save_path, out)
-    rch_mult = np.full(out.shape, rch_data['dry'])  # set dryland values
-    rch_mult[out] = rch_data['irr']  # set irrigated values
+    rch_mult = np.full(out.shape, rch_data['all'])
 
     return rch_mult
 
