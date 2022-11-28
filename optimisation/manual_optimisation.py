@@ -5,10 +5,20 @@ on: 25/11/22
 from pathlib import Path
 import numpy as np
 import shutil
-from targets_and_sensitive_sites.model_output import process_model_output
-from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
-from model_tools.run_multiprocess import run_multiprocess, make_mp_function
+from model_build.project_model_tools import smt
+from project_base import unbacked_dir
+from copy import deepcopy
+import matplotlib.pyplot as plt
+import pandas as pd
+from targets_and_sensitive_sites.model_output import process_model_output, plot_hds_regular_locator, \
+    base_regular_groupnames
+from optimisation.model_utils_for_forward_run import build_run_model
+from model_tools.run_multiprocess import run_multiprocess
 from model_parameterisation.inital_parametersiation import *
+from matplotlib.colors import FuncNorm, Normalize
+from matplotlib.colorbar import ColorbarBase
+from optimisation.optimisation_period import tdis
+from model_build.utils import get_colors
 
 
 def _run_model_mp(kwargs):
@@ -22,10 +32,12 @@ def _run_model_mp(kwargs):
     return kwargs, success, error
 
 
-def manual_opt(mod_params, model_ws, name, plot=True):
+def manual_opt(mod_params, model_name, base_dir):
+    assert isinstance(base_dir, Path)
+    model_ws = base_dir.joinpath(model_name)
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
     build_run_model(
-        model_name=name, model_ws=model_ws,
+        model_name=model_name, model_ws=model_ws,
         kh_param=kh_param,
         sy_param=sy_param,
         riv_params=riv_params,
@@ -34,21 +46,172 @@ def manual_opt(mod_params, model_ws, name, plot=True):
         rch_param=rch_param
     )
     process_model_output(model_ws=model_ws,
-                         hds_file=model_ws.joinpath(f'{name}.hds'),
-                         plot=plot, savelist=False, save_param=False, run_if_unconverged=True)
+                         hds_file=model_ws.joinpath(f'{model_name}.hds'),
+                         plot=False, savelist=False, save_param=False, run_if_unconverged=True,
+                         plot_failures=True)
 
-def run_manal_opt(mod_params):  # todo need to play with manual optimisation, start here if v11 doesn't magically work~
+
+def run_manal_opt(opt_dir, mod_params, safemode=True, replot=False):
+    """
+    plan is to send in runs (via mod params), it then runs everything, makes necissary plots, and plots up key values
+    :param opt_dir
+    :param mod_params:
+    :param safemode: bool, if True then raise exception if the optdir exists
+    :return:
+    """
+    assert isinstance(opt_dir, Path)
+
+    opt_dir.mkdir(exist_ok=not safemode or replot, parents=True)
+
+    mod_params = np.atleast_1d(mod_params)
+
+    all_mod_keys = []
+    for m in mod_params:
+        all_mod_keys.extend(m.keys())
+    sen_names = ['base'] + [f'sen_{i:02d}' for i in range(len(mod_params))]
+    overview_data = pd.DataFrame(index=pd.unique(all_mod_keys), columns=sen_names)
+
     kh_param = get_inital_kh(True)
     sy_param = get_inital_sy(True)
     riv_params = get_initial_riv_conductance(True)
     hill_param = get_hillslope_multiplier(True)
     race_param = get_race_multiplier(True)
     rch_param = get_initial_rch_mult(True)
+    all_params = (kh_param, sy_param, riv_params, hill_param, race_param, rch_param)
+    tags = ['kh', 'sy', 'riv', 'hill', 'race', 'rch']
+    base_pdict = {t: deepcopy(p) for t, p in zip(tags, all_params)}
+    for k in overview_data.index:
+        tag = k.split('_')[0]
+        pname = '_'.join(k.split('_')[1:])
+        v = base_pdict[tag][pname]
+        overview_data.loc[k, :] = v
 
-    kh_param = {k: data[f'kh_{k}'] for k in get_inital_kh().keys()}
-    sy_param = {k: data[f'sy_{k}'] for k in get_inital_sy().keys()}
-    riv_params = {k: data[f'riv_{k}'] for k in get_initial_riv_conductance().keys()}
-    hill_param = {k: data[f'hill_{k}'] for k in get_hillslope_multiplier().keys()}
-    race_param = {k: data[f'race_{k}'] for k in get_race_multiplier().keys()}
-    rch_param = {k: data[f'rch_{k}'] for k in get_initial_rch_mult().keys()}
+    runs = []
+    # setup base model
+    runs.append({'model_name': 'base', 'base_dir': opt_dir, 'mod_params': [base_pdict[t] for t in tags]})
+
+    # setup manual calibration models
+    for i, single_mod_params in enumerate(mod_params):
+        pdict = deepcopy(base_pdict)
+
+        for k, v in single_mod_params.items():
+            overview_data.loc[k, f'sen_{i:02d}'] = v
+            tag = k.split('_')[0]
+            pname = '_'.join(k.split('_')[1:])
+            pdict[tag][pname] = v
+        runs.append({'model_name': f'sen_{i:02d}', 'base_dir': opt_dir, 'mod_params': [pdict[t] for t in tags]})
+
+    # write overview of changed parameters
+    with open(opt_dir.joinpath('param_overview.txt'), 'w') as f:
+        f.write(f'{opt_dir.name}\n'
+                f'{opt_dir}\n\n')
+        f.write(overview_data.transpose().to_string())
+
+    # run all models
+    if not replot:
+        print(f'running {len(runs)} models')
+        run_multiprocess(_run_model_mp, runs, num_cores=8)
+
+    # plot the results
+    print('plotting')
+    _plot_high_freq_heads(opt_dir, opt_dir.joinpath('0_plots'))
+    _plot_success_fail(opt_dir, opt_dir.joinpath('0_plots'))
+
+
+def _plot_success_fail(opt_dir, plot_dir):
+    all_list = sorted(list(opt_dir.glob('**/*.list')))
+    # read in all of the regualr heads
+    names = []
+    conv = []
+    for f in all_list:
+        names.append(f.parent.name)
+        conv.append(smt.modelchecks.modflow_converged(f))
+    xs = np.arange(len(names))
+    names = np.array(names)
+    conv = np.array(conv)
+    fig, ax = plt.subplots(figsize=(10, 8))
+    ax.scatter(xs[conv], np.ones(conv.sum()), color='blue', label='converged')
+    ax.scatter(xs[~conv], np.zeros((~conv).sum()), color='red', label='converged')
+
+    ax.legend()
+    ax.set_xticks(xs)
+    ax.set_xticklabels(names, rotation=-45)
+    ax.set_title('converged')
+    fig.tight_layout()
+    fig.savefig(plot_dir.joinpath('0_converged.png'))
+
+
+def _plot_high_freq_heads(opt_dir, plot_dir):
+    # todo move legend into differnt axis, (plrobably new gridspec, multiple columns
+    # todo make legend ax smaller, change limits
+    # todo break up into groups (max per figure)
+
+    plot_dir.mkdir(exist_ok=True)
+    regular_hds = {}
+    success = {}
+    all_obs_files = sorted(list(opt_dir.glob('**/*.list')))
+    # read in all of the regualr heads
+    for lf in all_obs_files:
+        f = lf.parent.joinpath("observations.dat")
+        i = f.parent.name
+        success[i] = smt.modelchecks.modflow_converged(lf)
+        hds_obs = pd.read_csv(f, sep='\t', skiprows=0)
+        hds_obs.rename(columns={e: e.lower() for e in hds_obs.keys()}, inplace=True)
+        hds_obs.loc[:, 'modelled'] = pd.to_numeric(hds_obs.loc[:, 'modelled'], 'coerce')
+        hds_obs.loc[:, 'measured'] = pd.to_numeric(hds_obs.loc[:, 'measured'], 'coerce')
+        mapper = {'h_piezo': 'h_piezo',
+                  'h_single_3': 'h_single_3',
+                  'h_single_1': 'h_single_1'}
+        mapper.update({k: 'regular' for k in base_regular_groupnames})
+        hds_obs.loc[:, 'group'] = hds_obs.loc[:, 'group'].replace(mapper)
+        hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
+        hds_obs = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
+        hds_obs.loc[:, 'nper'] = hds_obs.name.str.split('_').str.get(-1).astype(int)
+        hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.loc[:, 'nper'])
+        hds_obs.loc[:, 'week'] = hds_obs.date.dt.isocalendar().loc[:, 'week']
+
+        regular_hds[i] = hds_obs
+
+    opt_steps = sorted(list(regular_hds.keys()))
+    scen_cmap = 'tab20'
+    colors = get_colors(opt_steps, scen_cmap)
+
+    reg_colormap = 'tab10'
+    regular_wells = sorted(regular_hds[opt_steps[0]].well_name.unique())
+    regular_colors = get_colors(regular_wells, reg_colormap)
+
+    for n, nc in zip(regular_wells, regular_colors):
+        # full dataset
+        fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(14, 9),
+                                gridspec_kw=dict(width_ratios=(2, 1)))
+        ax = axs[0]
+        ax_loc = axs[1]
+        for i, (k, c) in enumerate(zip(opt_steps, colors)):
+            if not success[k]:
+                lab = f'{k} (failed)'
+            else:
+                lab = k
+            temp2 = regular_hds[k].loc[regular_hds[k].well_name == n].sort_values('date')
+            ax.plot(temp2.date, temp2.modelled, color=c, label=lab)
+
+            # add text label
+            if i % 2 == 0:
+                idx = -1
+            else:
+                idx = 0
+
+            t = temp2.dropna()
+            if not t.empty:
+                ax.text(t.date.values[idx], t.modelled.values[idx], k, color=c)
+
+        ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+        ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=nc, label=f'{n.capitalize()} modelled')
+        plot_hds_regular_locator(ax_loc, {n: nc})
+        ax.set_title(f'{n.capitalize()} hds')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Weekly mean Head (m)')
+        ax.legend()
+        fig.tight_layout()
+        fig.savefig(plot_dir.joinpath(f'hds_closeup_{n}.png'))
+        plt.close(fig)
 

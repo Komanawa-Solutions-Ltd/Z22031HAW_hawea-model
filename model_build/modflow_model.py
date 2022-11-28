@@ -128,7 +128,7 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
         t = time.time()
         if verbose:
             print('running_model')
-        m.run_model()
+        m.run_model(silent=not verbose)
         if verbose:
             print(f'took {time.time() - t}s to run the model in modflow')
 

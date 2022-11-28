@@ -734,14 +734,14 @@ def modflow_converged(list_path):
 
 
 def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_param=True, plot_dir=None,
-                         run_if_unconverged=False):
+                         run_if_unconverged=False, plot_failures=False):
     model_ws = Path(model_ws)
     hds_file = Path(hds_file)
     list_file = hds_file.with_suffix('.list')
     cbc_file = hds_file.with_suffix('.cbc')
     parameter_file = model_ws.joinpath('parameters.dat')
 
-    if plot:
+    if plot or plot_failures:
         if plot_dir is None:
             plot_dir = model_ws.joinpath('plots')
         plot_dir.mkdir(exist_ok=True)

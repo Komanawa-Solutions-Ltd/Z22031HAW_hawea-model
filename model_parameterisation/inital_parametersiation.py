@@ -63,21 +63,13 @@ def get_inital_sy(return_just_start=False):
     # keynote do not use log values
     # keynote one value for the whole model
     start_val = (0.005, (0.0001, 0.3))
-    # todo playing, don't take too seriously
-    temp = (0.001, (0.0001, 0.3))
     if return_just_start:
         start_val = start_val[0]
-        temp = temp[0]
     pps = get_pilot_point_locations()
     sy_data = {}
 
     for i in pps.index:
         sy_data[i] = start_val
-
-    # todo playing, don't take too seriously
-    sy_data['h_flat4'] = temp
-    sy_data['h_flat3'] = temp
-    sy_data['h_flat8'] = temp
 
     return sy_data
 

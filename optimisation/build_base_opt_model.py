@@ -5,10 +5,8 @@ on: 27/09/22
 import time
 from pathlib import Path
 import numpy as np
-from model_build.modflow_model import build_model
 from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
-from model_parameterisation.static_params import ss, vka
 from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
 from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh, \
     get_initial_riv_conductance, get_race_multiplier, get_hillslope_multiplier, get_initial_rch_mult

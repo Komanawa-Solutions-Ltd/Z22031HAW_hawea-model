@@ -71,6 +71,7 @@ def recalc_param_targets():
     from targets_and_sensitive_sites.senstive_sites import get_wetlands
     from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
     from optimisation.optimisation_period import tdis
+    from model_parameterisation.plot_parameter_names import plot_parameter_locator
 
     get_riv_target_locs(recalc=True)
     get_hawea_gain_loss_nper(tdis, recalc=True)
@@ -80,6 +81,7 @@ def recalc_param_targets():
     get_all_hds_targets(tdis, recalc=True)
     get_pilot_point_locations(recalc=True)
     get_spatial_temporal_rch_mult(get_initial_rch_mult(True), tdis, recalc=False)
+    plot_parameter_locator()
 
 
 def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
@@ -127,7 +129,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_v11'
+mversion = 'post_manual_v11'
 previous_mversion = 'init_v11'
 branch = 'structure_v11'
 previous_branch = 'structure_v10'

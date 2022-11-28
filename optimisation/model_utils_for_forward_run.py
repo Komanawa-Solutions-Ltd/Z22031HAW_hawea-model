@@ -99,7 +99,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       hani=None,
                       mfv='mfnwt',
                       run_model=run_model,
-                      verbose=True,
+                      verbose=False,
                       t=t,
                       noprint=True)
     print(out)
