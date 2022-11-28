@@ -9,7 +9,6 @@ import pyemu
 from pathlib import Path
 from optimisation.model_utils_for_forward_run import _get_param_data
 from project_base import proj_root, opt_proj_root, opt_model_tools
-from model_tools.beopest_manager import BeopestManager
 
 base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 

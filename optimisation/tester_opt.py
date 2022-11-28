@@ -4,8 +4,6 @@ on: 27/10/22
 """
 import shutil
 from pathlib import Path
-from optimisation.build_optimisation import raw_pest
-from model_tools.beopest_manager import BeopestManager
 from project_base import unbacked_dir
 from optimisation.a_build_run_optimisation_version import build_test_model
 

@@ -212,12 +212,10 @@ if __name__ == '__main__':
             },
             prepend_bash_commands={
                 '100.124.148.71': [
-                    'default',
                     f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
                     f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
                 ],
                 '100.121.150.68': [
-                    'default',
                     f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
                     f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
                 ]
