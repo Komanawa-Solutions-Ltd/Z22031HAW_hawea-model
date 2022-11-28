@@ -304,7 +304,7 @@ def get_all_hds_targets(tdis, recalc=False):
     return all_head_targets
 
 
-def plot_hds_regular_locator(ax, colors_dict):
+def plot_hds_regular_locator(ax, colors_dict, truncate_to_active=True):
     all_wells = get_all_wells()
     smt.plot.plt_basemap(ax=ax, no_flow_layer=0)
 
@@ -312,6 +312,11 @@ def plot_hds_regular_locator(ax, colors_dict):
         k = k.replace('h_', '')
         x, y = all_wells.loc[k, ['nztmx', 'nztmy']]
         ax.scatter(x, y, color=c, label=k, s=80)
+    if truncate_to_active:
+        xs, ys = smt.get_model_x_y()
+        ibound = smt.get_no_flow(0)
+        ys = ys[ibound == 1]
+        ax.set_ylim(ys.min() - 200, ys.max() + 200)
     ax.legend(loc='lower left')
 
 
