@@ -66,19 +66,44 @@ def lake_and_sy_test():
                   safemode=True, replot=replot)
 
 
+def north_kh():
+    print_myself()
+    opt_name = 'north_kh'
+    new_params = [{
+        'kh_h_flat4': l,  # lower
+        'kh_h_flat3': l,
+        'kh_h_flat6': l,
+
+        'kh_h_flat7': r,  # raise
+        'kh_h_flat8': r,  # raise
+
+    }
+        for l, r in itertools.product([50, 100, 200, 300],
+                                      [300, 400, 500, 600]
+
+                                      )]
+
+    base_opt_dirs = unbacked_dir.joinpath('manual')
+    opt_dir = base_opt_dirs.joinpath(f'{branch}_{opt_name}')
+
+    run_manal_opt(opt_dir, mod_params=new_params,
+                  safemode=True, replot=replot)
+
+
 # next thoughts:
 # lower kh of h_flat 4, 6, 3
 # lower conductance of riv grandview
 # lower conductivity of all of the terrace kh points
 
 
-replot = True
+replot = False
 # todo fix plotting problems and replot
 # todo it would be nice to throw some of the load to dickie (if possible)
 if __name__ == '__main__':
     if replot:
+        north_kh()
+        lake_and_sy_test()
         lake_kh_test()
         sy_test()
-        lake_and_sy_test()
 
     pass

@@ -3,22 +3,18 @@ created matt_dumont
 on: 25/11/22
 """
 from pathlib import Path
-import numpy as np
-import shutil
 from model_build.project_model_tools import smt
-from project_base import unbacked_dir
 from copy import deepcopy
 import matplotlib.pyplot as plt
 import pandas as pd
 from targets_and_sensitive_sites.model_output import process_model_output, plot_hds_regular_locator, \
     base_regular_groupnames
 from optimisation.model_utils_for_forward_run import build_run_model
-from model_tools.run_multiprocess import run_multiprocess
+from run_managers.run_multiprocess import run_multiprocess
 from model_parameterisation.inital_parametersiation import *
-from matplotlib.colors import FuncNorm, Normalize
-from matplotlib.colorbar import ColorbarBase
 from optimisation.optimisation_period import tdis
 from model_build.utils import get_colors
+import matplotlib.gridspec as gridspec
 
 
 def _run_model_mp(kwargs):
@@ -142,10 +138,7 @@ def _plot_success_fail(opt_dir, plot_dir):
 
 
 def _plot_high_freq_heads(opt_dir, plot_dir):
-    # todo move legend into differnt axis, (plrobably new gridspec, multiple columns
-    # todo make legend ax smaller, change limits
-    # todo break up into groups (max per figure)
-
+    max_per_fig = 10
     plot_dir.mkdir(exist_ok=True)
     regular_hds = {}
     success = {}
@@ -172,46 +165,61 @@ def _plot_high_freq_heads(opt_dir, plot_dir):
 
         regular_hds[i] = hds_obs
 
-    opt_steps = sorted(list(regular_hds.keys()))
+    scens = sorted(list(regular_hds.keys()))
     scen_cmap = 'tab20'
-    colors = get_colors(opt_steps, scen_cmap)
+    colors = get_colors(scens, scen_cmap)
 
     reg_colormap = 'tab10'
-    regular_wells = sorted(regular_hds[opt_steps[0]].well_name.unique())
+    regular_wells = sorted(regular_hds[scens[0]].well_name.unique())
     regular_colors = get_colors(regular_wells, reg_colormap)
-
+    num_figs = len(scens) // max_per_fig
+    if len(scens) > num_figs * max_per_fig:
+        num_figs += 1
+    # plotting
     for n, nc in zip(regular_wells, regular_colors):
         # full dataset
-        fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(14, 9),
-                                gridspec_kw=dict(width_ratios=(2, 1)))
-        ax = axs[0]
-        ax_loc = axs[1]
-        for i, (k, c) in enumerate(zip(opt_steps, colors)):
-            if not success[k]:
-                lab = f'{k} (failed)'
-            else:
-                lab = k
-            temp2 = regular_hds[k].loc[regular_hds[k].well_name == n].sort_values('date')
-            ax.plot(temp2.date, temp2.modelled, color=c, label=lab)
 
-            # add text label
-            if i % 2 == 0:
-                idx = -1
-            else:
-                idx = 0
+        for figi in range(num_figs):
+            use_scens = scens[figi * max_per_fig: (figi + 1) * max_per_fig]
+            use_colors = colors[figi * max_per_fig: (figi + 1) * max_per_fig]
+            fig = plt.figure(figsize=(14, 9))
+            gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1))
+            ax = fig.add_subplot(gs[:, 0])
+            ax_loc = fig.add_subplot(gs[0, 1])
+            ax_leg = fig.add_subplot(gs[1, 1])
+            for i, (k, c) in enumerate(zip(use_scens, use_colors)):
+                if not success[k]:
+                    lab = f'{k} (failed)'
+                else:
+                    lab = k
+                temp2 = regular_hds[k].loc[regular_hds[k].well_name == n].sort_values('date')
+                ax.plot(temp2.date, temp2.modelled, color=c, label=lab)
 
-            t = temp2.dropna()
-            if not t.empty:
-                ax.text(t.date.values[idx], t.modelled.values[idx], k, color=c)
+                # add text label
+                if i % 2 == 0:
+                    idx = -1
+                else:
+                    idx = 0
 
-        ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
-        ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=nc, label=f'{n.capitalize()} modelled')
-        plot_hds_regular_locator(ax_loc, {n: nc})
-        ax.set_title(f'{n.capitalize()} hds')
-        ax.set_xlabel('Date')
-        ax.set_ylabel('Weekly mean Head (m)')
-        ax.legend()
-        fig.tight_layout()
-        fig.savefig(plot_dir.joinpath(f'hds_closeup_{n}.png'))
-        plt.close(fig)
+                t = temp2.dropna()
+                if not t.empty:
+                    ax.text(t.date.values[idx], t.modelled.values[idx], k, color=c)
 
+            ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+            ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=nc, label=f'{n.capitalize()} modelled')
+            plot_hds_regular_locator(ax_loc, {n: nc})
+            ax.set_title(f'{n.capitalize()} hds {figi + 1} of {num_figs}')
+            ax.set_xlabel('Date')
+            ax.set_ylabel('Weekly mean Head (m)')
+            ax_leg.legend(*ax.get_legend_handles_labels())
+            ax_leg.set_xticks([])
+            ax_leg.set_yticks([])
+
+            # kill frame around ax..
+            ax_leg.spines["top"].set_visible(False)
+            ax_leg.spines["right"].set_visible(False)
+            ax_leg.spines["left"].set_visible(False)
+            ax_leg.spines["bottom"].set_visible(False)
+            fig.tight_layout()
+            fig.savefig(plot_dir.joinpath(f'hds_closeup_{n}_{figi:02d}.png'))
+            plt.close(fig)
