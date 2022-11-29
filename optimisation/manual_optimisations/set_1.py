@@ -90,6 +90,31 @@ def north_kh():
                   safemode=True, replot=replot)
 
 
+def north_kh_2():  # todo have not run!
+    print_myself()
+    opt_name = 'north_kh2'
+    new_params = [{
+        'kh_h_flat4': l,  # lower
+        'kh_h_flat3': riv_long,
+        'kh_h_flat6': l,
+
+        'kh_h_flat7': r,  # raise
+        'kh_h_flat8': r,  # raise
+
+    }
+        for riv_long, l, r in itertools.product([100],
+                                                [50, 100, 200, 300, 400],
+                                                [300, 400, 500, 600, 800, 1000, 1200]
+
+                                                )]
+
+    base_opt_dirs = unbacked_dir.joinpath('manual')
+    opt_dir = base_opt_dirs.joinpath(f'{branch}_{opt_name}')
+
+    run_manal_opt(opt_dir, mod_params=new_params,
+                  safemode=True, replot=replot)
+
+
 # next thoughts:
 # lower kh of h_flat 4, 6, 3
 # lower conductance of riv grandview
