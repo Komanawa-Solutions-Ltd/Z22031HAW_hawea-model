@@ -6,7 +6,7 @@ import itertools
 
 from project_base import unbacked_dir
 from optimisation.a_build_run_optimisation_version import branch
-from optimisation.manual_optimisation import run_manal_opt
+from optimisation.manual_optimisations.manual_optimisation import run_manal_opt
 
 import inspect
 

@@ -10,11 +10,46 @@ import pandas as pd
 from targets_and_sensitive_sites.model_output import process_model_output, plot_hds_regular_locator, \
     base_regular_groupnames
 from optimisation.model_utils_for_forward_run import build_run_model
-from run_managers.run_multiprocess import run_multiprocess
 from model_parameterisation.inital_parametersiation import *
 from optimisation.optimisation_period import tdis
 from model_build.utils import get_colors
 import matplotlib.gridspec as gridspec
+from run_managers.ssh_distributor import SshDist
+from project_base import unbacked_dir
+from optimisation.a_build_run_optimisation_version import opt_model_tools, opt_proj_root, branch
+
+base_opt_dirs = unbacked_dir.joinpath('manual')
+
+ssh_dist = SshDist(
+    base_path={
+        '100.124.148.71': base_opt_dirs,
+        '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(
+            base_opt_dirs.relative_to(unbacked_dir))
+    },
+    ips=['100.124.148.71',
+         '100.121.150.68'],
+    script_path='/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/optimisation/manual_optimisations/run_manual_opt.py',
+    conda_env='hawea',
+    num_cores={
+        '100.124.148.71': 8,
+        '100.121.150.68': None,
+    },
+    core_weigtings=None,
+    user_names=None,
+    short_names=None,
+    prepend_bash_commands={
+        '100.124.148.71': [
+            f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+            f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+        ],
+        '100.121.150.68': [
+            f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+            f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+        ]},
+    use_tailscale=True,
+    python_paths=[opt_proj_root, opt_model_tools],
+    sys_paths="default"
+)
 
 
 def _run_model_mp(kwargs):
@@ -47,7 +82,7 @@ def manual_opt(mod_params, model_name, base_dir):
                          plot_failures=True)
 
 
-def run_manal_opt(opt_dir, mod_params, safemode=True, replot=False):
+def run_manal_opt(name, mod_params, safemode=True, replot=False):
     """
     plan is to send in runs (via mod params), it then runs everything, makes necissary plots, and plots up key values
     :param opt_dir
@@ -55,6 +90,7 @@ def run_manal_opt(opt_dir, mod_params, safemode=True, replot=False):
     :param safemode: bool, if True then raise exception if the optdir exists
     :return:
     """
+    opt_dir = base_opt_dirs.joinpath(name)
     assert isinstance(opt_dir, Path)
 
     opt_dir.mkdir(exist_ok=not safemode or replot, parents=True)
@@ -106,7 +142,7 @@ def run_manal_opt(opt_dir, mod_params, safemode=True, replot=False):
     # run all models
     if not replot:
         print(f'running {len(runs)} models')
-        run_multiprocess(_run_model_mp, runs, num_cores=8)
+        ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=False, run=True, compile=True)
 
     # plot the results
     print('plotting')
