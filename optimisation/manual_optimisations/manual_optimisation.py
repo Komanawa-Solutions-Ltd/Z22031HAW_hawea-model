@@ -31,7 +31,7 @@ ssh_dist = SshDist(
     script_path=opt_proj_root.joinpath('optimisation/manual_optimisations/run_manual_opt.py'),
     conda_env='hawea',
     num_cores={
-        '100.124.148.71': 8,
+        '100.124.148.71': 0,  # todo DADB
         '100.121.150.68': None,
     },
     core_weigtings=None,
