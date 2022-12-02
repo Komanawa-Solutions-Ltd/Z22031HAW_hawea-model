@@ -67,6 +67,7 @@ def manual_opt(mod_params, model_name, base_dir):
     assert isinstance(base_dir, Path)
     model_ws = base_dir.joinpath(model_name)
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
+    print(f'building and running {model_name}')
     build_run_model(
         model_name=model_name, model_ws=model_ws,
         kh_param=kh_param,
@@ -76,6 +77,7 @@ def manual_opt(mod_params, model_name, base_dir):
         race_param=race_param,
         rch_param=rch_param
     )
+    print(f'processing output for: {model_name}')
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{model_name}.hds'),
                          plot=False, savelist=False, save_param=False, run_if_unconverged=True,

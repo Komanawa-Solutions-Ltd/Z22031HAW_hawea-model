@@ -3,6 +3,7 @@ created matt_dumont
 on: 2/12/22
 """
 import sys
+print(sys.path)
 from pathlib import Path
 import pickle
 import socket
