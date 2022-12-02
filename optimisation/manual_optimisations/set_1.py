@@ -4,7 +4,6 @@ on: 28/11/22
 """
 import itertools
 
-from project_base import unbacked_dir
 from optimisation.a_build_run_optimisation_version import branch
 from optimisation.manual_optimisations.manual_optimisation import run_manal_opt
 
@@ -25,10 +24,8 @@ def sy_test():
     }
         for v in [0.0001, 0.0005, .001, 0.1, 0.2]]
 
-    base_opt_dirs = unbacked_dir.joinpath('manual')
-    opt_dir = base_opt_dirs.joinpath(f'{branch}_{opt_name}')
-
-    run_manal_opt(opt_dir, mod_params=new_params,
+    opt_name = f'{branch}_{opt_name}'
+    run_manal_opt(opt_name, mod_params=new_params,
                   safemode=True, replot=replot)
 
 
@@ -41,9 +38,8 @@ def lake_kh_test():
     }
         for v in [0.1, 0.5, 1, 3, 5, 10]]
 
-    base_opt_dirs = unbacked_dir.joinpath('manual')
-    opt_dir = base_opt_dirs.joinpath(f'{branch}_{opt_name}')
-    run_manal_opt(opt_dir, mod_params=new_params,
+    opt_name = f'{branch}_{opt_name}'
+    run_manal_opt(opt_name, mod_params=new_params,
                   safemode=True, replot=replot)
 
 
@@ -59,10 +55,8 @@ def lake_and_sy_test():
         for l, v in itertools.product([0.1, 0.5, 1, 3, ],
                                       [0.00005, 0.0001, 0.0005, .001, 0.005, 0.01, 0.05])]
 
-    base_opt_dirs = unbacked_dir.joinpath('manual')
-    opt_dir = base_opt_dirs.joinpath(f'{branch}_{opt_name}')
-
-    run_manal_opt(opt_dir, mod_params=new_params,
+    opt_name = f'{branch}_{opt_name}'
+    run_manal_opt(opt_name, mod_params=new_params,
                   safemode=True, replot=replot)
 
 
@@ -83,10 +77,8 @@ def north_kh():
 
                                       )]
 
-    base_opt_dirs = unbacked_dir.joinpath('manual')
-    opt_dir = base_opt_dirs.joinpath(f'{branch}_{opt_name}')
-
-    run_manal_opt(opt_dir, mod_params=new_params,
+    opt_name = f'{branch}_{opt_name}'
+    run_manal_opt(opt_name, mod_params=new_params,
                   safemode=True, replot=replot)
 
 
@@ -108,11 +100,10 @@ def north_kh_2():  # todo have not run!
 
                                                 )]
 
-    base_opt_dirs = unbacked_dir.joinpath('manual')
-    opt_dir = base_opt_dirs.joinpath(f'{branch}_{opt_name}')
+    opt_name = f'{branch}_{opt_name}'
 
-    run_manal_opt(opt_dir, mod_params=new_params,
-                  safemode=True, replot=replot)
+    run_manal_opt(opt_name, mod_params=new_params,
+                  safemode=False, replot=replot)
 
 
 # next thoughts:
@@ -125,6 +116,7 @@ replot = False
 # todo fix plotting problems and replot
 # todo it would be nice to throw some of the load to dickie (if possible)
 if __name__ == '__main__':
+    north_kh_2()
     if replot:
         north_kh()
         lake_and_sy_test()

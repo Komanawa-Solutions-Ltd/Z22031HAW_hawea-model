@@ -28,7 +28,7 @@ ssh_dist = SshDist(
     },
     ips=['100.124.148.71',
          '100.121.150.68'],
-    script_path='/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/optimisation/manual_optimisations/run_manual_opt.py',
+    script_path=opt_proj_root.joinpath('optimisation/manual_optimisations/run_manual_opt.py'),
     conda_env='hawea',
     num_cores={
         '100.124.148.71': 8,
@@ -141,8 +141,10 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
 
     # run all models
     if not replot:
+        runs = runs[0:10] # todo DADB!!!!
         print(f'running {len(runs)} models')
-        ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=False, run=True, compile=True)
+        ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=False, run=True, compile=True,
+                                 run_in_series=True)
 
     # plot the results
     print('plotting')
