@@ -16,5 +16,6 @@ if __name__ == '__main__':
     run_name, base_run_path, num_cores, runs = pickle.load(pickle_path.open('rb'))
     if len(runs) != 0:
         print(f'running: {run_name} on {socket.gethostname()}')
-        pool_outputs = run_multiprocess(_run_model_mp, runs, num_cores=num_cores)
-        print('\n'.join([str(e) for e in pool_outputs]))
+        print(_run_model_mp(runs[0])) # todo dadb
+        #pool_outputs = run_multiprocess(_run_model_mp, runs, num_cores=num_cores)
+        #print('\n'.join([str(e) for e in pool_outputs]))
