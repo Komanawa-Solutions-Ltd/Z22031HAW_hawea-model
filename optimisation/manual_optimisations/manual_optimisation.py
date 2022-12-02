@@ -122,7 +122,7 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
 
     runs = []
     # setup base model
-    runs.append({'model_name': 'base', 'base_dir': name, 'mod_params': [base_pdict[t] for t in tags]})
+    runs.append({'model_name': 'base', 'base_dir': '', 'mod_params': [base_pdict[t] for t in tags]})
 
     # setup manual calibration models
     for i, single_mod_params in enumerate(mod_params):
@@ -133,7 +133,7 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
             tag = k.split('_')[0]
             pname = '_'.join(k.split('_')[1:])
             pdict[tag][pname] = v
-        runs.append({'model_name': f'sen_{i:02d}', 'base_dir': name, 'mod_params': [pdict[t] for t in tags]})
+        runs.append({'model_name': f'sen_{i:02d}', 'base_dir': '', 'mod_params': [pdict[t] for t in tags]})
 
     # write overview of changed parameters
     with open(opt_dir.joinpath('param_overview.txt'), 'w') as f:
@@ -144,7 +144,7 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     # run all models
     if not replot:
         print(f'running {len(runs)} models')
-        ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=False, run=True, compile=True,
+        ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=True, run=True, compile=True,
                                  run_in_series=False, kwargs_relative_to_base_dir=['base_dir'])
 
     # plot the results

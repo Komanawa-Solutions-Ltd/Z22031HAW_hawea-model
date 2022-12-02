@@ -18,3 +18,12 @@ if __name__ == '__main__':
         print(f'running: {run_name} on {socket.gethostname()}')
         pool_outputs = run_multiprocess(_run_model_mp, runs, num_cores=num_cores)
         print('\n'.join([str(e) for e in pool_outputs]))
+
+        # remove unnecessary files
+        files = Path(base_run_path).glob('**/*.*')
+        for p in files:
+            if p.is_dir():
+                continue
+            if p.name.split('.')[-1] in ['list', 'dat', 'png', 'p', 'log']:
+                continue
+            p.unlink()

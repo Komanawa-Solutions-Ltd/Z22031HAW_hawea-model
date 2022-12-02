@@ -82,23 +82,24 @@ def north_kh():
                   safemode=True, replot=replot)
 
 
-def north_kh_2():  # todo have not run!
+def north_kh_lake():
     print_myself()
-    opt_name = 'north_kh2'
+    opt_name = 'north_kh_and_lake'
     new_params = [{
-        'kh_h_flat4': l,  # lower
+        'kh_h_flat4': low,  # lower
         'kh_h_flat3': riv_long,
-        'kh_h_flat6': l,
+        'kh_h_flat6': low,
 
-        'kh_h_flat7': r,  # raise
-        'kh_h_flat8': r,  # raise
-
+        'kh_h_flat7': inc,  # raise
+        'kh_h_flat8': inc,  # raise
+        'kh_lake': lake
     }
-        for riv_long, l, r in itertools.product([100],
-                                                [50, 100, 200, 300, 400],
-                                                [300, 400, 500, 600, 800, 1000, 1200]
-
-                                                )]
+        for riv_long, low, inc, lake in itertools.product(
+            [50, 100, 150],
+            [50, 100, 200, 300, 400],
+            [300, 400, 500, 600, 800, 1000, 1200],
+            [0.1, 0.5, 1, 3, 5, 10]
+        )]
 
     opt_name = f'{branch}_{opt_name}'
 
@@ -112,11 +113,10 @@ def north_kh_2():  # todo have not run!
 # lower conductivity of all of the terrace kh points
 
 
-replot = False
-# todo fix plotting problems and replot
-# todo it would be nice to throw some of the load to dickie (if possible)
+replot = True
 if __name__ == '__main__':
-    north_kh_2()
+    north_kh_lake()
+    # todo possibly also include bulk sy, bulk hk etc.
     if replot:
         north_kh()
         lake_and_sy_test()
