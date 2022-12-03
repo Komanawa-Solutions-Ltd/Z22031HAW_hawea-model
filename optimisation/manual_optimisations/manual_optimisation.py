@@ -63,20 +63,28 @@ def _run_model_mp(kwargs):
     return kwargs, success, error
 
 
-def manual_opt(mod_params, model_name, base_dir):
+def manual_opt(mod_params, model_name, base_dir, re_run=False):
     assert isinstance(base_dir, Path)
     model_ws = base_dir.joinpath(model_name)
-    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
-    print(f'building and running {model_name}')
-    build_run_model(
-        model_name=model_name, model_ws=model_ws,
-        kh_param=kh_param,
-        sy_param=sy_param,
-        riv_params=riv_params,
-        hill_param=hill_param,
-        race_param=race_param,
-        rch_param=rch_param
-    )
+    run_model = True
+    listfile = model_ws.joinpath(f'{model_name}.list')
+    if not re_run and listfile.exists():
+        if smt.modelchecks.modflow_converged(listfile):
+            run_model = False
+
+    if run_model:
+        kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
+        print(f'building and running {model_name}')
+        build_run_model(
+            model_name=model_name, model_ws=model_ws,
+            kh_param=kh_param,
+            sy_param=sy_param,
+            riv_params=riv_params,
+            hill_param=hill_param,
+            race_param=race_param,
+            rch_param=rch_param
+        )
+
     print(f'processing output for: {model_name}')
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{model_name}.hds'),

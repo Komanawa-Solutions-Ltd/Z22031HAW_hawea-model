@@ -712,6 +712,7 @@ def plot_list_failures(list_file, plot_dir):
         ax.scatter(*smt.convert_matrix_to_coords(plt_data.row, plt_data.column), color='r')
         fig.tight_layout()
         fig.savefig(plot_dir.joinpath(f'more_than_{l}_outers.png'))
+        plt.close(fig)
 
 
 def modflow_converged(list_path):
@@ -783,6 +784,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
         visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                         all_str_flow, str_flow_out,
                         plot_dir=plot_dir)
+        plt.close('all')
 
 
 if __name__ == '__main__':
@@ -790,13 +792,13 @@ if __name__ == '__main__':
     test = False
     if test:
         plot_paths = [Path('/home/matt_dumont/unbacked/hawea/structure_v10/init_v10/base_model/opt_model.hds')]
-        save_param=True
+        save_param = True
     else:
         plot_paths = Path('/home/matt_dumont/unbacked/hawea/previous_optimisations').glob('**/*.hds')
-        save_param=False
+        save_param = False
     for hds in plot_paths:
         process_model_output(hds.parent,
                              hds,
                              plot=True,
-                             run_if_unconverged=True,save_param=save_param)
+                             run_if_unconverged=True, save_param=save_param)
         print(f'took {time.time() - t}s to process output')
