@@ -5,7 +5,7 @@ on: 28/11/22
 import matplotlib.pyplot as plt
 from model_build.project_model_tools import smt
 from model_parameterisation.inital_parametersiation import *
-from pilot_points import get_pilot_point_locations
+from model_parameterisation.pilot_points import get_pilot_point_locations
 from targets_and_sensitive_sites.head_targets import plot_hds_regular_locator
 from pathlib import Path
 from model_build.utils import get_colors

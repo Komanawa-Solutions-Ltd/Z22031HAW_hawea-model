@@ -136,6 +136,11 @@ def no_flow():
         alltouched=True)
     ibound[0][np.isfinite(sp_rm)] = 0
 
+    # remove non-terrae portion of the model
+    rm_non_terrace = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('kill_non_terrace.shp'),
+                                                           'id', alltouched=True)
+    ibound[0][np.isfinite(rm_non_terrace)] = 0
+
     np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound[0])
     return np.repeat(ibound, 2, axis=0)
 
@@ -170,19 +175,10 @@ def _lake_locs():
 
 
 def _river_locs():
-    hawea_shp_path = base_model_build_data_dir.joinpath('hawea_river.shp')
     clutha_shp_path = base_model_build_data_dir.joinpath('lower_clutha.shp')
 
     # read in the shapefiles and save only the data in active model
     ibound = no_flow()[0]
-    hawea = temp_smt.io.shape_file_to_model_array(hawea_shp_path, 'dist_top', alltouched=True)
-    hawea[ibound < 1] = np.nan
-
-    # make sure hawea r. not in the lake!!!
-    lake_hawea = temp_smt.io.df_to_array(_lake_locs(), 'i')
-    hawea[np.isfinite(lake_hawea)] = np.nan
-
-    hawea = temp_smt.io.array_to_df(hawea, 'dist').sort_values('dist')
 
     clutha = temp_smt.io.shape_file_to_model_array(clutha_shp_path, 'dist_top', alltouched=True)
     clutha[ibound < 1] = np.nan
@@ -190,22 +186,11 @@ def _river_locs():
 
     # add top data
     top = simplify_upper_clutha_dem()
-    hawea.loc[:, 'rbot'] = top[hawea.loc[:, 'i'], hawea.loc[:, 'j']]
-    hawea.loc[0, 'rbot'] = hawea.loc[1, 'rbot']  # first segment dem is nan, so set first to second
-    hawea.loc[:, 'rbot_raw'] = hawea.loc[:, 'rbot']
     clutha.loc[:, 'rbot'] = top[clutha.loc[:, 'i'], clutha.loc[:, 'j']]
-    clutha.loc[0, 'rbot'] = hawea.loc[:, 'rbot'].iloc[-1]
+    # clutha.loc[0, 'rbot'] = hawea.loc[:, 'rbot'].iloc[-1]
     clutha.loc[:, 'rbot_raw'] = clutha.loc[:, 'rbot']
 
     # fix weird things in the DEM
-    val = -1
-    idx = hawea.rbot.diff(-1) <= val
-    for d in [-2]:
-        idx = idx | (hawea.rbot.diff(d) <= val)
-    hawea.loc[idx, 'rbot'] = np.nan
-
-    hawea.loc[idx, 'rbot'] = hawea.loc[:, 'rbot'].rolling(5, min_periods=1, center=True).mean().loc[idx]
-
     val = -1
     idx = clutha.rbot.diff(-1) <= val
     for d in [-2]:
@@ -215,19 +200,14 @@ def _river_locs():
     clutha.loc[idx, 'rbot'] = clutha.loc[:, 'rbot'].rolling(5, min_periods=1, center=True).mean().loc[idx]
 
     # label rivers
-    hawea.loc[:, 'rname'] = 'hawea'
-    hawea.loc[:, 'seg'] = 1
     clutha.loc[:, 'rname'] = 'clutha'
-    clutha.loc[:, 'seg'] = 2
+    clutha.loc[:, 'seg'] = 1
     # fix rbot so consecutively below
     roll_size = 5
     clutha.loc[:, 'rbot'] = clutha.loc[:, 'rbot'].rolling(roll_size, min_periods=1, center=True).mean()
-    hawea.loc[:, 'rbot'] = hawea.loc[:, 'rbot'].rolling(roll_size, min_periods=1, center=True).mean()
-    hawea.sort_values('dist', inplace=True)
     clutha.sort_values('dist', inplace=True)
-    hawea.loc[:, 'reach'] = np.arange(len(hawea))
     clutha.loc[:, 'reach'] = np.arange(len(clutha))
-    outdata = pd.concat((hawea, clutha))
+    outdata = clutha
 
     # set the river river bottoms 3 m below top so that the stage is always higher than river bottom
     outdata.loc[:, 'rbot'] += -2.5

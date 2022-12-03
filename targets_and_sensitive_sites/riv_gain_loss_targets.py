@@ -90,7 +90,4 @@ def get_hawea_gain_loss_nper(tdis, recalc=False):
 if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
 
-    temp = get_hawea_gain_loss_nper(tdis, True)
-    loc = get_riv_target_locs()
-    targ = get_hawea_gain_loss_targets()
     pass

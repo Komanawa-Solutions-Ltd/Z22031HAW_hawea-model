@@ -39,10 +39,6 @@ def get_hillside_catchment_locs(recalc=False, show=False, include_hill_str=False
 
         for k, v in dtypes.items():
             outdata.loc[:, k] = outdata.loc[:, k].astype(v)
-        if include_hill_str:
-            pass
-        else:
-            outdata = outdata.drop(index=['Grandview Creek', 'John Creek'])
         return outdata
     catchments = get_catchment_areas()
     ibound = smt.get_no_flow(0)
@@ -72,6 +68,7 @@ def get_hillside_catchment_locs(recalc=False, show=False, include_hill_str=False
         for g, (k, v) in move_direction.items():
             idx = temp & (outdata.group == g)
             outdata.loc[idx, k] += v
+        outdata = outdata.loc[~smt.matrix_out_bounds(outdata.loc[:, 'i'], outdata.loc[:, 'j'])]
         temp = (ibound[outdata.loc[:, 'i'], outdata.loc[:, 'j']]) == 0
 
     # move all cells in 1 more in
@@ -114,11 +111,6 @@ def get_hillside_catchment_locs(recalc=False, show=False, include_hill_str=False
 
     outdata.loc[:, 'k'] = 0
     outdata.to_csv(catchment_loc_path)
-
-    if include_hill_str:
-        pass
-    else:
-        outdata = outdata.drop(index=['Grandview Creek', 'John Creek'])
 
     return outdata
 

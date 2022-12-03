@@ -10,7 +10,6 @@ from targets_and_sensitive_sites.get_indicative_times import get_indicative_time
 from optimisation.optimisation_period import tdis
 
 if __name__ == '__main__':
-    get_riv_target_locs(recalc=True)
     get_2011_piezo_survey(recalc=True)
     get_wetlands(recalc=True)
     get_indicative_times_v2(recalc=True)

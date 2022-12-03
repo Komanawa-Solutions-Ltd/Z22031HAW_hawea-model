@@ -913,7 +913,7 @@ def get_corrected_historical_era5_rch(start_date, end_date, recalc=False, limite
 def get_rch(start_date, end_date, frequency='D', limited_irrigation=False, recalc=False, fun='mean'):
     # keynote all rch is in mm
     dates, rch = get_historical_rch_model_results('historical', limited_irrigation=limited_irrigation, recalc=recalc)
-
+    rch[:, smt.get_no_flow(0) != 1] = np.nan
     temp = pd.DataFrame(index=dates,
                         data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
                         )

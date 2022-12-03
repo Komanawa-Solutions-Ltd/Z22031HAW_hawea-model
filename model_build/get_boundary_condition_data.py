@@ -28,20 +28,8 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
     """
     save_path = processed_model_build_data_dir.joinpath(f'well_stress_period_data-{tdis.name}.p')
     if save_path.exists() and not recalc:
-        (race_spd, hill_spd, pumping_spd) = pickle.load(open(save_path, 'rb'))
+        (hill_spd, pumping_spd) = pickle.load(open(save_path, 'rb'))
     else:
-        # race data
-        race_locs = get_race_locs()
-        race_flow = get_race_well_losses(*tdis.date_limits)
-
-        race_spd = tdis.map_data_locations(race_locs, {'flux': race_flow},
-                                           flopy.modflow.ModflowWel.get_default_dtype(),
-                                           apply_to_all=True,
-                                           group_cells=False,
-                                           grouper='sum',
-                                           manage_datatypes=False
-                                           )
-
         # hillside data
         hillside_locs = get_hillside_catchment_locs()
         hillside_flow = get_hillside_flows(*tdis.date_limits)
@@ -52,7 +40,7 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
         for k, v in hill_param.items():
             use_keys = hillside_locs.loc[hillside_locs.param == k].index.unique()
             hillside_flow.loc[:, use_keys] *= v
-            assert set(hill_param.keys()) == set(hillside_locs.param)
+            assert set(hill_param.keys()).issuperset(hillside_locs.param)
         hill_spd = tdis.map_data_locations(hillside_locs, {'flux': hillside_flow},
                                            flopy.modflow.ModflowWel.get_default_dtype(),
                                            group_cells=False,
@@ -73,30 +61,24 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
                                               grouper='sum',
                                               manage_datatypes=True
                                               )
-        pickle.dump((race_spd, hill_spd, pumping_spd), open(save_path, 'wb'))
+        pickle.dump((hill_spd, pumping_spd), open(save_path, 'wb'))
 
     # manage parameters
-    for p, d in race_spd.items():
-        d.loc[:, 'flux'] *= race_param['all']
-
     for p, d in hill_spd.items():
         for k, v in hill_param.items():
             idx = d.param == k
             d.loc[idx, 'flux'] *= v
 
     # convert to numpy arrays (well is done before pickle)
-    race_spd = tdis.manage_dtypes(race_spd, flopy.modflow.ModflowWel.get_default_dtype(),
-                                  group_cells=True,
-                                  grouper='sum', )
     hill_spd = tdis.manage_dtypes(hill_spd, flopy.modflow.ModflowWel.get_default_dtype(),
                                   group_cells=True,
                                   grouper='sum', )
 
     if return_unique_spd:
-        out = {'race': race_spd, 'hill': hill_spd, 'pump': pumping_spd}
+        out = {'hill': hill_spd, 'pump': pumping_spd}
         return out
     else:
-        out_spd = tdis.merge_spd((race_spd, hill_spd, pumping_spd),
+        out_spd = tdis.merge_spd((hill_spd, pumping_spd),
                                  flopy.modflow.ModflowWel.get_default_dtype(),
                                  group_cells=True,
                                  grouper='sum')

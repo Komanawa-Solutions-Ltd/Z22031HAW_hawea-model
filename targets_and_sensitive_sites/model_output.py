@@ -69,19 +69,11 @@ def generate_outputs(hds_path, cbc_path):
     flooded_cells = (all_hds > tops) & (ibound == 1)
 
     # extract riv targets
-    riv = get_hawea_gain_loss_nper(tdis).reset_index()
-    riv_locs = get_riv_target_locs()
     # keynote change if saving multiple steps
     t = flopy.utils.CellBudgetFile(cbc_path).get_data(text='STREAM LEAKAGE', full3D=True)
     mask = t[0].mask[np.newaxis, 0]
     all_riv = np.array(t)[:, 0]
     all_riv[np.repeat(mask, all_riv.shape[0], axis=0)] = np.nan
-
-    riv.loc[:, 'modelled'] = np.nan
-    for i, target_key, nper in riv.loc[:, ['target_key', 'nper']].itertuples(True, None):
-        if nper > max_nper:
-            continue
-        riv.loc[i, 'modelled'] = all_riv[nper][riv_locs[target_key]].sum()
 
     # get stream flow out
     t = flopy.utils.CellBudgetFile(cbc_path).get_data(text='STREAM FLOW OUT', full3D=True)
@@ -115,12 +107,6 @@ def generate_outputs(hds_path, cbc_path):
     need_keys = ['name', 'group', 'zone', 'nper', 'measured', 'modelled']
     # add hds
     out_obs.append(hds.rename(columns={'head': 'measured'}).loc[:, need_keys])
-
-    # add riv
-    riv.loc[:, 'name'] = 'riv_h' + riv.target_key.astype(str) + '_' + riv.nper.astype(str)
-    riv.loc[:, 'group'] = 'riv'
-    riv.loc[:, 'zone'] = 'riv'
-    out_obs.append(riv.rename(columns={'target_val': 'measured'}).loc[:, need_keys])
 
     out_obs = pd.concat(out_obs)
     return out_obs, all_riv_obs, dry_hds.sum(axis=(0, 1)), flooded_cells.sum(
@@ -393,7 +379,7 @@ def _plot_budget(list_file, plot_dir, plot_transient_budget):
     print(myself())
     # pull out budgets and plot
     bud_names = [
-        'STORAGE', 'CONSTANT_HEAD', 'WELLS', 'STREAM_LEAKAGE', 'HEAD_DEP_BOUNDS', 'RECHARGE', 'TOTAL'
+        'STORAGE', 'CONSTANT_HEAD', 'WELLS', 'STREAM_LEAKAGE', 'RECHARGE', 'TOTAL'
     ]
     bud_colors = get_colors(bud_names)
     inc_bud = pd.DataFrame(flopy.utils.MfListBudget(list_file).get_incremental()).set_index('stress_period')
@@ -775,7 +761,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
      all_hds, all_riv, all_str_flow, str_flow_out) = generate_outputs(hds_file, cbc_file)
 
     # save output
-    out_obs.to_csv(model_ws.joinpath('observations.dat'), sep='\t', index=False)
+    out_obs.dropna().to_csv(model_ws.joinpath('observations.dat'), sep='\t', index=False)
     np.savetxt(model_ws.joinpath('dry_cells.txt'), dry_hds, fmt='%d')
     np.savetxt(model_ws.joinpath('flooded_cells.txt'), flooded_cells, fmt='%d')
 

@@ -35,43 +35,12 @@ def get_river_loc_data(recalc=default_recalc):
             outdata.loc[:, k] = outdata.loc[:, k].astype(v)
         return outdata
     outdata = _river_locs()
-    outdata = get_river_gage_locs(outdata)
     outdata = get_stage_locs(outdata)
     outdata.loc[:, 'seg_name'] = [f'{r}_{int(d):05d}' for r, d
                                   in outdata.loc[:, ['rname', 'dist']].itertuples(index=False, name=None)]
     outdata.set_index('seg_name', inplace=True)
-    outdata.loc[outdata.rname == 'hawea', 'param'] = 'h3'
     outdata.loc[outdata.rname == 'clutha', 'param'] = 'c1'
-    for g in range(1, 4):
-        outdata.loc[outdata.gage == g, 'param'] = f'h{g}'
     outdata.loc[:, 'k'] = 0
-
-    # add john and grandview ck
-    hill_crks = {
-        'gview': base_model_build_data_dir.joinpath('grandview_creek_points.shp'),
-        'john': base_model_build_data_dir.joinpath('John_creek_points.shp'),
-    }
-    for i, (k, path) in enumerate(hill_crks.items()):
-        temp = smt.io.array_to_df(smt.io.shape_file_to_model_array(path, 'distance', alltouched=True), 'dist')
-        top = smt.get_tops()[0]
-        temp.loc[:, 'top'] = top[temp.i, temp.j]
-        temp.sort_values('dist', inplace=True)
-        temp.index = [f'{k}_{int(e):05d}' for e in temp.dist]
-        temp.loc[:, 'reach'] = np.arange(len(temp))
-        temp.loc[:, 'rname'] = k
-        temp.loc[:, 'param'] = k
-        temp.loc[:, 'k'] = 0
-        temp_rbot = temp.loc[:, 'top'] - 2
-        use_bot = []
-        prev = 1E15
-        for v in temp_rbot:
-            if v >= prev:
-                v = prev - 0.2
-            use_bot.append(v)
-            prev = v
-        temp.loc[:, 'rbot'] = use_bot
-        temp.loc[:, 'seg'] = outdata.seg.max() + 1
-        outdata = pd.concat((outdata, temp))
 
     outdata.loc[:, 'rtop'] = outdata.loc[:, 'rbot'] + 2
     for n in outdata.rname.unique():
@@ -124,9 +93,6 @@ def get_stage_locs(riv_data, show=False):
     loc_data = pd.read_excel(gageing_path, 'locs').set_index('site')
     temp = riv_data.copy(deep=True)
     temp = smt.io.add_mxmy_to_df(temp)
-    t = ((temp.mx - loc_data.loc['Camp Hill', 'x']) ** 2 + (temp.my - loc_data.loc['Camp Hill', 'y']) ** 2)
-    riv_data.loc[t.argmin(), 'stage'] = 'hawea_camphill'
-
     x, y = 1307859, 5038569
     t = ((temp.mx - x) ** 2 + (temp.my - y) ** 2)
     riv_data.loc[t.argmin(), 'stage'] = 'clutha_luggate'
@@ -135,7 +101,6 @@ def get_stage_locs(riv_data, show=False):
     temp[riv_data['i'], riv_data['j']] = 1
     fig, ax = smt.plot.plt_matrix(temp, title='river_locs', base_map=True)
     ax.scatter(x, y, c='r', label='clutha_luggate')
-    ax.scatter(loc_data.loc['Camp Hill', 'x'], loc_data.loc['Camp Hill', 'y'], c='b', label='hawea_camphill')
     if show:
         smt.plot.show()
 
@@ -235,40 +200,21 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False, plot
     ax.set_ylabel('clutha luggate')
 
     # initialize the dataframe
-    hawea_keys = loc_data.index[loc_data.loc[:, 'rname'] == 'hawea']
     clutha_keys = loc_data.index[loc_data.loc[:, 'rname'] == 'clutha']
     outdata = pd.DataFrame(index=stage_data.index, columns=loc_data.index, dtype=float)
 
-    # set hawea_stage
-    elv_at_camphill = loc_data.loc[loc_data.stage == 'hawea_camphill', 'rbot'][0]
-    delta_at_camphill = (stage_data.loc[:, 'camphill_stage'] - elv_at_camphill).values
-    t = (loc_data.loc[hawea_keys, 'rbot'].values[np.newaxis, :]
-         + delta_at_camphill[:, np.newaxis])
-    outdata.loc[:, hawea_keys] = t
 
     # set clutha stage, feather in the deltas at luggate to the deltas at clutha so there is no step change.
     elv_at_luggate = loc_data.loc[loc_data.stage == 'clutha_luggate', 'rbot'][0]
     delta_at_luggate = (stage_data.loc[:, 'clutha_luggate'] - elv_at_luggate).values
-    clutha_dist = loc_data.loc[loc_data.loc[:, 'rname'] == 'clutha', 'dist']
-    luggate_idx = np.where(loc_data.loc[loc_data.loc[:, 'rname'] == 'clutha', 'stage'].notna())[0][0]
 
     clutha_deltas = np.zeros((len(delta_at_luggate), len(clutha_keys))) * np.nan
-    clutha_deltas[:, 0] = delta_at_camphill
-    clutha_deltas[:, luggate_idx:] = delta_at_luggate[:, np.newaxis]
-
-    clutha_deltas[:, 0:luggate_idx] = np.array(
-        [delta_at_camphill * ((clutha_dist[luggate_idx] - d) / clutha_dist[luggate_idx])
-         + delta_at_luggate * (d / clutha_dist[luggate_idx])
-         for d in clutha_dist[0:luggate_idx]]).transpose()
+    clutha_deltas[:, :] = delta_at_luggate[:, np.newaxis]
 
     t = (loc_data.loc[clutha_keys, 'rbot'].values + clutha_deltas)
     outdata.loc[:, clutha_keys] = t
 
-    # set john and grandview stage to model top (smoothed)
-    temp = loc_data.loc[np.in1d(loc_data.rname, ['john', 'gview'])]
-    outdata.loc[:, temp.index] = temp.rtop.values[np.newaxis]
 
-    assert np.isclose(outdata.loc[:, temp.index].mean(), temp.rtop).all()
     assert (outdata.min() >= loc_data.loc[:, 'rbot']).all(), 'some stages are below rbot, address this'
 
     use_cols = [e for e in outdata.columns if (('hawea' in e) or ('clutha' in e))]

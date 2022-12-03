@@ -73,8 +73,6 @@ def recalc_param_targets():
     from optimisation.optimisation_period import tdis
     from model_parameterisation.plot_parameter_names import plot_parameter_locator
 
-    get_riv_target_locs(recalc=True)
-    get_hawea_gain_loss_nper(tdis, recalc=True)
     get_2011_piezo_survey(recalc=True)
     get_wetlands(recalc=True)
     get_indicative_times_v2(recalc=True)
@@ -129,23 +127,19 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'post_manual_v11'
+mversion = 'init_terrace_only'
 previous_mversion = 'init_v11'
-branch = 'structure_v11'
-previous_branch = 'structure_v10'
+branch = 'terrace_only'
+previous_branch = 'structure_v11'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-* Move to 1 global recharge modifier (done)
-* Much higher initial kh (lake=5, rest = 300), lower lake kh bounds
-* Lower sy, and lower sy bounds
-* Change weights (lower low frequency targets)
-* Bit of a hail mary before the weekend
+* test to see if I can fit the southern high frequency without the connection to the lake.
 
 """
-noptmax = 300
-recalc = True
-build_model = True
+noptmax = 100
+recalc = False
+build_model = False
 build_pest = True
 safemode = True
 local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
@@ -184,7 +178,8 @@ if __name__ == '__main__':
 
     # build pest
     if build_pest:
-        from optimisation.build_optimisation import raw_pest, BeopestManager
+        from optimisation.build_optimisation import raw_pest
+        from run_managers.beopest_manager import BeopestManager
 
         pdir = unbacked_dir.joinpath(branch, mversion, 'Optimisations')
 
@@ -200,6 +195,10 @@ if __name__ == '__main__':
         pest_file, pst = raw_pest(name='opt', pst_dir=pdir, noptmax=noptmax,
                                   model_template_dir=test_path, start_param_vals=start_param)
         man = BeopestManager(
+            ips=[
+                '100.124.148.71',
+                '100.121.150.68',
+            ],
             pest_file=pest_file,
             num_cores={
                 '100.124.148.71': local_cores,

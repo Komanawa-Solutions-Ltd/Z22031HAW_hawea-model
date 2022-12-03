@@ -150,6 +150,16 @@ def set_parameter_data_groups(pst, start_param_vals):
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('kh'), 'partrans'] = 'log'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('riv'), 'partrans'] = 'log'
 
+    # fix unessicary parameters
+    keep_params = [
+        'hill_main', 'hill_se', 'kh_h_flat1', 'kh_h_flat9', 'kh_hill11', 'kh_hill14', 'kh_hill15', 'kh_riv_g23',
+        'kh_riv_g24', 'kh_riv_g27', 'kh_sandy31', 'kh_sandy32', 'kh_ter33', 'kh_ter34', 'kh_ter35', 'kh_ter36',
+        'kh_ter37', 'kh_ter38', 'kh_ter39', 'rch_all', 'riv_c1', 'sy_h_flat1', 'sy_h_flat9', 'sy_hill11', 'sy_hill14',
+        'sy_hill15', 'sy_riv_g23', 'sy_riv_g24', 'sy_riv_g27', 'sy_sandy31', 'sy_sandy32', 'sy_ter33', 'sy_ter34',
+        'sy_ter35', 'sy_ter36', 'sy_ter37', 'sy_ter38', 'sy_ter39', ]
+
+    pst.parameter_data.loc[~np.in1d(pst.parameter_data.index, keep_params), 'partrans'] = 'fixed'
+
     param_data = _get_param_data().set_index('name')
     # set inital values, lower, upper bounds
     all_params = pst.parameter_data.index
@@ -207,8 +217,7 @@ def set_obs_data(pst, obs_path):
     for n, v in obs_num.items():
         use_idx = (temp.loc[:, 'loc_name'] == n) & idx
         assert use_idx.sum() == v
-        pst.observation_data.loc[use_idx, 'weight'] *= v/obs_num.sum()
-
+        pst.observation_data.loc[use_idx, 'weight'] *= v / obs_num.sum()
 
     # normalise weights by group totals  (total weight sums to 1) for each group
     weight_totals = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight'].to_dict()
@@ -227,7 +236,7 @@ def set_obs_data(pst, obs_path):
         'h_single_1': 5,
         'h_single_3': 5,
     }
-    assert set(group_wts.keys()) == set(pst.observation_data.loc[:, 'obgnme'])
+    assert set(group_wts.keys()).issuperset(pst.observation_data.loc[:, 'obgnme'])
     group_wts_summary = pd.Series(group_wts)
 
     for g in pst.nnz_obs_groups:

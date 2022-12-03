@@ -13,7 +13,7 @@ from pathlib import Path
 from model_build.project_model_tools import smt, get_starting_heads
 from model_build.utils import get_colors
 from model_parameterisation.pilot_points import get_pilot_point_locations, interpolate_kh_pilot_points, \
-    interpolate_kh_pilot_points, get_param_zones, get_lake_array
+    interpolate_kh_pilot_points, get_lake_array
 from model_parameterisation.static_params import *
 from model_tools.model_plotting import plot_spd, first, last, FakePath
 from model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_str_data
@@ -312,12 +312,8 @@ def plot_all_spd(save=False):
 
 
 def plot_boundary_locs(save=False):
-    outdir = save_path.joinpath('boundary_condition_locations')
-    outdir.mkdir(exist_ok=True)
     datasets = {'Abstraction': get_pumping_locs(),
-                'Race Losses': get_race_locs(),
                 'River cells': get_river_loc_data(),
-                'Lake cells': get_lake_hawea_loc(),
                 'Hillside Inflows': get_hillside_catchment_locs()}
     for k, data in datasets.items():
         fig, ax = smt.plot.plt_matrix(smt.get_model_zeros() + np.nan, title=k, no_flow_layer=0, color_bar=False,
@@ -326,6 +322,8 @@ def plot_boundary_locs(save=False):
         ax.scatter(data.mx, data.my, color='r')
         fig.tight_layout()
         if save:
+            outdir = save_path.joinpath('boundary_condition_locations')
+            outdir.mkdir(exist_ok=True)
             fig.savefig(outdir.joinpath(f'{k.replace(" ", "_")}{extension}'))
 
 
