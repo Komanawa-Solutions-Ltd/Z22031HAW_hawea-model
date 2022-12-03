@@ -110,7 +110,7 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     all_mod_keys = []
     for m in mod_params:
         all_mod_keys.extend(m.keys())
-    sen_names = ['base'] + [f'sen_{i:02d}' for i in range(len(mod_params))]
+    sen_names = ['base'] + [f'sen_{i:04d}' for i in range(len(mod_params))]
     overview_data = pd.DataFrame(index=pd.unique(all_mod_keys), columns=sen_names)
 
     kh_param = get_inital_kh(True)
@@ -145,11 +145,11 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
                     pdict[tag][pr] = val
 
         for k, v in single_mod_params.items():
-            overview_data.loc[k, f'sen_{i:02d}'] = v
+            overview_data.loc[k, f'sen_{i:04d}'] = v
             tag = k.split('_')[0]
             pname = '_'.join(k.split('_')[1:])
             pdict[tag][pname] = v
-        runs.append({'model_name': f'sen_{i:02d}', 'base_dir': '', 'mod_params': [pdict[t] for t in tags]})
+        runs.append({'model_name': f'sen_{i:04d}', 'base_dir': '', 'mod_params': [pdict[t] for t in tags]})
 
     # run all models
     if not replot:
@@ -165,27 +165,19 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     # plot the results
     print('plotting')
     _plot_high_freq_heads(opt_dir, opt_dir.joinpath('0_plots'))
-    _plot_success_fail(opt_dir, opt_dir.joinpath('0_plots'))
 
 
-def _plot_success_fail(opt_dir, plot_dir):
-    all_list = sorted(list(opt_dir.glob('**/*.list')))
-    # read in all of the regualr heads
-    names = []
-    conv = []
-    for f in all_list:
-        names.append(f.parent.name)
-        conv.append(smt.modelchecks.modflow_converged(f))
+def _plot_success_fail(success, plot_dir):
+    names = np.array(list(success.keys()))
+    conv = np.array([success[k] for k in names])
     xs = np.arange(len(names))
-    names = np.array(names)
-    conv = np.array(conv)
     fig, ax = plt.subplots(figsize=(10, 8))
     ax.scatter(xs[conv], np.ones(conv.sum()), color='blue', label='converged')
     ax.scatter(xs[~conv], np.zeros((~conv).sum()), color='red', label='converged')
 
     ax.legend()
     ax.set_xticks(xs)
-    ax.set_xticklabels(names, rotation=-45)
+    ax.set_xticklabels(names, rotation=-90)
     ax.set_title('converged')
     fig.tight_layout()
     fig.savefig(plot_dir.joinpath('0_converged.png'))
@@ -229,8 +221,9 @@ def _plot_high_freq_heads(opt_dir, plot_dir):
     # plotting
     for n, nc in zip(regular_wells, regular_colors):
         # full dataset
-        _plot_regular(scens, max_per_fig, colors, n, success, regular_hds, nc, plot_dir)
         _rank_best_shape_fit(regular_hds, n, nc, max_per_fig, success, opt_dir)
+        _plot_regular(scens, max_per_fig, colors, n, success, regular_hds, nc, plot_dir)
+    _plot_success_fail(success, plot_dir)
 
 
 def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, well_color, plot_dir):
@@ -298,26 +291,31 @@ def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, w
         ax_leg.spines["left"].set_visible(False)
         ax_leg.spines["bottom"].set_visible(False)
         fig.tight_layout()
-        fig.savefig(plot_dir.joinpath(f'hds_closeup_{well_name}_{figi:02d}.png'))
+        fig.savefig(plot_dir.joinpath(f'hds_closeup_{well_name}_{figi:04d}.png'))
         plt.close(fig)
 
 
 def _rank_best_shape_fit(regular_hds, well_name, well_color, max_per_fig, success, opt_dir):
     assert isinstance(opt_dir, Path)
     mse = _calc_shape_fit_mse(regular_hds, well_name)
-    add_params(mse, param_path=opt_dir.joinpath('param_overview.txt'))
-    mse.to_csv(opt_dir.joinpath('mse.csv'))
+    _add_params(mse, param_path=opt_dir.joinpath('param_overview.txt'))
+    mse.loc[:, 'success'] = [success.get(e) for e in mse.index]
+    mse.to_csv(opt_dir.joinpath(f'{well_name}_mse.csv'))
     num_plot = 20
     for k in ['shape_mse', 'mse', 'joint_mse']:
-        _plot_regular(scens=mse.sort_values(k).index[0:num_plot], max_per_fig=max_per_fig,
+        scens = mse.sort_values(k).index
+        scens = [e for e in scens if success[e]]
+        if len(scens) > num_plot:
+            scens = scens[0:num_plot]
+        _plot_regular(scens=scens, max_per_fig=max_per_fig,
                       colors=get_colors(range(num_plot)), well_name=well_name,
                       success=success, regular_hds=regular_hds, well_color=well_color,
                       plot_dir=opt_dir.joinpath(f'0_{k}_plots'))
 
 
-def add_params(df, param_path):
-    temp = pd.read_fwf(param_path, index_col=0,
-                       skiprows=3)
+def _add_params(df, param_path):
+    temp = pd.read_csv(param_path, index_col=0,
+                       skiprows=3, delim_whitespace=True)
     for k in temp.columns:
         df.loc[:, k] = temp.loc[df.index, k]
 

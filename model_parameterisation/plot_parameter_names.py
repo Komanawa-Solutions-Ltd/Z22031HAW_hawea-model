@@ -6,7 +6,9 @@ import matplotlib.pyplot as plt
 from model_build.project_model_tools import smt
 from model_parameterisation.inital_parametersiation import *
 from pilot_points import get_pilot_point_locations
+from targets_and_sensitive_sites.head_targets import plot_hds_regular_locator
 from pathlib import Path
+from model_build.utils import get_colors
 
 
 def plot_parameter_locator(show=False):
@@ -24,7 +26,18 @@ def plot_parameter_locator(show=False):
 
     fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(14, 10), gridspec_kw=dict(width_ratios=(3, 1)))
 
-    smt.plot.plt_basemap(ax1, no_flow_layer=0)
+    regular_wells = [
+        'g40_0041',
+        'g40_0120',
+        'g40_0129',
+        'g40_0366',
+        'g40_0367',
+        'g40_0415',
+        'g40_0416', ]
+    reg_colormap = 'tab10'
+    regular_colors = get_colors(regular_wells, reg_colormap)
+
+    plot_hds_regular_locator(ax1, {n: c for n, c in zip(regular_wells, regular_colors)})
     ax1.set_ylim(pplocs.y.min() - 100, smt.get_xlim_ylim()[1][1])
     ax1.set_title('kh | sy')
     for n, (x, y) in pplocs.loc[:, ['x', 'y']].iterrows():
