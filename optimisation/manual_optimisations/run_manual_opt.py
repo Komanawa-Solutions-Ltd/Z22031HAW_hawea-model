@@ -26,4 +26,6 @@ if __name__ == '__main__':
                 continue
             if p.name.split('.')[-1] in ['list', 'dat', 'png', 'p', 'log']:
                 continue
+            if p.name in ['param_overview.txt', 'mse.csv']:
+                continue
             p.unlink()

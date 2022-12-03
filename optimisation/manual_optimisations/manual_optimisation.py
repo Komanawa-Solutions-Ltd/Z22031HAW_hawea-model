@@ -196,10 +196,10 @@ def _plot_high_freq_heads(opt_dir, plot_dir):
     plot_dir.mkdir(exist_ok=True)
     regular_hds = {}
     success = {}
-    all_obs_files = sorted(list(opt_dir.glob('**/*.list')))
+    all_obs_files = sorted(list(opt_dir.glob('**/observations.dat')))
     # read in all of the regualr heads
-    for lf in all_obs_files:
-        f = lf.parent.joinpath("observations.dat")
+    for f in all_obs_files:
+        lf = f.parent.joinpath(f'{f.parent.name}.list')
         i = f.parent.name
         success[i] = smt.modelchecks.modflow_converged(lf)
         hds_obs = pd.read_csv(f, sep='\t', skiprows=0)
@@ -226,71 +226,112 @@ def _plot_high_freq_heads(opt_dir, plot_dir):
     reg_colormap = 'tab10'
     regular_wells = sorted(regular_hds[scens[0]].well_name.unique())
     regular_colors = get_colors(regular_wells, reg_colormap)
-    num_figs = len(scens) // max_per_fig
-    if len(scens) > num_figs * max_per_fig:
-        num_figs += 1
     # plotting
     for n, nc in zip(regular_wells, regular_colors):
         # full dataset
+        _plot_regular(scens, max_per_fig, colors, n, success, regular_hds, nc, plot_dir)
+        _rank_best_shape_fit(regular_hds, n, nc, max_per_fig, success, opt_dir)
 
-        for figi in range(num_figs):
-            use_scens = scens[figi * max_per_fig: (figi + 1) * max_per_fig]
-            use_colors = colors[figi * max_per_fig: (figi + 1) * max_per_fig]
-            fig = plt.figure(figsize=(14, 9))
-            if n == 'h_g40_0415':
-                gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1), height_ratios=(3, 1))
-                ax = fig.add_subplot(gs[0, 0])
-                ax_lake = fig.add_subplot(gs[1, 0])
 
+def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, well_color, plot_dir):
+    plot_dir.mkdir(exist_ok=True)
+    num_figs = len(scens) // max_per_fig
+    if len(scens) > num_figs * max_per_fig:
+        num_figs += 1
+    for figi in range(num_figs):
+        use_scens = scens[figi * max_per_fig: (figi + 1) * max_per_fig]
+        use_colors = colors[figi * max_per_fig: (figi + 1) * max_per_fig]
+        fig = plt.figure(figsize=(14, 9))
+        if well_name == 'h_g40_0415':
+            gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1), height_ratios=(3, 1))
+            ax = fig.add_subplot(gs[0, 0])
+            ax_lake = fig.add_subplot(gs[1, 0])
+
+        else:
+            gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1))
+            ax = fig.add_subplot(gs[:, 0])
+        ax_loc = fig.add_subplot(gs[0, 1])
+        ax_leg = fig.add_subplot(gs[1, 1])
+        for i, (k, c) in enumerate(zip(use_scens, use_colors)):
+            if not success[k]:
+                lab = f'{k} (failed)'
             else:
-                gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1))
-                ax = fig.add_subplot(gs[:, 0])
-            ax_loc = fig.add_subplot(gs[0, 1])
-            ax_leg = fig.add_subplot(gs[1, 1])
-            for i, (k, c) in enumerate(zip(use_scens, use_colors)):
-                if not success[k]:
-                    lab = f'{k} (failed)'
-                else:
-                    lab = k
-                temp2 = regular_hds[k].loc[regular_hds[k].well_name == n].sort_values('date')
-                ax.plot(temp2.date, temp2.modelled, color=c, label=lab)
+                lab = k
+            temp2 = regular_hds[k].loc[regular_hds[k].well_name == well_name].sort_values('date')
+            ax.plot(temp2.date, temp2.modelled, color=c, label=lab)
 
-                # add text label
-                if i % 2 == 0:
-                    idx = -1
-                else:
-                    idx = 0
+            # add text label
+            if i % 2 == 0:
+                idx = -1
+            else:
+                idx = 0
 
-                t = temp2.dropna()
-                if not t.empty:
-                    ax.text(t.date.values[idx], t.modelled.values[idx], k, color=c)
+            t = temp2.dropna()
+            if not t.empty:
+                ax.text(t.date.values[idx], t.modelled.values[idx], k, color=c)
 
-            ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
-            ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=nc, label=f'{n.capitalize()} modelled')
+        ax.scatter(temp2.date, temp2.measured, color=well_color, label=f'{well_name.capitalize()} measured')
+        ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=well_color,
+                label=f'{well_name.capitalize()} modelled')
 
-            if n == 'h_g40_0415':
-                from model_build.supporting_data_analysis import get_lake_heads
-                lake = get_lake_heads(temp2.date.min(), temp2.date.max())
-                ax_lake.plot(lake.index, lake, label='lake heads')
-                ax_lake.set_ylabel('lake heads (m)')
-                ax_lake.set_xlim(ax.get_xlim())
-                ax.set_xticks([])
-                ax.set_xticklabels([])
-                ax.set_xlabel('')
+        if well_name == 'h_g40_0415':
+            from model_build.supporting_data_analysis import get_lake_heads
+            lake = get_lake_heads(temp2.date.min(), temp2.date.max())
+            ax_lake.plot(lake.index, lake, label='lake heads')
+            ax_lake.set_ylabel('lake heads (m)')
+            ax_lake.set_xlim(ax.get_xlim())
+            ax.set_xticks([])
+            ax.set_xticklabels([])
+            ax.set_xlabel('')
 
-            plot_hds_regular_locator(ax_loc, {n: nc})
-            ax.set_title(f'{n.capitalize()} hds {figi + 1} of {num_figs}')
-            ax.set_xlabel('Date')
-            ax.set_ylabel('Weekly mean Head (m)')
-            ax_leg.legend(*ax.get_legend_handles_labels())
-            ax_leg.set_xticks([])
-            ax_leg.set_yticks([])
+        plot_hds_regular_locator(ax_loc, {well_name: well_color})
+        ax.set_title(f'{well_name.capitalize()} hds {figi + 1} of {num_figs}')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Weekly mean Head (m)')
+        ax_leg.legend(*ax.get_legend_handles_labels())
+        ax_leg.set_xticks([])
+        ax_leg.set_yticks([])
 
-            # kill frame around ax..
-            ax_leg.spines["top"].set_visible(False)
-            ax_leg.spines["right"].set_visible(False)
-            ax_leg.spines["left"].set_visible(False)
-            ax_leg.spines["bottom"].set_visible(False)
-            fig.tight_layout()
-            fig.savefig(plot_dir.joinpath(f'hds_closeup_{n}_{figi:02d}.png'))
-            plt.close(fig)
+        # kill frame around ax..
+        ax_leg.spines["top"].set_visible(False)
+        ax_leg.spines["right"].set_visible(False)
+        ax_leg.spines["left"].set_visible(False)
+        ax_leg.spines["bottom"].set_visible(False)
+        fig.tight_layout()
+        fig.savefig(plot_dir.joinpath(f'hds_closeup_{well_name}_{figi:02d}.png'))
+        plt.close(fig)
+
+
+def _rank_best_shape_fit(regular_hds, well_name, well_color, max_per_fig, success, opt_dir):
+    assert isinstance(opt_dir, Path)
+    mse = _calc_shape_fit_mse(regular_hds, well_name)
+    add_params(mse, param_path=opt_dir.joinpath('param_overview.txt'))
+    mse.to_csv(opt_dir.joinpath('mse.csv'))
+    num_plot = 20
+    for k in ['shape_mse', 'mse', 'joint_mse']:
+        _plot_regular(scens=mse.sort_values(k).index[0:num_plot], max_per_fig=max_per_fig,
+                      colors=get_colors(range(num_plot)), well_name=well_name,
+                      success=success, regular_hds=regular_hds, well_color=well_color,
+                      plot_dir=opt_dir.joinpath(f'0_{k}_plots'))
+
+
+def add_params(df, param_path):
+    temp = pd.read_fwf(param_path, index_col=0,
+                       skiprows=3)
+    for k in temp.columns:
+        df.loc[:, k] = temp.loc[df.index, k]
+
+
+def _calc_shape_fit_mse(regular_hds, wellname):
+    assert isinstance(regular_hds, dict)
+    outdata = pd.DataFrame(index=regular_hds.keys(), columns=['shape_mse', 'mse'])
+    for k, v in regular_hds.items():
+        temp2 = v.loc[v.well_name == wellname].sort_values('date').copy(deep=True)
+        mse = ((temp2.loc[:, 'measured'] - temp2.loc[:, 'modelled']) ** 2).sum()
+        outdata.loc[k, 'mse'] = mse
+        temp2.loc[:, 'modelled'] += -temp2['modelled'].min()
+        temp2.loc[:, 'measured'] += -temp2['measured'].min()
+        mse = ((temp2.loc[:, 'measured'] - temp2.loc[:, 'modelled']) ** 2).sum()
+        outdata.loc[k, 'shape_mse'] = mse
+    outdata.loc[:, 'joint_mse'] = outdata.loc[:, ['shape_mse', 'mse']].mean(axis=1)
+    return outdata

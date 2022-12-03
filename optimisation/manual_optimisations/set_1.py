@@ -142,16 +142,15 @@ def lake_kh_sy():
 # lower conductivity of all of the terrace kh points
 
 
-replot = False
+replot = True
 if __name__ == '__main__':
     # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
-    lake_kh_sy()
     if replot:
-        lake_and_sy_test()
         lake_kh_test()
+        lake_kh_sy()
+        lake_and_sy_test()
         north_kh_lake()
         north_kh()
-        lake_kh_test()
         sy_test()
 
     pass
