@@ -36,7 +36,7 @@ def lake_kh_test():
         'kh_lake': v
 
     }
-        for v in [0.1, 0.5, 1, 3, 5, 10]]
+        for v in [0.01, 0.1, 0.5, 1, 3, 5, 10, 50, 100]]
 
     opt_name = f'{branch}_{opt_name}'
     run_manal_opt(opt_name, mod_params=new_params,
@@ -52,7 +52,7 @@ def lake_and_sy_test():
         'sy_h_flat8': v,
         'kh_lake': l
     }
-        for l, v in itertools.product([0.1, 0.5, 1, 3, ],
+        for l, v in itertools.product([0.1, 0.5, 1, 3, 5, 10, 50, 100],
                                       [0.00005, 0.0001, 0.0005, .001, 0.005, 0.01, 0.05])]
 
     opt_name = f'{branch}_{opt_name}'
@@ -95,16 +95,45 @@ def north_kh_lake():
         'kh_lake': lake
     }
         for riv_long, low, inc, lake in itertools.product(
-            [50, 100, 150],
-            [50, 100, 200, 300, 400],
-            [300, 400, 500, 600, 800, 1000, 1200],
-            [0.1, 0.5, 1, 3, 5, 10]
+            [100],
+            [50, 200, 400],
+            [300, 500, 1000, 1200],
+            [0.1, 1, 5, 10]
         )]
 
     opt_name = f'{branch}_{opt_name}'
 
     run_manal_opt(opt_name, mod_params=new_params,
-                  safemode=False, replot=replot)
+                  safemode=True, replot=replot)
+
+
+def lake_kh_sy():
+    print_myself()
+    opt_name = 'lake_kh_sy'
+    new_params = [{
+        'kh_h_flat4': kh,
+        'kh_h_flat3': kh,
+        'kh_h_flat6': kh,
+
+        'kh_h_flat7': kh,
+        'kh_h_flat8': kh,
+
+        'sy_h_flat4': sy,
+        'sy_h_flat7': sy,
+        'sy_h_flat8': sy,
+
+        'kh_lake': lake
+    }
+        for kh, sy, lake in itertools.product(
+            [100, 300, 500, 1000, 1500],
+            [0.00005, 0.0001, 0.0005, .001, 0.005, 0.01, 0.05],
+            [0.1, 0.5, 1, 3, 5, 10, 50, 100],
+        )]
+
+    opt_name = f'{branch}_{opt_name}'
+
+    run_manal_opt(opt_name, mod_params=new_params,
+                  safemode=True, replot=replot)
 
 
 # next thoughts:
@@ -113,13 +142,15 @@ def north_kh_lake():
 # lower conductivity of all of the terrace kh points
 
 
-replot = True
+replot = False
 if __name__ == '__main__':
-    north_kh_lake()
-    # todo possibly also include bulk sy, bulk hk etc.
+    # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
+    lake_kh_sy()
     if replot:
-        north_kh()
         lake_and_sy_test()
+        lake_kh_test()
+        north_kh_lake()
+        north_kh()
         lake_kh_test()
         sy_test()
 

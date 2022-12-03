@@ -128,6 +128,14 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     for i, single_mod_params in enumerate(mod_params):
         pdict = deepcopy(base_pdict)
 
+        bulk_keys = [e for e in pdict.keys() if 'bulk_' in e]
+        if len(bulk_keys) > 0:
+            for k in bulk_keys:
+                val = pdict.pop(k)
+                tag = k.split('_')[-1]
+                for pr in pdict[tag].keys():
+                    pdict[tag][pr] = val
+
         for k, v in single_mod_params.items():
             overview_data.loc[k, f'sen_{i:02d}'] = v
             tag = k.split('_')[0]
@@ -135,18 +143,17 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
             pdict[tag][pname] = v
         runs.append({'model_name': f'sen_{i:02d}', 'base_dir': '', 'mod_params': [pdict[t] for t in tags]})
 
-    # write overview of changed parameters
-    with open(opt_dir.joinpath('param_overview.txt'), 'w') as f:
-        f.write(f'{opt_dir.name}\n'
-                f'{opt_dir}\n\n')
-        f.write(overview_data.transpose().to_string())
-
     # run all models
     if not replot:
         print(f'running {len(runs)} models')
         ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=True, run=True, compile=True,
                                  run_in_series=False, kwargs_relative_to_base_dir=['base_dir'])
 
+    # write overview of changed parameters
+    with open(opt_dir.joinpath('param_overview.txt'), 'w') as f:
+        f.write(f'{opt_dir.name}\n'
+                f'{opt_dir}\n\n')
+        f.write(overview_data.transpose().to_string())
     # plot the results
     print('plotting')
     _plot_high_freq_heads(opt_dir, opt_dir.joinpath('0_plots'))
@@ -222,8 +229,14 @@ def _plot_high_freq_heads(opt_dir, plot_dir):
             use_scens = scens[figi * max_per_fig: (figi + 1) * max_per_fig]
             use_colors = colors[figi * max_per_fig: (figi + 1) * max_per_fig]
             fig = plt.figure(figsize=(14, 9))
-            gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1))
-            ax = fig.add_subplot(gs[:, 0])
+            if n == 'h_g40_0415':
+                gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1), height_ratios=(3, 1))
+                ax = fig.add_subplot(gs[0, 0])
+                ax_lake = fig.add_subplot(gs[1, 0])
+
+            else:
+                gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1))
+                ax = fig.add_subplot(gs[:, 0])
             ax_loc = fig.add_subplot(gs[0, 1])
             ax_leg = fig.add_subplot(gs[1, 1])
             for i, (k, c) in enumerate(zip(use_scens, use_colors)):
@@ -246,6 +259,17 @@ def _plot_high_freq_heads(opt_dir, plot_dir):
 
             ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
             ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=nc, label=f'{n.capitalize()} modelled')
+
+            if n == 'h_g40_0415':
+                from model_build.supporting_data_analysis import get_lake_heads
+                lake = get_lake_heads(temp2.date.min(), temp2.date.max())
+                ax_lake.plot(lake.index, lake, label='lake heads')
+                ax_lake.set_ylabel('lake heads (m)')
+                ax_lake.set_xlim(ax.get_xlim())
+                ax.set_xticks([])
+                ax.set_xticklabels([])
+                ax.set_xlabel('')
+
             plot_hds_regular_locator(ax_loc, {n: nc})
             ax.set_title(f'{n.capitalize()} hds {figi + 1} of {num_figs}')
             ax.set_xlabel('Date')
