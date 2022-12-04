@@ -129,10 +129,10 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'post_manual_v11'
+mversion = 'init_v12'
 previous_mversion = 'init_v11'
-branch = 'structure_v11'
-previous_branch = 'structure_v10'
+branch = 'structure_v12'
+previous_branch = 'structure_v12'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
@@ -146,7 +146,7 @@ notes = f"""
 noptmax = 300
 recalc = True
 build_model = True
-build_pest = True
+build_pest = False
 safemode = True
 local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
 
