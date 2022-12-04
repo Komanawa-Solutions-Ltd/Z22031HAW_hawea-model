@@ -183,11 +183,12 @@ def near_lake_raise_lower():
 # lower conductivity of all of the terrace kh points
 
 
-replot = True
+replot = False
 
 # todo can I fit the south most without lake wave??, good question
+# keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
-    # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
+    near_lake_raise_lower()
     if replot:
         lake_kh_sy()
         lake_kh_test()
