@@ -8,6 +8,7 @@ import numpy as np
 from model_build.project_model_tools import smt
 from model_build.utils import get_colors
 from project_base import processed_model_build_data_dir, base_model_build_data_dir, modelling_dir
+from model_build.supporting_data_analysis.lake_data import get_lake_heads
 import rasterio
 
 base_well_path = base_model_build_data_dir.joinpath('Hawea Wellsdata request ZEB.xlsx')
@@ -104,7 +105,13 @@ def get_all_wells(recalc=False):
     well_data = well_data.loc[well_data.i >= 0]
     ibound = smt.get_no_flow(0)
     well_data.loc[:, 'ibound'] = ibound[well_data.i, well_data.j]
-
+    # todo add lake heads
+    lake_hds = get_lake_heads(None, None)
+    for i in well_data.index:
+        dd = well_data.drilldate.dt.date.loc[i].isoformat()
+        if dd in lake_hds.index:
+            well_data.loc[i, 'lake_at_drilldate'] = lake_hds.loc[dd]
+    well_data.loc[:, 'dpt_v_lake'] = well_data.lake_at_drilldate - well_data.depth_to_water_elv
     well_data.to_csv(processed_well_path)
 
 
@@ -129,5 +136,6 @@ def plot_wells():
     smt.plot.show()
 
 if __name__ == '__main__':
-    plot_wells()
     t = get_all_wells(recalc=True)
+    plot_wells()
+    # todo plot of drill date level vs lake level is useful!

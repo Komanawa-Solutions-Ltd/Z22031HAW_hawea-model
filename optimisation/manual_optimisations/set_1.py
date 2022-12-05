@@ -306,6 +306,139 @@ def near_lake_raise_rl_lower_str():
                   safemode=True, replot=replot)
 
 
+def extreme_bounds():
+    print_myself()
+    opt_name = 'extreme_bounds'
+
+    lower = [100, 50, 10, 5, 1]
+    raise_lower = [50, 100, 500, 1000, 2000]
+    inc = [1000, 2000, 3000]
+    sy_vals = [0.0001, 0.001, 0.01]
+    lakes = [1, 5, 10]
+
+    num_runs = len(list(itertools.product(lower, raise_lower, inc, sy_vals, lakes)))
+    print(f'num_runs: {num_runs}')
+
+    new_params = [{
+        # kh
+        'kh_h_flat4': low,
+        'kh_h_flat3': low,
+        'kh_h_flat6': low,
+        'kh_h_flat40': low,
+        'kh_h_flat41': low,
+        'kh_h_flat42': low,
+
+        'kh_h_flat43': rl,
+        'kh_h_flat44': rl,
+        'kh_h_flat45': rl,
+        'kh_h_flat10': rl,
+        'kh_riv_g25': rl,
+
+        'kh_h_flat7': u,
+        'kh_h_flat8': u,
+        'kh_h_flat46': u,
+        'kh_riv_g26': u,
+
+        # sy
+        'sy_h_flat4': sy,
+        'sy_h_flat3': sy,
+        'sy_h_flat6': sy,
+        'sy_h_flat40': sy,
+        'sy_h_flat41': sy,
+        'sy_h_flat42': sy,
+        'sy_h_flat43': sy,
+        'sy_h_flat44': sy,
+        'sy_h_flat45': sy,
+        'sy_h_flat10': sy,
+        'sy_riv_g25': sy,
+        'sy_h_flat7': sy,
+        'sy_h_flat8': sy,
+        'sy_h_flat46': sy,
+        'sy_riv_g26': sy,
+
+        # lake
+        'kh_lake': lake
+    }
+
+        for low, rl, u, sy, lake in itertools.product(lower, raise_lower, inc, sy_vals, lakes)
+    ]
+
+    opt_name = f'{branch}_{opt_name}'
+
+    run_manal_opt(opt_name, mod_params=new_params,
+                  safemode=True, replot=replot)
+
+
+def explore_kh_south2():
+    print_myself()
+    opt_name = 'explore_kh_south_v2'
+    lower_names = [
+        'kh_ter34',
+        'kh_ter35',
+        'kh_ter38',
+        'kh_ter39',
+        'kh_ter38',
+
+    ]
+    lower_vals = [5, 10, 50, 100, 300]
+    raise_lower_names = [
+        'kh_h_flat1',
+        'kh_h_flat9',
+        'kh_riv_g23',
+    ]
+    raise_lower_vals = [50, 100, 300, 500]
+    runs = []
+    for lv, rlv in itertools.product(lower_vals, raise_lower_vals):
+        temp = {k: rlv for k in raise_lower_names}
+        temp.update({k: lv for k in lower_names})
+        runs.append(temp)
+    opt_name = f'{branch}_{opt_name}'
+
+    run_manal_opt(opt_name, mod_params=runs,
+                  safemode=True, replot=replot)
+
+
+def explore_kh_south3():
+    print_myself()
+    opt_name = 'explore_kh_south_v3'
+    lower_names = [
+        'kh_ter34',
+        'kh_ter35',
+        'kh_ter38',
+        'kh_ter39',
+        'kh_ter38',
+
+    ]
+    lower_vals = [5, 10, 50, 100, 300]
+    raise_lower_names = [
+        'kh_h_flat1',
+        'kh_h_flat9',
+        'kh_riv_g23',
+    ]
+    raise_lower_vals = [50, 100, 300, 500, 1000]
+
+    mid_vals = [50, 100, 300, 500, 1000]
+    mid_names = [
+        'kh_h_flat2',
+        'kh_h_flat5',
+        'kh_h_flat7',
+        'kh_h_flat8',
+        'kh_h_flat46',
+
+    ]
+
+    runs = []
+    for lv, rlv, mid in itertools.product(lower_vals, raise_lower_vals, mid_vals):
+        temp = {k: rlv for k in raise_lower_names}
+        temp.update({k: lv for k in lower_names})
+        temp.update({k: mid for k in mid_names})
+        runs.append(temp)
+    opt_name = f'{branch}_{opt_name}'
+
+    run_manal_opt(opt_name, mod_params=runs,
+                  safemode=True, replot=replot)
+
+
 # next thoughts:
 # lower kh of h_flat 4, 6, 3
 # lower conductance of riv grandview
@@ -317,15 +450,19 @@ replot = False
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
-    near_lake_raise_rl_lower_str()
     if replot:
+        explore_kh_south3()
+        explore_kh_south2()
+        near_lake_raise_rl_lower_str()
         near_lake_raise_rl_lower()
-        near_lake_raise_lower()
-        lake_kh_sy()
-        lake_kh_test()
-        lake_and_sy_test()
-        north_kh_lake()
-        north_kh()
-        sy_test()
+
+        # previous structure
+        # near_lake_raise_lower()
+        # lake_kh_sy()
+        # lake_kh_test()
+        # lake_and_sy_test()
+        # north_kh_lake()
+        # north_kh()
+        # sy_test()
 
     pass

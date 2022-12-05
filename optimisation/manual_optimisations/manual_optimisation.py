@@ -235,14 +235,10 @@ def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, w
         use_scens = scens[figi * max_per_fig: (figi + 1) * max_per_fig]
         use_colors = colors[figi * max_per_fig: (figi + 1) * max_per_fig]
         fig = plt.figure(figsize=(14, 9))
-        if well_name == 'h_g40_0415':
-            gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1), height_ratios=(3, 1))
-            ax = fig.add_subplot(gs[0, 0])
-            ax_lake = fig.add_subplot(gs[1, 0])
+        gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1), height_ratios=(3, 1))
+        ax = fig.add_subplot(gs[0, 0])
+        ax_lake = fig.add_subplot(gs[1, 0])
 
-        else:
-            gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1))
-            ax = fig.add_subplot(gs[:, 0])
         ax_loc = fig.add_subplot(gs[0, 1])
         ax_leg = fig.add_subplot(gs[1, 1])
         for i, (k, c) in enumerate(zip(use_scens, use_colors)):
@@ -267,15 +263,14 @@ def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, w
         ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=well_color,
                 label=f'{well_name.capitalize()} modelled')
 
-        if well_name == 'h_g40_0415':
-            from model_build.supporting_data_analysis import get_lake_heads
-            lake = get_lake_heads(temp2.date.min(), temp2.date.max())
-            ax_lake.plot(lake.index, lake, label='lake heads')
-            ax_lake.set_ylabel('lake heads (m)')
-            ax_lake.set_xlim(ax.get_xlim())
-            ax.set_xticks([])
-            ax.set_xticklabels([])
-            ax.set_xlabel('')
+        from model_build.supporting_data_analysis import get_lake_heads
+        lake = get_lake_heads(temp2.date.min(), temp2.date.max())
+        ax_lake.plot(lake.index, lake, label='lake heads')
+        ax_lake.set_ylabel('lake heads (m)')
+        ax_lake.set_xlim(ax.get_xlim())
+        ax.set_xticks([])
+        ax.set_xticklabels([])
+        ax.set_xlabel('')
 
         plot_hds_regular_locator(ax_loc, {well_name: well_color})
         ax.set_title(f'{well_name.capitalize()} hds {figi + 1} of {num_figs}')
