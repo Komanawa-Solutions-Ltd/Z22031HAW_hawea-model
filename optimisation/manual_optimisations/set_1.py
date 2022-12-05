@@ -199,7 +199,6 @@ def near_lake_raise_rl_lower():
         'kh_h_flat41': low,
         'kh_h_flat42': low,
 
-
         'kh_h_flat43': rl,
         'kh_h_flat44': rl,
         'kh_h_flat45': rl,
@@ -241,6 +240,72 @@ def near_lake_raise_rl_lower():
                   safemode=True, replot=replot)
 
 
+def near_lake_raise_rl_lower_str():
+    print_myself()
+    opt_name = 'near_lake_raise_lower_str'
+
+    lower = [100, 50, 10, 5]
+    inc = [500, 1000, 1500, 2000]
+    sy_vals = [0.001, 0.005, 0.01]
+    lakes = [5, 10, 50, 100]
+    str_vals = [5, 10, 50, 100]
+
+    num_runs = len(list(itertools.product(lower, inc, sy_vals, lakes, str_vals)))
+    print(f'num_runs: {num_runs}')
+
+    new_params = [{
+        # kh
+        'kh_h_flat4': low,
+        'kh_h_flat3': low,
+        'kh_h_flat6': low,
+        'kh_h_flat40': low,
+        'kh_h_flat41': low,
+        'kh_h_flat42': low,
+
+        'kh_h_flat43': low,
+        'kh_h_flat44': low,
+        'kh_h_flat45': low,
+        'kh_h_flat10': low,
+        'kh_riv_g25': low,
+
+        'kh_h_flat7': u,
+        'kh_h_flat8': u,
+        'kh_h_flat46': u,
+        'kh_riv_g26': u,
+
+        # sy
+        'sy_h_flat4': sy,
+        'sy_h_flat3': sy,
+        'sy_h_flat6': sy,
+        'sy_h_flat40': sy,
+        'sy_h_flat41': sy,
+        'sy_h_flat42': sy,
+        'sy_h_flat43': sy,
+        'sy_h_flat44': sy,
+        'sy_h_flat45': sy,
+        'sy_h_flat10': sy,
+        'sy_riv_g25': sy,
+        'sy_h_flat7': sy,
+        'sy_h_flat8': sy,
+        'sy_h_flat46': sy,
+        'sy_riv_g26': sy,
+
+        # lake
+        'kh_lake': lake,
+
+        # str
+        'riv_gview': stv,
+    }
+
+        for low, rl, u, sy, lake, stv in itertools.product(lower, inc, sy_vals, lakes, str_vals)
+    ]
+
+    opt_name = f'{branch}_{opt_name}'
+
+    run_manal_opt(opt_name, mod_params=new_params,
+                  safemode=True, replot=replot)
+
+
 # next thoughts:
 # lower kh of h_flat 4, 6, 3
 # lower conductance of riv grandview
@@ -252,8 +317,9 @@ replot = False
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
-    near_lake_raise_rl_lower()
+    near_lake_raise_rl_lower_str()
     if replot:
+        near_lake_raise_rl_lower()
         near_lake_raise_lower()
         lake_kh_sy()
         lake_kh_test()
