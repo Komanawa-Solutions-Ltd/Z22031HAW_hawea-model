@@ -238,7 +238,7 @@ def plot_all_spd(save=False):
              outpath=outdir.joinpath(f'rch_time{extension}'))
 
     # lake
-    plot_spd(get_ghb_data(tdis), smt, tdis,
+    plot_spd(get_ghb_data(tdis, get_lake_param(True)), smt, tdis,
              func=np.nanmean,
              key='bhead', title='lake heads', outpath=outdir.joinpath(f'lake_time{extension}'))
 

@@ -170,6 +170,7 @@ def set_parameter_data_groups(pst, start_param_vals):
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('rch_'), 'parchglim'] = 'absolute(1)'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('hill_'), 'parchglim'] = 'absolute(1)'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('race_'), 'parchglim'] = 'absolute(1)'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('lake_'), 'parchglim'] = 'absolute(2)'
 
     # parameter group data
     parameter_groups = pd.DataFrame(index=pd.unique(pst.parameter_data.loc[all_params, 'pargp']))
@@ -207,8 +208,7 @@ def set_obs_data(pst, obs_path):
     for n, v in obs_num.items():
         use_idx = (temp.loc[:, 'loc_name'] == n) & idx
         assert use_idx.sum() == v
-        pst.observation_data.loc[use_idx, 'weight'] *= v/obs_num.sum()
-
+        pst.observation_data.loc[use_idx, 'weight'] *= v / obs_num.sum()
 
     # normalise weights by group totals  (total weight sums to 1) for each group
     weight_totals = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight'].to_dict()
@@ -241,7 +241,7 @@ def set_obs_data(pst, obs_path):
 def hack_for_absparmax(file):
     with open(file, 'r') as f:
         lines = f.readlines()
-    lines[6] = lines[6].strip('\n') + '  absparmax(1)=0.1\n'  # keynote ABSPARMAX set here
+    lines[6] = lines[6].strip('\n') + '  absparmax(1)=0.1' + '  absparmax(2)=0.5\n'  # keynote ABSPARMAX set here
     with open(file, 'w') as f:
         f.writelines(lines)
     pass

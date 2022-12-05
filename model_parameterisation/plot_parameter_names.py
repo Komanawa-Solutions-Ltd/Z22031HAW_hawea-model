@@ -17,6 +17,7 @@ def plot_parameter_locator(show=False):
     riv_params = get_initial_riv_conductance(True)
     hill_param = get_hillslope_multiplier(True)
     race_param = get_race_multiplier(True)
+    # todo plot lake param if we go down this route
     rch_param = get_initial_rch_mult(True)
     all_params = (kh_param, sy_param, riv_params, hill_param, race_param, rch_param)
     tags = ['kh', 'sy', 'riv', 'hill', 'race', 'rch']

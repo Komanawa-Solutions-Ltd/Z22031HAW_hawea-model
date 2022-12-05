@@ -17,7 +17,7 @@ if __name__ == '__main__':
     plot = False
     name = 'opt_model'
     model_ws = Path(__file__).parent
-    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws)
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param, lake_param = read_param_data(model_ws)
     build_run_model(
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,
@@ -25,7 +25,8 @@ if __name__ == '__main__':
         riv_params=riv_params,
         hill_param=hill_param,
         race_param=race_param,
-        rch_param=rch_param
+        rch_param=rch_param,
+        lake_param=lake_param
     )
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),

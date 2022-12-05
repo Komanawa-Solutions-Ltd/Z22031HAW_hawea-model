@@ -9,7 +9,7 @@ from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
 from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
 from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh, \
-    get_initial_riv_conductance, get_race_multiplier, get_hillslope_multiplier, get_initial_rch_mult
+    get_initial_riv_conductance, get_race_multiplier, get_hillslope_multiplier, get_initial_rch_mult, get_lake_param
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
 from targets_and_sensitive_sites.model_output import process_model_output
 from project_base import proj_root
@@ -31,7 +31,7 @@ def test_times():
     get_rch_data(tdis, get_initial_rch_mult(True))
     print(f'took {time.time() - t}s for get_rch_data')
     t = time.time()
-    get_ghb_data(tdis)
+    get_ghb_data(tdis, lake_param=get_lake_param(True))
     print(f'took {time.time() - t}s for get_ghb_data')
     t = time.time()
     get_str_data(tdis, riv_params=get_initial_riv_conductance(True))
@@ -58,7 +58,8 @@ def build_initial_model(model_name, model_ws,
         riv_params=get_initial_riv_conductance(True),
         hill_param=get_hillslope_multiplier(True),
         race_param=get_race_multiplier(True),
-        rch_param=get_initial_rch_mult(True)
+        rch_param=get_initial_rch_mult(True),
+        lake_param=get_lake_param(True)
     )
 
 

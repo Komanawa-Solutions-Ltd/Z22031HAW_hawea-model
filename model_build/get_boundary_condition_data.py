@@ -120,22 +120,24 @@ def get_rch_data(tdis, rch_param, recalc=False):
     return out
 
 
-def get_ghb_data(tdis, recalc=False):
+def get_ghb_data(tdis, lake_param, recalc=False):
     save_path = processed_model_build_data_dir.joinpath(f'ghb_stress_period_data-{tdis.name}.p')
     if save_path.exists() and not recalc:
         out = pickle.load(open(save_path, 'rb'))
-        return out
-    lake_locs = get_lake_hawea_loc()
-    lake_locs.loc[:, 'cond'] = lake_conduct
-    lake_hds = get_lake_heads(*tdis.date_limits)
+    else:
+        lake_locs = get_lake_hawea_loc()
+        lake_locs.loc[:, 'cond'] = lake_conduct
+        lake_hds = get_lake_heads(*tdis.date_limits)
 
-    # import lake levels
-    flopy.modflow.ModflowGhb.get_default_dtype()
-    # transform into GHB data
-    out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
-                                  flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
+        # import lake levels
+        flopy.modflow.ModflowGhb.get_default_dtype()
+        # transform into GHB data
+        out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
+                                      flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
 
-    pickle.dump(out, open(save_path, 'wb'))
+        pickle.dump(out, open(save_path, 'wb'))
+    for v in out.values():
+        v['bhead'] += lake_param['step']
     return out
 
 
@@ -170,6 +172,7 @@ if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
     from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_hillslope_multiplier, \
         get_initial_rch_mult
+    get_ghb_data(tdis, {'step':-1000})
 
     get_str_data(tdis, get_initial_riv_conductance(True))
     t = get_initial_rch_mult(True)
@@ -179,4 +182,3 @@ if __name__ == '__main__':
     b = get_well_data(tdis, hill_param=get_hillslope_multiplier(True)
                       , race_param={'all': 1}, recalc=True)
     get_str_data(tdis, get_initial_riv_conductance(return_just_start=True))
-    get_ghb_data(tdis)

@@ -30,7 +30,7 @@ def recalc_model_build(rerun_rushton=False):
     from model_build.zones import get_param_zones, get_model_zones
     from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
     from optimisation.optimisation_period import tdis
-    from model_parameterisation.inital_parametersiation import get_initial_rch_mult
+    from model_parameterisation.inital_parametersiation import get_initial_rch_mult, get_lake_param
 
     get_ibound(recalc=True)
     get_elv_db(recalc=True)
@@ -52,7 +52,7 @@ def recalc_model_build(rerun_rushton=False):
     get_historical_pumping_data(None, None, recalc=True)
     get_soil_classes(recalc=True)
     get_rch_data(tdis, rch_param=get_initial_rch_mult(True), recalc=True)
-    get_ghb_data(tdis, recalc=True)
+    get_ghb_data(tdis, lake_param=get_lake_param(True), recalc=True)
     get_well_data(tdis, hill_param={'se': 1, 'main': 1, 'mang': 1, }, race_param={'all': 1}, recalc=True)
     if rerun_rushton:
         for k in [True, False]:
@@ -127,20 +127,15 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 # todo version here to run pest and base model
 #  for structural changes re-run build_base_opt_model.py, pre_optimisation_overview.py
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
-#  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'post_manual_v11'
+mversion = 'init_param_lake_level'
 previous_mversion = 'init_v11'
-branch = 'structure_v11'
-previous_branch = 'structure_v10'
+branch = 'param_lake_level'
+previous_branch = 'structure_v11'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-* Move to 1 global recharge modifier (done)
-* Much higher initial kh (lake=5, rest = 300), lower lake kh bounds
-* Lower sy, and lower sy bounds
-* Change weights (lower low frequency targets)
-* Bit of a hail mary before the weekend
+check what happens if I add a step parameter to lake levels (e.g. lake levels += mod)
 
 """
 noptmax = 300

@@ -41,7 +41,7 @@ def get_initial_riv_conductance(return_just_start=False):
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model based on the 10**mean(log10(scotts parameters))
     # keynote use log values
-    start_val = (300, (0.01, 1000))
+    start_val = (40, (0.01, 1000))
     lake_val = (5, (0.001, 1000))
 
     # for reference scott's model ha min = 0.09, max = 300, median = 14
@@ -102,6 +102,14 @@ def get_race_multiplier(return_just_start=False):
             params[k] = v[0]
     return params
 
+def get_lake_param(return_just_start=False):
+    params = {
+        'step': (-10, (10, 20)),
+    }
+    if return_just_start:
+        for k, v in params.items():
+            params[k] = v[0]
+    return params
 
 if __name__ == '__main__':
     get_inital_kh()

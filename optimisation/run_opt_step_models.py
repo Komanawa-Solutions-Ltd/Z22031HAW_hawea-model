@@ -22,7 +22,7 @@ def _run_model_mp(kwargs):
 
 
 def run_model(name, model_ws, plot):
-    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws, format='pest')
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param,lake_param = read_param_data(model_ws, format='pest')
     build_run_model(
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,
@@ -30,7 +30,8 @@ def run_model(name, model_ws, plot):
         riv_params=riv_params,
         hill_param=hill_param,
         race_param=race_param,
-        rch_param=rch_param
+        rch_param=rch_param,
+        lake_param=lake_param
     )
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),

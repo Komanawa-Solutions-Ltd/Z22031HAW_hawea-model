@@ -73,7 +73,7 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False):
             run_model = False
 
     if run_model:
-        kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
+        kh_param, sy_param, riv_params, hill_param, race_param, rch_param,lake_param = mod_params
         print(f'building and running {model_name}')
         build_run_model(
             model_name=model_name, model_ws=model_ws,
@@ -82,7 +82,8 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False):
             riv_params=riv_params,
             hill_param=hill_param,
             race_param=race_param,
-            rch_param=rch_param
+            rch_param=rch_param,
+            lake_param=lake_param
         )
 
     print(f'processing output for: {model_name}')
@@ -119,8 +120,9 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     hill_param = get_hillslope_multiplier(True)
     race_param = get_race_multiplier(True)
     rch_param = get_initial_rch_mult(True)
-    all_params = (kh_param, sy_param, riv_params, hill_param, race_param, rch_param)
-    tags = ['kh', 'sy', 'riv', 'hill', 'race', 'rch']
+    lake_param = get_lake_param(True)
+    all_params = (kh_param, sy_param, riv_params, hill_param, race_param, rch_param, lake_param)
+    tags = ['kh', 'sy', 'riv', 'hill', 'race', 'rch', 'lake']
     base_pdict = {t: deepcopy(p) for t, p in zip(tags, all_params)}
     for k in overview_data.index:
         tag = k.split('_')[0]

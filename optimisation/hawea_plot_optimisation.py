@@ -37,9 +37,9 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=Fal
     assert len(opt_par_file) == 1
     opt_par_file = opt_par_file[0]
 
-    kh_param, sy_param, riv_param, hill_param, race_param, rch_param = read_param_data(model_ws,
-                                                                                       parameter_file=opt_par_file,
-                                                                                       format='pest')
+    kh_param, sy_param, riv_param, hill_param, race_param, rch_param, lake_param = read_param_data(model_ws,
+                                                                                                   parameter_file=opt_par_file,
+                                                                                                   format='pest')
 
     build_run_model(
         model_name=name, model_ws=model_ws,
@@ -48,7 +48,9 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=Fal
         riv_params=riv_param,
         hill_param=hill_param,
         race_param=race_param,
-        rch_param=rch_param
+        rch_param=rch_param,
+        lake_param=lake_param,
+
     )
     opt_plot_dir = base_plot_dir.joinpath('final_opt_model')
     opt_plot_dir.mkdir(exist_ok=True)

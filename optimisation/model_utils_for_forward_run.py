@@ -13,10 +13,10 @@ from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, 
 from model_parameterisation.inital_parametersiation import *
 
 
-def _get_param_data():
+def _get_param_data():  # todo trace through
     param_fs = [get_race_multiplier, get_hillslope_multiplier,
-                get_initial_riv_conductance, get_inital_sy, get_inital_kh, get_initial_rch_mult]
-    param_groups = ['race', 'hill', 'riv', 'sy', 'kh', 'rch']
+                get_initial_riv_conductance, get_inital_sy, get_inital_kh, get_initial_rch_mult, get_lake_param]
+    param_groups = ['race', 'hill', 'riv', 'sy', 'kh', 'rch', 'lake']
     param_names = []
     param_starts = []
     param_low = []
@@ -54,8 +54,9 @@ def read_param_data(model_ws=None, parameter_file=None, format='model', return_i
         hill_param = {k: data[f'hill_{k}'] for k in get_hillslope_multiplier().keys()}
         race_param = {k: data[f'race_{k}'] for k in get_race_multiplier().keys()}
         rch_param = {k: data[f'rch_{k}'] for k in get_initial_rch_mult().keys()}
+        lake_param = {k: data[f'lake_{k}'] for k in get_lake_param().keys()}
 
-        return kh_param, sy_param, riv_params, hill_param, race_param, rch_param
+        return kh_param, sy_param, riv_params, hill_param, race_param, rch_param, lake_param
     else:
         return data
 
@@ -66,7 +67,8 @@ def write_base_param_file(outdir):
     param_data.to_csv(input_file, sep='\t', header=False, index=False)
 
 
-def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param):
+def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param,
+                    lake_param):
     exe_name = 'mfnwt'
     run_model = True
     t = time.time()
@@ -89,7 +91,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       strt=get_starting_heads(),
                       chani=1,
                       rch=get_rch_data(tdis, rch_param),
-                      ghb_spd=get_ghb_data(tdis),
+                      ghb_spd=get_ghb_data(tdis, lake_param),
                       str_spd=get_str_data(tdis, riv_params=riv_params),
                       well_spd=get_well_data(tdis,
                                              hill_param=hill_param,
