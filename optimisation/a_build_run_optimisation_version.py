@@ -108,7 +108,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
         param_data.loc[:, 'start'] = start_vals
     param_data.to_csv(model_ws.joinpath('parameters.dat'), sep='\t', header=False, index=False)
 
-    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws)
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param, lake_param = read_param_data(model_ws)
     build_run_model(
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,
@@ -116,7 +116,8 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
         riv_params=riv_params,
         hill_param=hill_param,
         race_param=race_param,
-        rch_param=rch_param
+        rch_param=rch_param,
+        lake_param=lake_param
     )
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),
@@ -138,7 +139,7 @@ notes = f"""
 check what happens if I add a step parameter to lake levels (e.g. lake levels += mod)
 
 """
-noptmax = 300
+noptmax = 50
 recalc = True
 build_model = True
 build_pest = True
