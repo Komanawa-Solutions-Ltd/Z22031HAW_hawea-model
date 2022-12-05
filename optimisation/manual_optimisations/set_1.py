@@ -297,7 +297,7 @@ def near_lake_raise_rl_lower_str():
         'riv_gview': stv,
     }
 
-        for low, rl, u, sy, lake, stv in itertools.product(lower, inc, sy_vals, lakes, str_vals)
+        for low, u, sy, lake, stv in itertools.product(lower, inc, sy_vals, lakes, str_vals)
     ]
 
     opt_name = f'{branch}_{opt_name}'
