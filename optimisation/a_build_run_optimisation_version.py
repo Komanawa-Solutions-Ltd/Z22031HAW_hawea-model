@@ -197,6 +197,7 @@ if __name__ == '__main__':
         pest_file, pst = raw_pest(name='opt', pst_dir=pdir, noptmax=noptmax,
                                   model_template_dir=test_path, start_param_vals=start_param)
         man = BeopestManager(
+            ips=['100.124.148.71', '100.121.150.68'],
             pest_file=pest_file,
             num_cores={
                 '100.124.148.71': local_cores,
