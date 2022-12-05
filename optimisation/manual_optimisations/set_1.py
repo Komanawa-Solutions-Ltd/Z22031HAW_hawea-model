@@ -249,11 +249,12 @@ def near_lake_raise_rl_lower():
 
 replot = False
 
-# todo can I fit the south most without lake wave??, good question
+# todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
-    near_lake_raise_lower()
+    near_lake_raise_rl_lower()
     if replot:
+        near_lake_raise_lower()
         lake_kh_sy()
         lake_kh_test()
         lake_and_sy_test()
