@@ -137,7 +137,7 @@ def get_ghb_data(tdis, lake_param, recalc=False):
 
         pickle.dump(out, open(save_path, 'wb'))
     for v in out.values():
-        v['bhead'] += lake_param['step']
+        v['bhead'] += lake_param['step'] - 100
     return out
 
 
@@ -155,7 +155,7 @@ def get_str_data(tdis, riv_params):
     riv_flow = get_river_flow_data(*tdis.date_limits)
     use_riv_flow = riv_stage.copy(deep=True) * 0
     for k in riv_locs.rname.unique():
-        sreach = int(riv_locs.loc[riv_locs.rname==k,'dist'].min())
+        sreach = int(riv_locs.loc[riv_locs.rname == k, 'dist'].min())
         use_riv_flow.loc[:, f"{k}_{sreach:05d}"] = riv_flow.loc[:, k]
 
     spd_dtype, seg_dtype = flopy.modflow.ModflowStr.get_default_dtype()
@@ -172,7 +172,8 @@ if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
     from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_hillslope_multiplier, \
         get_initial_rch_mult
-    get_ghb_data(tdis, {'step':-1000})
+
+    get_ghb_data(tdis, {'step': -1000})
 
     get_str_data(tdis, get_initial_riv_conductance(True))
     t = get_initial_rch_mult(True)

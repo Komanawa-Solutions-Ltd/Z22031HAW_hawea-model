@@ -129,9 +129,9 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  for structural changes re-run build_base_opt_model.py, pre_optimisation_overview.py
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 # make a new branch on major structural shifts
-mversion = 'init_param_lake_level'
+mversion = 'init_p_lake'
 previous_mversion = 'init_v11'
-branch = 'param_lake_level'
+branch = 'p_lake'
 previous_branch = 'structure_v11'
 # todo to use previous parameters, put file here, else None
 param_file = None

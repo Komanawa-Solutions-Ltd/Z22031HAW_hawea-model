@@ -244,6 +244,9 @@ def hack_for_absparmax(file):
     lines[6] = lines[6].strip('\n') + '  absparmax(1)=0.1' + '  absparmax(2)=0.5\n'  # keynote ABSPARMAX set here
     with open(file, 'w') as f:
         f.writelines(lines)
+
+    # todo negative abs par will not work because of pst._rectify_parchglim(self):, it would also be good to allow
+    #  user to trurn this off and to set warnings
     pass
 
 

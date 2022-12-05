@@ -102,14 +102,16 @@ def get_race_multiplier(return_just_start=False):
             params[k] = v[0]
     return params
 
+
 def get_lake_param(return_just_start=False):
     params = {
-        'step': (-10, (10, 20)),
+        'step': (-10 + 100, (-20 + 100, 20 + 100)),  # todo the +100 is to fix bug  in pyemu
     }
     if return_just_start:
         for k, v in params.items():
             params[k] = v[0]
     return params
+
 
 if __name__ == '__main__':
     get_inital_kh()
