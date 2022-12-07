@@ -43,7 +43,7 @@ def get_inital_kh(return_just_start=False):
     # keynote the tidal reference seems to suggest a kh of 32-43 (assuming 30-40m thickness and a T of 1300)
     # keynote use log values
     start_val = (35, (0.01, 1000))
-    lake_bar_val = (1e-2, (1e-11, 100))  # todo set start via manual calibration
+    lake_bar_val = (1e-2, (1e-11, 100))  # todo set start via manual calibration,
 
     # for reference scott's model ha min = 0.09, max = 300, median = 14
     if return_just_start:

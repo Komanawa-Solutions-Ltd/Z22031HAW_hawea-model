@@ -459,6 +459,7 @@ def lake_bar_kh_sy_test():
 
 
 replot = False
+#  todo look at bulk kh/sy in addition to lake bar params...
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
