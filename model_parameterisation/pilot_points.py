@@ -163,7 +163,7 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
 
     assert np.isfinite(sy).all()
     min_v = min(sy_data.values())
-    sy[idx][sy < min_v] = min_v
+    sy[idx & (sy < min_v)] = min_v
     sy = sy[np.newaxis]
     if return_df:
         return sy, pilot_locs

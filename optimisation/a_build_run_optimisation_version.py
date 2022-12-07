@@ -41,11 +41,10 @@ def recalc_model_build(rerun_rushton=False):
     get_model_zones(recalc=True)
 
     get_river_loc_data(recalc=True)
-    get_river_stage_data(None, None, recalc=True)
     get_all_wells(recalc=True)
     get_lake_hawea_loc(recalc=True)
     get_race_locs(recalc=True)
-    print('#####here')
+    get_river_stage_data(None, None, recalc=True)
     get_hillside_catchment_locs(recalc=True)
     get_hillside_flows(None, None, recalc=True)
     get_well_flowmeter_mapper(recalc=True)
