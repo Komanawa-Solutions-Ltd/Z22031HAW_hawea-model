@@ -4,6 +4,8 @@ on: 28/11/22
 """
 import itertools
 
+import numpy as np
+
 from optimisation.a_build_run_optimisation_version import branch
 from optimisation.manual_optimisations.manual_optimisation import run_manal_opt
 
@@ -439,10 +441,21 @@ def explore_kh_south3():
                   safemode=True, replot=replot)
 
 
-# next thoughts:
-# lower kh of h_flat 4, 6, 3
-# lower conductance of riv grandview
-# lower conductivity of all of the terrace kh points
+def lake_bar_kh_sy_test():
+    print_myself()
+    opt_name = 'lake_bar_kh_sy_test'
+    new_params = [{
+        'sy_lake_bar': sy,
+        'kh_lake_bar': kh,
+    }
+        for sy, kh in itertools.product(
+            10. ** np.arange(-8, 0),  # sy
+            10. ** np.arange(-11, 3)  # kh
+        )]
+
+    opt_name = f'{branch}_{opt_name}'
+    run_manal_opt(opt_name, mod_params=new_params,
+                  safemode=True, replot=replot)
 
 
 replot = False
@@ -450,11 +463,12 @@ replot = False
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
+    lake_bar_kh_sy_test()
     if replot:
-        explore_kh_south3()
-        explore_kh_south2()
-        near_lake_raise_rl_lower_str()
-        near_lake_raise_rl_lower()
+        # explore_kh_south3()
+        # explore_kh_south2()
+        # near_lake_raise_rl_lower_str()
+        # near_lake_raise_rl_lower()
 
         # previous structure
         # near_lake_raise_lower()
@@ -464,5 +478,6 @@ if __name__ == '__main__':
         # north_kh_lake()
         # north_kh()
         # sy_test()
+        pass
 
     pass
