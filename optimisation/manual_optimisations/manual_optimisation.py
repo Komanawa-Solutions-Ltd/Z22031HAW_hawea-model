@@ -32,7 +32,7 @@ ssh_dist = SshDist(
     conda_env='hawea',
     num_cores={
         '100.124.148.71': 8,
-        '100.121.150.68': None,
+        '100.121.150.68': 0,  # None,
     },
     core_weigtings=None,
     user_names=None,

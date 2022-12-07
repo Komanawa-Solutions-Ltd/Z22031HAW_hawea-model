@@ -452,14 +452,14 @@ def lake_bar_kh_sy_test():
             10. ** np.arange(-8, 0),  # sy
             10. ** np.arange(-11, 3)  # kh
         )]
-
+    print(f'{len(new_params)} runs')
     opt_name = f'{branch}_{opt_name}'
     run_manal_opt(opt_name, mod_params=new_params,
                   safemode=True, replot=replot)
 
 
 replot = False
-
+# todo rest number of cores on tuke!
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
