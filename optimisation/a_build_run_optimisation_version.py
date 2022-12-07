@@ -129,19 +129,15 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_v12'
-previous_mversion = 'init_v11'
-branch = 'structure_v12'
+mversion = 'init_lake_bar'
+previous_mversion = 'init_v12'
+branch = 'lake_bar'
 previous_branch = 'structure_v12'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-* Move to 1 global recharge modifier (done)
-* Much higher initial kh (lake=5, rest = 300), lower lake kh bounds
-* Lower sy, and lower sy bounds
-* Change weights (lower low frequency targets)
-* Bit of a hail mary before the weekend
-
+* remove additional parameterization from v12  (basically reset pilot points to v11)
+* create a 1 cell thick boundary around the lake, which is parameterised by single kh and sy val (to model moraine bound)
 """
 noptmax = 300
 recalc = True

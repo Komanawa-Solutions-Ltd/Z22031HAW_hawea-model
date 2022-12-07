@@ -9,7 +9,7 @@ from project_base import base_param_dir, processed_param_dir
 from model_build.project_model_tools import smt, get_lake_array
 from model_build.supporting_data_analysis import get_irrigation_code
 from model_tools.time_discretization import TimeDis
-from model_parameterisation.static_params import lake_sy
+from model_parameterisation.static_params import lake_sy, lake_conduct
 import geopandas as gpd
 
 
@@ -28,30 +28,31 @@ def get_pilot_point_locations(recalc=False):
 
         for k, v in dtypes.items():
             outdata.loc[:, k] = outdata.loc[:, k].astype(v)
-        return outdata
+    else:
+        data = gpd.read_file(data_path)
+        x, y = data.geometry.x, data.geometry.y
 
-    data = gpd.read_file(data_path)
-    x, y = data.geometry.x, data.geometry.y
+        data.loc[:, 'group'] = data.loc[:, 'group'].replace({
+            'rivergroup': 'riv_g',
+            'terrace': 'ter',
+            'haweaflat': 'h_flat',
+            'sandyhill': 'sandy',
+            'mangawera': 'mang',
+            'hillside': 'hill',
+        })
 
-    data.loc[:, 'group'] = data.loc[:, 'group'].replace({
-        'rivergroup': 'riv_g',
-        'terrace': 'ter',
-        'haweaflat': 'h_flat',
-        'sandyhill': 'sandy',
-        'mangawera': 'mang',
-        'hillside': 'hill',
-    })
-
-    outdata = data.loc[:, ['id', 'group']]
-    assert len(outdata.id.unique()) == len(outdata)
-    outdata.loc[:, 'x'] = x
-    outdata.loc[:, 'y'] = y
-    i, j = smt.convert_coords_to_matix(x, y)
-    outdata.loc[:, 'i'] = i
-    outdata.loc[:, 'j'] = j
-    outdata.loc[:, 'name'] = outdata.group.astype(str) + outdata.id.astype(str)
-    outdata.set_index('name', inplace=True)
-    outdata.to_csv(processed_path)
+        outdata = data.loc[:, ['id', 'group']]
+        assert len(outdata.id.unique()) == len(outdata)
+        outdata.loc[:, 'x'] = x
+        outdata.loc[:, 'y'] = y
+        i, j = smt.convert_coords_to_matix(x, y)
+        outdata.loc[:, 'i'] = i
+        outdata.loc[:, 'j'] = j
+        outdata.loc[:, 'name'] = outdata.group.astype(str) + outdata.id.astype(str)
+        outdata.set_index('name', inplace=True)
+        outdata.to_csv(processed_path)
+    # keynote remove v12 parameterisation
+    outdata = outdata.drop(['h_flat40', 'h_flat41', 'h_flat42', 'h_flat43', 'h_flat44', 'h_flat45', 'h_flat46'])
     return outdata
 
 
@@ -103,7 +104,8 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     pilot_locs.loc[:, 'value'] = 10 ** (pilot_locs.loc[:, 'value'])
     # set lake values
     lake_array = get_lake_array()
-    kh[np.isfinite(lake_array)] = kh_data['lake']
+    kh[np.isfinite(lake_array)] = lake_conduct
+    kh[get_lake_bar()] = kh_data['lake_bar']
 
     kh[~idx] = 0
     assert np.isfinite(kh).all()
@@ -153,10 +155,15 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     sy[np.isfinite(lake_array)] = lake_sy
 
     sy[~idx] = 0
+
+    lake_bar_sy = sy_data.pop('lake_bar')
+    sy[get_lake_bar()] = lake_bar_sy
+
+    idx = idx & np.isnan(lake_array)
+
     assert np.isfinite(sy).all()
     min_v = min(sy_data.values())
-    sy[sy < min_v] = min_v
-    sy[~idx] = 0
+    sy[idx][sy < min_v] = min_v
     sy = sy[np.newaxis]
     if return_df:
         return sy, pilot_locs
@@ -260,7 +267,32 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
     return rch_mult
 
 
+def get_lake_bar():
+    lake = get_lake_array()
+    ibound = smt.get_no_flow(0)
+    rows, cols = smt.get_model_index_grid()
+    rows = rows[np.isfinite(lake) & (ibound == 1)]
+    cols = cols[np.isfinite(lake) & (ibound == 1)]
+
+    out_array = np.full(smt.model_2d_shape, False)
+    for col in np.unique(cols):
+        row = rows[cols == col].max()
+        out_array[row, col] = True
+    for row in np.unique(rows):
+        if out_array[row, :].sum() > 0:
+            continue
+        col = cols[rows == row].max()
+        out_array[row, col] = True
+    return out_array
+
+
 if __name__ == '__main__':
-    t = get_pilot_point_locations(recalc=True)
+    temp = np.isfinite(get_lake_array()).astype(int)
+    bar = get_lake_bar()
+    temp[bar] = 2
+
+    smt.plot.plt_matrix(temp, base_map=True, no_flow_layer=0)
+    smt.plot.show()
+    t = get_pilot_point_locations(recalc=False)
     exampine_kh_interpolation()
     pass
