@@ -126,6 +126,8 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     base_pdict = {t: deepcopy(p) for t, p in zip(tags, all_params)}
     for k in overview_data.index:
         tag = k.split('_')[0]
+        if tag == 'bulk':
+            continue
         pname = '_'.join(k.split('_')[1:])
         v = base_pdict[tag][pname]
         overview_data.loc[k, :] = v
