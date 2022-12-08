@@ -140,10 +140,10 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     for i, single_mod_params in enumerate(mod_params):
         pdict = deepcopy(base_pdict)
 
-        bulk_keys = [e for e in pdict.keys() if 'bulk_' in e]
+        bulk_keys = [e for e in single_mod_params.keys() if 'bulk_' in e]
         if len(bulk_keys) > 0:
             for k in bulk_keys:
-                val = pdict.pop(k)
+                val = single_mod_params.pop(k)
                 tag = k.split('_')[-1]
                 for pr in pdict[tag].keys():
                     pdict[tag][pr] = val
