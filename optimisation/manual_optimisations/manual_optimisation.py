@@ -34,7 +34,9 @@ ssh_dist = SshDist(
         '100.124.148.71': 8,
         '100.121.150.68': None,
     },
-    core_weigtings=None,
+    core_weigtings={
+        '100.124.148.71': 2.6675381999814873,
+        '100.121.150.68': 1.0},
     user_names=None,
     short_names=None,
     prepend_bash_commands={

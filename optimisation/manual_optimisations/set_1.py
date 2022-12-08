@@ -458,13 +458,42 @@ def lake_bar_kh_sy_test():
                   safemode=True, replot=replot)
 
 
+def bar_bulk_kh_sy_test():
+    print_myself()
+    opt_name = 'bar_bulk_kh_sy_test'
+    new_params = [{
+        'sy_lake_bar': bar_sy,
+        'kh_lake_bar': bar_kh,
+
+        'bulk_kh': bulk_kh,
+        'bulk_sy': bulk_sy,
+
+        'kh_ter34': 40,
+        'kh_ter35': 40,
+        'kh_ter38': 40,
+        'kh_ter39': 40,
+    }
+        for bar_sy, bar_kh, bulk_kh, bulk_sy in itertools.product(
+            10. ** np.arange(-8, 0),  # bar sy
+            10. ** np.arange(-11, 3),  # bar kh
+            10. ** np.mgrid[slice(-4, 1, 1)],  # bulk sy
+            10. ** np.mgrid[slice(-2, 4, 1)]  # bulk kh
+
+        )]
+    print(f'{len(new_params)} runs')
+    opt_name = f'{branch}_{opt_name}'
+    run_manal_opt(opt_name, mod_params=new_params,
+                  safemode=True, replot=replot)
+
+
 replot = False
 #  todo look at bulk kh/sy in addition to lake bar params...
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
-    lake_bar_kh_sy_test()
+    bar_bulk_kh_sy_test()
     if replot:
+        lake_bar_kh_sy_test()
         # explore_kh_south3()
         # explore_kh_south2()
         # near_lake_raise_rl_lower_str()
