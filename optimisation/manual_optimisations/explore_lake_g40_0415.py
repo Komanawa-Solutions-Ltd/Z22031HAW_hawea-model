@@ -37,7 +37,7 @@ def brute_min(recalc=False):
             slice(-13, -7, 0.2),  # step
             slice(0, 20, 1),  # lag
             slice(0.75, 1., 0.05),  # amplitude
-            slice(0, 150, 2),  # smooth
+            slice(5, 6),  # smooth
         ])
         print(np.prod([np.mgrid[e].shape for e in bounds]))
 
@@ -61,7 +61,7 @@ def curve_min(recalc=False):
             [-13, -7],  # step
             [0, 20],  # lag
             [0.5, 1],  # amplitude
-            [0, 150],  # smooth
+            [5, 6],  # smooth
         ])
 
         inits = brute_min()[0]
@@ -89,7 +89,7 @@ def get_simple_curve_fit(recalc=False):
             [-20, 10],  # step
             [0, 150],  # lag
             [0.5, 2],  # amplitude
-            [0, 150],  # smooth
+            [5, 6],  # smooth
         ]).transpose()
 
         inits = [
@@ -199,5 +199,5 @@ def examine_lake_record_step_change():
 
 
 if __name__ == '__main__':
-    examine_lake_record_step_change()
     plot_lake_well()
+    examine_lake_record_step_change()

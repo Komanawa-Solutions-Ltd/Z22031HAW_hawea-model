@@ -62,8 +62,7 @@ def _run_model_mp(kwargs):
         error = val
     return kwargs, success, error
 
-
-def manual_opt(mod_params, model_name, base_dir, re_run=False):
+def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisary=True):
     assert isinstance(base_dir, Path)
     model_ws = base_dir.joinpath(model_name)
     run_model = True
@@ -89,7 +88,16 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False):
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{model_name}.hds'),
                          plot=False, savelist=False, save_param=False, run_if_unconverged=True,
-                         plot_failures=True)
+                         plot_failures=False)
+    if remove_unneccisary:
+        files = Path(model_ws).glob('**/*.*')
+        for p in files:
+            if p.is_dir():
+                continue
+            if p.name.split('.')[-1] in ['list', 'dat', 'png', 'p', 'log']:
+                continue
+            if p.name in ['param_overview.txt', 'mse.csv']:
+                continue
 
 
 def run_manal_opt(name, mod_params, safemode=True, replot=False):
