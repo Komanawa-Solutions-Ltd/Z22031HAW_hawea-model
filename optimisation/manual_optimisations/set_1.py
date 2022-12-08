@@ -485,14 +485,15 @@ def bar_bulk_kh_sy_test():
     run_manal_opt(opt_name, mod_params=new_params,
                   safemode=True, replot=replot)
 
-
+# todo something changed in ssh_dist which is causing problems with file structure!!!!
 replot = False
 #  todo look at bulk kh/sy in addition to lake bar params...
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
-    bar_bulk_kh_sy_test()
+    sy_test()
     if replot:
+        bar_bulk_kh_sy_test()
         lake_bar_kh_sy_test()
         # explore_kh_south3()
         # explore_kh_south2()
