@@ -64,6 +64,17 @@ def simplify_hawea_dem(recalc=False):
     return data
 
 
+def get_2d_moraine(recalc=False):
+    shp_path = base_model_build_data_dir.joinpath('moraine.shp')
+    outpath = base_model_build_data_dir.joinpath('moraine.txt')
+    if outpath.exists() and not recalc:
+        data = np.loadtxt(outpath)
+        return data == 1
+    data = np.isfinite(temp_smt.io.shape_file_to_model_array(shp_path, 'id', alltouched=True))
+    np.savetxt(outpath, data, '%d')
+    return data
+
+
 def simplify_upper_clutha_dem(recalc=False):
     """
     take the min of the upper clutha dem to use for the model
