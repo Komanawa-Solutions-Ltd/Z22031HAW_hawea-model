@@ -149,6 +149,7 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
             for k in bulk_keys:
                 val = pdict.pop(k)
                 tag = k.split('_')[-1]
+                overview_data.loc[k, f'sen_{i:04d}'] = val
                 for pr in pdict[tag].keys():
                     pdict[tag][pr] = val
 
