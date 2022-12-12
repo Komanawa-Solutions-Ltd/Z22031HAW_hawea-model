@@ -116,28 +116,49 @@ def simplify_upper_clutha_dem(recalc=False):
     return data
 
 
-def no_flow():
-    ibound = temp_smt.get_model_zeros(_3d=True)
+def _org_noflow():
+    ibound = temp_smt.get_model_zeros(_3d=False)
     active = temp_smt.io.shape_file_to_model_array(boundary_path, 'fid', alltouched=True)
     # remove camphill and the camphill moraine from the model
     camphill = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('camp_hill_moraine.shp'), 'id',
                                                      alltouched=True)
     assert temp_smt.layers == 2
-    ibound[0][np.isfinite(active)] = 1
-    ibound[0][np.isfinite(camphill)] = 0
+    ibound[np.isfinite(active)] = 1
+    ibound[np.isfinite(camphill)] = 0
     # remove cameron hill
     cameron = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('cameron_hill.shp'), 'id',
                                                     alltouched=True)
-    ibound[0][np.isfinite(cameron)] = 0
+    ibound[np.isfinite(cameron)] = 0
 
     # remove sandy point
     sp_rm = temp_smt.io.shape_file_to_model_array(
         base_model_build_data_dir.joinpath('rm_sandy_point.shp'), 'id',
         alltouched=True)
-    ibound[0][np.isfinite(sp_rm)] = 0
+    ibound[np.isfinite(sp_rm)] = 0
 
-    np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound[0])
-    return np.repeat(ibound, 2, axis=0)
+    return ibound
+
+
+def no_flow():
+    ibound = _org_noflow()
+    org_lake = _org_lake_array()
+    new_lake = get_lake_array(True)
+    # set org lake to no flow (excluding the 'lakebar')
+    ibound[(org_lake >= 0) & ~np.isfinite(new_lake)] = 0
+
+    np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound)
+    return np.repeat(ibound[np.newaxis], 2, axis=0)
+
+
+def _org_lake_array():
+    lakefront_shp_path = base_model_build_data_dir.joinpath('lakefront.shp')
+    lake_shp_path = base_model_build_data_dir.joinpath('lake_hawea.shp')
+    lake = temp_smt.io.shape_file_to_model_array(lake_shp_path, 'id', alltouched=True)
+    lake_front = temp_smt.io.shape_file_to_model_array(lakefront_shp_path, 'id', alltouched=True)
+    lake[np.isfinite(lake_front)] = -1
+    lake[np.isnan(lake)] = -1
+    lake = lake.astype(int)
+    return lake
 
 
 def get_lake_array(recalc=False):
@@ -148,16 +169,24 @@ def get_lake_array(recalc=False):
         lake[lake < 0] = np.nan
         return lake
 
-    lakefront_shp_path = base_model_build_data_dir.joinpath('lakefront.shp')
-    lake_shp_path = base_model_build_data_dir.joinpath('lake_hawea.shp')
-    lake = temp_smt.io.shape_file_to_model_array(lake_shp_path, 'id', alltouched=True)
-    lake_front = temp_smt.io.shape_file_to_model_array(lakefront_shp_path, 'id', alltouched=True)
-    lake[np.isfinite(lake_front)] = -1
-    lake = lake.astype(int)
+    lake = _org_lake_array()
+    ibound = _org_noflow()
+    rows, cols = temp_smt.get_model_index_grid()
+    rows = rows[(lake >= 0) & (ibound == 1)]
+    cols = cols[(lake >= 0) & (ibound == 1)]
+    out_array = np.full(temp_smt.model_2d_shape, False)
+    for col in np.unique(cols):
+        row = rows[cols == col].max()
+        out_array[row, col] = True
+    for row in np.unique(rows):
+        if out_array[row, :].sum() > 0:
+            continue
+        col = cols[rows == row].max()
+        out_array[row, col] = True
+    lake[~out_array] = -1
     np.savetxt(save_path, lake, fmt='%d')
     lake = lake.astype(float)
     lake[lake < 0] = np.nan
-
     return lake
 
 
@@ -440,6 +469,14 @@ def export_model_boundary():
 
 
 if __name__ == '__main__':
+    org_lake = _org_lake_array()
+    new_lake = get_lake_array(True)
+    org_ibound = _org_noflow()
+    new_ibound = no_flow()[0]
+    for k in ['org_lake', 'new_lake', 'org_ibound', 'new_ibound', ]:
+        smt.plot.plt_matrix(eval(k), base_map=True, title=k)
+    smt.plot.show()
+
     from pathlib import Path
 
     save_old = False

@@ -30,7 +30,7 @@ def recalc_model_build(rerun_rushton=False):
     from model_build.zones import get_param_zones, get_model_zones
     from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
     from optimisation.optimisation_period import tdis
-    from model_parameterisation.inital_parametersiation import get_initial_rch_mult
+    from model_parameterisation.inital_parametersiation import get_initial_rch_mult, get_inital_kh
 
     get_ibound(recalc=True)
     get_elv_db(recalc=True)
@@ -51,7 +51,7 @@ def recalc_model_build(rerun_rushton=False):
     get_historical_pumping_data(None, None, recalc=True)
     get_soil_classes(recalc=True)
     get_rch_data(tdis, rch_param=get_initial_rch_mult(True), recalc=True)
-    get_ghb_data(tdis, recalc=True)
+    get_ghb_data(tdis, kh_param=get_inital_kh(True), recalc=True)
     get_well_data(tdis, hill_param={'se': 1, 'main': 1, 'mang': 1, }, race_param={'all': 1}, recalc=True)
     if rerun_rushton:
         for k in [True, False]:
@@ -128,15 +128,14 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_lake_bar'
-previous_mversion = 'init_v12'
-branch = 'lake_bar'
-previous_branch = 'structure_v12'
+mversion = 'init_cond_int'
+previous_mversion = 'init_lake_bar'
+branch = 'cond_int'
+previous_branch = 'lake_bar'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-* remove additional parameterization from v12  (basically reset pilot points to v11)
-* create a 1 cell thick boundary around the lake, which is parameterised by single kh and sy val (to model moraine bound)
+* Try to fit the heads by simply setting lake conductance (1 cell width lake)
 """
 noptmax = 300
 recalc = True

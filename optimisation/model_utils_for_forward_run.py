@@ -89,7 +89,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       strt=get_starting_heads(),
                       chani=1,
                       rch=get_rch_data(tdis, rch_param),
-                      ghb_spd=get_ghb_data(tdis),
+                      ghb_spd=get_ghb_data(tdis, kh_param=kh_param),
                       str_spd=get_str_data(tdis, riv_params=riv_params),
                       well_spd=get_well_data(tdis,
                                              hill_param=hill_param,

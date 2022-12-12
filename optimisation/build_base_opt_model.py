@@ -31,7 +31,7 @@ def test_times():
     get_rch_data(tdis, get_initial_rch_mult(True))
     print(f'took {time.time() - t}s for get_rch_data')
     t = time.time()
-    get_ghb_data(tdis)
+    get_ghb_data(tdis, get_inital_kh(True))
     print(f'took {time.time() - t}s for get_ghb_data')
     t = time.time()
     get_str_data(tdis, riv_params=get_initial_riv_conductance(True))

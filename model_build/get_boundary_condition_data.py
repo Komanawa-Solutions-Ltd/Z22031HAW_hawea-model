@@ -6,7 +6,7 @@ import pickle
 import time
 
 import numpy as np
-
+from copy import deepcopy
 from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
     get_river_loc_data, get_lake_hawea_loc, get_lake_heads, get_river_flow_data
@@ -120,22 +120,28 @@ def get_rch_data(tdis, rch_param, recalc=False):
     return out
 
 
-def get_ghb_data(tdis, recalc=False):
+def get_ghb_data(tdis, kh_param, recalc=False):
+    kh_param = deepcopy(kh_param)
     save_path = processed_model_build_data_dir.joinpath(f'ghb_stress_period_data-{tdis.name}.p')
     if save_path.exists() and not recalc:
         out = pickle.load(open(save_path, 'rb'))
         return out
-    lake_locs = get_lake_hawea_loc()
-    lake_locs.loc[:, 'cond'] = lake_conduct
-    lake_hds = get_lake_heads(*tdis.date_limits)
+    else:
+        lake_locs = get_lake_hawea_loc()
+        lake_locs.loc[:, 'cond'] = lake_conduct
+        lake_hds = get_lake_heads(*tdis.date_limits)
 
-    # import lake levels
-    flopy.modflow.ModflowGhb.get_default_dtype()
-    # transform into GHB data
-    out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
-                                  flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
+        # import lake levels
+        flopy.modflow.ModflowGhb.get_default_dtype()
+        # transform into GHB data
+        out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
+                                      flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
 
-    pickle.dump(out, open(save_path, 'wb'))
+        pickle.dump(out, open(save_path, 'wb'))
+
+    for v in out.values():
+        v['cond'] = kh_param['lake_cond']
+
     return out
 
 
@@ -153,7 +159,7 @@ def get_str_data(tdis, riv_params):
     riv_flow = get_river_flow_data(*tdis.date_limits)
     use_riv_flow = riv_stage.copy(deep=True) * 0
     for k in riv_locs.rname.unique():
-        sreach = int(riv_locs.loc[riv_locs.rname==k,'dist'].min())
+        sreach = int(riv_locs.loc[riv_locs.rname == k, 'dist'].min())
         use_riv_flow.loc[:, f"{k}_{sreach:05d}"] = riv_flow.loc[:, k]
 
     spd_dtype, seg_dtype = flopy.modflow.ModflowStr.get_default_dtype()

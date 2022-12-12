@@ -3,6 +3,7 @@ created matt_dumont
 on: 2/09/22
 """
 import numpy as np
+from copy import deepcopy
 import pandas as pd
 from scipy.interpolate import RBFInterpolator
 from project_base import base_param_dir, processed_param_dir
@@ -65,6 +66,7 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     :param kernal:
     :return:
     """
+    kh_data = deepcopy(kh_data)
     kh = smt.get_model_zeros() * np.nan
 
     # set pilot point values
@@ -102,11 +104,6 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     # undo the log
     kh = 10 ** kh
     pilot_locs.loc[:, 'value'] = 10 ** (pilot_locs.loc[:, 'value'])
-    # set lake values
-    lake_array = get_lake_array()
-    kh[np.isfinite(lake_array)] = lake_conduct
-    kh[get_lake_bar()] = kh_data['lake_bar']
-
     kh[~idx] = 0
     assert np.isfinite(kh).all()
     kh = kh[np.newaxis]
@@ -155,9 +152,6 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     sy[np.isfinite(lake_array)] = lake_sy
 
     sy[~idx] = 0
-
-    lake_bar_sy = sy_data.pop('lake_bar')
-    sy[get_lake_bar()] = lake_bar_sy
 
     idx = idx & np.isnan(lake_array)
 
@@ -267,29 +261,8 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
     return rch_mult
 
 
-def get_lake_bar():
-    lake = get_lake_array()
-    ibound = smt.get_no_flow(0)
-    rows, cols = smt.get_model_index_grid()
-    rows = rows[np.isfinite(lake) & (ibound == 1)]
-    cols = cols[np.isfinite(lake) & (ibound == 1)]
-
-    out_array = np.full(smt.model_2d_shape, False)
-    for col in np.unique(cols):
-        row = rows[cols == col].max()
-        out_array[row, col] = True
-    for row in np.unique(rows):
-        if out_array[row, :].sum() > 0:
-            continue
-        col = cols[rows == row].max()
-        out_array[row, col] = True
-    return out_array
-
-
 if __name__ == '__main__':
     temp = np.isfinite(get_lake_array()).astype(int)
-    bar = get_lake_bar()
-    temp[bar] = 2
 
     smt.plot.plt_matrix(temp, base_map=True, no_flow_layer=0)
     smt.plot.show()

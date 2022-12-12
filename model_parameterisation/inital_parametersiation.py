@@ -43,15 +43,13 @@ def get_inital_kh(return_just_start=False):
     # keynote the tidal reference seems to suggest a kh of 32-43 (assuming 30-40m thickness and a T of 1300)
     # keynote use log values
     start_val = (35, (0.01, 1000))
-    lake_bar_val = (1e-2, (1e-11, 100))  # todo set start via manual calibration,
-
+    lake_cond = (, (,))  # todo # keynote lake conductiviyt is held here (for simplicity)
     # for reference scott's model ha min = 0.09, max = 300, median = 14
     if return_just_start:
         start_val = start_val[0]
-        lake_bar_val = lake_bar_val[0]
     pps = get_pilot_point_locations()
     kh_data = {
-        'lake_bar': lake_bar_val
+        'lake_cond': lake_cond,
     }
 
     for i in pps.index:
@@ -65,12 +63,10 @@ def get_inital_sy(return_just_start=False):
     # keynote the tidal reference seems to suggest a sy of 0.012
     # keynote one value for the whole model
     start_val = (0.01, (0.0001, 0.3))
-    lake_bar_val = (0.01, (1e-8, 1e-1))  # todo set start by manual
     if return_just_start:
         start_val = start_val[0]
-        lake_bar_val = lake_bar_val[0]
     pps = get_pilot_point_locations()
-    sy_data = {'lake_bar': lake_bar_val}
+    sy_data = {}
 
     for i in pps.index:
         sy_data[i] = start_val

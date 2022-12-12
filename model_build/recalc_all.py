@@ -17,7 +17,7 @@ from model_build.supporting_data_analysis.all_wells import get_all_wells
 from model_build.zones import get_param_zones, get_model_zones
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
 from optimisation.optimisation_period import tdis
-from model_parameterisation.inital_parametersiation import get_initial_rch_mult
+from model_parameterisation.inital_parametersiation import get_initial_rch_mult, get_inital_kh
 
 if __name__ == '__main__':
     # recalculate all saved data in model_build
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     get_soil_classes(recalc=True)
     get_era5_land(correct=True, recalc=True)
     get_rch_data(tdis, rch_param=get_initial_rch_mult(True), recalc=True)
-    get_ghb_data(tdis, recalc=True)
+    get_ghb_data(tdis,kh_param=get_inital_kh(True), recalc=True)
     get_well_data(tdis, hill_param={'south_east': 1, 'main': 1, 'maungawera': 1, }, race_param={'all': 1}, recalc=True)
     for k in [True, False]:
         get_historical_rch_model_results(data_source='historical', limited_irrigation=k, recalc=True)
