@@ -485,16 +485,37 @@ def bar_bulk_kh_sy_test():
     run_manal_opt(opt_name, mod_params=new_params,
                   safemode=True, replot=replot)
 
-# todo something changed in ssh_dist which is causing problems with file structure!!!!
+
+def lake_cond():
+    print_myself()
+    opt_name = 'bar_bulk_kh_sy_test'
+    new_params = [{
+        'lake_cond': lake,
+        'bulk_kh': bulk_kh,
+        'bulk_sy': bulk_sy,
+    }
+        for lake, bulk_kh, bulk_sy in itertools.product(
+            10. ** np.mgrid[slice(-8, 1, 1)],  # lake conductance
+            10. ** np.mgrid[slice(-4, 1, 1)],  # bulk sy
+            10. ** np.mgrid[slice(-2, 4, 1)]  # bulk kh
+
+        )]
+    print(f'{len(new_params)} runs')
+    opt_name = f'{branch}_{opt_name}'
+    run_manal_opt(opt_name, mod_params=new_params,
+                  safemode=True, replot=replot)
+
+
 replot = False
 #  todo look at bulk kh/sy in addition to lake bar params...
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
-    sy_test()
+    lake_cond()
     if replot:
-        bar_bulk_kh_sy_test()
-        lake_bar_kh_sy_test()
+        # sy_test()
+        # bar_bulk_kh_sy_test()
+        # lake_bar_kh_sy_test()
         # explore_kh_south3()
         # explore_kh_south2()
         # near_lake_raise_rl_lower_str()
