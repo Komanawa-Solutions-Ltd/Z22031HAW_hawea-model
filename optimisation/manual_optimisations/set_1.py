@@ -493,11 +493,15 @@ def lake_bulk_cond():
         'kh_lake_cond': lake,
         'bulk_kh': bulk_kh,
         'bulk_sy': bulk_sy,
+        'kh_ter34': 40,
+        'kh_ter35': 40,
+        'kh_ter38': 40,
+        'kh_ter39': 40,
     }
         for lake, bulk_kh, bulk_sy in itertools.product(
-            10. ** np.mgrid[slice(-8, 1, 1)],  # lake conductance
-            10. ** np.mgrid[slice(-4, 1, 1)],  # bulk sy
-            10. ** np.mgrid[slice(-2, 4, 1)]  # bulk kh
+            10. ** np.mgrid[slice(-6, 3, 0.5)],  # lake conductance
+            10. ** np.mgrid[slice(1, 4, 0.5)],  # bulk kh
+            10. ** np.mgrid[slice(-4, -1, 0.5)],  # bulk sy
 
         )]
     print(f'{len(new_params)} runs')
@@ -506,7 +510,7 @@ def lake_bulk_cond():
                   safemode=True, replot=replot)
 
 
-replot = False
+replot = True
 #  todo look at bulk kh/sy in addition to lake bar params...
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']

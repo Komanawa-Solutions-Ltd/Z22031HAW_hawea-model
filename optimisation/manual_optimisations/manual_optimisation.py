@@ -152,6 +152,7 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
         bulk_keys = [e for e in single_mod_params.keys() if 'bulk_' in e]
         if len(bulk_keys) > 0:
             for k in bulk_keys:
+                overview_data.loc[k, f'sen_{i:04d}'] = v
                 val = single_mod_params.pop(k)
                 tag = k.split('_')[-1]
                 for pr in pdict[tag].keys():
