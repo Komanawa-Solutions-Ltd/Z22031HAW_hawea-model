@@ -481,7 +481,6 @@ def bar_bulk_kh_sy_test():
 
         )]
     print(f'{len(new_params)} runs')
-    raise
     opt_name = f'{branch}_{opt_name}'
     run_manal_opt(opt_name, mod_params=new_params,
                   safemode=True, replot=replot)
