@@ -486,11 +486,11 @@ def bar_bulk_kh_sy_test():
                   safemode=True, replot=replot)
 
 
-def lake_cond():
+def lake_bulk_cond():
     print_myself()
-    opt_name = 'bar_bulk_kh_sy_test'
+    opt_name = 'lake_bulk_cond'
     new_params = [{
-        'lake_cond': lake,
+        'kh_lake_cond': lake,
         'bulk_kh': bulk_kh,
         'bulk_sy': bulk_sy,
     }
@@ -511,7 +511,7 @@ replot = False
 # todo can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
-    lake_cond()
+    lake_bulk_cond()
     if replot:
         # sy_test()
         # bar_bulk_kh_sy_test()
