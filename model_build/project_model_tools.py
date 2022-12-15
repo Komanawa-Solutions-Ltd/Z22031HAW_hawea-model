@@ -347,6 +347,8 @@ def elv_calc(fix_southern=True):
     temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
     top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
+    # todo new elv
+
     out = np.concatenate((top[np.newaxis], bot[np.newaxis], bot[np.newaxis] - 1))
     np.save(processed_model_build_data_dir.joinpath('elv_db.npy'), out)
     np.savetxt(processed_model_build_data_dir.joinpath('elv_db_top.txt'), out[0])
@@ -355,6 +357,21 @@ def elv_calc(fix_southern=True):
     np.savetxt(processed_model_build_data_dir.joinpath('elv_db_bot2.txt'), out[2])
 
     return out
+
+
+def old_to_3d(top, bot):
+    bot1 = bot
+    bot2 = bot - 1
+    bot3 = bot - 2
+
+    moraine = get_2d_moraine()
+    bot1[moraine | np.isfinite(get_lake_array())] = 335
+    bot2[moraine | np.isfinite(get_lake_array())] = 328
+
+    # todo smooth with smoother orthognal to line (need to create in modeltools)
+    # todo pinch bottom layers out quickly, set most of layer 2 to no flow
+
+    raise NotImplementedError
 
 
 def get_top(recalc=False):
@@ -453,7 +470,7 @@ def export_model_boundary():
 if __name__ == '__main__':
     from pathlib import Path
 
-    save_old = False
+    save_old = True
     old_path = Path.home().joinpath('Downloads/previous_bot.txt')
     if save_old:
         old = get_bottom(False)
