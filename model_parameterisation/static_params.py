@@ -6,6 +6,6 @@ on: 14/09/22
 #  lake fluxes are entirely dependent on the conductivity of the lake cell, which is parameterised
 
 lake_sy = 1e-10
-ss = 1e-10
+ss = 1e-10  # todo do I need to make this different?
 vka = 1
 lake_conduct = 1e10

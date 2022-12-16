@@ -12,6 +12,7 @@ from model_tools.time_discretization import TimeDis
 from model_parameterisation.static_params import lake_sy
 import geopandas as gpd
 
+# todo check carefully for multiple layers and new parameterisaion
 
 # keynote use zones for mangawera and sandy point aquifer systems, but use pilot points for main portion of the model
 

@@ -15,6 +15,7 @@ base_well_path = base_model_build_data_dir.joinpath('Hawea Wellsdata request ZEB
 processed_well_path = processed_model_build_data_dir.joinpath('all_well_locs.csv')
 dem_path = modelling_dir.joinpath('input_data/southi_15mdem_Hawea.tif')
 
+# todo check carefully with multiple layers
 
 def get_all_wells(recalc=False):
     """
@@ -106,6 +107,7 @@ def get_all_wells(recalc=False):
     ibound = smt.get_no_flow(0)
     well_data.loc[:, 'ibound'] = ibound[well_data.i, well_data.j]
     # todo add lake heads
+    # todo add/manage layer
     lake_hds = get_lake_heads(None, None)
     for i in well_data.index:
         dd = well_data.drilldate.dt.date.loc[i].isoformat()

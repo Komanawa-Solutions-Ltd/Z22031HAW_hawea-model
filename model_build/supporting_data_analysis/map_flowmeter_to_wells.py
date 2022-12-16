@@ -10,7 +10,7 @@ from model_build.project_model_tools import smt
 
 flow_meter_data_path = base_model_build_data_dir.joinpath('water_permit_meter_results_2022-07-20',
                                                           'water_permit_meter_yearly_data_2022-07-20.csv')
-
+# todo check carefully with multiple layers
 
 def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
     if incl_surface_water:
@@ -133,7 +133,7 @@ def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
         outdata.loc[idx, 'use_y'] = outdata.loc[idx, f'{k}_y']
     assert outdata.use_x.notna().all() and outdata.use_y.notna().all()
 
-    # add row, col... layer isn't going to happen.
+    # add row, col... layer isn't going to happen. # todo manage layer
     i, j = smt.convert_coords_to_matix(outdata.use_x, outdata.use_y)
     outdata.loc[:, 'i'] = i
     outdata.loc[:, 'j'] = j

@@ -13,10 +13,12 @@ from project_base import unbacked_dir, opt_proj_root, opt_model_tools
 import shutil
 import matplotlib.pyplot as plt
 
+# todo check carefully with multiple layers
+
 
 def recalc_model_build(rerun_rushton=False):
     from model_build.project_model_tools import smt, get_ibound, get_elv_db, \
-        get_lake_array, get_starting_heads
+        get_lake_array, get_starting_heads, get_2d_moraine
     from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
     from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes, \
         get_era5_land, get_corrected_historical_era5_rch
@@ -35,6 +37,7 @@ def recalc_model_build(rerun_rushton=False):
     get_ibound(recalc=True)
     get_elv_db(recalc=True)
     get_starting_heads(recalc=True)
+    get_2d_moraine(True)
 
     get_param_zones(recalc=True)
     get_lake_array(recalc=True)
@@ -125,7 +128,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 
 
 # todo version here to run pest and base model
-#  for structural changes re-run build_base_opt_model.py, pre_optimisation_overview.py
+#  for structural changes pre_optimisation_overview.py
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts

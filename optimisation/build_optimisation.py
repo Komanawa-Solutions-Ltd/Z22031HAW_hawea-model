@@ -14,6 +14,7 @@ base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 
 default_output_path = proj_root.joinpath('optimisation/pre_opt_model/observations.dat')
 
+# todo check carefully with multiple layers
 
 def _get_base_obs(output_path):
     default_data = pd.read_csv(output_path, sep='\t')

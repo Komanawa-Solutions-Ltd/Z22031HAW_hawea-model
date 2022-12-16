@@ -20,6 +20,8 @@ from model_build.zones import get_model_zones
 
 base_regular_groupnames = ['h_hf_riv', 'h_hf', 'h_lf']  # ensures coheriance across functions
 
+# todo check carefully with multiple layers
+
 
 def get_single_head_targets():
     all_wells = get_single_target_data()

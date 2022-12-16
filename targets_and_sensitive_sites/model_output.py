@@ -22,6 +22,8 @@ from model_build.project_model_tools import get_ibound, smt
 from matplotlib.colors import SymLogNorm
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 
+# todo check carefully with multiple layers
+
 # thoughts target groups
 """
 1. high frequency head targets  (high weight)
@@ -51,7 +53,7 @@ def generate_outputs(hds_path, cbc_path):
     idx = hds.nper <= max_nper
     hds.loc[idx, 'modelled'] = all_hds[hds.loc[idx, 'nper'], hds.loc[idx, 'k'],
                                        hds.loc[idx, 'i'], hds.loc[idx, 'j']]
-    bots = smt.get_bottoms()
+    bots = smt.get_bottoms() # todo additional layers
     tops = smt.get_tops()
     ibound = get_ibound()[0]
     #  keynote set dry observations to bottom of cell -5m  # todo needs to be adjusted for multiple layers

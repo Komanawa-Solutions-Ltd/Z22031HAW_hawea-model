@@ -17,8 +17,8 @@ def define_cutoffs(poss_elvs):
     _plot_xsection(poss_elvs)
     fig, axs = plt.subplots(ncols=3, figsize=(14, 9))
     smt.plot.plt_matrix(smt.get_tops()[0], base_map=True, no_flow_layer=0, title='model top', ax=axs[0])
-    smt.plot.plt_matrix(smt.get_bottoms()[0], base_map=True, no_flow_layer=0, title='model bot', ax=axs[1])
-    smt.plot.plt_matrix(smt.get_thickness()[0], base_map=True, no_flow_layer=0, title='model thick', ax=axs[2])
+    smt.plot.plt_matrix(smt.get_bottoms()[-1], base_map=True, no_flow_layer=0, title='model bot', ax=axs[1])
+    smt.plot.plt_matrix(smt.get_thickness().sum(axis=0), base_map=True, no_flow_layer=0, title='model thick', ax=axs[2])
     fig.tight_layout()
 
 
@@ -33,7 +33,7 @@ def _plot_layer_surface_intersect(elv):
     plt_arrays = {
         f'{elv} above surface': (smt.get_tops()[0] < elv, 1),
         f'thickness above {elv}': (smt.get_tops()[0] - elv, 30),
-        f'thickness below {elv}': (elv - smt.get_bottoms()[0], 30),
+        f'thickness below {elv}': (elv - smt.get_bottoms()[-1], 30),
     }
     for ax, (k, v) in zip(axs, plt_arrays.items()):
         smt.plot.plt_matrix(v[0], base_map=True, no_flow_layer=1, ax=ax,

@@ -36,9 +36,6 @@ def read_borelogs_metadata(recalc=False):
     for k in ['top', 'bot']:
         bore_logs.loc[:, k] = bore_logs.well_id.replace(well_metadata.elevation.to_dict()) - bore_logs.loc[:, k]
 
-    # todo colors/hatch (only if needed)
-
-    # todo save data
     well_metadata.loc[:, 'x'] = well_metadata.nztmx
     well_metadata.loc[:, 'y'] = well_metadata.nztmy
 

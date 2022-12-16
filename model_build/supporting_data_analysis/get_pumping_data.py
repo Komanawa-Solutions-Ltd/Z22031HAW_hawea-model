@@ -13,7 +13,7 @@ from model_build.project_model_tools import exclude_near_river_pumping
 
 default_recalc = False
 
-
+# todo check carefully with multiple layers
 # keynote why is it so hard to link well numbers to flow meter number...
 
 def _load_usage_data():
@@ -72,7 +72,7 @@ def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=Fals
 
 def get_pumping_locs(return_raw=False):
     data = get_well_flowmeter_mapper()
-    data = data.loc[:, ['ibound', 'use_x', 'use_y', 'i', 'j', 'k']]
+    data = data.loc[:, ['ibound', 'use_x', 'use_y', 'i', 'j', 'k']] # todo check layer
     data = data.loc[data.ibound == 1]
     data.drop(['w_068', 'w_025'], inplace=True)
     zones = get_model_zones()

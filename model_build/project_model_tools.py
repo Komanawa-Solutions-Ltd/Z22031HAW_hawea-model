@@ -39,7 +39,7 @@ cols = int(abs(ulx - lrx) // grid_space) + 1
 rows = int(abs(uly - lry) // grid_space) + 1
 
 layers = 3
-layer_type = [1, 0]
+layer_type = [1, 1, 0]
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,

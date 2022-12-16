@@ -37,7 +37,7 @@ def get_initial_riv_conductance(return_just_start=False):
             params[k] = v[0]
     return params
 
-
+# todo parameterisation of multiple layers
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model based on the 10**mean(log10(scotts parameters))
     # keynote the tidal reference seems to suggest a kh of 32-43 (assuming 30-40m thickness and a T of 1300)
@@ -59,7 +59,8 @@ def get_inital_kh(return_just_start=False):
 
     return kh_data
 
-
+# todo parameterisation of multiple layers
+#  do I need an SS term?
 def get_inital_sy(return_just_start=False):
     # keynote do not use log values
     # keynote the tidal reference seems to suggest a sy of 0.012

@@ -12,6 +12,8 @@ from model_parameterisation.pilot_points import interpolate_kh_pilot_points, int
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
 from model_parameterisation.inital_parametersiation import *
 
+# todo check carefully with multiple layers
+
 
 def _get_param_data():
     param_fs = [get_race_multiplier, get_hillslope_multiplier,
@@ -81,11 +83,11 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       exe_name=exe_name,
                       model_name=model_name,
                       model_ws=model_ws,
-                      hk=np.repeat(interpolate_kh_pilot_points(kh_param), 2, axis=0),
+                      hk=np.repeat(interpolate_kh_pilot_points(kh_param), smt.layers, axis=0),
                       vka=vka,
                       layer_avg=0,
-                      ss=np.repeat(sy, 2, axis=0),  # keynote set ss to sy
-                      sy=np.repeat(sy, 2, axis=0),
+                      ss=np.repeat(sy, smt.layers, axis=0),  # keynote set ss to sy  # todo this may not make sense now!!
+                      sy=np.repeat(sy, smt.layers, axis=0),
                       strt=get_starting_heads(),
                       chani=1,
                       rch=get_rch_data(tdis, rch_param),

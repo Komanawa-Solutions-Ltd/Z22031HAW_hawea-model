@@ -11,11 +11,13 @@ from targets_and_sensitive_sites.head_targets import get_high_freq_head_targets,
 from model_build.supporting_data_analysis import get_lake_heads, get_river_stage_data, get_river_loc_data
 from optimisation.optimisation_period import tdis
 
+# todo check carefully with multiple layers
+#  re-run to dble check new systems
 
 def check_riv_stage_near_g40_0366():
     rstage = get_river_stage_data(*tdis.date_limits)
     rlocs = get_river_loc_data()
-    bottoms = smt.get_bottoms()[0]
+    bottoms = smt.get_bottoms()[0]  # todo check multiple layers
     tops = smt.get_tops()[0]
     high = get_high_freq_head_targets(*tdis.date_limits)
     all_wells = get_all_wells()
@@ -35,7 +37,7 @@ def check_riv_stage_near_g40_0366():
 
 
 def bottom_vs_mean_for_all_regular_targets():
-    bottoms = smt.get_bottoms()[0]
+    bottoms = smt.get_bottoms()[0] # todo check targets with multiple layers
     tops = smt.get_tops()[0]
     high = get_high_freq_head_targets(*tdis.date_limits)
     low = get_low_freq_head_targets(*tdis.date_limits)
@@ -54,7 +56,7 @@ def bottom_vs_mean_for_all_regular_targets():
 
 def Lake_stage_vs_g40_0415():
     lake = get_lake_heads(*tdis.date_limits)
-    bottoms = smt.get_bottoms()[0]
+    bottoms = smt.get_bottoms()[0] # todo multiple layers
     tops = smt.get_tops()[0]
     high = get_high_freq_head_targets(*tdis.date_limits)
     all_wells = get_all_wells()
@@ -71,7 +73,7 @@ def Lake_stage_vs_g40_0415():
 
 
 def check_target_datums():
-    bottoms = smt.get_bottoms()[0]
+    bottoms = smt.get_bottoms()[0] # todo check with multiple layers
     tops = smt.get_tops()[0]
     high = get_high_freq_head_targets(*tdis.date_limits)
     low = get_low_freq_head_targets(*tdis.date_limits)

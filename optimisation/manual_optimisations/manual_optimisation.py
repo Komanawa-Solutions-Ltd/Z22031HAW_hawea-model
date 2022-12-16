@@ -18,6 +18,8 @@ from run_managers.ssh_distributor import SshDist
 from project_base import unbacked_dir
 from optimisation.a_build_run_optimisation_version import opt_model_tools, opt_proj_root, branch
 
+# todo check carefully with multiple layers
+
 base_opt_dirs = unbacked_dir.joinpath('manual')
 
 ssh_dist = SshDist(

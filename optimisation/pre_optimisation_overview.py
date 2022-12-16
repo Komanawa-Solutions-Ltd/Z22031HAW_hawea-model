@@ -27,6 +27,9 @@ from targets_and_sensitive_sites.head_targets import plot_head_targets, get_high
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
 from optimisation.determine_opt_start import get_opt_start_stop
 
+# todo check carefully with multiple layers
+# todo re-run with new 3d version, too much change to trust it
+
 
 def plot_parameterisation(save=False):
     outdir = save_path.joinpath('parameterisation')
@@ -141,7 +144,7 @@ def plot_parameterisation(save=False):
     # inital transmisivity
     khs = get_inital_kh()
     lake = get_lake_array()
-    thick = get_starting_heads()[0] - smt.get_bottoms()[0]
+    thick = get_starting_heads()[0] - smt.get_bottoms().sum(axis=0)
     kh = np.full(smt.model_shape[1:], khs['sandy'][0])
     kh[np.isfinite(lake)] = khs['lake_conductance'][0]
 
@@ -256,7 +259,7 @@ def plot_all_spd(save=False):
     colors = get_colors(k_cs, cmap_name='winter')
     temp_data = get_river_loc_data()
     tops = smt.get_tops()[0]
-    bottoms = smt.get_bottoms()[0]
+    bottoms = smt.get_bottoms()[0] # todo this is probbly wrong
     temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
     temp_data.loc[:, 'model_bot'] = bottoms[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
     hawea_clutha_divide = temp_data.loc[temp_data.rname == 'hawea', 'dist'].max()
