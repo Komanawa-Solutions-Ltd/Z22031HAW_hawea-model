@@ -3,7 +3,7 @@ created matt_dumont
 on: 19/07/22
 """
 import matplotlib.pyplot as plt
-
+from scipy.interpolate import griddata
 from model_tools.regular_modeltools import ModelTools_RegularGrid
 from project_base import proj_root, modelling_dir, unbacked_dir, base_model_build_data_dir, \
     processed_model_build_data_dir
@@ -38,7 +38,7 @@ grid_space = 100  #
 cols = int(abs(ulx - lrx) // grid_space) + 1
 rows = int(abs(uly - lry) // grid_space) + 1
 
-layers = 2
+layers = 3
 layer_type = [1, 0]
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
@@ -133,7 +133,7 @@ def no_flow():
     # remove camphill and the camphill moraine from the model
     camphill = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('camp_hill_moraine.shp'), 'id',
                                                      alltouched=True)
-    assert temp_smt.layers == 2
+    assert temp_smt.layers == 3
     ibound[0][np.isfinite(active)] = 1
     ibound[0][np.isfinite(camphill)] = 0
     # remove cameron hill
@@ -147,8 +147,12 @@ def no_flow():
         alltouched=True)
     ibound[0][np.isfinite(sp_rm)] = 0
 
+    # remove dam
+    dam = temp_smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('dam.shp'), 'id', alltouched=True)
+    ibound[0][np.isfinite(dam)] = 0
+
     np.savetxt(processed_model_build_data_dir.joinpath('ibound.txt'), ibound[0])
-    return np.repeat(ibound, 2, axis=0)
+    return np.repeat(ibound, 3, axis=0)
 
 
 def get_lake_array(recalc=False):
@@ -347,15 +351,10 @@ def elv_calc(fix_southern=True):
     temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
     top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
+    out = old_to_3d(top, bot)
     # todo new elv
 
-    out = np.concatenate((top[np.newaxis], bot[np.newaxis], bot[np.newaxis] - 1))
     np.save(processed_model_build_data_dir.joinpath('elv_db.npy'), out)
-    np.savetxt(processed_model_build_data_dir.joinpath('elv_db_top.txt'), out[0])
-    np.savetxt(processed_model_build_data_dir.joinpath('elv_db_bot.txt'), out[1])
-    # keynote confined 1m thick to improve stability?
-    np.savetxt(processed_model_build_data_dir.joinpath('elv_db_bot2.txt'), out[2])
-
     return out
 
 
@@ -368,44 +367,40 @@ def old_to_3d(top, bot):
     bot1[moraine | np.isfinite(get_lake_array())] = 335
     bot2[moraine | np.isfinite(get_lake_array())] = 328
 
-    # todo smooth with smoother orthognal to line (need to create in modeltools)
-    # todo pinch bottom layers out quickly, set most of layer 2 to no flow
+    azimuth_data = temp_smt.io.azimuth_from_line(base_model_build_data_dir.joinpath('3d_smoother.shp'), 20,
+                                                 return_array=False).set_index('id')
+    step_points = temp_smt.io.get_new_points_from_points_azimuth(azimuth_data, 1000, 90, return_array=False)
+    i, j = temp_smt.convert_coords_to_matix(step_points.new_x, step_points.new_y)
+    step_points.loc[:, 'i'] = i
+    step_points.loc[:, 'j'] = j
+    all_points = pd.concat((azimuth_data, step_points))
 
-    raise NotImplementedError
+    for barray in [bot1, bot2]:
+        all_points.loc[:, 'val'] = barray[all_points.i, all_points.j]
+        temp = all_points.groupby(['i', 'j']).mean().reset_index()
+        all_i, all_j = temp_smt.get_model_index_grid()
+        smooth_bot = griddata(temp.loc[:, ['i', 'j']].values, temp.loc[:, 'val'].values,
+                              (all_i, all_j),
+                              method='linear'
+                              )
+        smooth_bot[moraine | np.isfinite(get_lake_array())] = np.nan
+        barray[np.isfinite(smooth_bot)] = smooth_bot[np.isfinite(smooth_bot)]
 
-
-def get_top(recalc=False):
-    if recalc:
-        elv_calc()
-    out = np.loadtxt(processed_model_build_data_dir.joinpath('elv_db_top.txt'))
-    return out
-
-
-def get_bottom(recalc=False):
-    if recalc:
-        elv_calc()
-    out = np.loadtxt(processed_model_build_data_dir.joinpath('elv_db_bot.txt'))
-    return out
-
-
-def get_confined_bottom(recalc=False):
-    if recalc:
-        elv_calc()
-    out = np.loadtxt(processed_model_build_data_dir.joinpath('elv_db_bot2.txt'))
-    return out
+    # todo happy except for the dam/river, see how the model goes with these sharp elv changes
+    return np.concatenate([e[np.newaxis] for e in [top, bot1, bot2, bot3]])
 
 
 def get_elv_db(recalc=False):
-    return np.concatenate((get_top(recalc)[np.newaxis],
-                           get_bottom(recalc)[np.newaxis],
-                           get_confined_bottom(recalc)[np.newaxis]), axis=0)
+    if recalc:
+        elv_calc()
+    return np.load(processed_model_build_data_dir.joinpath('elv_db.npy'))
 
 
 def get_ibound(recalc=False):
     if recalc:
         no_flow()
     out = np.loadtxt(processed_model_build_data_dir.joinpath('ibound.txt'))
-    return np.repeat(out[np.newaxis], 2, axis=0)
+    return np.repeat(out[np.newaxis], 3, axis=0)
 
 
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
@@ -467,16 +462,65 @@ def export_model_boundary():
                             ibound, None)
 
 
+def examine_3d(num_plots=10):
+    elv_calc()
+    get_ibound(True)
+    lake = get_lake_array(True)
+    moraine = get_2d_moraine(True)
+    smt.plot.plt_matrix((moraine | np.isfinite(lake)), base_map=True, no_flow_layer=0)
+    azimuth_data = smt.io.azimuth_from_line(base_model_build_data_dir.joinpath('3d_examiner.shp'), 20,
+                                            return_array=False).set_index('id')
+    step_points = smt.io.get_new_points_from_points_azimuth(azimuth_data, 2000, 90, return_array=False)
+    idxs = np.arange(num_plots + 1) * len(step_points) // num_plots
+    idxs[-1] = step_points.index[-1]
+    (x_min, x_max), (y_min, y_max) = smt.get_xlim_ylim()
+    step_points[step_points.new_x > x_max] = x_max
+    plt_array = smt.get_model_zeros(True) * np.nan
+    plt_array[:, np.isfinite(lake)] = 1
+    plt_array[:, moraine] = 2
+    for ox, oy, nx, ny in step_points.loc[idxs, ['old_x', 'old_y', 'new_x', 'new_y']].itertuples(False, None):
+        fig, (ax, locator_ax) = plt.subplots(nrows=2, gridspec_kw=dict(height_ratios=(3, 1)), figsize=(14, 9))
+        fig, ax = smt.plot.plt_slice(plt_array, [ox, nx], [oy, ny], ax=ax,
+                                     locator_ax=locator_ax, alpha=0.4, color_bar=False, vmin=1, vmax=2)
+        locator_ax.set_ylim([5.0520e6, max(locator_ax.get_ylim())])
+        fig.tight_layout()
+    xs = [
+        (1302335.8300223248, 1303305.152166307),
+        (1302197.3554303276, 1303486.9000683036),
+        (1302257.9380643263, 1303512.864054303),
+        (1302231.974078327, 1304014.8344502938)
+    ]
+    ys = [
+        (5053140.726263654, 5053227.272883653),
+        (5052552.2092476655, 5052604.137219664),
+        (5051652.124399682, 5051755.98034368),
+        (5050803.967523698, 5050829.931509697),
+    ]
+
+    for x, y in zip(xs, ys):
+        fig, (ax, locator_ax) = plt.subplots(nrows=2, gridspec_kw=dict(height_ratios=(3, 1)), figsize=(14, 9))
+        fig, ax = smt.plot.plt_slice(plt_array, x, y, ax=ax,
+                                     locator_ax=locator_ax, alpha=0.4, color_bar=False, vmin=1, vmax=2)
+        locator_ax.set_ylim([5.0450e6, max(locator_ax.get_ylim())])
+        fig.tight_layout()
+    smt.plot.show()
+
+
 if __name__ == '__main__':
+    examine_3d()
     from pathlib import Path
 
-    save_old = True
+    get_lake_array(True)
+    get_2d_moraine(True)
+    save_old = False
     old_path = Path.home().joinpath('Downloads/previous_bot.txt')
     if save_old:
-        old = get_bottom(False)
+        old = get_elv_db()[1]
         np.savetxt(old_path, old)
 
     old_bot = np.loadtxt(old_path)
+    top = get_elv_db()[0]
+    old_to_3d(top, old_bot)
     new_bot = elv_calc()[1]
     temp = np.concatenate((old_bot, new_bot))
     vmax = np.nanmax(temp)

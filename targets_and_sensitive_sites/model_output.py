@@ -18,7 +18,7 @@ from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_loc
 from optimisation.optimisation_period import tdis
 from model_build.supporting_data_analysis import get_river_loc_data, get_all_wells
 from model_build.utils import get_colors, plot_1_to_1
-from model_build.project_model_tools import get_bottom, get_top, get_ibound, smt
+from model_build.project_model_tools import get_ibound, smt
 from matplotlib.colors import SymLogNorm
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 
@@ -51,10 +51,10 @@ def generate_outputs(hds_path, cbc_path):
     idx = hds.nper <= max_nper
     hds.loc[idx, 'modelled'] = all_hds[hds.loc[idx, 'nper'], hds.loc[idx, 'k'],
                                        hds.loc[idx, 'i'], hds.loc[idx, 'j']]
-    bots = get_bottom()
-    tops = get_top()
+    bots = smt.get_bottoms()
+    tops = smt.get_tops()
     ibound = get_ibound()[0]
-    #  keynote set dry observations to bottom of cell -5m
+    #  keynote set dry observations to bottom of cell -5m  # todo needs to be adjusted for multiple layers
     hds.loc[hds.modelled < -666, 'modelled'] = bots[hds.loc[hds.modelled < -666, 'i'],
                                                     hds.loc[hds.modelled < -666, 'j']] - 5
 
