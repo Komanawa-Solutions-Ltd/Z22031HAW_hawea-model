@@ -172,9 +172,9 @@ def plot_lake_well(inc_fit=True):
     lake = get_lake_heads('2015', None)
     high_freq = high_freq.loc[high_freq.index <= lake.index.max()]
     fig, ax = plt.subplots(figsize=(10, 8))
-    names = ['G40_0415', 'lake']
+    names = ['Lake', 'G40_0415', ]
 
-    vals = [high_freq, lake]
+    vals = [lake, high_freq]
     if inc_fit:
         out = curve_min()
         out = out.x
@@ -188,6 +188,9 @@ def plot_lake_well(inc_fit=True):
         v = v.loc[v.index >= high_freq.index.min()]
         ax.plot(v.index, v, color=c, label=k)
     ax.legend()
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Elevation')
+    fig.tight_layout()
     plt.show()
 
 
