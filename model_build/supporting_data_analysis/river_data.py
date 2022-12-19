@@ -10,9 +10,6 @@ from model_build.project_model_tools import smt, _river_locs, get_lake_array
 from project_base import base_model_build_data_dir, processed_model_build_data_dir
 from model_build.supporting_data_analysis.hillside_inflows import get_hillside_flows
 
-# todo check carefully with multiple layers
-#  also check ibound changes don't kill hawea
-
 default_recalc = False
 hawea_shp_path = base_model_build_data_dir.joinpath('hawea_river.shp')
 clutha_shp_path = base_model_build_data_dir.joinpath('lower_clutha.shp')
@@ -56,7 +53,7 @@ def get_river_loc_data(recalc=default_recalc):
     }
     for i, (k, path) in enumerate(hill_crks.items()):
         temp = smt.io.array_to_df(smt.io.shape_file_to_model_array(path, 'distance', alltouched=True), 'dist')
-        top = smt.get_tops()[0] # todo check no problems with multiple layers
+        top = smt.get_tops()[0]
         temp.loc[:, 'top'] = top[temp.i, temp.j]
         temp.sort_values('dist', inplace=True)
         temp.index = [f'{k}_{int(e):05d}' for e in temp.dist]
@@ -281,7 +278,7 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False, plot
 
     temp_data = loc_data.copy(deep=True).loc[np.in1d(loc_data.rname, ['hawea', 'clutha'])]
     tops = smt.get_tops()[0]
-    bottoms = smt.get_bottoms()[0] # todo check with multiple layers
+    bottoms = smt.get_bottoms()[0]
     temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
     temp_data.loc[:, 'model_bot'] = bottoms[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
     hawea_clutha_divide = temp_data.loc[temp_data.rname == 'hawea', 'dist'].max()
@@ -323,7 +320,7 @@ def data_checks():
     # look at dist vs model top, bot, riv bot, looks good
     river_locs = get_river_loc_data()
     tops = smt.get_tops()[0]
-    bottoms = smt.get_bottoms()[0] # todo double check, but should have worked
+    bottoms = smt.get_bottoms()[0]
     river_locs.loc[:, 'model_top'] = tops[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
     river_locs.loc[:, 'model_bot'] = bottoms[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
     for r in ['clutha', 'hawea', 'both']:
@@ -372,7 +369,7 @@ def data_checks():
     # look at str package data
     riv_locs = get_river_loc_data()
     tops = smt.get_tops()[0]
-    bottoms = smt.get_bottoms()[0] # todo dbl check
+    bottoms = smt.get_bottoms()[0]
     riv_locs.loc[:, 'm_top'] = tops[riv_locs.i, riv_locs.j]
     riv_locs.loc[:, 'm_bot'] = bottoms[riv_locs.i, riv_locs.j]
     param_dict = {k: i for i, k in enumerate(riv_locs.param.unique())}

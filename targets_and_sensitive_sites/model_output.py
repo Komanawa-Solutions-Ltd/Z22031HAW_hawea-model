@@ -18,7 +18,7 @@ from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_loc
 from optimisation.optimisation_period import tdis
 from model_build.supporting_data_analysis import get_river_loc_data, get_all_wells
 from model_build.utils import get_colors, plot_1_to_1
-from model_build.project_model_tools import get_ibound, smt
+from model_build.project_model_tools import get_ibound, smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine
 from matplotlib.colors import SymLogNorm
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 
@@ -52,13 +52,14 @@ def generate_outputs(hds_path, cbc_path):
     max_nper = all_hds.shape[0] - 1
     idx = hds.nper <= max_nper
     hds.loc[idx, 'modelled'] = all_hds[hds.loc[idx, 'nper'], hds.loc[idx, 'k'],
-                                       hds.loc[idx, 'i'], hds.loc[idx, 'j']]
-    bots = smt.get_bottoms() # todo additional layers
+    hds.loc[idx, 'i'], hds.loc[idx, 'j']]
+    bots = smt.get_bottoms()
     tops = smt.get_tops()
     ibound = get_ibound()[0]
+
     #  keynote set dry observations to bottom of cell -5m  # todo needs to be adjusted for multiple layers
     hds.loc[hds.modelled < -666, 'modelled'] = bots[hds.loc[hds.modelled < -666, 'i'],
-                                                    hds.loc[hds.modelled < -666, 'j']] - 5
+    hds.loc[hds.modelled < -666, 'j']] - 5
 
     # get annual mean heads (weekly)
     annual_mean = get_annual_mean_head_targets(hds)
@@ -125,18 +126,32 @@ def generate_outputs(hds_path, cbc_path):
     out_obs.append(riv.rename(columns={'target_val': 'measured'}).loc[:, need_keys])
 
     out_obs = pd.concat(out_obs)
-    return out_obs, all_riv_obs, dry_hds.sum(axis=(0, 1)), flooded_cells.sum(
-        axis=(0, 1)), all_hds, all_riv, all_str_flow, str_flow_out
+    return out_obs, all_riv_obs, dry_hds, flooded_cells, all_hds, all_riv, all_str_flow, str_flow_out
+
+
+def plot_lake_moraine_smoothed_areas(all_hds):  # todo
+    # plot all three layers of the area that is smoothed, etc. all in 1 plot
+    get_lake_array, get_layer_pinchout_area, get_2d_moraine
+    raise NotImplementedError
 
 
 def _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells):
     print(myself())
     # plot hds (ss, min, max, range)
+
+    # todo plot 3d hds and how to manage the multiple layers, make this a plot of layer 0 and layer 3
+    #  (in the near array area), see get layer_smoothing area (project model tools)
+    #  get_lake_array, get_layer_pinchout_area, get_2d_moraine
+
+    use_hds = deepcopy(all_hds[:, 0])
+    idx = get_2d_moraine() | get_layer_pinchout_area() | np.isfinite(get_lake_array())
+    use_hds[:, idx] = all_hds[:, 2, idx]
+    # keynote plotting layer 2 in lake, moraine, pinchout area
     all_plt_hds = {
-        'Steady state heads': all_hds[0, 0],
-        'Min heads': np.nanmin(all_hds[1:, 0], axis=0),
-        'Max heads': np.nanmax(all_hds[1:, 0], axis=0),
-        'Range of Heads': np.nanmax(all_hds[1:, 0], axis=0) - np.nanmin(all_hds[1:, 0], axis=(0))
+        'Steady state heads (Hawea aquifer)': use_hds[0],
+        'Min heads (Hawea aquifer)': np.nanmin(use_hds[1:], axis=0),
+        'Max heads (Hawea aquifer)': np.nanmax(use_hds[1:], axis=0),
+        'Range of Heads (Hawea aquifer)': np.nanmax(use_hds[1:], axis=0) - np.nanmin(use_hds[1:], axis=0)
     }
     for key, plt_hds in all_plt_hds.items():
         plt_hds[ibound != 1] = np.nan
@@ -147,7 +162,9 @@ def _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells):
         fig.savefig(plot_dir.joinpath(f'{key.replace(" ", "_")}.png'))
         plt.close(fig)
 
-    # plot dry hds
+    for l in range(smt.layers):
+        raise NotImplementedError
+    # plot dry hds  # todo make 3d
     dry_hds = dry_hds.astype(float)
     dry_hds[np.isclose(dry_hds, 0)] = np.nan
     fig, ax = smt.plot.plt_matrix(dry_hds, base_map=True, no_flow_layer=0, title='Dry cells (# of steps)')
@@ -155,7 +172,7 @@ def _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells):
     fig.savefig(plot_dir.joinpath('dry_cells.png'))
     plt.close(fig)
 
-    # plot flooded cells
+    # plot flooded cells # todo make 3d
     flooded_cells = flooded_cells.astype(float)
     flooded_cells[np.isclose(flooded_cells, 0)] = np.nan
     fig, ax = smt.plot.plt_matrix(flooded_cells, base_map=True, no_flow_layer=0, title='flooded cells (# of steps)')
@@ -634,6 +651,10 @@ def _plot_spatial_hd_misfit(hds_obs, plot_dir):
         fig.savefig(outdir.joinpath(f'spatial_hds_residual_{g}.png'))
 
 
+def plot_xsections():  # todo
+    raise NotImplementedError
+
+
 def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                     all_str_flow, str_flow_out, plot_transient_budget=False, plot_dir=None):
     assert isinstance(model_ws, Path)
@@ -670,6 +691,10 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     riv_colors = get_colors(riv_keys)
 
     ## Plotting ##
+    plot_xsections()
+
+    _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells)
+
     _plot_spatial_hd_misfit(hds_obs, plot_dir)
 
     _plot_str_along_str(all_str_flow, plot_dir)
@@ -683,8 +708,6 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     _plot_aaverage_modelled_vs_measured(aaverage_data, regular_wells, regular_colors, plot_dir)
 
     _plot_aaverage_temporal(regular_wells, regular_colors, aaverage_data, plot_dir)
-
-    _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells)
 
     _plot_all_riv_obs(all_riv_obs, plot_dir, riv_keys, riv_colors, out_obs)
 
@@ -778,8 +801,6 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
     # save output
     out_obs.to_csv(model_ws.joinpath('observations.dat'), sep='\t', index=False)
-    np.savetxt(model_ws.joinpath('dry_cells.txt'), dry_hds, fmt='%d')
-    np.savetxt(model_ws.joinpath('flooded_cells.txt'), flooded_cells, fmt='%d')
 
     # plot stuff
     if plot:

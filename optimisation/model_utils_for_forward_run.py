@@ -8,7 +8,7 @@ from model_build.modflow_model import build_model
 from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
 from model_parameterisation.static_params import ss, vka
-from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
+from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points, set_ss_terms
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
 from model_parameterisation.inital_parametersiation import *
 
@@ -77,17 +77,18 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                    tdis.pers[1:]})  # todo in future could make the oc data to save every step then mean of all
     # keynote other steps if I end up with them
     sy = interpolate_sy_pilot_points(sy_param)
+    ss = set_ss_terms(sy_param)
     out = build_model(smt=smt,
                       tdis=tdis,
                       oc_spd=oc_spd,
                       exe_name=exe_name,
                       model_name=model_name,
                       model_ws=model_ws,
-                      hk=np.repeat(interpolate_kh_pilot_points(kh_param), smt.layers, axis=0),
+                      hk=interpolate_kh_pilot_points(kh_param),
                       vka=vka,
                       layer_avg=0,
-                      ss=np.repeat(sy, smt.layers, axis=0),  # keynote set ss to sy  # todo this may not make sense now!!
-                      sy=np.repeat(sy, smt.layers, axis=0),
+                      ss=ss,
+                      sy=sy,
                       strt=get_starting_heads(),
                       chani=1,
                       rch=get_rch_data(tdis, rch_param),

@@ -13,12 +13,10 @@ from project_base import unbacked_dir, opt_proj_root, opt_model_tools
 import shutil
 import matplotlib.pyplot as plt
 
-# todo check carefully with multiple layers
-
 
 def recalc_model_build(rerun_rushton=False):
     from model_build.project_model_tools import smt, get_ibound, get_elv_db, \
-        get_lake_array, get_starting_heads, get_2d_moraine
+        get_lake_array, get_starting_heads, get_2d_moraine, get_layer_pinchout_area
     from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
     from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes, \
         get_era5_land, get_corrected_historical_era5_rch
@@ -38,6 +36,7 @@ def recalc_model_build(rerun_rushton=False):
     get_elv_db(recalc=True)
     get_starting_heads(recalc=True)
     get_2d_moraine(True)
+    get_layer_pinchout_area(recalc=True)
 
     get_param_zones(recalc=True)
     get_lake_array(recalc=True)
@@ -132,9 +131,9 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_v12'
-previous_mversion = 'init_v11'
-branch = 'structure_v12'
+mversion = 'init_3d_v1'
+previous_mversion = 'init_v12'
+branch = '3d_v1'
 previous_branch = 'structure_v12'
 # todo to use previous parameters, put file here, else None
 param_file = None

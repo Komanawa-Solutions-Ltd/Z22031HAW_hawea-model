@@ -352,7 +352,6 @@ def elv_calc(fix_southern=True):
     top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
 
     out = old_to_3d(top, bot)
-    # todo new elv
 
     np.save(processed_model_build_data_dir.joinpath('elv_db.npy'), out)
     return out
@@ -385,9 +384,14 @@ def old_to_3d(top, bot):
                               )
         smooth_bot[moraine | np.isfinite(get_lake_array())] = np.nan
         barray[np.isfinite(smooth_bot)] = smooth_bot[np.isfinite(smooth_bot)]
-
-    # todo happy except for the dam/river, see how the model goes with these sharp elv changes
+    np.savetxt(processed_model_build_data_dir.joinpath('smoothed_array'), np.isfinite(smooth_bot), '%d')
     return np.concatenate([e[np.newaxis] for e in [top, bot1, bot2, bot3]])
+
+
+def get_layer_pinchout_area(recalc=False):
+    if recalc:
+        elv_calc()
+    return np.loadtxt(processed_model_build_data_dir.joinpath('smoothed_array'), int) == 1
 
 
 def get_elv_db(recalc=False):

@@ -49,7 +49,7 @@ def plot_all_borelogs():
     plt.show()
 
 
-def plot_moraine_wells():  # todo manually add township bore, add colors,hatch
+def plot_moraine_wells():
     well_metadata, bore_logs = read_borelogs_metadata()
     moraine = get_2d_moraine()
     lake = get_lake_array()

@@ -150,6 +150,7 @@ def set_parameter_data_groups(pst, start_param_vals):
     pst.parameter_data.loc[:, 'partrans'] = 'none'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('kh'), 'partrans'] = 'log'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('riv'), 'partrans'] = 'log'
+    # todo manage ss and sy data
 
     param_data = _get_param_data().set_index('name')
     # set inital values, lower, upper bounds

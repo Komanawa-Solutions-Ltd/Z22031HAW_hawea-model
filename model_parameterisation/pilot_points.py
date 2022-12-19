@@ -9,10 +9,8 @@ from project_base import base_param_dir, processed_param_dir
 from model_build.project_model_tools import smt, get_lake_array
 from model_build.supporting_data_analysis import get_irrigation_code
 from model_tools.time_discretization import TimeDis
-from model_parameterisation.static_params import lake_sy
+from model_parameterisation.static_params import lake_sy, lake_ss
 import geopandas as gpd
-
-# todo check carefully for multiple layers and new parameterisaion
 
 # keynote use zones for mangawera and sandy point aquifer systems, but use pilot points for main portion of the model
 
@@ -57,6 +55,7 @@ def get_pilot_point_locations(recalc=False):
 
 
 def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='multiquadric'):
+    # todo add the new structure
     """
 
     :param kh_data: real values, it will be logged then unlogged
@@ -115,6 +114,7 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
 
 
 def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='multiquadric'):
+    # todo add the new structure
     # keynote do not interpolate on log values
     sy = smt.get_model_zeros() * np.nan
 
@@ -162,6 +162,15 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     if return_df:
         return sy, pilot_locs
     return sy
+
+def set_ss_terms(sy_data):
+    """
+    make the array for the ss data, ss parameters are being added to the sy_data for easy handling
+    :param sy_data:
+    :return:
+    """
+    lake_ss
+    raise NotImplementedError
 
 
 def exampine_kh_interpolation():

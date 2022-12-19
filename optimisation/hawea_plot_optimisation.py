@@ -21,8 +21,6 @@ import py7zr
 from targets_and_sensitive_sites.model_output import plot_hds_regular_locator, base_regular_groupnames
 from optimisation.optimisation_period import tdis
 
-# todo check carefully with multiple layers
-
 
 def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=False):
     base_plot_dir = Path(pest_dir).joinpath('Base_Optimisation_plots')
@@ -138,6 +136,7 @@ def _plot_param_at_bounds(base_plot_dir, pp_locs, kh_param, sy_param, riv_param,
 
 
 def _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs):
+    # todo update with the new sy and kh system
     # plot rch multiplier array, kh, sy array
     sy_array = interpolate_sy_pilot_points(sy_param)
     kh_array = interpolate_kh_pilot_points(kh_param)

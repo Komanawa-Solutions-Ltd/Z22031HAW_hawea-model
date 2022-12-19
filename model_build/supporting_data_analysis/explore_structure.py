@@ -132,6 +132,6 @@ if __name__ == '__main__':
     define_cutoffs([328, 335])
 
 
-    # todo 328 as bottom of confining
-    # todo paramaterise top?, start 335
-    # todo does the elevation of the head cutoff matter???
+    # 328 as bottom of confining
+    # paramaterise top?, start 335
+    # does the elevation of the head cutoff matter???
