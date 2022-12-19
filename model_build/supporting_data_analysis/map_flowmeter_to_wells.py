@@ -6,11 +6,11 @@ import pandas as pd
 import numpy as np
 from model_build.supporting_data_analysis.all_wells import get_all_wells
 from project_base import base_model_build_data_dir, processed_model_build_data_dir
-from model_build.project_model_tools import smt
+from model_build.project_model_tools import smt, get_layer_pinchout_area, get_2d_moraine, get_lake_array
 
 flow_meter_data_path = base_model_build_data_dir.joinpath('water_permit_meter_results_2022-07-20',
                                                           'water_permit_meter_yearly_data_2022-07-20.csv')
-# todo check carefully with multiple layers
+
 
 def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
     if incl_surface_water:
@@ -98,7 +98,7 @@ def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
         nwm, ncons = num_waps.loc[cid]
         if ncons == 1:
             outdata.loc[np.in1d(outdata.permit_id, [cid]),
-                        consent_transfer_keys] = unique_well_consents.loc[
+            consent_transfer_keys] = unique_well_consents.loc[
                 np.in1d(unique_well_consents.ConsentID, [cid]), consent_transfer_keys].values
         else:
             # where there are multiple wells but they don't match to the number of consents
@@ -133,11 +133,13 @@ def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
         outdata.loc[idx, 'use_y'] = outdata.loc[idx, f'{k}_y']
     assert outdata.use_x.notna().all() and outdata.use_y.notna().all()
 
-    # add row, col... layer isn't going to happen. # todo manage layer
+    # add row, col... layer by area (layer 0 except in teh special area then layer 2)
     i, j = smt.convert_coords_to_matix(outdata.use_x, outdata.use_y)
     outdata.loc[:, 'i'] = i
     outdata.loc[:, 'j'] = j
     outdata.loc[:, 'k'] = 0
+    special_area = np.isfinite(get_lake_array()) | get_layer_pinchout_area() | get_2d_moraine()
+    outdata.loc[special_area[i, j], 'k'] = 2
 
     ibound = smt.get_no_flow(0)
     outdata.loc[:, 'ibound'] = ibound[outdata.i, outdata.j]

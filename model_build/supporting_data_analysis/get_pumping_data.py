@@ -9,11 +9,12 @@ from project_base import base_model_build_data_dir, processed_model_build_data_d
 from model_build.utils import select_resample, get_colors
 from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
 from model_build.zones import get_model_zones
-from model_build.project_model_tools import exclude_near_river_pumping
+from model_build.project_model_tools import exclude_near_river_pumping, get_low_cond_array, get_lake_array, \
+    get_2d_moraine
 
 default_recalc = False
 
-# todo check carefully with multiple layers
+
 # keynote why is it so hard to link well numbers to flow meter number...
 
 def _load_usage_data():
@@ -72,9 +73,17 @@ def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=Fals
 
 def get_pumping_locs(return_raw=False):
     data = get_well_flowmeter_mapper()
-    data = data.loc[:, ['ibound', 'use_x', 'use_y', 'i', 'j', 'k']] # todo check layer
+    idx = get_low_cond_array()
+    moraine = get_2d_moraine()
+    lake_array = get_lake_array()
+    for l in range(len(idx)):
+        idx[l] = idx[l] | np.isfinite(lake_array)
+    idx[0] = idx[0] | moraine
+    data = data.loc[:, ['ibound', 'use_x', 'use_y', 'i', 'j', 'k']]
     data = data.loc[data.ibound == 1]
     data.drop(['w_068', 'w_025'], inplace=True)
+    assert not idx[data.k, data.i, data.j].any(), 'pumping in lake or low cond cells, or thin layer'
+
     zones = get_model_zones()
     for k, v in zones.items():
         data.loc[:, k] = v[data.i, data.j]
@@ -169,6 +178,6 @@ def data_checks():
 if __name__ == '__main__':
     get_model_zones(True)
     data_checks()
-    flow_mapper = get_well_flowmeter_mapper()
+    flow_mapper = get_well_flowmeter_mapper(recalc=True)
     locs = get_pumping_locs()
     flow = get_historical_pumping_data(None, None, recalc=True)

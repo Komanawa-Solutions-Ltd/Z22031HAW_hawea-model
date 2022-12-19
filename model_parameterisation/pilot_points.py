@@ -6,11 +6,12 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import RBFInterpolator
 from project_base import base_param_dir, processed_param_dir
-from model_build.project_model_tools import smt, get_lake_array
+from model_build.project_model_tools import smt, get_lake_array, get_low_cond_array, get_2d_moraine
 from model_build.supporting_data_analysis import get_irrigation_code
 from model_tools.time_discretization import TimeDis
 from model_parameterisation.static_params import lake_sy, lake_ss
 import geopandas as gpd
+
 
 # keynote use zones for mangawera and sandy point aquifer systems, but use pilot points for main portion of the model
 
@@ -55,7 +56,6 @@ def get_pilot_point_locations(recalc=False):
 
 
 def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='multiquadric'):
-    # todo add the new structure
     """
 
     :param kh_data: real values, it will be logged then unlogged
@@ -107,14 +107,17 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
 
     kh[~idx] = 0
     assert np.isfinite(kh).all()
-    kh = kh[np.newaxis]
+    kh = np.repeat(kh[np.newaxis], smt.layers, axis=0)
+
+    kh[get_low_cond_array()] = kh_data['mor_l1']
+    kh[0, get_2d_moraine()] = kh_data['mor_l0']
+
     if return_df:
         return kh, pilot_locs
     return kh
 
 
 def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='multiquadric'):
-    # todo add the new structure
     # keynote do not interpolate on log values
     sy = smt.get_model_zeros() * np.nan
 
@@ -158,10 +161,15 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     min_v = min(sy_data.values())
     sy[sy < min_v] = min_v
     sy[~idx] = 0
-    sy = sy[np.newaxis]
+    sy = np.repeat(sy[np.newaxis], smt.layers, axis=0)
+
+    sy[get_low_cond_array()] = sy_data['sy_mor_l1']
+    sy[0, get_2d_moraine()] = sy_data['sy_mor_l0']
+
     if return_df:
         return sy, pilot_locs
     return sy
+
 
 def set_ss_terms(sy_data):
     """
@@ -169,8 +177,11 @@ def set_ss_terms(sy_data):
     :param sy_data:
     :return:
     """
-    lake_ss
-    raise NotImplementedError
+    ss = smt.get_model_zeros(True) + sy_data['ss_rest']
+    ss[0, get_2d_moraine()] = sy_data['ss_mor_l0']
+    ss[get_low_cond_array()] = sy_data['ss_mor_l1']
+
+    return ss
 
 
 def exampine_kh_interpolation():
@@ -271,6 +282,8 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
 
 
 if __name__ == '__main__':
+    # todo visually check ss, sy, kh
+
     t = get_pilot_point_locations(recalc=True)
     exampine_kh_interpolation()
     pass

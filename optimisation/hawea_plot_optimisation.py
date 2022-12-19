@@ -136,10 +136,9 @@ def _plot_param_at_bounds(base_plot_dir, pp_locs, kh_param, sy_param, riv_param,
 
 
 def _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs):
-    # todo update with the new sy and kh system
     # plot rch multiplier array, kh, sy array
-    sy_array = interpolate_sy_pilot_points(sy_param)
-    kh_array = interpolate_kh_pilot_points(kh_param)
+    sy_array = interpolate_sy_pilot_points(sy_param)[-1]
+    kh_array = interpolate_kh_pilot_points(kh_param)[-1]
 
     fig, ax = smt.plot.plt_matrix(sy_array[0], base_map=True, no_flow_layer=0, title='Sy field')
     fig.tight_layout()

@@ -8,7 +8,7 @@ from model_build.zones import get_param_zones
 from model_build.utils import select_resample
 from project_base import base_target_dir
 
-# todo check carefully with multiple layers
+
 def get_single_target_data():
     # from get_all_wells
     all_wells = get_all_wells()

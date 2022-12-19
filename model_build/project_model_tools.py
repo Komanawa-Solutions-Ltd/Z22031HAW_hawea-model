@@ -180,7 +180,14 @@ def _lake_locs():
     lake = get_lake_array(True)
     lake_data = temp_smt.io.array_to_df(lake, 'drop')
     lake_data.drop(columns='drop', inplace=True)
-    lake_data.loc[:, 'k'] = 0
+    out = []
+    for l in range(smt.layers):  # keynote set ghbs in all lake cells except low cond lake bar
+        temp = deepcopy(lake_data)
+        temp.loc[:, 'k'] = l
+        out.append(temp)
+    lake_data = pd.concat(out)
+    low_cond = get_low_cond_array()
+    lake_data = lake_data.loc[~low_cond[lake_data.k, lake_data.i, lake_data.j]]
     return lake_data
 
 
@@ -466,6 +473,72 @@ def export_model_boundary():
                             ibound, None)
 
 
+def get_xsection_points(recalc=False):
+    num_plots = 10
+    save_path = processed_model_build_data_dir.joinpath('xsection_points')
+
+    if save_path.exists() and not recalc:
+        step_points = pd.read_csv(save_path)
+        return step_points
+
+    azimuth_data = smt.io.azimuth_from_line(base_model_build_data_dir.joinpath('3d_examiner.shp'), 20,
+                                            return_array=False).set_index('id')
+    step_points = smt.io.get_new_points_from_points_azimuth(azimuth_data, 2000, 90, return_array=False)
+    idxs = np.arange(num_plots + 1) * len(step_points) // num_plots
+    idxs[-1] = step_points.index[-1]
+    (x_min, x_max), (y_min, y_max) = smt.get_xlim_ylim()
+    step_points[step_points.new_x > x_max] = x_max
+    step_points = step_points.loc[idxs, ['old_x', 'old_y', 'new_x', 'new_y']].reset_index()
+    xs = [
+        (1302335.8300223248, 1303305.152166307),
+        (1302197.3554303276, 1303486.9000683036),
+        (1302257.9380643263, 1303512.864054303),
+        (1302231.974078327, 1304014.8344502938)
+    ]
+    ys = [
+        (5053140.726263654, 5053227.272883653),
+        (5052552.2092476655, 5052604.137219664),
+        (5051652.124399682, 5051755.98034368),
+        (5050803.967523698, 5050829.931509697),
+    ]
+
+    for i, (x, y) in enumerate(zip(xs, ys)):
+        step_points.loc[100 + i, ['old_x', 'new_x', ]] = x
+        step_points.loc[100 + i, ['old_y', 'new_y']] = y
+
+    step_points.to_csv(save_path)
+    return step_points
+
+
+def get_lake_bar():
+    lake = get_lake_array()
+    ibound = smt.get_no_flow(0)
+    rows, cols = smt.get_model_index_grid()
+    rows = rows[np.isfinite(lake) & (ibound == 1)]
+    cols = cols[np.isfinite(lake) & (ibound == 1)]
+
+    out_array = np.full(smt.model_2d_shape, False)
+    for col in np.unique(cols):
+        row = rows[cols == col].max()
+        out_array[row, col] = True
+    for row in np.unique(rows):
+        if out_array[row, :].sum() > 0:
+            continue
+        col = cols[rows == row].max()
+        out_array[row, col] = True
+    return out_array
+
+
+def get_low_cond_array():
+    # make a low conductiviyt array for the area, how to handle the interface between layer 3 and the lake, lake bar?
+    data = np.full(smt.model_shape, False)
+    data[1, get_2d_moraine()] = True
+    lake_bar = get_lake_bar()
+    data[1, lake_bar] = True
+    data[2, lake_bar] = True
+    return data
+
+
 def examine_3d(num_plots=10):
     elv_calc()
     get_ibound(True)
@@ -511,6 +584,10 @@ def examine_3d(num_plots=10):
 
 
 if __name__ == '__main__':
+    temp = get_low_cond_array()
+    smt.plot.plt_layer_slices(temp, base_map=True)
+    smt.plot.show()
+    get_xsection_points()
     examine_3d()
     from pathlib import Path
 

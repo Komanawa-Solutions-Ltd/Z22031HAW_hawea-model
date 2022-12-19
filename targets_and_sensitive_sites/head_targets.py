@@ -11,7 +11,8 @@ import numpy as np
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 from model_build.supporting_data_analysis import get_all_wells
-from model_build.project_model_tools import smt
+from model_build.project_model_tools import smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
+    get_low_cond_array
 from project_base import processed_target_dir, base_target_dir
 from model_build.utils import get_colors, select_resample
 from targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
@@ -19,8 +20,6 @@ from targets_and_sensitive_sites.get_indicative_times import get_indicative_time
 from model_build.zones import get_model_zones
 
 base_regular_groupnames = ['h_hf_riv', 'h_hf', 'h_lf']  # ensures coheriance across functions
-
-# todo check carefully with multiple layers
 
 
 def get_single_head_targets():
@@ -81,7 +80,13 @@ def get_2011_piezo_survey(recalc=False):
         temp.loc[:, 'use_datetime'] = d
         outdata.append(temp)
     outdata = pd.concat(outdata).reset_index(drop=True)
+
     outdata.loc[:, 'k'] = 0
+    special_area = get_layer_pinchout_area() | get_2d_moraine()
+    outdata.loc[special_area[outdata.i, outdata.j], 'k'] = 2
+    idx = np.repeat(np.isfinite(get_lake_array())[np.newaxis], smt.layers, axis=0) | get_low_cond_array()
+    assert not idx[outdata.k, outdata.i, outdata.j].any(), 'targets in lake or low conductivity zone'
+
     outdata.to_csv(processed_path)
     return outdata
 
@@ -277,6 +282,9 @@ def get_all_hds_targets(tdis, recalc=False):
     # add step and per, remove duplicated data
     all_head_targets = tdis.add_nstp_nper_to_df(all_head_targets, datetime_col='use_datetime',
                                                 action_on_duplicates='last')
+    idx = np.repeat(np.isfinite(get_lake_array())[np.newaxis], smt.layers, axis=0) | get_low_cond_array()
+    assert not idx[
+        all_head_targets.k, all_head_targets.i, all_head_targets.j].any(), 'targets in lake or low conductivity zone'
 
     all_head_targets = all_head_targets.loc[all_head_targets.nper > 0]
     all_head_targets = all_head_targets.drop_duplicates(subset=['i', 'j', 'group', 'nper']).reset_index(drop=True)
