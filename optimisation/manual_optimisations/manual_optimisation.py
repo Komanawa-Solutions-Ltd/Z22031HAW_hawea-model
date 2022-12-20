@@ -18,7 +18,6 @@ from run_managers.ssh_distributor import SshDist
 from project_base import unbacked_dir
 from optimisation.a_build_run_optimisation_version import opt_model_tools, opt_proj_root, branch
 
-
 base_opt_dirs = unbacked_dir.joinpath('manual')
 
 ssh_dist = SshDist(
@@ -63,6 +62,7 @@ def _run_model_mp(kwargs):
         error = val
     return kwargs, success, error
 
+
 def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisary=True):
     assert isinstance(base_dir, Path)
     model_ws = base_dir.joinpath(model_name)
@@ -100,6 +100,7 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
             if p.name in ['param_overview.txt', 'mse.csv']:
                 continue
 
+# todo abstract and save
 
 def run_manal_opt(name, mod_params, safemode=True, replot=False):
     """
@@ -145,13 +146,26 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     for i, single_mod_params in enumerate(mod_params):
         pdict = deepcopy(base_pdict)
 
-        bulk_keys = [e for e in pdict.keys() if 'bulk_' in e]
+        bulk_keys = [e for e in pdict.keys() if 'bulk_' in e]  # todo add terrace vs bulk
         if len(bulk_keys) > 0:
             for k in bulk_keys:
                 val = pdict.pop(k)
                 tag = k.split('_')[-1]
                 overview_data.loc[k, f'sen_{i:04d}'] = val
                 for pr in pdict[tag].keys():
+                    if 'ter' in pr:
+                        continue
+                    pdict[tag][pr] = val
+
+        bulk_ter_keys = [e for e in pdict.keys() if 'bulkter_' in e]
+        if len(bulk_ter_keys) > 0:
+            for k in bulk_keys:
+                val = pdict.pop(k)
+                tag = k.split('_')[-1]
+                overview_data.loc[k, f'sen_{i:04d}'] = val
+                for pr in pdict[tag].keys():
+                    if 'ter' not in pr:
+                        continue
                     pdict[tag][pr] = val
 
         for k, v in single_mod_params.items():

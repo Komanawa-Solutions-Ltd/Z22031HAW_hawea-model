@@ -87,7 +87,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       layer_avg=0,
                       ss=ss,
                       sy=sy,
-                      strt=get_starting_heads(),
+                      strt=smt.get_tops(),
                       chani=1,
                       rch=get_rch_data(tdis, rch_param),
                       ghb_spd=get_ghb_data(tdis),

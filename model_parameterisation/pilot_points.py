@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import RBFInterpolator
 from project_base import base_param_dir, processed_param_dir
+from model_build.zones import get_model_zones
 from model_build.project_model_tools import smt, get_lake_array, get_low_cond_array, get_2d_moraine
 from model_build.supporting_data_analysis import get_irrigation_code
 from model_tools.time_discretization import TimeDis
@@ -85,10 +86,16 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
         # thinplate spline has too much possibility for radically creating extremes,
         # both multiquadric and linear do not provide too much contorition and extreme values.
         # my preference is mutiquadric as it has more curvature about the point
+        terrace_points = pilot_locs.loc[pilot_locs.group == 'ter']
+        other_points = pilot_locs.loc[~(pilot_locs.group == 'ter')]
+        rbf_other = RBFInterpolator(other_points.loc[:, ['i', 'j']].values, other_points['value'].values, kernel=kernal,
+                                    epsilon=1)
+        kh[idx] = rbf_other(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
 
-        rbf = RBFInterpolator(pilot_locs.loc[:, ['i', 'j']].values, pilot_locs['value'].values, kernel=kernal,
-                              epsilon=1)
-        kh[idx] = rbf(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
+        rbf_ter = RBFInterpolator(terrace_points.loc[:, ['i', 'j']].values, terrace_points['value'].values,
+                                  kernel=kernal, epsilon=1)
+        idx = idx & get_model_zones()['terrace']
+        kh[idx] = rbf_ter(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
 
     else:
         # other options include:
@@ -107,7 +114,7 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     lake_array = get_lake_array()
     kh[np.isfinite(lake_array)] = kh_data['lake']
 
-    kh[~idx] = 0
+    kh[~(ibound == 1)] = 0
     assert np.isfinite(kh).all()
     kh = np.repeat(kh[np.newaxis], smt.layers, axis=0)
 
@@ -119,8 +126,9 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     return kh
 
 
-def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='multiquadric'):
-    # keynote do not interpolate on log values
+def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False,
+                                kernal='multiquadric'):
+    # keynote interpolate on log values
     sy = smt.get_model_zeros() * np.nan
 
     # set pilot point values
@@ -133,16 +141,24 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
     ibound = smt.get_no_flow(layer=0)
     i, j = smt.get_model_index_grid()
     idx = ibound == 1
+    pilot_locs.loc[:, 'value'] = np.log10(pilot_locs.loc[:, 'value'])
 
     if method == 'rbf':
         # Radial basis function techniques, which kernal
         # thinplate spline has too much possibility for radically creating extremes,
         # both multiquadric and linear do not provide too much contorition and extreme values.
         # my preference is mutiquadric as it has more curvature about the point
+        terrace_points = pilot_locs.loc[pilot_locs.group == 'ter']
+        other_points = pilot_locs.loc[~(pilot_locs.group == 'ter')]
+        rbf_other = RBFInterpolator(other_points.loc[:, ['i', 'j']].values, other_points['value'].values, kernel=kernal,
+                                    epsilon=1)
+        sy[idx] = rbf_other(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
 
-        rbf = RBFInterpolator(pilot_locs.loc[:, ['i', 'j']].values, pilot_locs['value'].values, kernel=kernal,
-                              epsilon=1)
-        sy[idx] = rbf(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
+        rbf_ter = RBFInterpolator(terrace_points.loc[:, ['i', 'j']].values, terrace_points['value'].values,
+                                  kernel=kernal, epsilon=1)
+        idx = idx & get_model_zones()['terrace']
+        sy[idx] = rbf_ter(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
+
 
     else:
         # other options include:
@@ -154,15 +170,19 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
         # I chose to simply use RBF methods
         raise ValueError(f'unexpected method: {method}')
 
+    # undo the log
+    sy = 10 ** sy
+    pilot_locs.loc[:, 'value'] = 10 ** (pilot_locs.loc[:, 'value'])
+
     # set lake values
     lake_array = get_lake_array()
     sy[np.isfinite(lake_array)] = lake_sy
 
-    sy[~idx] = 0
+    sy[~(ibound == 1)] = 0
     assert np.isfinite(sy).all()
     min_v = min(sy_data.values())
     sy[sy < min_v] = min_v
-    sy[~idx] = 0
+    sy[~(ibound == 1)] = 0
     sy = np.repeat(sy[np.newaxis], smt.layers, axis=0)
 
     sy[get_low_cond_array()] = sy_data['sy_mor_l1']
@@ -286,9 +306,9 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
 def check_kh_sy_ss():
     from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh
     vas = get_inital_kh(True)
-    vas['lake'] = 200
-    vas['mor_l0'] = 100
-    vas['mor_l1'] = 50
+    vas['lake'] = 20
+    vas['mor_l0'] = 7
+    vas['mor_l1'] = 5
     kh = interpolate_kh_pilot_points(vas)
     ss_sy = get_inital_sy(True)
     ss_sy['sy_mor_l0'] = 0.02

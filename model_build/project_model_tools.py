@@ -39,7 +39,7 @@ cols = int(abs(ulx - lrx) // grid_space) + 1
 rows = int(abs(uly - lry) // grid_space) + 1
 
 layers = 3
-layer_type = [1, 1, 0]
+layer_type = [1, 0, 0]
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,
@@ -392,6 +392,8 @@ def old_to_3d(top, bot):
         smooth_bot[moraine | np.isfinite(get_lake_array())] = np.nan
         barray[np.isfinite(smooth_bot)] = smooth_bot[np.isfinite(smooth_bot)]
     np.savetxt(processed_model_build_data_dir.joinpath('smoothed_array'), np.isfinite(smooth_bot), '%d')
+    thick2 = bot2 - bot3
+    bot3[thick2 < 1] += -1 + thick2[thick2 < 1]
     return np.concatenate([e[np.newaxis] for e in [top, bot1, bot2, bot3]])
 
 
@@ -422,6 +424,7 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
 
 
 def get_starting_heads(recalc=False):
+    raise NotImplementedError('depreciated')
     save_path = processed_model_build_data_dir.joinpath('start_heads.txt')
     if save_path.exists() and not recalc:
         return np.repeat(np.loadtxt(save_path)[np.newaxis], smt.layers, axis=0)
@@ -580,15 +583,20 @@ def examine_3d(num_plots=10):
                                      locator_ax=locator_ax, alpha=0.4, color_bar=False, vmin=1, vmax=2)
         locator_ax.set_ylim([5.0450e6, max(locator_ax.get_ylim())])
         fig.tight_layout()
+
+    smt.plot.plt_layer_slices(smt.get_thickness(), base_map=True, contour_levels=10, contour=True, title='thick')
+    thick = smt.get_thickness()
+    thick[thick>10] = np.nan
+    smt.plot.plt_layer_slices(thick, base_map=True, contour_levels=1, contour=True, title='thick')
     smt.plot.show()
 
 
 if __name__ == '__main__':
+    t = get_xsection_points()
+    examine_3d()
     temp = get_low_cond_array()
     smt.plot.plt_layer_slices(temp, base_map=True)
     smt.plot.show()
-    get_xsection_points()
-    examine_3d()
     from pathlib import Path
 
     get_lake_array(True)

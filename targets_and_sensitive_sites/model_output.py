@@ -138,8 +138,8 @@ def plot_lake_moraine_smoothed_areas(all_hds, plot_dir):
     temp = deepcopy(all_hds[0])
     temp[:, ~idx] = np.nan
     for l, ax in zip(range(smt.layers), axs):
-        smt.plot.plt_matrix(temp, no_flow_layer=0, base_map=True, title=f'layer {l}', vmin=np.nanmin(temp), vmax=
-        np.nanmax(temp), contour=True, contour_levels=1)
+        smt.plot.plt_matrix(temp[l], no_flow_layer=0, base_map=True, title=f'layer {l}', vmin=np.nanmin(temp), vmax=
+        np.nanmax(temp), contour=True, contour_levels=1, ax=ax)
 
     ax.set_ylim([5.0450e6, max(ax.get_ylim())])
     ax.set_xlim([1.301e6, 1.308e6])
@@ -174,8 +174,10 @@ def _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells):
 
     dry_hds = dry_hds.astype(float)
     dry_hds[np.isclose(dry_hds, 0)] = np.nan
+    dry_hds = np.nansum(dry_hds, axis=0)
     flooded_cells = flooded_cells.astype(float)
     flooded_cells[np.isclose(flooded_cells, 0)] = np.nan
+    flooded_cells = np.nansum(flooded_cells, axis=0)
     for l in range(smt.layers):
         # plot dry hds
         fig, ax = smt.plot.plt_matrix(dry_hds[l], base_map=True, no_flow_layer=0,
@@ -668,10 +670,10 @@ def plot_xsections(all_hds, plot_dir):
     outdir.mkdir(exist_ok=True)
     temp = deepcopy(all_hds[0])
     sections = get_xsection_points()
-    for i, ox, oy, nx, ny in sections.loc[['old_x', 'old_y', 'new_x', 'new_y']].itertuples(True, None):
+    for i, ox, oy, nx, ny in sections.loc[:, ['old_x', 'old_y', 'new_x', 'new_y']].itertuples(True, None):
         fig, (ax, locator_ax) = plt.subplots(nrows=2, gridspec_kw=dict(height_ratios=(3, 1)), figsize=(14, 9))
         fig, ax = smt.plot.plt_slice(temp, [ox, nx], [oy, ny], ax=ax,
-                                     locator_ax=locator_ax, alpha=0.4, color_bar=False, vmin=1, vmax=2)
+                                     locator_ax=locator_ax, alpha=0.4, color_bar=True, contour=True, contour_levels=2)
         locator_ax.set_xlim(min(ox, nx) - 500, max(ox, nx) + 500)
         locator_ax.set_ylim(min(oy, ny) - 500, max(oy, ny) + 500)
         fig.tight_layout()
@@ -838,9 +840,9 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
 if __name__ == '__main__':
     t = time.time()
-    test = False
+    test = True
     if test:
-        plot_paths = [Path('/home/matt_dumont/unbacked/hawea/structure_v10/init_v10/base_model/opt_model.hds')]
+        plot_paths = [Path('/home/matt_dumont/unbacked/hawea/3d_v1/init_3d_v1/base_model/opt_model.hds')]
         save_param = True
     else:
         plot_paths = Path('/home/matt_dumont/unbacked/hawea/previous_optimisations').glob('**/*.hds')

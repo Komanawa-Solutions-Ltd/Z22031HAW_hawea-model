@@ -35,7 +35,6 @@ def recalc_model_build(rerun_rushton=False):
     get_ibound(recalc=True)
     get_elv_db(recalc=True)
     get_xsection_points(True)
-    get_starting_heads(recalc=True)
     get_2d_moraine(True)
     get_layer_pinchout_area(recalc=True)
 
@@ -137,10 +136,15 @@ branch = '3d_v1'
 previous_branch = 'structure_v12'
 # todo to use previous parameters, put file here, else None
 param_file = None
-notes = f"""
+notes = f""" 
 * move to 3d structure (near lake)
 * remove the slope fixer on the east side
 * remove additional parameterization of v12
+* Address the 3d moraine issues in structure
+* 3 layers the bottom two pinch out against the bottom of the model.
+* Add abrupt parameter change at terrace interface
+* Remove from dam to “dam control” road from model (e.g. no flow)
+
 
 """
 noptmax = 300
@@ -184,7 +188,8 @@ if __name__ == '__main__':
 
     # build pest
     if build_pest:
-        from optimisation.build_optimisation import raw_pest, BeopestManager
+        from optimisation.build_optimisation import raw_pest
+        from run_managers.beopest_manager import BeopestManager
 
         pdir = unbacked_dir.joinpath(branch, mversion, 'Optimisations')
 
@@ -200,6 +205,7 @@ if __name__ == '__main__':
         pest_file, pst = raw_pest(name='opt', pst_dir=pdir, noptmax=noptmax,
                                   model_template_dir=test_path, start_param_vals=start_param)
         man = BeopestManager(
+            ips=['100.124.148.71', '100.121.150.68'],
             pest_file=pest_file,
             num_cores={
                 '100.124.148.71': local_cores,

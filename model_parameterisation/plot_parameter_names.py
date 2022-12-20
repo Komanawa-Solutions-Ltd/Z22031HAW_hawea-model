@@ -41,6 +41,8 @@ def plot_parameter_locator(show=False):
     ax1.set_ylim(pplocs.y.min() - 100, smt.get_xlim_ylim()[1][1])
     ax1.set_title('kh | sy')
     for n, (x, y) in pplocs.loc[:, ['x', 'y']].iterrows():
+        base_pdict['sy'].pop(n)
+        base_pdict['kh'].pop(n)
         if n == 'riv_g30':
             y += 150
         t = ax1.text(x + 200, y, n)
@@ -49,8 +51,6 @@ def plot_parameter_locator(show=False):
 
     use_names = []
     for t, p in base_pdict.items():
-        if t in ['kh', 'sy']:
-            continue
         use_names.extend([f'{t}_{e}' for e in p.keys()])
     for i, n in enumerate(use_names):
         if i > len(use_names) // 2:
