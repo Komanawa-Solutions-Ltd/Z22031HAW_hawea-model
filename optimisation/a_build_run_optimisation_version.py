@@ -110,6 +110,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
     param_data.to_csv(model_ws.joinpath('parameters.dat'), sep='\t', header=False, index=False)
 
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws)
+    print('running base model')
     build_run_model(
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,
