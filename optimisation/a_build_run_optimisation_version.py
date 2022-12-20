@@ -48,7 +48,6 @@ def recalc_model_build(rerun_rushton=False):
     get_all_wells(recalc=True)
     get_lake_hawea_loc(recalc=True)
     get_race_locs(recalc=True)
-    print('#####here')
     get_hillside_catchment_locs(recalc=True)
     get_hillside_flows(None, None, recalc=True)
     get_well_flowmeter_mapper(recalc=True)
@@ -139,17 +138,15 @@ previous_branch = 'structure_v12'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f"""
-* Move to 1 global recharge modifier (done)
-* Much higher initial kh (lake=5, rest = 300), lower lake kh bounds
-* Lower sy, and lower sy bounds
-* Change weights (lower low frequency targets)
-* Bit of a hail mary before the weekend
+* move to 3d structure (near lake)
+* remove the slope fixer on the east side
+* remove additional parameterization of v12
 
 """
 noptmax = 300
 recalc = True
 build_model = True
-build_pest = False
+build_pest = True
 safemode = True
 local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
 

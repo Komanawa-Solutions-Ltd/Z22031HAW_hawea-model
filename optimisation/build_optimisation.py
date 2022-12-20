@@ -14,7 +14,6 @@ base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 
 default_output_path = proj_root.joinpath('optimisation/pre_opt_model/observations.dat')
 
-# todo check carefully with multiple layers
 
 def _get_base_obs(output_path):
     default_data = pd.read_csv(output_path, sep='\t')
@@ -150,7 +149,7 @@ def set_parameter_data_groups(pst, start_param_vals):
     pst.parameter_data.loc[:, 'partrans'] = 'none'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('kh'), 'partrans'] = 'log'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('riv'), 'partrans'] = 'log'
-    # todo manage ss and sy data
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('sy'), 'partrans'] = 'log'
 
     param_data = _get_param_data().set_index('name')
     # set inital values, lower, upper bounds
@@ -209,8 +208,7 @@ def set_obs_data(pst, obs_path):
     for n, v in obs_num.items():
         use_idx = (temp.loc[:, 'loc_name'] == n) & idx
         assert use_idx.sum() == v
-        pst.observation_data.loc[use_idx, 'weight'] *= v/obs_num.sum()
-
+        pst.observation_data.loc[use_idx, 'weight'] *= v / obs_num.sum()
 
     # normalise weights by group totals  (total weight sums to 1) for each group
     weight_totals = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight'].to_dict()

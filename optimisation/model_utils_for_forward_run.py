@@ -72,7 +72,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
     t = time.time()
     oc_spd = {(0, 0): ['save head', 'save budget']}
     oc_spd.update({(p, 4): ['save head', 'save budget'] for p in
-                   tdis.pers[1:]})  # todo in future could make the oc data to save every step then mean of all
+                   tdis.pers[1:]})  # keynote in future could make the oc data to save every step then mean of all
     # keynote other steps if I end up with them
     sy = interpolate_sy_pilot_points(sy_param)
     ss = set_ss_terms(sy_param)

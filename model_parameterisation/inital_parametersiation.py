@@ -38,15 +38,14 @@ def get_initial_riv_conductance(return_just_start=False):
     return params
 
 
-# todo parameterisation of multiple layers
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model based on the 10**mean(log10(scotts parameters))
     # keynote the tidal reference seems to suggest a kh of 32-43 (assuming 30-40m thickness and a T of 1300)
     # keynote use log values
     start_val = (300, (0.01, 1000))
-    lake_val = (5, (0.001, 1000))
-    moraine_l0 = None  # todo
-    moraine_l1 = None  # todo
+    lake_val = (300, (0.001, 1000))
+    moraine_l0 = (300, (0.001, 1000))
+    moraine_l1 = (1e-4, (1e-7, 1))
 
     # for reference scott's model ha min = 0.09, max = 300, median = 14
     if return_just_start:
@@ -72,13 +71,16 @@ def get_inital_sy(return_just_start=False):
     # keynote the tidal reference seems to suggest a sy of 0.012
     # keynote one value for the whole model
     start_val = (0.01, (0.0001, 0.3))
+    sy_mor_l1 = (0.001, (0.0001, 0.3))
+    ss_start = (1e-4, (1e-6, 1e-3))
+
     pps = get_pilot_point_locations()
-    sy_data = {  # todo implement values
-        'sy_mor_l0': None,
-        'sy_mor_l1': None,
-        'ss_rest': None,
-        'ss_mor_l0': None,
-        'ss_mor_l1': None,
+    sy_data = {
+        'sy_mor_l0': start_val,
+        'sy_mor_l1': sy_mor_l1,
+        'ss_rest': ss_start,
+        'ss_mor_l0': ss_start,
+        'ss_mor_l1': ss_start,
     }
 
     for i in pps.index:

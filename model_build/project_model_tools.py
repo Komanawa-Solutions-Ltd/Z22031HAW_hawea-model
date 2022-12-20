@@ -201,7 +201,7 @@ def _river_locs():
     hawea[ibound < 1] = np.nan
 
     # make sure hawea r. not in the lake!!!
-    lake_hawea = temp_smt.io.df_to_array(_lake_locs(), 'i')
+    lake_hawea = get_lake_array()
     hawea[np.isfinite(lake_hawea)] = np.nan
 
     hawea = temp_smt.io.array_to_df(hawea, 'dist').sort_values('dist')
@@ -424,14 +424,14 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
 def get_starting_heads(recalc=False):
     save_path = processed_model_build_data_dir.joinpath('start_heads.txt')
     if save_path.exists() and not recalc:
-        return np.repeat(np.loadtxt(save_path)[np.newaxis], 2, axis=0)
+        return np.repeat(np.loadtxt(save_path)[np.newaxis], smt.layers, axis=0)
     strt_hds = smt.get_tops()[0]
     scott_hds = smt.io.raster_to_array(proj_root.joinpath('scott_model/scott_model_files/scott_hds.tif'),
                                        'average')
     idx = scott_hds < strt_hds
     strt_hds[idx] = scott_hds[idx]
     np.savetxt(save_path, strt_hds)
-    return np.repeat(strt_hds[np.newaxis], 2, axis=0)
+    return np.repeat(strt_hds[np.newaxis], smt.layers, axis=0)
 
 
 def data_checks():

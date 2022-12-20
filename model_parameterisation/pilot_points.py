@@ -28,30 +28,32 @@ def get_pilot_point_locations(recalc=False):
 
         for k, v in dtypes.items():
             outdata.loc[:, k] = outdata.loc[:, k].astype(v)
-        return outdata
+    else:
+        data = gpd.read_file(data_path)
+        x, y = data.geometry.x, data.geometry.y
 
-    data = gpd.read_file(data_path)
-    x, y = data.geometry.x, data.geometry.y
+        data.loc[:, 'group'] = data.loc[:, 'group'].replace({
+            'rivergroup': 'riv_g',
+            'terrace': 'ter',
+            'haweaflat': 'h_flat',
+            'sandyhill': 'sandy',
+            'mangawera': 'mang',
+            'hillside': 'hill',
+        })
 
-    data.loc[:, 'group'] = data.loc[:, 'group'].replace({
-        'rivergroup': 'riv_g',
-        'terrace': 'ter',
-        'haweaflat': 'h_flat',
-        'sandyhill': 'sandy',
-        'mangawera': 'mang',
-        'hillside': 'hill',
-    })
+        outdata = data.loc[:, ['id', 'group']]
+        assert len(outdata.id.unique()) == len(outdata)
+        outdata.loc[:, 'x'] = x
+        outdata.loc[:, 'y'] = y
+        i, j = smt.convert_coords_to_matix(x, y)
+        outdata.loc[:, 'i'] = i
+        outdata.loc[:, 'j'] = j
+        outdata.loc[:, 'name'] = outdata.group.astype(str) + outdata.id.astype(str)
+        outdata.set_index('name', inplace=True)
+        outdata.to_csv(processed_path)
+    # keynote remove v12 parameterisation
+    outdata = outdata.drop(['h_flat40', 'h_flat41', 'h_flat42', 'h_flat43', 'h_flat44', 'h_flat45', 'h_flat46'])
 
-    outdata = data.loc[:, ['id', 'group']]
-    assert len(outdata.id.unique()) == len(outdata)
-    outdata.loc[:, 'x'] = x
-    outdata.loc[:, 'y'] = y
-    i, j = smt.convert_coords_to_matix(x, y)
-    outdata.loc[:, 'i'] = i
-    outdata.loc[:, 'j'] = j
-    outdata.loc[:, 'name'] = outdata.group.astype(str) + outdata.id.astype(str)
-    outdata.set_index('name', inplace=True)
-    outdata.to_csv(processed_path)
     return outdata
 
 
@@ -281,8 +283,31 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
     return rch_mult
 
 
+def check_kh_sy_ss():
+    from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh
+    vas = get_inital_kh(True)
+    vas['lake'] = 200
+    vas['mor_l0'] = 100
+    vas['mor_l1'] = 50
+    kh = interpolate_kh_pilot_points(vas)
+    ss_sy = get_inital_sy(True)
+    ss_sy['sy_mor_l0'] = 0.02
+    ss_sy['sy_mor_l1'] = 0.03
+    ss_sy['ss_rest'] = 0.1
+    ss_sy['ss_mor_l0'] = 0.2
+    ss_sy['ss_mor_l1'] = 0.3
+
+    sy = interpolate_sy_pilot_points(ss_sy)
+
+    ss = set_ss_terms(ss_sy)
+
+    for k in ['kh', 'sy', 'ss']:
+        smt.plot.plt_layer_slices(eval(k), base_map=True, no_flow_layer=0, title=k)
+    smt.plot.show()
+
+
 if __name__ == '__main__':
-    # todo visually check ss, sy, kh
+    check_kh_sy_ss()
 
     t = get_pilot_point_locations(recalc=True)
     exampine_kh_interpolation()
