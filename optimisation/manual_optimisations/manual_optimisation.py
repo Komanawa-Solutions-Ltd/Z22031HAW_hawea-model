@@ -105,7 +105,7 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
 
 # todo abstract and save
 
-def run_manal_opt(name, mod_params, safemode=True, replot=False):
+def run_manal_opt(name, mod_params, safemode=True, replot=False, rm_remote_files=True):
     """
     plan is to send in runs (via mod params), it then runs everything, makes necissary plots, and plots up key values
     :param opt_dir
@@ -182,7 +182,7 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     opt_dir.mkdir(exist_ok=not safemode or replot, parents=True)
     if not replot:
         print(f'running {len(runs)} models')
-        ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=True, run=True, compile=True,
+        ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=rm_remote_files, run=True, compile=True,
                                  run_in_series=False, kwargs_relative_to_base_dir=['base_dir'])
 
     # write overview of changed parameters

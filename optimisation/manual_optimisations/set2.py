@@ -51,7 +51,7 @@ def test_2():
     print(len(runs))
     opt_name = f'{branch}_{opt_name}'
     run_manal_opt(opt_name, mod_params=runs,
-                  safemode=True, replot=replot)
+                  safemode=True, replot=replot, rm_remote_files=False)
 
 
 
