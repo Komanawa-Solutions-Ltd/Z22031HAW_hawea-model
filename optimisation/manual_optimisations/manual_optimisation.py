@@ -100,6 +100,7 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
             if p.name in ['param_overview.txt', 'mse.csv']:
                 continue
 
+
 # todo abstract and save
 
 def run_manal_opt(name, mod_params, safemode=True, replot=False):
@@ -113,7 +114,6 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     opt_dir = base_opt_dirs.joinpath(name)
     assert isinstance(opt_dir, Path)
 
-    opt_dir.mkdir(exist_ok=not safemode or replot, parents=True)
 
     mod_params = np.atleast_1d(mod_params)
 
@@ -135,7 +135,9 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     for k in overview_data.index:
         tag = k.split('_')[0]
         pname = '_'.join(k.split('_')[1:])
-        v = base_pdict[tag][pname]
+        v = base_pdict.get(tag)
+        if v is not None:
+            v = v.get(pname)
         overview_data.loc[k, :] = v
 
     runs = []
@@ -146,10 +148,10 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     for i, single_mod_params in enumerate(mod_params):
         pdict = deepcopy(base_pdict)
 
-        bulk_keys = [e for e in pdict.keys() if 'bulk_' in e]  # todo add terrace vs bulk
+        bulk_keys = [e for e in single_mod_params.keys() if 'bulk_' in e]  # todo add terrace vs bulk
         if len(bulk_keys) > 0:
             for k in bulk_keys:
-                val = pdict.pop(k)
+                val = single_mod_params.pop(k)
                 tag = k.split('_')[-1]
                 overview_data.loc[k, f'sen_{i:04d}'] = val
                 for pr in pdict[tag].keys():
@@ -157,10 +159,10 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
                         continue
                     pdict[tag][pr] = val
 
-        bulk_ter_keys = [e for e in pdict.keys() if 'bulkter_' in e]
+        bulk_ter_keys = [e for e in single_mod_params.keys() if 'bulkter_' in e]
         if len(bulk_ter_keys) > 0:
-            for k in bulk_keys:
-                val = pdict.pop(k)
+            for k in bulk_ter_keys:
+                val = single_mod_params.pop(k)
                 tag = k.split('_')[-1]
                 overview_data.loc[k, f'sen_{i:04d}'] = val
                 for pr in pdict[tag].keys():
@@ -176,6 +178,7 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
         runs.append({'model_name': f'sen_{i:04d}', 'base_dir': '', 'mod_params': [pdict[t] for t in tags]})
 
     # run all models
+    opt_dir.mkdir(exist_ok=not safemode or replot, parents=True)
     if not replot:
         print(f'running {len(runs)} models')
         ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=True, run=True, compile=True,
