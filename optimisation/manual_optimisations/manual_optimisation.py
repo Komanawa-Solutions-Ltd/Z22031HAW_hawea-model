@@ -34,7 +34,9 @@ ssh_dist = SshDist(
         '100.124.148.71': 8,
         '100.121.150.68': None,
     },
-    core_weigtings=None,
+    core_weigtings={
+        '100.124.148.71': 2.6675381999814873,
+        '100.121.150.68': 1.0},
     user_names=None,
     short_names=None,
     prepend_bash_commands={
@@ -113,7 +115,6 @@ def run_manal_opt(name, mod_params, safemode=True, replot=False):
     """
     opt_dir = base_opt_dirs.joinpath(name)
     assert isinstance(opt_dir, Path)
-
 
     mod_params = np.atleast_1d(mod_params)
 
