@@ -101,6 +101,7 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
                 continue
             if p.name in ['param_overview.txt', 'mse.csv']:
                 continue
+            p.unlink()
 
 
 # todo abstract and save
