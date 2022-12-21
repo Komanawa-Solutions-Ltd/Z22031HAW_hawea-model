@@ -34,6 +34,24 @@ def test_1():
     opt_name = f'{branch}_{opt_name}'
     run_manal_opt(opt_name, mod_params=runs,
                   safemode=True, replot=replot)
+def test_2():
+    print_myself()
+    opt_name = 'test_2'
+
+    params = {
+        'bulk_kh': [1, 10, 50, 100, 300],
+        'kh_mor_l0': [1, 10, 50, 100],
+    }
+    use_keys = params.keys()
+    runs = []
+    new_vals = np.array(list(itertools.product(*[params[e] for e in use_keys])))
+    for r in new_vals:
+        temp = {k: i for k, i in zip(use_keys, r)}
+        runs.append(temp)
+    print(len(runs))
+    opt_name = f'{branch}_{opt_name}'
+    run_manal_opt(opt_name, mod_params=runs,
+                  safemode=True, replot=replot)
 
 
 
@@ -68,7 +86,8 @@ replot = False
 #  bulk kh and sy are applied to everything other than the terrace, the lake, the low cond and moraine zone
 # keynote bulkter parameters are supported ['bulkter_kh', 'bulkter_sy'] theses apply to all terrace pilot points
 if __name__ == '__main__':
-    test_1()
+    test_2()
     if replot:
+        test_1()
         initial_manual2() # todo didn't run
         pass

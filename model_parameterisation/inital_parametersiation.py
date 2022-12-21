@@ -44,7 +44,7 @@ def get_inital_kh(return_just_start=False):
     # keynote use log values
     start_val = (40, (0.01, 1000))
     ter_start_val = (10, (0.01, 1000))
-    lake_val = (40, (0.001, 1000))
+    lake_val = (100, (0.001, 1000))
     moraine_l0 = (40, (0.001, 1000))
     moraine_l1 = (1e-4, (1e-7, 1))
 
