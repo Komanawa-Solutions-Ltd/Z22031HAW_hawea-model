@@ -6,7 +6,7 @@ from manual_optimisation import ssh_dist, _plot_high_freq_heads, _plot_success_f
 from optimisation.a_build_run_optimisation_version import branch
 
 if __name__ == '__main__':
-    run_name = 'lake_kh_sy'
+    run_name = 'initial_manual2'
     re_run = False
     re_plot = True
 

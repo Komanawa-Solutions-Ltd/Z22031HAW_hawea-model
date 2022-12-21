@@ -70,9 +70,8 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
     model_ws = base_dir.joinpath(model_name)
     run_model = True
     listfile = model_ws.joinpath(f'{model_name}.list')
-    if not re_run and listfile.exists():
-        if smt.modelchecks.modflow_converged(listfile):
-            run_model = False
+    if not re_run and listfile.exists() and model_ws.joinpath('observations.dat'):
+        run_model = False
 
     if run_model:
         kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
