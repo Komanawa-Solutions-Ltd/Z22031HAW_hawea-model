@@ -140,13 +140,13 @@ def _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs):
     sy_array = interpolate_sy_pilot_points(sy_param)[-1]
     kh_array = interpolate_kh_pilot_points(kh_param)[-1]
 
-    fig, ax = smt.plot.plt_matrix(sy_array[0], base_map=True, no_flow_layer=0, title='Sy field')
+    fig, ax = smt.plot.plt_matrix(sy_array, base_map=True, no_flow_layer=0, title='Sy field')
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('sy_array.png'))
 
     fig, (ax, ax1) = plt.subplots(ncols=2, figsize=(10, 8))
-    smt.plot.plt_matrix(kh_array[0], base_map=True, no_flow_layer=0, title='Kh field', ax=ax)
-    smt.plot.plt_matrix(np.log10(kh_array[0]), base_map=True, no_flow_layer=0, title='log10 Kh field', ax=ax1)
+    smt.plot.plt_matrix(kh_array, base_map=True, no_flow_layer=0, title='Kh field', ax=ax)
+    smt.plot.plt_matrix(np.log10(kh_array), base_map=True, no_flow_layer=0, title='log10 Kh field', ax=ax1)
     fig.tight_layout()
     fig.savefig(base_plot_dir.joinpath('kh_array.png'))
 
@@ -341,9 +341,9 @@ if __name__ == '__main__':
     from project_base import unbacked_dir
     from optimisation.a_build_run_optimisation_version import branch
 
-    plot_failures = False  # keynote this can take a really long time with a long optimisation
+    plot_failures = True  # keynote this can take a really long time with a long optimisation
     check_success = False  # takes too long
-    re_plot = False  # keynote don't set this to True!
+    re_plot = True  # keynote don't set this to True!
     pest_runs = unbacked_dir.joinpath(branch).glob('*/Optimisations')
 
     for d in pest_runs:
