@@ -206,7 +206,7 @@ def get_all_list_data(pest_dir, outer, inner):
     nfailed = 0
     for i, f in enumerate(listfiles):
         if i % 100 == 0:
-            print(f'extracting file {i}')
+            print(f'extracting file {i} of {len(listfiles)}')
         try:
             temp = ListSolverInfo(f)
             outdata_solver.append(temp.get_over(outer, inner))

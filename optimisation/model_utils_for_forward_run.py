@@ -76,6 +76,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
     # keynote other steps if I end up with them
     sy = interpolate_sy_pilot_points(sy_param)
     ss = set_ss_terms(sy_param)
+    ss[0] = sy[0]  # keynote set ss for layer 0 to sy (for fully confined model run)
     out = build_model(smt=smt,
                       tdis=tdis,
                       oc_spd=oc_spd,
@@ -96,7 +97,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                                              hill_param=hill_param,
                                              race_param=race_param),
                       options='COMPLEX',
-                      nwt_kwargs={'maxiterout': 1000, 'maxitinner': 100},
+                      nwt_kwargs={'maxiterout': 1500, 'maxitinner': 100},
                       hani=None,
                       mfv='mfnwt',
                       run_model=run_model,
