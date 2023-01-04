@@ -10,7 +10,7 @@ from model_build.utils import select_resample, get_colors
 from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
 from model_build.zones import get_model_zones
 from model_build.project_model_tools import exclude_near_river_pumping, get_low_cond_array, get_lake_array, \
-    get_2d_moraine
+    get_2d_moraine, smt
 
 default_recalc = False
 
@@ -71,6 +71,18 @@ def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=Fals
     return select_resample(outdata, start_date, end_date, frequency, func=func)
 
 
+def get_pump_to_l1(recalc=False):
+    save_path = processed_model_build_data_dir.joinpath('pump_mover.txt')
+    if save_path.exists() and not recalc:
+        out = np.loadtxt(save_path).astype(int) == 1
+    else:
+        out = np.isfinite(
+            smt.io.shape_file_to_model_array(base_model_build_data_dir.joinpath('pump_to_layer_2.shp'), 'id',
+                                             alltouched=True))
+        np.savetxt(save_path, out.astype(int), '%d')
+    return out
+
+
 def get_pumping_locs(return_raw=False):
     data = get_well_flowmeter_mapper()
     idx = get_low_cond_array()
@@ -87,6 +99,10 @@ def get_pumping_locs(return_raw=False):
     zones = get_model_zones()
     for k, v in zones.items():
         data.loc[:, k] = v[data.i, data.j]
+
+    # move hawea flat bores to layer 1 so that they cannot go dry (reduce model instability)
+    idx = get_pump_to_l1()[data.i, data.j] & (data.k == 0)
+    data.loc[idx, 'k'] = 1
     if return_raw:
         return data
     if exclude_near_river_pumping:
@@ -176,8 +192,8 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    locs = get_pumping_locs()
     get_model_zones(True)
     data_checks()
     flow_mapper = get_well_flowmeter_mapper(recalc=True)
-    locs = get_pumping_locs()
     flow = get_historical_pumping_data(None, None, recalc=True)

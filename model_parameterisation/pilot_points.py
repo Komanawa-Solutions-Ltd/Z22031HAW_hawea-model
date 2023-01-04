@@ -52,8 +52,8 @@ def get_pilot_point_locations(recalc=False):
         outdata.loc[:, 'name'] = outdata.group.astype(str) + outdata.id.astype(str)
         outdata.set_index('name', inplace=True)
         outdata.to_csv(processed_path)
-    # keynote remove v12 parameterisation
-    outdata = outdata.drop(['h_flat40', 'h_flat41', 'h_flat42', 'h_flat43', 'h_flat44', 'h_flat45', 'h_flat46'])
+    # keynote remove some v12 parameterisation
+    outdata = outdata.drop(['h_flat40', 'h_flat41', 'h_flat42', 'h_flat43', 'h_flat44'])
 
     return outdata
 

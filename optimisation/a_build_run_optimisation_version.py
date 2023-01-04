@@ -131,20 +131,16 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_3d_v1'
-previous_mversion = 'init_v12'
-branch = '3d_v1'
-previous_branch = 'structure_v12'
+mversion = 'init_3d_v1a'
+previous_mversion = 'init_3d_v1'
+branch = '3d_v1a'
+previous_branch = '3d_v1'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f""" 
-* move to 3d structure (near lake)
-* remove the slope fixer on the east side
-* remove additional parameterization of v12
-* Address the 3d moraine issues in structure
-* 3 layers the bottom two pinch out against the bottom of the model.
-* Add abrupt parameter change at terrace interface
-* Remove from dam to “dam control” road from model (e.g. no flow)
+* extend the terrace to encompas the hawea flat moraine
+* add some additional pilot points
+* set hawea flat puming wells to layer 1 (confined) to minimise the wetting and drying instability with these wells.
 
 
 """
