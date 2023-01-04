@@ -149,7 +149,7 @@ recalc = True
 build_model = True
 build_pest = True
 safemode = True
-local_cores = 7  # set to a lower number of core if you plan on using the local machine at the same time as a run
+local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
 
 # todo fill above here
 
