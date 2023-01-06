@@ -131,7 +131,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_3d_v1a'
+mversion = 'init2_3d_v1a'
 previous_mversion = 'init_3d_v1'
 branch = '3d_v1a'
 previous_branch = '3d_v1'
@@ -149,7 +149,7 @@ recalc = True
 build_model = True
 build_pest = True
 safemode = True
-local_cores = None  # set to a lower number of core if you plan on using the local machine at the same time as a run
+local_cores = 8  # set to a lower number of core if you plan on using the local machine at the same time as a run
 
 # todo fill above here
 
