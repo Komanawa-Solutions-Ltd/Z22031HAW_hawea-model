@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.interpolate import RBFInterpolator
 from project_base import base_param_dir, processed_param_dir
 from model_build.zones import get_model_zones
-from model_build.project_model_tools import smt, get_lake_array, get_low_cond_array, get_2d_moraine
+from model_build.project_model_tools import smt, get_lake_array, get_low_cond_array, get_2d_moraine, get_east_opening
 from model_build.supporting_data_analysis import get_irrigation_code
 from model_tools.time_discretization import TimeDis
 from model_parameterisation.static_params import lake_sy, lake_ss
@@ -119,7 +119,8 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     kh = np.repeat(kh[np.newaxis], smt.layers, axis=0)
 
     kh[get_low_cond_array()] = kh_data['mor_l1']
-    kh[0, get_2d_moraine()] = kh_data['mor_l0']
+    kh[0, get_2d_moraine()] = kh_data['mor_l1']
+    kh[0, get_2d_moraine() & get_east_opening()] = kh_data['mor_l0']
 
     if return_df:
         return kh, pilot_locs
@@ -186,7 +187,8 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False,
     sy = np.repeat(sy[np.newaxis], smt.layers, axis=0)
 
     sy[get_low_cond_array()] = sy_data['sy_mor_l1']
-    sy[0, get_2d_moraine()] = sy_data['sy_mor_l0']
+    sy[0, get_2d_moraine()] = sy_data['sy_mor_l1']
+    sy[0, get_2d_moraine() & get_east_opening()] = sy_data['sy_mor_l0']
 
     if return_df:
         return sy, pilot_locs
@@ -200,8 +202,9 @@ def set_ss_terms(sy_data):
     :return:
     """
     ss = smt.get_model_zeros(True) + sy_data['ss_rest']
-    ss[0, get_2d_moraine()] = sy_data['ss_mor_l0']
     ss[get_low_cond_array()] = sy_data['ss_mor_l1']
+    ss[0, get_2d_moraine()] = sy_data['ss_mor_l1']
+    ss[0, get_2d_moraine() & get_east_opening()] = sy_data['ss_mor_l0']
 
     return ss
 
@@ -306,9 +309,9 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
 def check_kh_sy_ss():
     from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh
     vas = get_inital_kh(True)
-    vas['lake'] = 20
-    vas['mor_l0'] = 7
-    vas['mor_l1'] = 5
+    vas['lake'] = 200
+    vas['mor_l0'] = 400
+    vas['mor_l1'] = 500
     kh = interpolate_kh_pilot_points(vas)
     ss_sy = get_inital_sy(True)
     ss_sy['sy_mor_l0'] = 0.02

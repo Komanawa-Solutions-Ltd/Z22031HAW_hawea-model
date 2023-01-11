@@ -512,6 +512,15 @@ def get_xsection_points(recalc=False):
     step_points.to_csv(save_path)
     return step_points
 
+def get_east_opening(recalc=False):
+    shp_path = base_model_build_data_dir.joinpath('east_opening.shp')
+    outpath = base_model_build_data_dir.joinpath('east_opening.txt')
+    if outpath.exists() and not recalc:
+        data = np.loadtxt(outpath)
+        return data == 1
+    data = np.isfinite(temp_smt.io.shape_file_to_model_array(shp_path, 'id', alltouched=True))
+    np.savetxt(outpath, data, '%d')
+    return data
 
 def get_lake_bar():
     lake = get_lake_array()

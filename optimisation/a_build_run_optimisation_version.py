@@ -16,7 +16,8 @@ import matplotlib.pyplot as plt
 
 def recalc_model_build(rerun_rushton=False):
     from model_build.project_model_tools import smt, get_ibound, get_elv_db, \
-        get_lake_array, get_starting_heads, get_2d_moraine, get_layer_pinchout_area, get_xsection_points
+        get_lake_array, get_starting_heads, get_2d_moraine, get_layer_pinchout_area, get_xsection_points, \
+        get_east_opening
     from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
     from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes, \
         get_era5_land, get_corrected_historical_era5_rch
@@ -40,6 +41,7 @@ def recalc_model_build(rerun_rushton=False):
 
     get_param_zones(recalc=True)
     get_lake_array(recalc=True)
+    get_east_opening(recalc=True)
     get_model_zones(recalc=True)
 
     get_river_loc_data(recalc=True)
@@ -132,15 +134,14 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
 mversion = 'init2_3d_v1a'
-previous_mversion = 'init_3d_v1'
-branch = '3d_v1a'
-previous_branch = '3d_v1'
+previous_mversion = 'init2_3d_v1a'
+branch = '3d_v3'
+previous_branch = '3d_v1a'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f""" 
-* extend the terrace to encompas the hawea flat moraine
-* add some additional pilot points
-* set hawea flat puming wells to layer 1 (confined) to minimise the wetting and drying instability with these wells.
+* make a deeper cut on E side of Moraine 
+* other layer 0 --> moraine value
 
 
 """
