@@ -133,14 +133,14 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init2_3d_v1a'
+mversion = 'init3d_v3'
 previous_mversion = 'init2_3d_v1a'
 branch = '3d_v3'
 previous_branch = '3d_v1a'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f""" 
-* make a deeper cut on E side of Moraine 
+* make a deeper cut on E side of Moraine (grandview ck east)
 * other layer 0 --> moraine value
 
 
