@@ -182,6 +182,8 @@ def _lake_locs():
     lake_data.drop(columns='drop', inplace=True)
     out = []
     for l in range(smt.layers):  # keynote set ghbs in all lake cells except low cond lake bar
+        if l == 0: # keynote exlude lake cells in layer 0 as the lake hds may fall below bot layer 0
+            continue
         temp = deepcopy(lake_data)
         temp.loc[:, 'k'] = l
         out.append(temp)
@@ -370,7 +372,7 @@ def old_to_3d(top, bot):
     bot3 = bot - 2
 
     moraine = get_2d_moraine()
-    bot1[moraine | np.isfinite(get_lake_array())] = 337
+    bot1[moraine | np.isfinite(get_lake_array())] = 335
     bot2[moraine | np.isfinite(get_lake_array())] = 328
 
     azimuth_data = temp_smt.io.azimuth_from_line(base_model_build_data_dir.joinpath('3d_smoother.shp'), 20,

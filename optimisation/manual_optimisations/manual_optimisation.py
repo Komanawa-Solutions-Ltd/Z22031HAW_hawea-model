@@ -3,7 +3,6 @@ created matt_dumont
 on: 25/11/22
 """
 from pathlib import Path
-from model_build.project_model_tools import smt
 from copy import deepcopy
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -53,7 +52,7 @@ ssh_dist = SshDist(
     sys_paths="default"
 )
 
-
+# todo sort SMT if needed!
 def _run_model_mp(kwargs):
     try:
         manual_opt(**kwargs)
@@ -76,7 +75,7 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
     if run_model:
         kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
         print(f'building and running {model_name}')
-        build_run_model(
+        build_run_model(smt=smt,
             model_name=model_name, model_ws=model_ws,
             kh_param=kh_param,
             sy_param=sy_param,
@@ -87,7 +86,7 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
         )
 
     print(f'processing output for: {model_name}')
-    process_model_output(model_ws=model_ws,
+    process_model_output(smt=smt, model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{model_name}.hds'),
                          plot=False, savelist=False, save_param=False, run_if_unconverged=True,
                          plot_failures=False)

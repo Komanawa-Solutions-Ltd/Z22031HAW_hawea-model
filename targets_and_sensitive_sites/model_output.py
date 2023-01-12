@@ -18,7 +18,7 @@ from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_loc
 from optimisation.optimisation_period import tdis
 from model_build.supporting_data_analysis import get_river_loc_data, get_all_wells
 from model_build.utils import get_colors, plot_1_to_1
-from model_build.project_model_tools import get_ibound, smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
+from model_build.project_model_tools import get_ibound, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
     get_xsection_points
 from matplotlib.colors import SymLogNorm
 from model_tools.util_functions.list_file_utils import ListSolverInfo
@@ -43,7 +43,7 @@ def myself():
     return inspect.stack()[1][3]
 
 
-def generate_outputs(hds_path, cbc_path):
+def generate_outputs(smt, hds_path, cbc_path):
     all_hds = flopy.utils.HeadFile(hds_path).get_alldata()
     all_hds[all_hds > 1e20] = np.nan
     hds = get_all_hds_targets(tdis)
@@ -131,7 +131,7 @@ def generate_outputs(hds_path, cbc_path):
     return out_obs, all_riv_obs, dry_hds, flooded_cells, all_hds, all_riv, all_str_flow, str_flow_out
 
 
-def plot_lake_moraine_smoothed_areas(all_hds, plot_dir):
+def plot_lake_moraine_smoothed_areas(smt, all_hds, plot_dir):
     # plot all three layers of the area that is smoothed, etc. all in 1 plot
     idx = np.isfinite(get_lake_array()) | get_layer_pinchout_area() | get_2d_moraine()
     fig, axs = plt.subplots(ncols=3, figsize=(14, 9), sharex=True, sharey=True)
@@ -149,7 +149,7 @@ def plot_lake_moraine_smoothed_areas(all_hds, plot_dir):
     plt.close(fig)
 
 
-def _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells):
+def _plot_spatial_heads(smt, all_hds, ibound, plot_dir, dry_hds, flooded_cells):
     print(myself())
     # plot hds (ss, min, max, range)
 
@@ -493,7 +493,7 @@ def _plot_budget(list_file, plot_dir, plot_transient_budget):
             plt.close(fig)
 
 
-def _plot_spatial_riv(all_riv, plot_dir):
+def _plot_spatial_riv(smt, all_riv, plot_dir):
     print(myself())
     if plot_dir is not None:
         assert isinstance(plot_dir, Path)
@@ -521,7 +521,7 @@ def _plot_spatial_riv(all_riv, plot_dir):
         plt.show()
 
 
-def _plot_spatial_strflow_out(all_str_flow, plot_dir):
+def _plot_spatial_strflow_out(smt, all_str_flow, plot_dir):
     print(myself())
     if plot_dir is not None:
         assert isinstance(plot_dir, Path)
@@ -608,7 +608,7 @@ def _plot_str_flow(str_flow_out, plot_dir):
         fig.savefig(outdir.joinpath(f'{r}_head_tail_flow.png'))
 
 
-def _plot_spatial_hd_misfit(hds_obs, plot_dir):
+def _plot_spatial_hd_misfit(smt, hds_obs, plot_dir):
     print(myself())
     outdir = plot_dir.joinpath('spatial_hds')
     outdir.mkdir(exist_ok=True)
@@ -664,7 +664,7 @@ def _plot_spatial_hd_misfit(hds_obs, plot_dir):
         fig.savefig(outdir.joinpath(f'spatial_hds_residual_{g}.png'))
 
 
-def plot_xsections(all_hds, plot_dir):
+def plot_xsections(smt, all_hds, plot_dir):
     assert isinstance(plot_dir, Path)
     outdir = plot_dir.joinpath('cross_sections')
     outdir.mkdir(exist_ok=True)
@@ -681,7 +681,7 @@ def plot_xsections(all_hds, plot_dir):
         plt.close(fig)
 
 
-def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
+def visualise_model(smt, model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                     all_str_flow, str_flow_out, plot_transient_budget=False, plot_dir=None):
     assert isinstance(model_ws, Path)
 
@@ -717,19 +717,19 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     riv_colors = get_colors(riv_keys)
 
     ## Plotting ##
-    plot_xsections(all_hds, plot_dir)
+    plot_xsections(smt, all_hds, plot_dir)
 
-    plot_lake_moraine_smoothed_areas(all_hds, plot_dir)
+    plot_lake_moraine_smoothed_areas(smt, all_hds, plot_dir)
 
-    _plot_spatial_heads(all_hds, ibound, plot_dir, dry_hds, flooded_cells)
+    _plot_spatial_heads(smt, all_hds, ibound, plot_dir, dry_hds, flooded_cells)
 
-    _plot_spatial_hd_misfit(hds_obs, plot_dir)
+    _plot_spatial_hd_misfit(smt, hds_obs, plot_dir)
 
     _plot_str_along_str(all_str_flow, plot_dir)
 
     _plot_budget(list_file, plot_dir, plot_transient_budget)
 
-    _plot_spatial_strflow_out(all_str_flow, plot_dir)
+    _plot_spatial_strflow_out(smt, all_str_flow, plot_dir)
 
     _plot_str_flow(str_flow_out, plot_dir)
 
@@ -749,10 +749,10 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
 
     _plot_riv_obs(riv_keys, riv_colors, out_obs, plot_dir)
 
-    _plot_spatial_riv(all_riv, plot_dir)
+    _plot_spatial_riv(smt, all_riv, plot_dir)
 
 
-def plot_list_failures(list_file, plot_dir):
+def plot_list_failures(smt, list_file, plot_dir):
     temp = ListSolverInfo(list_file)
     all_overs = temp.get_over(50, 0)
 
@@ -787,7 +787,7 @@ def modflow_converged(list_path):
     return converg
 
 
-def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_param=True, plot_dir=None,
+def process_model_output(smt, model_ws, hds_file, plot=False, savelist=True, save_param=True, plot_dir=None,
                          run_if_unconverged=False, plot_failures=False):
     model_ws = Path(model_ws)
     hds_file = Path(hds_file)
@@ -801,7 +801,7 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
         plot_dir.mkdir(exist_ok=True)
 
         # plot listfile failures
-        plot_list_failures(list_file, plot_dir)
+        plot_list_failures(smt, list_file, plot_dir)
 
     # save listfile and parameter file
     if savelist:
@@ -825,14 +825,14 @@ def process_model_output(model_ws, hds_file, plot=False, savelist=True, save_par
 
     # output information
     (out_obs, all_riv_obs, dry_hds, flooded_cells,
-     all_hds, all_riv, all_str_flow, str_flow_out) = generate_outputs(hds_file, cbc_file)
+     all_hds, all_riv, all_str_flow, str_flow_out) = generate_outputs(smt, hds_file, cbc_file)
 
     # save output
     out_obs.to_csv(model_ws.joinpath('observations.dat'), sep='\t', index=False)
 
     # plot stuff
     if plot:
-        visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
+        visualise_model(smt, model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_cells, all_riv, list_file,
                         all_str_flow, str_flow_out,
                         plot_dir=plot_dir)
         plt.close('all')

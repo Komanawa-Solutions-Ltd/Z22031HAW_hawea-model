@@ -13,6 +13,7 @@ from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 
 if __name__ == '__main__':
+    #keynote SMT is not handled here appropriately
     plot = False
     name = 'opt_model'
     model_ws = Path(__file__).parent

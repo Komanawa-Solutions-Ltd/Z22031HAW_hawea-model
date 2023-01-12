@@ -9,10 +9,9 @@ import numpy as np
 from matplotlib.colors import FuncNorm, Normalize
 from matplotlib.colorbar import ColorbarBase
 import pandas as pd
-from model_build.project_model_tools import smt
 from model_build.utils import get_colors
 from targets_and_sensitive_sites.model_output import process_model_output
-from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
+from optimisation.model_utils_for_forward_run import read_param_data, build_run_model, get_bespoke_smt
 from model_tools.plot_optimisation import plot_optimisation_and_extract_info
 from model_parameterisation.inital_parametersiation import *
 from model_parameterisation.pilot_points import interpolate_sy_pilot_points, interpolate_kh_pilot_points
@@ -20,7 +19,6 @@ from model_tools.util_functions.list_file_utils import ListSolverInfo
 import py7zr
 from targets_and_sensitive_sites.model_output import plot_hds_regular_locator, base_regular_groupnames
 from optimisation.optimisation_period import tdis
-
 
 def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=False):
     base_plot_dir = Path(pest_dir).joinpath('Base_Optimisation_plots')
@@ -40,8 +38,8 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=Fal
     kh_param, sy_param, riv_param, hill_param, race_param, rch_param = read_param_data(model_ws,
                                                                                        parameter_file=opt_par_file,
                                                                                        format='pest')
-
-    build_run_model(
+    smt = get_bespoke_smt(bund_elv=riv_param['bund_elv'])
+    build_run_model(smt=smt,
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,
         sy_param=sy_param,
@@ -52,7 +50,7 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=Fal
     )
     opt_plot_dir = base_plot_dir.joinpath('final_opt_model')
     opt_plot_dir.mkdir(exist_ok=True)
-    process_model_output(model_ws=model_ws,
+    process_model_output(smt=smt, model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),
                          plot=True,
                          plot_dir=opt_plot_dir,
@@ -67,20 +65,20 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=Fal
     pp_locs.loc[:, 'hk'] = [kh_param[e] for e in pp_locs.index]
     pp_locs.loc[:, 'sy'] = [sy_param[e] for e in pp_locs.index]
 
-    _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs)
-    _plot_param_at_bounds(base_plot_dir, pp_locs, kh_param, sy_param, riv_param, hill_param, race_param, rch_param)
+    _plot_spatial_kh_sy(smt, sy_param, kh_param, base_plot_dir, pp_locs)
+    _plot_param_at_bounds(smt, base_plot_dir, pp_locs, kh_param, sy_param, riv_param, hill_param, race_param, rch_param)
 
     if plot_failure_points:
-        _plot_failures(pest_dir, base_plot_dir)
+        _plot_failures(smt, pest_dir, base_plot_dir)
     elif check_success:
-        _just_check_success(pest_dir, base_plot_dir)
+        _just_check_success(smt, pest_dir, base_plot_dir)
 
 
 def _dummy(x):
     return x
 
 
-def _plot_param_at_bounds(base_plot_dir, pp_locs, kh_param, sy_param, riv_param, hill_param, race_param, rch_param):
+def _plot_param_at_bounds(smt, base_plot_dir, pp_locs, kh_param, sy_param, riv_param, hill_param, race_param, rch_param):
     init_sy_param = get_inital_sy()
     init_kh_param = get_inital_kh()
     init_race_param = get_race_multiplier()
@@ -135,7 +133,7 @@ def _plot_param_at_bounds(base_plot_dir, pp_locs, kh_param, sy_param, riv_param,
     fig.savefig(base_plot_dir.joinpath('parameter_norm_sy_kh.png'))
 
 
-def _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs):
+def _plot_spatial_kh_sy(smt, sy_param, kh_param, base_plot_dir, pp_locs):
     # plot rch multiplier array, kh, sy array
     sy_array = interpolate_sy_pilot_points(sy_param)[-1]
     kh_array = interpolate_kh_pilot_points(kh_param)[-1]
@@ -166,9 +164,9 @@ def _plot_spatial_kh_sy(sy_param, kh_param, base_plot_dir, pp_locs):
         fig.savefig(base_plot_dir.joinpath(f'{k}_values.png'))
 
 
-def _plot_failures(pest_dir, base_plot_dir):
+def _plot_failures(smt, pest_dir, base_plot_dir):
     # location of failures (e.g. model cells with max change over n iterations), use utls.listfilestuff that I wrote.
-    all_overs, all_itters, model_converged = get_all_list_data(pest_dir, 50, 0)
+    all_overs, all_itters, model_converged = get_all_list_data(smt, pest_dir, 50, 0)
     with open(base_plot_dir.joinpath('convergence_record.txt'), 'w') as f:
         f.write(f'model convergence percentage: {np.array(model_converged).sum() / len(model_converged) * 100}')
 
@@ -195,7 +193,7 @@ def _plot_failures(pest_dir, base_plot_dir):
         f.write(t.to_string())
 
 
-def get_all_list_data(pest_dir, outer, inner):
+def get_all_list_data(smt, pest_dir, outer, inner):
     pest_dir = Path(pest_dir)
     listfiles = []
     temp = [open(e, 'r') for e in pest_dir.rglob("**/*.list")]
@@ -238,7 +236,7 @@ def get_all_list_data(pest_dir, outer, inner):
     return outdata_solver, outdata_itters, model_converged
 
 
-def _just_check_success(pest_dir, base_plot_dir):
+def _just_check_success(smt, pest_dir, base_plot_dir):
     pest_dir = Path(pest_dir)
     model_converged = []
     raw_listfiles = [open(e, 'r') for e in pest_dir.rglob("**/*.list")]

@@ -24,6 +24,7 @@ def get_initial_rch_mult(return_just_start=False):
 def get_initial_riv_conductance(return_just_start=False):
     # these parameters are massively compensatory
     # keynote parameters are roughly from scott's model
+    # keynote Put BUND parameter in here for simplicity
     params = {
         'h1': (1000, (100, 10000)),
         'h2': (1000, (100, 10000)),
@@ -31,6 +32,7 @@ def get_initial_riv_conductance(return_just_start=False):
         'c1': (1000, (100, 10000)),
         'gview': (100, (50, 5000)),
         'john': (100, (50, 5000)),
+        'bund_elv': (335, (329, 341)),
     }
     if return_just_start:
         for k, v in params.items():

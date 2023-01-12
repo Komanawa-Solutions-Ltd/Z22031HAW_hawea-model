@@ -5,12 +5,28 @@ on: 25/10/22
 import time
 import pandas as pd
 from model_build.modflow_model import build_model
-from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
 from model_parameterisation.static_params import vka
 from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points, set_ss_terms
 from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
 from model_parameterisation.inital_parametersiation import *
+from model_build.project_model_tools import get_elv_db, get_2d_moraine, get_lake_array
+from copy import deepcopy
+
+
+def get_bespoke_smt(bund_elv):
+    from model_build.project_model_tools import smt as bsmt
+    bsmt = deepcopy(bsmt)
+
+    def belv_calc():
+        elv_db = get_elv_db()
+
+        elv_db[1, get_2d_moraine() | np.isfinite(get_lake_array())] = bund_elv
+        return elv_db
+
+    bsmt._elv_calculator = belv_calc
+
+    return bsmt
 
 
 def _get_param_data():
@@ -66,7 +82,7 @@ def write_base_param_file(outdir):
     param_data.to_csv(input_file, sep='\t', header=False, index=False)
 
 
-def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param):
+def build_run_model(smt, model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param):
     exe_name = 'mfnwt'
     run_model = True
     t = time.time()

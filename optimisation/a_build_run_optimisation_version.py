@@ -7,8 +7,7 @@ on: 1/11/22
 from pathlib import Path
 
 import pandas as pd
-from model_build.project_model_tools import smt
-from optimisation.model_utils_for_forward_run import _get_param_data, read_param_data
+from optimisation.model_utils_for_forward_run import _get_param_data, read_param_data, get_bespoke_smt
 from project_base import unbacked_dir, opt_proj_root, opt_model_tools
 import shutil
 import matplotlib.pyplot as plt
@@ -110,8 +109,10 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
     param_data.to_csv(model_ws.joinpath('parameters.dat'), sep='\t', header=False, index=False)
 
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws)
+    smt = get_bespoke_smt(bund_elv=riv_params['bund_elv'])
     print('running base model')
     build_run_model(
+        smt=smt,
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,
         sy_param=sy_param,
@@ -120,7 +121,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
         race_param=race_param,
         rch_param=rch_param
     )
-    process_model_output(model_ws=model_ws,
+    process_model_output(smt, model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),
                          plot=plot, run_if_unconverged=True)
     return model_ws.joinpath(f'{name}.list')
@@ -131,14 +132,14 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_3d_v4'
-previous_mversion = 'init_3d_v1'
-branch = '3d_v4'
+mversion = 'init_3d_v5'
+previous_mversion = 'init_3d_v1a'
+branch = '3d_v5'
 previous_branch = '3d_v1a'
 # todo to use previous parameters, put file here, else None
 from project_base import processed_param_dir
 
-param_file = processed_param_dir.joinpath('3d_v1a_final_opt.par.19')
+param_file = None
 notes = f""" 
 * as per 3d_v1a except bund is set to 340 instead of 335
 
@@ -181,7 +182,8 @@ if __name__ == '__main__':
     # build base model
     if build_model:
         listf = build_test_model(model_ws=test_path, start_param_vals=start_param, notes=test_notes, recalc=recalc)
-        assert smt.modelchecks.modflow_converged(listf)
+        from model_build.project_model_tools import smt as bulksmt
+        assert bulksmt.modelchecks.modflow_converged(listf)
 
     # build pest
     if build_pest:
