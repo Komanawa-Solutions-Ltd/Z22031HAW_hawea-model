@@ -73,6 +73,26 @@ def Lake_stage_vs_g40_0415():
     plt.show()
 
 
+def plot_bund_elv_interpreretation():
+    lake = get_lake_heads(*tdis.date_limits)
+    bottoms = smt.get_bottoms()
+    tops = smt.get_tops()[0]
+    high = get_high_freq_head_targets(*tdis.date_limits)
+    all_wells = get_all_wells()
+    w = 'g40_0415'
+    fig, ax = plt.subplots()
+    ax.plot(high.index, high.loc[:, w]+9, label=f'{w} + 9m', color='r', marker='.')
+    ax.plot(lake.index, lake, label='lake stage', color='b')
+    ax.axhline(tops[all_wells.loc[w, 'i'], all_wells.loc[w, 'j']], ls=':', label='top', color='grey')
+    for l in range(smt.layers):
+        ax.axhline(bottoms[l, all_wells.loc[w, 'i'], all_wells.loc[w, 'j']], ls=':', label=f'bot_l{l}', color='k')
+    for elv in [338, 338.5, 339, 339.5, 340, 340.5]:
+        ax.axhline(elv, ls='-.', color='k')
+    ax.legend()
+    ax.set_title(w)
+    plt.show()
+
+
 def check_target_datums():
     bottoms = smt.get_bottoms()
     tops = smt.get_tops()[0]
@@ -114,7 +134,8 @@ def check_target_datums():
 
 
 if __name__ == '__main__':
+    plot_bund_elv_interpreretation()
+    Lake_stage_vs_g40_0415()
     bottom_vs_mean_for_all_regular_targets()
     check_target_datums()
     check_riv_stage_near_g40_0366()
-    Lake_stage_vs_g40_0415()

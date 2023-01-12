@@ -122,7 +122,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
     )
     process_model_output(model_ws=model_ws,
                          hds_file=model_ws.joinpath(f'{name}.hds'),
-                         plot=plot)
+                         plot=plot, run_if_unconverged=True)
     return model_ws.joinpath(f'{name}.list')
 
 
@@ -131,16 +131,16 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init2_3d_v1a'
+mversion = 'init_3d_v4'
 previous_mversion = 'init_3d_v1'
-branch = '3d_v1a'
-previous_branch = '3d_v1'
+branch = '3d_v4'
+previous_branch = '3d_v1a'
 # todo to use previous parameters, put file here, else None
-param_file = None
+from project_base import processed_param_dir
+
+param_file = processed_param_dir.joinpath('3d_v1a_final_opt.par.19')
 notes = f""" 
-* extend the terrace to encompas the hawea flat moraine
-* add some additional pilot points
-* set hawea flat puming wells to layer 1 (confined) to minimise the wetting and drying instability with these wells.
+* as per 3d_v1a except bund is set to 340 instead of 335
 
 
 """
