@@ -370,7 +370,7 @@ def old_to_3d(top, bot):
     bot3 = bot - 2
 
     moraine = get_2d_moraine()
-    bot1[moraine | np.isfinite(get_lake_array())] = 335
+    bot1[moraine | np.isfinite(get_lake_array())] = 333
     bot2[moraine | np.isfinite(get_lake_array())] = 328
 
     azimuth_data = temp_smt.io.azimuth_from_line(base_model_build_data_dir.joinpath('3d_smoother.shp'), 20,
