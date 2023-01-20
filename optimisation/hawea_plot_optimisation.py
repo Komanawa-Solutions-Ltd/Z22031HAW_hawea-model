@@ -341,7 +341,7 @@ if __name__ == '__main__':
     from project_base import unbacked_dir
     from optimisation.a_build_run_optimisation_version import branch
 
-    plot_failures = True  # keynote this can take a really long time with a long optimisation
+    plot_failures = False  # keynote this can take a really long time with a long optimisation
     check_success = False  # takes too long
     re_plot = True  # keynote don't set this to True!
     pest_runs = unbacked_dir.joinpath(branch).glob('*/Optimisations')
