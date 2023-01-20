@@ -131,14 +131,14 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
 # make a new branch on major structural shifts
-mversion = 'init_3d_v1b'
+mversion = 'init_3d_v1c'
 previous_mversion = 'init_3d_v1a'
-branch = '3d_v1b'
+branch = '3d_v1c'
 previous_branch = '3d_v1a'
 # todo to use previous parameters, put file here, else None
 param_file = None
 notes = f""" 
-* optimisation as v1a but set bund elevation to 333
+* optimisation as v1a but set bund elevation to 337
 
 
 """
