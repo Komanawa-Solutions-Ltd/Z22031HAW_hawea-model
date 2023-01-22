@@ -64,8 +64,4 @@ if __name__ == '__main__':
     pdir = unbacked_dir.joinpath(branch, mversion, 'Optimisations')
     result_dir = pdir.joinpath('all_opt_steps')
 
-    run_opt_step_models(pdir, result_dir, 2, itters=np.concatenate((
-        np.arange(40, 56),
-        np.arange(20, 26),
-
-    )))
+    run_opt_step_models(pdir, result_dir, 2, itters=np.arange(15, 27))
