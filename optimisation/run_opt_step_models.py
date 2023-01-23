@@ -39,11 +39,18 @@ def run_model(name, model_ws, plot):
 
 def run_opt_step_models(pest_dir, run_dir, num_cores, itters=None, plot=True):
     assert isinstance(pest_dir, Path) and isinstance(run_dir, Path)
-    param_files = np.array(list(pest_dir.glob('*.par.*')))
-    param_itters = np.array([int(str(e).split('.')[-1]) for e in param_files])
     if itters is not None:
         itters = np.array(itters).astype(int)
-        param_files = param_files[np.in1d(param_itters, itters)]
+        param_files = []
+        param_itters = []
+        for i in itters:
+            t = pest_dir.joinpath(f'opt.par.{i}')
+            if t.exists():
+                param_files.append(t)
+                param_itters.append(i)
+    else:
+        param_files = np.array(sorted(list(pest_dir.glob('opt.par.*'))))
+        param_itters = np.array([int(str(e).split('.')[-1]) for e in param_files])
     runs = []
     run_dir.mkdir(exist_ok=True)
     for pid, p in zip(param_itters, param_files):
