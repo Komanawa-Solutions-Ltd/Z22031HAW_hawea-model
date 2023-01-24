@@ -216,12 +216,13 @@ def set_obs_data(pst, obs_path):
         pst.observation_data.loc[pst.observation_data.obgnme == g, 'weight'] *= 1 / weight_totals[g]
 
     # increase weight of specific groups
+    # keynote remove ngmp well obs
     group_wts = {
         'rwh_hf': 0,
         'rwh_hf_riv': 0,
         'h_hf': 150,
         'h_hf_riv': 50,
-        'h_lf': 10,
+        'h_lf': 0,
         'riv': 1e-3,
         'h_piezo': 10,
         'h_single_1': 5,
