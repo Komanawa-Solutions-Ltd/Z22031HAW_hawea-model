@@ -132,6 +132,8 @@ def run_simple_man_opt(name, mod_params, base_param_dict, replot, safemode=True,
 
     # write overview of changed parameters
     with open(opt_dir.joinpath('param_overview.txt'), 'w') as f:
+        f.write('dummy\n')
+        f.write('dummy\n')
         f.write(out_str)
     print('plotting')
     _plot_high_freq_heads(opt_dir, opt_dir.joinpath('0_plots'))
@@ -308,6 +310,7 @@ def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, w
                 lab = k
             temp2 = regular_hds[k].loc[regular_hds[k].well_name == well_name].sort_values('date')
             ax.plot(temp2.date, temp2.modelled, color=c, label=lab)
+            ax.axhline(temp2.modelled.mean(), color=c, ls=':', label=f'{lab}-mean')
 
             # add text label
             if i % 2 == 0:
@@ -320,6 +323,7 @@ def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, w
                 ax.text(t.date.values[idx], t.modelled.values[idx], k, color=c)
 
         ax.scatter(temp2.date, temp2.measured, color=well_color, label=f'{well_name.capitalize()} measured')
+        ax.axhline(temp2.measured.mean(), color=well_color, label=f'{well_name.capitalize()} measured - mean', ls='-.')
         ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=well_color,
                 label=f'{well_name.capitalize()} modelled')
 
