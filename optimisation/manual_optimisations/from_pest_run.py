@@ -135,7 +135,7 @@ def large_run():
 
 def try_shift_hflat():
     print_myself()
-    opt_name = 'large_run'
+    opt_name = 'try_shift_hflat'
     base_params = read_param_data(
         parameter_file='/home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.par',
         format='pest',
