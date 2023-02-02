@@ -586,12 +586,39 @@ def examine_3d(num_plots=10):
 
     smt.plot.plt_layer_slices(smt.get_thickness(), base_map=True, contour_levels=10, contour=True, title='thick')
     thick = smt.get_thickness()
-    thick[thick>10] = np.nan
+    thick[thick > 10] = np.nan
     smt.plot.plt_layer_slices(thick, base_map=True, contour_levels=1, contour=True, title='thick')
     smt.plot.show()
 
 
+def plot_3d_structure_spatial():
+    lake = np.isfinite(get_lake_array())
+    lake_bar = get_lake_bar()
+    moraine = get_2d_moraine()
+    pinch = get_layer_pinchout_area()
+
+    mapper = {
+        1: 'lake',
+        2: 'lake bar (layers 2 to 3)',
+        3: 'moraine zone',
+        4: 'layer pinch out area',
+    }
+    plt_layer = smt.get_model_zeros() * np.nan
+    plt_layer[lake] = 1
+    plt_layer[moraine] = 3
+    plt_layer[pinch] = 4
+    plt_layer[lake_bar] = 2
+    fig, ax = plt.subplots(figsize=(10, 8))
+    smt.plot.plt_discrete_matrix(plt_layer, names=mapper, base_map=True, no_flow_layer=0, cmap='tab10', alpha=0.6,
+                                 ax=ax,legend_loc='lower right')
+    ax.set_ylim(5.051e6, smt.get_xlim_ylim(False)[-1])
+    ax.set_xlim(1.3e6, 1.31e6)
+    fig.tight_layout()
+    plt.show()
+
+
 if __name__ == '__main__':
+    plot_3d_structure_spatial()
     t = get_xsection_points()
     examine_3d()
     temp = get_low_cond_array()
