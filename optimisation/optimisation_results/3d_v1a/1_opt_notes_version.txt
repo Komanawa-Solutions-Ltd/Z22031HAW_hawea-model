@@ -1,0 +1,19 @@
+version = base_model
+
+mversion = init2_3d_v1a
+branch: 3d_v1a
+previous optimisation: init_3d_v1
+previous branch: 3d_v1
+
+ 
+* extend the terrace to encompas the hawea flat moraine
+* add some additional pilot points
+* set hawea flat puming wells to layer 1 (confined) to minimise the wetting and drying instability with these wells.
+
+
+
+
+unique start params from: None
+unique start prams: 
+n/a
+

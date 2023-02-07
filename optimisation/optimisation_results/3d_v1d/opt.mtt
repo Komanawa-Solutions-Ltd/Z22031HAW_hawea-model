@@ -1,0 +1,8 @@
+ PARAMETER STATISTICAL MATRICES: CASE /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/opt
+
+ OPTIMISATION ITERATION NUMBER 45
+
+ Parameter statistical matrices are not calculated as some form of 
+ regularisation is being implemented on this run.
+
+ Use the PREDUNC7 utility to obtain a full posterior covariance matrix.

@@ -153,22 +153,22 @@ def plot_saturated_thickenss():
 
 if __name__ == '__main__':
     pass
-    plot_saturated_thickenss()
+    #plot_saturated_thickenss()
 
-    make_opt_preso(outdir=Path.home().joinpath('unbacked/hawea/opt_preso'),
+    make_opt_preso(outdir='/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/optimisation/optimisation_results',
                    pst_dir=Path.home().joinpath('unbacked/hawea',
-                                                '3d_v1a',
-                                                'init2_3d_v1a',
+                                                '3d_v1d',
+                                                'init_3d_v1d',
                                                 'Optimisations', 'Base_Optimisation_plots'),
                    all_obs_files=[
                        '/home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/Final_opt_model/observations.dat',
                        '/home/matt_dumont/unbacked/hawea/3d_v1b/init_3d_v1b/Optimisations/Final_opt_model/observations.dat',
-                       '/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/opt.rei.30'
+                       '/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/Final_opt_model/observations.dat'
                    ],
                    names=[
                        '3d_v1a',
                        '3d_v1b',
-                       '3d_v1d (not finished)',
+                       '3d_v1d',
                    ]
                    )
 
