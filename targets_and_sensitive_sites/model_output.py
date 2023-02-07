@@ -22,6 +22,8 @@ from model_build.project_model_tools import get_ibound, smt, get_lake_array, get
     get_xsection_points
 from matplotlib.colors import SymLogNorm
 from model_tools.util_functions.list_file_utils import ListSolverInfo
+from model_build.supporting_data_analysis import get_lake_heads
+import matplotlib.gridspec as gridspec
 
 # thoughts target groups
 """
@@ -314,11 +316,22 @@ def _plot_regular_hds_closeup(regular_wells, regular_colors, regular_hds, plot_d
     # plot each regular heads
     for n, nc in zip(regular_wells, regular_colors):
         # full dataset
-        fig, (ax, ax_loc) = plt.subplots(ncols=2, figsize=(12, 9), gridspec_kw=dict(width_ratios=(2, 1)))
+        fig = plt.figure(figsize=(14, 9))
+        gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1), height_ratios=(3, 1))
+        ax = fig.add_subplot(gs[0, 0])
+        ax_lake = fig.add_subplot(gs[1, 0])
+        ax_loc = fig.add_subplot(gs[0, 1])
         temp2 = regular_hds.loc[regular_hds.well_name == n].sort_values('date')
         ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
         ax.plot(temp2.date, temp2.modelled, color=nc, label=f'{n.capitalize()} modelled')
         plot_hds_regular_locator(ax_loc, {n: nc})
+        lake = get_lake_heads(temp2.date.min(), temp2.date.max())
+        ax_lake.plot(lake.index, lake, label='lake heads')
+        ax_lake.set_ylabel('lake heads (m)')
+        ax_lake.set_xlim(ax.get_xlim())
+        ax.set_xticks([])
+        ax.set_xticklabels([])
+        ax.set_xlabel('')
         ax.set_title(f'{n.capitalize()} hds')
         ax.set_xlabel('Date')
         ax.set_ylabel('Weekly mean Head (m)')
