@@ -65,7 +65,18 @@ def _run_model_mp(kwargs):
     return kwargs, success, error
 
 
-def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisary=True):
+def split_bulk_kwargs(data):
+    kh_param = {k: data[f'kh_{k}'] for k in get_inital_kh().keys()}
+    sy_param = {k: data[f'sy_{k}'] for k in get_inital_sy().keys()}
+    riv_params = {k: data[f'riv_{k}'] for k in get_initial_riv_conductance().keys()}
+    hill_param = {k: data[f'hill_{k}'] for k in get_hillslope_multiplier().keys()}
+    race_param = {k: data[f'race_{k}'] for k in get_race_multiplier().keys()}
+    rch_param = {k: data[f'rch_{k}'] for k in get_initial_rch_mult().keys()}
+
+    return kh_param, sy_param, riv_params, hill_param, race_param, rch_param
+
+
+def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisary=True, split_kwargs=True):
     assert isinstance(base_dir, Path)
     model_ws = base_dir.joinpath(model_name)
     run_model = True
@@ -74,7 +85,10 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
         run_model = False
 
     if run_model:
-        kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
+        if split_kwargs:
+            kh_param, sy_param, riv_params, hill_param, race_param, rch_param = mod_params
+        else:
+            kh_param, sy_param, riv_params, hill_param, race_param, rch_param = split_bulk_kwargs(mod_params)
         print(f'building and running {model_name}')
         build_run_model(
             model_name=model_name, model_ws=model_ws,
@@ -103,7 +117,27 @@ def manual_opt(mod_params, model_name, base_dir, re_run=False, remove_unneccisar
             p.unlink()
 
 
-# todo abstract and save
+def run_simple_man_opt(name, mod_params, base_param_dict, replot, safemode=True, rm_remote_files=True):
+    opt_dir = base_opt_dirs.joinpath(name)
+    assert isinstance(opt_dir, Path)
+    params, out_str = ssh_dist.modify_base_kwargs(name, mod_params, base_param_dict)
+    runs = []
+    for k, v in params.items():
+        runs.append({'model_name': k, 'base_dir': '', 'mod_params': v, 'split_kwargs': False})
+    opt_dir.mkdir(exist_ok=not safemode or replot, parents=True)
+    if not replot:
+        print(f'running {len(runs)} models')
+        ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=rm_remote_files, run=True, compile=True,
+                                 run_in_series=False, kwargs_relative_to_base_dir=['base_dir'])
+
+    # write overview of changed parameters
+    with open(opt_dir.joinpath('param_overview.txt'), 'w') as f:
+        f.write('dummy\n')
+        f.write('dummy\n')
+        f.write(out_str)
+    print('plotting')
+    _plot_high_freq_heads(opt_dir, opt_dir.joinpath('0_plots'))
+
 
 def run_manal_opt(name, mod_params, safemode=True, replot=False, rm_remote_files=True):
     """
@@ -276,6 +310,7 @@ def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, w
                 lab = k
             temp2 = regular_hds[k].loc[regular_hds[k].well_name == well_name].sort_values('date')
             ax.plot(temp2.date, temp2.modelled, color=c, label=lab)
+            ax.axhline(temp2.modelled.mean(), color=c, ls=':', label=f'{lab}-mean')
 
             # add text label
             if i % 2 == 0:
@@ -288,6 +323,7 @@ def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, w
                 ax.text(t.date.values[idx], t.modelled.values[idx], k, color=c)
 
         ax.scatter(temp2.date, temp2.measured, color=well_color, label=f'{well_name.capitalize()} measured')
+        ax.axhline(temp2.measured.mean(), color=well_color, label=f'{well_name.capitalize()} measured - mean', ls='-.')
         ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=well_color,
                 label=f'{well_name.capitalize()} modelled')
 

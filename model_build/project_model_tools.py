@@ -40,6 +40,7 @@ rows = int(abs(uly - lry) // grid_space) + 1
 
 layers = 3
 layer_type = [1, 0, 0]
+bund_top = 333
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,
@@ -370,7 +371,7 @@ def old_to_3d(top, bot):
     bot3 = bot - 2
 
     moraine = get_2d_moraine()
-    bot1[moraine | np.isfinite(get_lake_array())] = 333
+    bot1[moraine | np.isfinite(get_lake_array())] = bund_top
     bot2[moraine | np.isfinite(get_lake_array())] = 328
 
     azimuth_data = temp_smt.io.azimuth_from_line(base_model_build_data_dir.joinpath('3d_smoother.shp'), 20,
@@ -586,9 +587,35 @@ def examine_3d(num_plots=10):
 
     smt.plot.plt_layer_slices(smt.get_thickness(), base_map=True, contour_levels=10, contour=True, title='thick')
     thick = smt.get_thickness()
-    thick[thick>10] = np.nan
+    thick[thick > 10] = np.nan
     smt.plot.plt_layer_slices(thick, base_map=True, contour_levels=1, contour=True, title='thick')
     smt.plot.show()
+
+
+def plot_3d_structure_spatial():
+    lake = np.isfinite(get_lake_array())
+    lake_bar = get_lake_bar()
+    moraine = get_2d_moraine()
+    pinch = get_layer_pinchout_area()
+
+    mapper = {
+        1: 'lake',
+        2: 'lake bar (layers 2 to 3)',
+        3: 'moraine zone',
+        4: 'layer pinch out area',
+    }
+    plt_layer = smt.get_model_zeros() * np.nan
+    plt_layer[lake] = 1
+    plt_layer[moraine] = 3
+    plt_layer[pinch] = 4
+    plt_layer[lake_bar] = 2
+    fig, ax = plt.subplots(figsize=(10, 8))
+    smt.plot.plt_discrete_matrix(plt_layer, names=mapper, base_map=True, no_flow_layer=0, cmap='tab10', alpha=0.6,
+                                 ax=ax,legend_loc='lower right')
+    ax.set_ylim(5.051e6, smt.get_xlim_ylim(False)[-1])
+    ax.set_xlim(1.3e6, 1.31e6)
+    fig.tight_layout()
+    plt.show()
 
 
 if __name__ == '__main__':
