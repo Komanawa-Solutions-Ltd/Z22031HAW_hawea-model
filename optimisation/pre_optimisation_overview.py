@@ -16,7 +16,7 @@ from model_parameterisation.pilot_points import get_pilot_point_locations, inter
     interpolate_kh_pilot_points, get_param_zones, get_lake_array
 from model_parameterisation.static_params import *
 from model_tools.model_plotting import plot_spd, first, last, FakePath
-from model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_riv_data
+from model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_str_data
 from model_parameterisation.inital_parametersiation import *
 from optimisation.optimisation_period import tdis
 from project_base import proj_root, base_model_build_data_dir
@@ -27,15 +27,8 @@ from targets_and_sensitive_sites.head_targets import plot_head_targets, get_high
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
 from optimisation.determine_opt_start import get_opt_start_stop
 
-extension = '.pdf'
-if extension == '.png':
-    save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_png')
-elif extension == '.pdf':
-    save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_pdf')
-else:
-    raise ValueError('nope')
-
-save_path.mkdir(exist_ok=True)
+# todo check carefully with multiple layers
+# todo re-run with new 3d version, too much change to trust it
 
 
 def plot_parameterisation(save=False):
@@ -48,6 +41,7 @@ def plot_parameterisation(save=False):
         'River Conductance': ('Riv', get_initial_riv_conductance()),
         'Specific Yeild': ('Upw', get_inital_sy()),
         'Conductivity': ('Upw', get_inital_kh()),
+        'Recharge Multiplier': ('Rch', get_initial_rch_mult())
     }
     static_params = {
         'Lake Sy': lake_sy,
@@ -150,7 +144,7 @@ def plot_parameterisation(save=False):
     # inital transmisivity
     khs = get_inital_kh()
     lake = get_lake_array()
-    thick = get_starting_heads()[0] - smt.get_bottoms()[0]
+    thick = get_starting_heads()[0] - smt.get_bottoms().sum(axis=0)
     kh = np.full(smt.model_shape[1:], khs['sandy'][0])
     kh[np.isfinite(lake)] = khs['lake_conductance'][0]
 
@@ -187,9 +181,9 @@ def plot_parameterisation(save=False):
 
     # plot pilot points
     groups = pilot_locs.group.unique()
+    markersize = 3
+    marker = 'o'
     for group, c in zip(groups, get_colors(groups)):
-        markersize = 3
-        marker = 'o'
         temp = pilot_locs.loc[pilot_locs.group == group]
         ax.scatter(temp.x, temp.y, color=c, marker='o')
         handles.append(Line2D([0], [0], marker=marker, color='w',
@@ -241,8 +235,10 @@ def plot_all_spd(save=False):
                  outpath=outdir.joinpath(f'well_{k}_time{extension}'))
 
     # recharge
-    plot_spd(get_rch_data(tdis), smt, tdis, is_array=True, key='total LSR',
-             func=np.nansum, mult_by_area=True, title='recharge', outpath=outdir.joinpath(f'rch_time{extension}'))
+    plot_spd(get_rch_data(tdis, rch_param=get_initial_rch_mult(True)),
+             smt, tdis, is_array=True, key='total LSR',
+             func=np.nansum, mult_by_area=True, title='recharge',
+             outpath=outdir.joinpath(f'rch_time{extension}'))
 
     # lake
     plot_spd(get_ghb_data(tdis), smt, tdis,
@@ -250,10 +246,10 @@ def plot_all_spd(save=False):
              key='bhead', title='lake heads', outpath=outdir.joinpath(f'lake_time{extension}'))
 
     # river
-    plot_spd(get_riv_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
+    plot_spd(get_str_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
              func=first, key='stage', title='first river cell stage',
              outpath=outdir.joinpath(f'riv_first_cell_time{extension}'))
-    plot_spd(get_riv_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
+    plot_spd(get_str_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
              func=last, key='stage', title='last river cell stage',
              outpath=outdir.joinpath(f'riv_last_cell_time{extension}'))
 
@@ -263,7 +259,7 @@ def plot_all_spd(save=False):
     colors = get_colors(k_cs, cmap_name='winter')
     temp_data = get_river_loc_data()
     tops = smt.get_tops()[0]
-    bottoms = smt.get_bottoms()[0]
+    bottoms = smt.get_bottoms()[0] # todo this is probbly wrong
     temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
     temp_data.loc[:, 'model_bot'] = bottoms[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
     hawea_clutha_divide = temp_data.loc[temp_data.rname == 'hawea', 'dist'].max()
@@ -339,7 +335,7 @@ def plot_boundary_locs(save=False):
 def plot_steady_state_water_budget(save=False):
     outdir = save_path.joinpath('steady_state_water_budget')
     outdir.mkdir(exist_ok=True)
-    rch = get_rch_data(tdis)
+    rch = get_rch_data(tdis, rch_param=get_initial_rch_mult(True))
     rch = rch[0]
     wel = get_well_data(tdis, get_hillslope_multiplier(True), get_race_multiplier(True), return_unique_spd=True)
     wel = {k: v[0] for k, v in wel.items()}
@@ -386,7 +382,7 @@ def plot_steady_state_water_bud_locs(save):
     outdir = save_path.joinpath('steady_state_water_budget')
     outdir.mkdir(exist_ok=True)
     ibound = smt.get_no_flow(0)
-    rch = get_rch_data(tdis)
+    rch = get_rch_data(tdis, rch_param=get_initial_rch_mult(True))
     rch = rch[0]
     rch[ibound != 1] = np.nan
     wel = get_well_data(tdis, get_hillslope_multiplier(True), get_race_multiplier(True), return_unique_spd=True)
@@ -767,6 +763,18 @@ def make_all_preopt(save):
 
 
 if __name__ == '__main__':
+
+    # todo need to incorpoate changes to stream package (grandview and john creek)
     save = True
-    # checked and finished, but not saved
-    make_all_preopt(save)
+    for extension in ['.png']:
+        if extension == '.png':
+            save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_png')
+        elif extension == '.pdf':
+            save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_pdf')
+        else:
+            raise ValueError('nope')
+
+        save_path.mkdir(exist_ok=True)
+
+        # checked and finished, but not saved
+        make_all_preopt(save)

@@ -1,0 +1,2944 @@
+ PEST RUN RECORD: CASE /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/opt
+
+
+ BEOPEST Version: 17.3
+
+
+ PEST run mode:-
+
+    Parameter estimation mode
+
+
+ Case dimensions:-
+
+    Number of parameters                           :   135
+    Number of adjustable parameters                :   135
+    Number of parameter groups                     :     6
+    Number of observations                         :  1872
+    Number of prior estimates                      :     0
+
+
+ Model command line(s):-
+
+    conda run -n hawea python /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/forward_run.py
+
+
+ Jacobian command line:-
+
+    na
+
+
+ Model interface files:-
+
+    Templates:
+       /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/parameters.dat.tpl
+    for model input files:
+       /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/parameters.dat
+
+    (Parameter values written using single precision protocol.)
+    (Decimal point always included.)
+
+    Instruction files:
+       /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/observations.dat.ins
+    for reading model output files:
+       /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/observations.dat
+
+
+ PEST-to-model message file:-
+
+    na
+
+
+ Singular value decomposition:-
+
+    Perform SVD on XtQX or Q^(1/2)X               : XtQX
+    Max. number of singular values to employ      : 10000000
+    Ratio of lowest/highest singular value        :  1.000000E-06
+    Record eigenvectors in SVD file               : yes
+
+
+ Derivatives calculation:-
+
+ Param        Increment   Increment   Increment   Forward or   Multiplier  Method
+ group        type                    low bound   central      (central)   (central)
+ hill         relative    1.0000E-02   none         switch       2.000     parabolic
+ kh           relative    1.0000E-02   none         switch       2.000     parabolic
+ race         relative    1.0000E-02   none         switch       2.000     parabolic
+ rch          relative    1.0000E-02   none         switch       2.000     parabolic
+ riv          relative    1.0000E-02   none         switch       2.000     parabolic
+ sy           relative    1.0000E-02   none         switch       2.000     parabolic
+
+
+ Parameter definitions:-
+
+ This information not provided as non-verbose run record file requested.
+
+
+ Prior information:-
+
+    No prior information supplied
+
+
+ Observations:-
+
+ This information not provided as non-verbose run record file requested.
+
+
+ Control settings:-
+
+    Initial lambda                                               :  10.000    
+    Lambda adjustment factor                                     : iteration-dependent
+    Value of variable governing adjustment                       : -3.0000    
+    Sufficient new/old phi ratio per optimisation iteration      : 0.30000    
+    Limiting relative phi reduction between lambdas              : 1.00000E-02
+    Maximum trial lambdas per iteration                          :  10
+    Forgive model run failure during lamda testing               : yes
+    Forgive model run failure during Jacobian runs               : yes
+
+    Perform Broyden's update of Jacobian matrix                  : no
+    Undertake observation re-referencing                         : no
+
+    Maximum  factor  parameter change (factor-limited changes)   :  10.000
+    Maximum relative parameter change (relative-limited changes) : na
+    Fraction of initial parameter values used in computing
+    change limit for near-zero parameters                        : 1.00000E-03
+    Absolute parameter change limit (1)                          : 0.10000
+    Allow bending of parameter upgrade vector                    : no
+    Allow parameters to stick to their bounds                    : no
+
+    Relative phi reduction below which to begin use of
+    central derivatives                                          : 0.10000             
+    Iteration at which to first consider derivatives switch      :   3
+
+    Relative phi reduction indicating convergence                : 0.50000E-02
+    Number of phi values required within this range              :   6
+    Maximum number of consecutive failures to lower phi          :   6
+    Minimal relative parameter change indicating convergence     : 0.50000E-02
+    Number of consecutive iterations with minimal param change   :   6
+    Maximum number of optimisation iterations                    : 300
+
+    Attempt automatic user intervention                          : no
+
+    Attempt reuse of parameter sensitivities                     : no
+
+    Scale parameters by their bounds                             : no
+
+
+ File saving options: -
+
+    Save best JCO file                                           : yes
+    Save multiple JCO files                                      : yes
+    Save multiple REI files                                      : yes
+    Save multiple PAR files                                      : yes
+
+
+                             OPTIMISATION RECORD
+
+
+ INITIAL CONDITIONS: 
+    Sum of squared weighted residuals (ie phi)               =   3944.5    
+    Contribution to phi from observation group "h_piezo"     =   29.062    
+    Contribution to phi from observation group "h_single_3"  =   19.142    
+    Contribution to phi from observation group "h_single_1"  =   241.23    
+    Contribution to phi from observation group "h_hf_riv"    =   16.272    
+    Contribution to phi from observation group "rwh_hf_riv"  =   0.0000    
+    Contribution to phi from observation group "h_lf"        =   0.0000    
+    Contribution to phi from observation group "h_hf"        =   3443.0    
+    Contribution to phi from observation group "rwh_hf"      =   0.0000    
+    Contribution to phi from observation group "riv"         =   195.85    
+
+
+ OPTIMISATION ITERATION NO.        : 1
+    Model calls so far             : 1
+    Starting phi for this iteration                          :   3944.5    
+    Contribution to phi from observation group "h_piezo"     :   29.062    
+    Contribution to phi from observation group "h_single_3"  :   19.142    
+    Contribution to phi from observation group "h_single_1"  :   241.23    
+    Contribution to phi from observation group "h_hf_riv"    :   16.272    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   3443.0    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   195.85    
+
+    Parameter "kh_mang16" has no effect on observations.
+    Parameter "kh_mang18" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+
+        Lambda =   10.000     ----->
+           Phi =   3806.2      (  0.965 of starting phi)
+
+        Lambda =   4.6416     ----->
+           Phi =   3814.8      (  0.967 of starting phi)
+
+        Lambda =   21.544     ----->
+           Phi = cannot be calculated: model run failure
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   3806.2    
+    Maximum   factor change:  1.671     ["kh_ter35"]
+    Maximum relative change: 0.6711     ["kh_ter35"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 2
+    Model calls so far             : 142
+    Starting phi for this iteration                          :   3806.2    
+    Contribution to phi from observation group "h_piezo"     :   28.032    
+    Contribution to phi from observation group "h_single_3"  :   18.714    
+    Contribution to phi from observation group "h_single_1"  :   238.22    
+    Contribution to phi from observation group "h_hf_riv"    :   15.741    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   3316.9    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   188.60    
+
+    Parameter "sy_mang18" has no effect on observations.
+    Parameter "sy_mang19" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+
+        Lambda =   10.000     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   4.6416     ----->
+           Phi =   3695.5      (  0.971 of starting phi)
+
+        Lambda =   2.1544     ----->
+           Phi =   3696.6      (  0.971 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   3695.5    
+    Maximum   factor change:  1.526     ["kh_ter35"]
+    Maximum relative change: 0.5255     ["kh_ter35"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 3
+    Model calls so far             : 285
+    Starting phi for this iteration                          :   3695.5    
+    Contribution to phi from observation group "h_piezo"     :   27.408    
+    Contribution to phi from observation group "h_single_3"  :   18.459    
+    Contribution to phi from observation group "h_single_1"  :   235.91    
+    Contribution to phi from observation group "h_hf_riv"    :   15.289    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   3215.7    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   182.80    
+
+    Parameter "kh_h_flat9" has no effect on observations.
+    Parameter "kh_mang16" has no effect on observations.
+    Parameter "sy_riv_g25" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "hill_mang" frozen: - update vector out of bounds
+
+        Lambda =   2.1544     ----->
+           Phi =   3226.3      (  0.873 of starting phi)
+
+        Lambda =   1.0772     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   4.3089     ----->
+           Phi =   3170.5      (  0.858 of starting phi)
+
+        Lambda =   8.6177     ----->
+           Phi =   3177.8      (  0.860 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   3170.5    
+    Maximum   factor change:  10.00     ["sy_mang17"]
+    Maximum relative change:  9.000     ["sy_mang17"]
+    Maximum absolute(1) change: 8.0475E-02 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 4
+    Model calls so far             : 424
+    Starting phi for this iteration                          :   3170.5    
+    Contribution to phi from observation group "h_piezo"     :   23.415    
+    Contribution to phi from observation group "h_single_3"  :   17.465    
+    Contribution to phi from observation group "h_single_1"  :   183.12    
+    Contribution to phi from observation group "h_hf_riv"    :   13.462    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   2778.9    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   154.12    
+    All frozen parameters freed.
+
+    Parameter "rch_all" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+
+        Lambda =   4.3089     ----->
+           Phi =   2909.8      (  0.918 of starting phi)
+        param "hill_mang" frozen: - update vector out of bounds
+
+        Lambda =   2.1544     ----->
+           Phi =   2991.8      (  0.944 of starting phi)
+
+        Lambda =   1.0772     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   4.3089     ----->
+           Phi =   2904.2      (  0.916 of starting phi)
+
+        Lambda =   8.6177     ----->
+           Phi = cannot be calculated: model run failure
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   2904.2    
+    Relative phi reduction between optimisation iterations less than 0.1000
+    Switch to higher order derivatives calculation
+    Maximum   factor change:  10.00     ["kh_mang18"]
+    Maximum relative change:  9.000     ["kh_mang18"]
+    Maximum absolute(1) change: 3.7190E-02 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 5
+    Model calls so far             : 564
+    Starting phi for this iteration                          :   2904.2    
+    Contribution to phi from observation group "h_piezo"     :   21.893    
+    Contribution to phi from observation group "h_single_3"  :   17.055    
+    Contribution to phi from observation group "h_single_1"  :   178.41    
+    Contribution to phi from observation group "h_hf_riv"    :   17.748    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   2532.3    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   136.79    
+    All frozen parameters freed.
+
+    Parameter "kh_h_flat3" has no effect on observations.
+    Parameter "kh_h_flat46" has no effect on observations.
+    Parameter "kh_mang16" has no effect on observations.
+    Parameter "rch_all" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+
+        Lambda =   4.3089     ----->
+           Phi =   2846.2      (  0.980 of starting phi)
+        param "hill_mang" frozen: - update vector out of bounds
+
+        Lambda =   2.1544     ----->
+           Phi =   2367.8      (  0.815 of starting phi)
+
+        Lambda =   1.0772     ----->
+           Phi =   2371.8      (  0.817 of starting phi)
+
+        Lambda =   4.3089     ----->
+           Phi =   2359.8      (  0.813 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   2359.8    
+    Maximum   factor change:  7.262     ["sy_mang18"]
+    Maximum relative change:  3.260     ["kh_riv_g29"]
+    Maximum absolute(1) change: 7.8267E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 6
+    Model calls so far             : 838
+    Starting phi for this iteration                          :   2359.8    
+    Contribution to phi from observation group "h_piezo"     :   19.005    
+    Contribution to phi from observation group "h_single_3"  :   15.979    
+    Contribution to phi from observation group "h_single_1"  :   94.032    
+    Contribution to phi from observation group "h_hf_riv"    :   14.696    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   2103.4    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   112.64    
+    All frozen parameters freed.
+
+    Parameter "hill_mang" has no effect on observations.
+    Parameter "kh_riv_g28" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "kh_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter35" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+
+        Lambda =   4.3089     ----->
+           Phi =   2142.5      (  0.908 of starting phi)
+
+        Lambda =   2.1544     ----->
+           Phi =   2145.9      (  0.909 of starting phi)
+
+        Lambda =   8.6177     ----->
+           Phi =   2137.3      (  0.906 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   2137.3    
+    Maximum   factor change:  10.00     ["sy_mang18"]
+    Maximum relative change:  9.000     ["sy_mang18"]
+    Maximum absolute(1) change: 2.8681E-02 ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 7
+    Model calls so far             : 1111
+    Starting phi for this iteration                          :   2137.3    
+    Contribution to phi from observation group "h_piezo"     :   17.206    
+    Contribution to phi from observation group "h_single_3"  :   15.436    
+    Contribution to phi from observation group "h_single_1"  :   78.407    
+    Contribution to phi from observation group "h_hf_riv"    :   14.854    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   1918.0    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   93.350    
+    All frozen parameters freed.
+
+    Parameter "kh_mang17" has no effect on observations.
+    Parameter "sy_mang19" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter35" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+
+        Lambda =   8.6177     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   4.2033     ----->
+           Phi =   1998.6      (  0.935 of starting phi)
+
+        Lambda =   2.0502     ----->
+           Phi =   2000.1      (  0.936 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   1998.6    
+    Maximum   factor change:  2.007     ["kh_ter83"]
+    Maximum relative change: 0.8256     ["kh_mang20"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 8
+    Model calls so far             : 1384
+    Starting phi for this iteration                          :   1998.6    
+    Contribution to phi from observation group "h_piezo"     :   16.698    
+    Contribution to phi from observation group "h_single_3"  :   15.014    
+    Contribution to phi from observation group "h_single_1"  :   73.738    
+    Contribution to phi from observation group "h_hf_riv"    :   13.996    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   1792.5    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   86.600    
+    All frozen parameters freed.
+
+    Parameter "hill_mang" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_ter35" frozen: gradient and update vectors out of bounds
+
+        Lambda =   2.0502     ----->
+           Phi =   1801.2      (  0.901 of starting phi)
+
+        Lambda =   1.0251     ----->
+           Phi =   1805.2      (  0.903 of starting phi)
+
+        Lambda =   4.1004     ----->
+           Phi =   1800.7      (  0.901 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   1800.7    
+    Maximum   factor change:  5.308     ["sy_mang21"]
+    Maximum relative change:  4.308     ["sy_mang21"]
+    Maximum absolute(1) change: 0.1000     ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 9
+    Model calls so far             : 1657
+    Starting phi for this iteration                          :   1800.7    
+    Contribution to phi from observation group "h_piezo"     :   15.944    
+    Contribution to phi from observation group "h_single_3"  :   14.336    
+    Contribution to phi from observation group "h_single_1"  :   66.155    
+    Contribution to phi from observation group "h_hf_riv"    :   12.670    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   1615.9    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   75.746    
+    All frozen parameters freed.
+
+    Parameter "kh_riv_g24" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_hill12" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter35" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_mang20" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+
+        Lambda =   4.1004     ----->
+           Phi =   1688.5      (  0.938 of starting phi)
+
+        Lambda =   2.0502     ----->
+           Phi =   1689.7      (  0.938 of starting phi)
+
+        Lambda =   8.2008     ----->
+           Phi =   1686.5      (  0.937 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   1686.5    
+    Maximum   factor change:  1.603     ["kh_riv_g63"]
+    Maximum relative change: 0.4759     ["kh_mang17"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 10
+    Model calls so far             : 1930
+    Starting phi for this iteration                          :   1686.5    
+    Contribution to phi from observation group "h_piezo"     :   15.536    
+    Contribution to phi from observation group "h_single_3"  :   13.843    
+    Contribution to phi from observation group "h_single_1"  :   61.762    
+    Contribution to phi from observation group "h_hf_riv"    :   11.911    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   1513.2    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   70.274    
+    All frozen parameters freed.
+
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_hill12" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_mang19" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_mang20" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+
+        Lambda =   8.2008     ----->
+           Phi =   1379.2      (  0.818 of starting phi)
+
+        Lambda =   4.0667     ----->
+           Phi =   1397.6      (  0.829 of starting phi)
+
+        Lambda =   16.538     ----->
+           Phi =   1524.4      (  0.904 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   1379.2    
+    Maximum   factor change:  8.878     ["sy_ter15"]
+    Maximum relative change:  2.700     ["sy_ter34"]
+    Maximum absolute(1) change: 0.1000     ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 11
+    Model calls so far             : 2203
+    Starting phi for this iteration                          :   1379.2    
+    Contribution to phi from observation group "h_piezo"     :   14.514    
+    Contribution to phi from observation group "h_single_3"  :   12.085    
+    Contribution to phi from observation group "h_single_1"  :   34.096    
+    Contribution to phi from observation group "h_hf_riv"    :   10.145    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   1251.3    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   57.139    
+    All frozen parameters freed.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_hill12" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_mang20" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "sy_mang19" frozen: - update vector out of bounds
+
+        Lambda =   8.2008     ----->
+           Phi =   1238.1      (  0.898 of starting phi)
+
+        Lambda =   4.0667     ----->
+           Phi =   1238.1      (  0.898 of starting phi)
+
+        Lambda =   16.538     ----->
+           Phi =   1238.1      (  0.898 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   1238.1    
+    Maximum   factor change:  3.576     ["kh_riv_g63"]
+    Maximum relative change:  2.396     ["sy_hill11"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 12
+    Model calls so far             : 2476
+    Starting phi for this iteration                          :   1238.1    
+    Contribution to phi from observation group "h_piezo"     :   13.939    
+    Contribution to phi from observation group "h_single_3"  :   11.642    
+    Contribution to phi from observation group "h_single_1"  :   29.592    
+    Contribution to phi from observation group "h_hf_riv"    :   9.1840    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   1122.0    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   51.774    
+    All frozen parameters freed.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_mang20" frozen: - update vector out of bounds
+        param "kh_sandy31" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_mang19" frozen: - update vector out of bounds
+
+        Lambda =   16.538     ----->
+           Phi =   948.95      (  0.766 of starting phi)
+
+        Lambda =   6.4911     ----->
+           Phi =   948.95      (  0.766 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   948.95    
+    Maximum   factor change:  5.602     ["kh_riv_g23"]
+    Maximum relative change: 0.9839     ["sy_hill11"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 13
+    Model calls so far             : 2748
+    Starting phi for this iteration                          :   948.95    
+    Contribution to phi from observation group "h_piezo"     :   12.802    
+    Contribution to phi from observation group "h_single_3"  :   10.753    
+    Contribution to phi from observation group "h_single_1"  :   22.880    
+    Contribution to phi from observation group "h_hf_riv"    :   7.2781    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   850.96    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   44.277    
+    All frozen parameters freed.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat4" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_mang20" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_sandy31" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+
+        Lambda =   6.4911     ----->
+           Phi =   858.92      (  0.905 of starting phi)
+
+        Lambda =   3.2455     ----->
+           Phi =   858.92      (  0.905 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   858.92    
+    Maximum   factor change:  3.738     ["sy_h_flat7"]
+    Maximum relative change:  2.738     ["sy_h_flat7"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 14
+    Model calls so far             : 3020
+    Starting phi for this iteration                          :   858.92    
+    Contribution to phi from observation group "h_piezo"     :   12.510    
+    Contribution to phi from observation group "h_single_3"  :   10.344    
+    Contribution to phi from observation group "h_single_1"  :   20.911    
+    Contribution to phi from observation group "h_hf_riv"    :   6.7098    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   771.37    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   37.077    
+    All frozen parameters freed.
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat4" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_sandy31" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+
+        Lambda =   3.2455     ----->
+           Phi =   841.43      (  0.980 of starting phi)
+
+        Lambda =   1.6228     ----->
+           Phi =   841.43      (  0.980 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   841.43    
+    Maximum   factor change:  1.347     ["sy_h_flat7"]
+    Maximum relative change: 0.3466     ["sy_h_flat7"]
+    Maximum absolute(1) change: 5.0000E-02 ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 15
+    Model calls so far             : 3292
+    Starting phi for this iteration                          :   841.43    
+    Contribution to phi from observation group "h_piezo"     :   12.430    
+    Contribution to phi from observation group "h_single_3"  :   10.150    
+    Contribution to phi from observation group "h_single_1"  :   20.476    
+    Contribution to phi from observation group "h_hf_riv"    :   6.5831    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   755.50    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   36.286    
+    All frozen parameters freed.
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_sandy31" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+
+        Lambda =   1.6228     ----->
+           Phi =   793.41      (  0.943 of starting phi)
+
+        Lambda =  0.81139     ----->
+           Phi =   793.41      (  0.943 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   793.41    
+    Maximum   factor change:  2.245     ["sy_h_flat8"]
+    Maximum relative change:  1.173     ["sy_h_flat7"]
+    Maximum absolute(1) change: 2.5000E-02 ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 16
+    Model calls so far             : 3564
+    Starting phi for this iteration                          :   793.41    
+    Contribution to phi from observation group "h_piezo"     :   12.204    
+    Contribution to phi from observation group "h_single_3"  :   9.8540    
+    Contribution to phi from observation group "h_single_1"  :   19.234    
+    Contribution to phi from observation group "h_hf_riv"    :   6.2309    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   711.64    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   34.244    
+    All frozen parameters freed.
+
+
+                              .....RESTART.....
+
+
+ OPTIMISATION ITERATION NO.        : 16
+    Model calls so far             : 3564
+    Starting phi for this iteration                          :   793.41    
+    Contribution to phi from observation group "h_piezo"     :   12.204    
+    Contribution to phi from observation group "h_single_3"  :   9.8540    
+    Contribution to phi from observation group "h_single_1"  :   19.234    
+    Contribution to phi from observation group "h_hf_riv"    :   6.2309    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   711.64    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   34.244    
+    All frozen parameters freed.
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_sandy31" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+
+        Lambda =  0.81139     ----->
+           Phi =   697.40      (  0.879 of starting phi)
+
+        Lambda =  0.40569     ----->
+           Phi =   697.40      (  0.879 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   697.40    
+    Maximum   factor change:  3.934     ["sy_h_flat8"]
+    Maximum relative change:  1.590     ["sy_h_flat7"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 17
+    Model calls so far             : 3836
+    Starting phi for this iteration                          :   697.40    
+    Contribution to phi from observation group "h_piezo"     :   11.648    
+    Contribution to phi from observation group "h_single_3"  :   9.4444    
+    Contribution to phi from observation group "h_single_1"  :   16.111    
+    Contribution to phi from observation group "h_hf_riv"    :   7.5030    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   621.29    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   31.402    
+    All frozen parameters freed.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat4" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat7" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "sy_ss_mor_l1" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_sandy31" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_ter39" frozen: - update vector out of bounds
+        param "sy_ter87" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+
+        Lambda =  0.40569     ----->
+           Phi =   624.01      (  0.895 of starting phi)
+
+        Lambda =  0.20285     ----->
+           Phi =   624.01      (  0.895 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   624.01    
+    Maximum   factor change:  3.960     ["kh_riv_g63"]
+    Maximum relative change:  2.506     ["kh_ter37"]
+    Maximum absolute(1) change: 3.7536E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 18
+    Model calls so far             : 4108
+    Starting phi for this iteration                          :   624.01    
+    Contribution to phi from observation group "h_piezo"     :   11.285    
+    Contribution to phi from observation group "h_single_3"  :   9.2125    
+    Contribution to phi from observation group "h_single_1"  :   14.861    
+    Contribution to phi from observation group "h_hf_riv"    :   6.7127    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   553.97    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   27.972    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat4" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat7" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "sy_ss_mor_l1" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g62" frozen: - update vector out of bounds
+        param "kh_sandy31" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_ter39" frozen: - update vector out of bounds
+        param "sy_ter87" frozen: - update vector out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+
+        Lambda =  0.20285     ----->
+           Phi =   528.10      (  0.846 of starting phi)
+
+        Lambda =  0.10142     ----->
+           Phi =   528.10      (  0.846 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   528.10    
+    Maximum   factor change:  10.00     ["kh_mor_l1"]
+    Maximum relative change:  9.000     ["kh_mor_l1"]
+    Maximum absolute(1) change: 3.5555E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 19
+    Model calls so far             : 4380
+    Starting phi for this iteration                          :   528.10    
+    Contribution to phi from observation group "h_piezo"     :   10.787    
+    Contribution to phi from observation group "h_single_3"  :   8.8587    
+    Contribution to phi from observation group "h_single_1"  :   12.804    
+    Contribution to phi from observation group "h_hf_riv"    :   5.1878    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   467.23    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   23.238    
+    All frozen parameters freed.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat7" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat4" frozen: gradient and update vectors out of bounds
+        param "sy_ss_mor_l1" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_riv_g62" frozen: - update vector out of bounds
+        param "kh_sandy31" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_ter39" frozen: - update vector out of bounds
+        param "sy_ter87" frozen: - update vector out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+
+        Lambda =  0.10142     ----->
+           Phi =   407.73      (  0.772 of starting phi)
+
+        Lambda =  4.72989E-02 ----->
+           Phi =   407.73      (  0.772 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   407.73    
+    Maximum   factor change:  6.925     ["sy_ter33"]
+    Maximum relative change:  5.925     ["sy_ter33"]
+    Maximum absolute(1) change: 0.1000     ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 20
+    Model calls so far             : 4652
+    Starting phi for this iteration                          :   407.73    
+    Contribution to phi from observation group "h_piezo"     :   9.9679    
+    Contribution to phi from observation group "h_single_3"  :   9.5589    
+    Contribution to phi from observation group "h_single_1"  :   11.001    
+    Contribution to phi from observation group "h_hf_riv"    :   3.4922    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   356.44    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   17.265    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ss_mor_l1" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter35" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_riv_g62" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+
+        Lambda =  4.72989E-02 ----->
+           Phi =   368.16      (  0.903 of starting phi)
+
+        Lambda =  1.71054E-02 ----->
+           Phi =   368.16      (  0.903 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   368.16    
+    Maximum   factor change:  8.852     ["kh_mang19"]
+    Maximum relative change:  4.373     ["sy_ter81"]
+    Maximum absolute(1) change: 0.1000     ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 21
+    Model calls so far             : 4924
+    Starting phi for this iteration                          :   368.16    
+    Contribution to phi from observation group "h_piezo"     :   9.7542    
+    Contribution to phi from observation group "h_single_3"  :   9.3756    
+    Contribution to phi from observation group "h_single_1"  :   9.0634    
+    Contribution to phi from observation group "h_hf_riv"    :   2.9935    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   323.81    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   13.166    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "kh_riv_g62" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "sy_ss_mor_l1" frozen: - update vector out of bounds
+
+        Lambda =  1.71054E-02 ----->
+           Phi =   317.47      (  0.862 of starting phi)
+
+        Lambda =  4.40737E-03 ----->
+           Phi =   317.47      (  0.862 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   317.47    
+    Maximum   factor change:  9.879     ["sy_ter87"]
+    Maximum relative change:  8.879     ["sy_ter87"]
+    Maximum absolute(1) change: 0.1000     ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 22
+    Model calls so far             : 5196
+    Starting phi for this iteration                          :   317.47    
+    Contribution to phi from observation group "h_piezo"     :   9.4981    
+    Contribution to phi from observation group "h_single_3"  :   9.7363    
+    Contribution to phi from observation group "h_single_1"  :   7.5431    
+    Contribution to phi from observation group "h_hf_riv"    :   2.7034    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   276.53    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   11.458    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ss_mor_l1" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g62" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+
+        Lambda =  4.40737E-03 ----->
+           Phi =   265.61      (  0.837 of starting phi)
+
+        Lambda =  7.22612E-04 ----->
+           Phi =   265.61      (  0.837 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   265.61    
+    Maximum   factor change:  6.277     ["kh_ter82"]
+    Maximum relative change:  3.460     ["sy_ter87"]
+    Maximum absolute(1) change: 0.1000     ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 23
+    Model calls so far             : 5468
+    Starting phi for this iteration                          :   265.61    
+    Contribution to phi from observation group "h_piezo"     :   9.2739    
+    Contribution to phi from observation group "h_single_3"  :   9.2293    
+    Contribution to phi from observation group "h_single_1"  :   6.1156    
+    Contribution to phi from observation group "h_hf_riv"    :   2.3026    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   228.45    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   10.238    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "riv_h3" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_riv_g60" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g62" frozen: - update vector out of bounds
+
+        Lambda =  7.22612E-04 ----->
+           Phi =   229.99      (  0.866 of starting phi)
+
+        Lambda =  6.48446E-05 ----->
+           Phi =   229.99      (  0.866 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   229.99    
+    Maximum   factor change:  10.00     ["sy_ter87"]
+    Maximum relative change:  9.000     ["sy_ter87"]
+    Maximum absolute(1) change: 3.3580E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 24
+    Model calls so far             : 5740
+    Starting phi for this iteration                          :   229.99    
+    Contribution to phi from observation group "h_piezo"     :   9.0988    
+    Contribution to phi from observation group "h_single_3"  :   8.9449    
+    Contribution to phi from observation group "h_single_1"  :   6.1329    
+    Contribution to phi from observation group "h_hf_riv"    :   2.4011    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   194.34    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   9.0699    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "riv_h3" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang19" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "kh_riv_g62" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "sy_h_flat51" frozen: gradient and update vectors out of bounds
+
+        Lambda =  6.48446E-05 ----->
+           Phi =   186.15      (  0.809 of starting phi)
+
+        Lambda =  2.60514E-06 ----->
+           Phi =   186.15      (  0.809 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   186.15    
+    Maximum   factor change:  10.00     ["sy_mang19"]
+    Maximum relative change:  6.311     ["sy_ter83"]
+    Maximum absolute(1) change: 7.1331E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 25
+    Model calls so far             : 6012
+    Starting phi for this iteration                          :   186.15    
+    Contribution to phi from observation group "h_piezo"     :   8.8766    
+    Contribution to phi from observation group "h_single_3"  :   8.6957    
+    Contribution to phi from observation group "h_single_1"  :   4.9399    
+    Contribution to phi from observation group "h_hf_riv"    :   1.9875    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   154.28    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   7.3737    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_mang19" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "riv_h3" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "kh_riv_g62" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "kh_h_flat6" frozen: gradient and update vectors out of bounds
+
+        Lambda =  2.60514E-06 ----->
+           Phi =   163.87      (  0.880 of starting phi)
+
+        Lambda =  3.58461E-08 ----->
+           Phi =   163.87      (  0.880 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   163.87    
+    Maximum   factor change:  6.480     ["sy_ter83"]
+    Maximum relative change:  5.480     ["sy_ter83"]
+    Maximum absolute(1) change: 8.1537E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 26
+    Model calls so far             : 6284
+    Starting phi for this iteration                          :   163.87    
+    Contribution to phi from observation group "h_piezo"     :   8.7603    
+    Contribution to phi from observation group "h_single_3"  :   8.5416    
+    Contribution to phi from observation group "h_single_1"  :   4.1921    
+    Contribution to phi from observation group "h_hf_riv"    :   1.7266    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   134.21    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   6.4398    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang19" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "sy_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+
+        Lambda =  3.58461E-08 ----->
+           Phi =   153.27      (  0.935 of starting phi)
+
+        Lambda =  1.18193E-10 ----->
+           Phi =   153.27      (  0.935 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   153.27    
+    Maximum   factor change:  3.604     ["kh_ter83"]
+    Maximum relative change:  2.604     ["kh_ter83"]
+    Maximum absolute(1) change: 3.2676E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 27
+    Model calls so far             : 6556
+    Starting phi for this iteration                          :   153.27    
+    Contribution to phi from observation group "h_piezo"     :   8.7036    
+    Contribution to phi from observation group "h_single_3"  :   8.4789    
+    Contribution to phi from observation group "h_single_1"  :   3.8287    
+    Contribution to phi from observation group "h_hf_riv"    :   1.6154    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   124.66    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   5.9896    
+    All frozen parameters freed.
+
+
+                              .....RESTART.....
+
+
+ OPTIMISATION ITERATION NO.        : 27
+    Model calls so far             : 6556
+    Starting phi for this iteration                          :   153.27    
+    Contribution to phi from observation group "h_piezo"     :   8.7036    
+    Contribution to phi from observation group "h_single_3"  :   8.4789    
+    Contribution to phi from observation group "h_single_1"  :   3.8287    
+    Contribution to phi from observation group "h_hf_riv"    :   1.6154    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   124.66    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   5.9896    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang19" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   112.14      (  0.732 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   112.14      (  0.732 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   112.14    
+    Maximum   factor change:  10.00     ["sy_mang21"]
+    Maximum relative change:  2.781     ["sy_mang20"]
+    Maximum absolute(1) change: 4.7840E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 28
+    Model calls so far             : 6828
+    Starting phi for this iteration                          :   112.14    
+    Contribution to phi from observation group "h_piezo"     :   8.4596    
+    Contribution to phi from observation group "h_single_3"  :   8.2072    
+    Contribution to phi from observation group "h_single_1"  :   2.1004    
+    Contribution to phi from observation group "h_hf_riv"    :   1.3738    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   87.445    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   4.5522    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang19" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_mang20" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter37" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "riv_h3" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   92.689      (  0.827 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   92.689      (  0.827 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   92.689    
+    Maximum   factor change:  5.897     ["kh_hill11"]
+    Maximum relative change:  1.040     ["sy_mang18"]
+    Maximum absolute(1) change: 8.6062E-03 ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 29
+    Model calls so far             : 7100
+    Starting phi for this iteration                          :   92.689    
+    Contribution to phi from observation group "h_piezo"     :   8.3208    
+    Contribution to phi from observation group "h_single_3"  :   8.0879    
+    Contribution to phi from observation group "h_single_1"  :   1.6977    
+    Contribution to phi from observation group "h_hf_riv"    :   1.1658    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   69.780    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   3.6368    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang19" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_mang20" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_riv_g25" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "riv_h3" frozen: gradient and update vectors out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   74.079      (  0.799 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   74.079      (  0.799 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   74.079    
+    Maximum   factor change:  10.00     ["kh_ter83"]
+    Maximum relative change:  9.000     ["kh_ter83"]
+
+
+ OPTIMISATION ITERATION NO.        : 30
+    Model calls so far             : 7372
+    Starting phi for this iteration                          :   74.079    
+    Contribution to phi from observation group "h_piezo"     :   8.2240    
+    Contribution to phi from observation group "h_single_3"  :   7.9488    
+    Contribution to phi from observation group "h_single_1"  :   1.3111    
+    Contribution to phi from observation group "h_hf_riv"    :   1.0089    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   52.621    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   2.9652    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang19" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_mang20" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "sy_ter87" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   54.460      (  0.735 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   54.460      (  0.735 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   54.460    
+    Maximum   factor change:  10.00     ["kh_hill11"]
+    Maximum relative change:  5.289     ["sy_h_flat9"]
+
+
+ OPTIMISATION ITERATION NO.        : 31
+    Model calls so far             : 7644
+    Starting phi for this iteration                          :   54.460    
+    Contribution to phi from observation group "h_piezo"     :   8.0800    
+    Contribution to phi from observation group "h_single_3"  :   7.7940    
+    Contribution to phi from observation group "h_single_1"  :   1.0338    
+    Contribution to phi from observation group "h_hf_riv"    :  0.77458    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   34.674    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   2.1040    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   49.865      (  0.916 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   49.865      (  0.916 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   49.865    
+    Maximum   factor change:  10.00     ["sy_mang19"]
+    Maximum relative change:  9.000     ["sy_mang19"]
+
+
+ OPTIMISATION ITERATION NO.        : 32
+    Model calls so far             : 7916
+    Starting phi for this iteration                          :   49.865    
+    Contribution to phi from observation group "h_piezo"     :   8.0267    
+    Contribution to phi from observation group "h_single_3"  :   7.7309    
+    Contribution to phi from observation group "h_single_1"  :  0.98648    
+    Contribution to phi from observation group "h_hf_riv"    :  0.74363    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   30.481    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.8963    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   46.391      (  0.930 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   46.391      (  0.930 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   46.391    
+    Maximum   factor change:  3.162     ["sy_mang19"]
+    Maximum relative change: 0.6838     ["sy_mang19"]
+
+
+ OPTIMISATION ITERATION NO.        : 33
+    Model calls so far             : 8188
+    Starting phi for this iteration                          :   46.391    
+    Contribution to phi from observation group "h_piezo"     :   7.9785    
+    Contribution to phi from observation group "h_single_3"  :   7.6942    
+    Contribution to phi from observation group "h_single_1"  :  0.92288    
+    Contribution to phi from observation group "h_hf_riv"    :  0.71961    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   27.306    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.7698    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mang21" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   39.184      (  0.845 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   39.184      (  0.845 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   39.184    
+    Maximum   factor change:  10.00     ["kh_h_flat6"]
+    Maximum relative change:  5.447     ["kh_ter82"]
+
+
+ OPTIMISATION ITERATION NO.        : 34
+    Model calls so far             : 8460
+    Starting phi for this iteration                          :   39.184    
+    Contribution to phi from observation group "h_piezo"     :   7.8205    
+    Contribution to phi from observation group "h_single_3"  :   7.5964    
+    Contribution to phi from observation group "h_single_1"  :  0.71779    
+    Contribution to phi from observation group "h_hf_riv"    :  0.65739    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   20.826    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.5658    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   37.438      (  0.955 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   37.438      (  0.955 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   37.438    
+    Maximum   factor change:  10.00     ["kh_hill11"]
+    Maximum relative change:  2.680     ["sy_mang21"]
+
+
+ OPTIMISATION ITERATION NO.        : 35
+    Model calls so far             : 8732
+    Starting phi for this iteration                          :   37.438    
+    Contribution to phi from observation group "h_piezo"     :   7.7927    
+    Contribution to phi from observation group "h_single_3"  :   7.5672    
+    Contribution to phi from observation group "h_single_1"  :  0.78797    
+    Contribution to phi from observation group "h_hf_riv"    :  0.63551    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   19.109    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.5457    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang17" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "sy_ter86" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   35.104      (  0.938 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   35.104      (  0.938 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   35.104    
+    Maximum   factor change:  4.280     ["kh_hill12"]
+    Maximum relative change:  1.551     ["sy_h_flat10"]
+
+
+ OPTIMISATION ITERATION NO.        : 36
+    Model calls so far             : 9004
+    Starting phi for this iteration                          :   35.104    
+    Contribution to phi from observation group "h_piezo"     :   7.7552    
+    Contribution to phi from observation group "h_single_3"  :   7.5351    
+    Contribution to phi from observation group "h_single_1"  :  0.70986    
+    Contribution to phi from observation group "h_hf_riv"    :  0.61413    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   17.073    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.4168    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_mang18" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "kh_hill11" frozen: gradient and update vectors out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   31.453      (  0.896 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   31.453      (  0.896 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   31.453    
+    Maximum   factor change:  10.00     ["sy_mang21"]
+    Maximum relative change:  2.771     ["sy_mang20"]
+
+
+ OPTIMISATION ITERATION NO.        : 37
+    Model calls so far             : 9276
+    Starting phi for this iteration                          :   31.453    
+    Contribution to phi from observation group "h_piezo"     :   7.7243    
+    Contribution to phi from observation group "h_single_3"  :   7.4770    
+    Contribution to phi from observation group "h_single_1"  :  0.83648    
+    Contribution to phi from observation group "h_hf_riv"    :  0.61177    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   13.570    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.2343    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   30.565      (  0.972 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   30.565      (  0.972 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   30.565    
+    Maximum   factor change:  3.162     ["sy_mang21"]
+    Maximum relative change:  2.162     ["sy_mang21"]
+
+
+ OPTIMISATION ITERATION NO.        : 38
+    Model calls so far             : 9548
+    Starting phi for this iteration                          :   30.565    
+    Contribution to phi from observation group "h_piezo"     :   7.7191    
+    Contribution to phi from observation group "h_single_3"  :   7.4620    
+    Contribution to phi from observation group "h_single_1"  :  0.83077    
+    Contribution to phi from observation group "h_hf_riv"    :  0.60888    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   12.754    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.1899    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   25.220      (  0.825 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   25.220      (  0.825 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   25.220    
+    Maximum   factor change:  10.00     ["sy_mang19"]
+    Maximum relative change:  2.409     ["kh_h_flat10"]
+
+
+ OPTIMISATION ITERATION NO.        : 39
+    Model calls so far             : 9820
+    Starting phi for this iteration                          :   25.220    
+    Contribution to phi from observation group "h_piezo"     :   7.6920    
+    Contribution to phi from observation group "h_single_3"  :   7.3745    
+    Contribution to phi from observation group "h_single_1"  :  0.85111    
+    Contribution to phi from observation group "h_hf_riv"    :  0.63079    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   7.5807    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.0913    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "kh_h_flat46" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   24.434      (  0.969 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   24.434      (  0.969 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   24.434    
+    Maximum   factor change:  3.162     ["sy_mang19"]
+    Maximum relative change:  2.162     ["sy_mang19"]
+
+
+ OPTIMISATION ITERATION NO.        : 40
+    Model calls so far             : 10092
+    Starting phi for this iteration                          :   24.434    
+    Contribution to phi from observation group "h_piezo"     :   7.6742    
+    Contribution to phi from observation group "h_single_3"  :   7.3647    
+    Contribution to phi from observation group "h_single_1"  :  0.81572    
+    Contribution to phi from observation group "h_hf_riv"    :  0.63815    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   6.9064    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.0343    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat46" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "kh_h_flat46" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   23.271      (  0.952 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   23.271      (  0.952 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   23.271    
+    Maximum   factor change:  10.00     ["sy_mang19"]
+    Maximum relative change:  9.000     ["sy_mang19"]
+
+
+ OPTIMISATION ITERATION NO.        : 41
+    Model calls so far             : 10364
+    Starting phi for this iteration                          :   23.271    
+    Contribution to phi from observation group "h_piezo"     :   7.6548    
+    Contribution to phi from observation group "h_single_3"  :   7.3515    
+    Contribution to phi from observation group "h_single_1"  :  0.85978    
+    Contribution to phi from observation group "h_hf_riv"    :  0.63288    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   5.8007    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.97097    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat46" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "kh_h_flat46" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   22.798      (  0.980 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   22.798      (  0.980 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   22.798    
+    Maximum   factor change:  10.00     ["kh_ter83"]
+    Maximum relative change:  1.153     ["kh_ter80"]
+
+
+ OPTIMISATION ITERATION NO.        : 42
+    Model calls so far             : 10636
+    Starting phi for this iteration                          :   22.798    
+    Contribution to phi from observation group "h_piezo"     :   7.6207    
+    Contribution to phi from observation group "h_single_3"  :   7.3414    
+    Contribution to phi from observation group "h_single_1"  :  0.82361    
+    Contribution to phi from observation group "h_hf_riv"    :  0.63440    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   5.4497    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.92794    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat46" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter88" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat2" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "kh_h_flat46" frozen: - update vector out of bounds
+        param "kh_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   21.609      (  0.948 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   21.609      (  0.948 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   21.609    
+    Maximum   factor change:  10.00     ["sy_mang19"]
+    Maximum relative change:  2.557     ["sy_mang21"]
+
+
+ OPTIMISATION ITERATION NO.        : 43
+    Model calls so far             : 10908
+    Starting phi for this iteration                          :   21.609    
+    Contribution to phi from observation group "h_piezo"     :   7.5963    
+    Contribution to phi from observation group "h_single_3"  :   7.3163    
+    Contribution to phi from observation group "h_single_1"  :  0.97856    
+    Contribution to phi from observation group "h_hf_riv"    :  0.63529    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   4.2068    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.87557    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g30" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat46" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter87" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_mang19" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter83" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "kh_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat46" frozen: - update vector out of bounds
+        param "kh_ter80" frozen: - update vector out of bounds
+        param "sy_h_flat7" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   21.363      (  0.989 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   21.363      (  0.989 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   21.363    
+    Maximum   factor change:  10.00     ["sy_ss_rest"]
+    Maximum relative change:  9.000     ["sy_ss_rest"]
+
+
+ OPTIMISATION ITERATION NO.        : 44
+    Model calls so far             : 11180
+    Starting phi for this iteration                          :   21.363    
+    Contribution to phi from observation group "h_piezo"     :   7.5581    
+    Contribution to phi from observation group "h_single_3"  :   7.3162    
+    Contribution to phi from observation group "h_single_1"  :   1.1032    
+    Contribution to phi from observation group "h_hf_riv"    :  0.63531    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   4.0036    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.74675    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter35" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter87" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat46" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter83" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat1" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+        param "sy_ter83" frozen: - update vector out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat46" frozen: - update vector out of bounds
+        param "kh_ter80" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   20.373      (  0.954 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   20.373      (  0.954 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   20.373    
+    Maximum   factor change:  10.00     ["sy_riv_g28"]
+    Maximum relative change:  9.000     ["sy_riv_g28"]
+
+
+ OPTIMISATION ITERATION NO.        : 45
+    Model calls so far             : 11452
+    Starting phi for this iteration                          :   20.373    
+    Contribution to phi from observation group "h_piezo"     :   7.4800    
+    Contribution to phi from observation group "h_single_3"  :   7.3060    
+    Contribution to phi from observation group "h_single_1"  :  0.83261    
+    Contribution to phi from observation group "h_hf_riv"    :  0.63646    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   0.0000    
+    Contribution to phi from observation group "h_hf"        :   3.4513    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.66690    
+    All frozen parameters freed.
+
+    Parameter "kh_riv_g24" has no effect on observations.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat4" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat89" frozen: gradient and update vectors out of bounds
+        param "kh_mang17" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g60" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g63" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_ter38" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat2" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat46" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g26" frozen: gradient and update vectors out of bounds
+        param "sy_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "sy_ter81" frozen: gradient and update vectors out of bounds
+        param "sy_ter83" frozen: gradient and update vectors out of bounds
+        param "sy_ter86" frozen: gradient and update vectors out of bounds
+        param "sy_ter87" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+        param "kh_ter87" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat89" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+        param "kh_riv_g30" frozen: - update vector out of bounds
+        param "kh_ter34" frozen: - update vector out of bounds
+        param "kh_ter83" frozen: - update vector out of bounds
+        param "kh_ter84" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_gview" frozen: - update vector out of bounds
+        param "riv_john" frozen: - update vector out of bounds
+        param "sy_h_flat10" frozen: - update vector out of bounds
+        param "sy_h_flat4" frozen: - update vector out of bounds
+        param "kh_h_flat46" frozen: - update vector out of bounds
+        param "kh_ter35" frozen: - update vector out of bounds
+        param "kh_ter80" frozen: - update vector out of bounds
+        param "sy_mang18" frozen: - update vector out of bounds
+        param "sy_ter37" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =  2.15443E-11 ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =  4.64159E-06 ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =  2.15443E-03 ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   1.0000     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   464.16     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =  2.15443E+05 ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =  1.00000E+08 ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =  4.64159E+10 ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =  2.15443E+13 ----->
+           Phi = cannot be calculated: model run failure
+
+    No more lambdas: allowed lambdas per iteration = 10
+    Maximum   factor change:  10.00     ["kh_ter82"]
+    Maximum relative change:  9.000     ["kh_ter82"]
+
+    Optimisation complete: too many model run failures.
+    Total model calls:  11732
+
+    The model has been run one final time using best parameters. 
+    Thus all model input files contain best parameter values, and model 
+    output files contain model results based on these parameters.
+
+
+                             OPTIMISATION RESULTS
+
+
+ Parameters ----->
+
+ This information not provided as non-verbose run record file requested.
+
+ See file /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/opt.sen for parameter sensitivities.
+
+
+ Observations ----->
+
+ This information not provided as non-verbose run record file requested.
+
+ See file /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/opt.res for more details of residuals in graph-ready format.
+
+ See file /home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/opt.seo for composite observation sensitivities.
+
+
+ Objective function ----->
+
+   Sum of squared weighted residuals (ie phi)                =   20.373    
+   Contribution to phi from observation group "h_piezo"      =   7.4800    
+   Contribution to phi from observation group "h_single_3"   =   7.3060    
+   Contribution to phi from observation group "h_single_1"   =  0.83261    
+   Contribution to phi from observation group "h_hf_riv"     =  0.63646    
+   Contribution to phi from observation group "rwh_hf_riv"   =   0.0000    
+   Contribution to phi from observation group "h_lf"         =   0.0000    
+   Contribution to phi from observation group "h_hf"         =   3.4513    
+   Contribution to phi from observation group "rwh_hf"       =   0.0000    
+   Contribution to phi from observation group "riv"          =  0.66690    
+
+
+ Correlation Coefficient ----->
+
+   Correlation coefficient                                   =  0.99999    
+
+
+ Analysis of residuals ----->
+
+   All residuals:-
+      Number of residuals with non-zero weight                       =  1574
+      Mean value of non-zero weighted residuals                      =  2.7188E-02
+      Maximum weighted residual [observation "h_g40_0013_211"]       =  0.7603    
+      Minimum weighted residual [observation "riv_h3_115"]           = -0.5521    
+      Standard variance of weighted residuals                        =  1.4158E-02
+      Standard error of weighted residuals                           =  0.1190    
+
+      Note: the above variance was obtained by dividing the objective 
+      function by the number of system degrees of freedom (ie. number of 
+      observations with non-zero weight plus number of prior information 
+      articles with non-zero weight minus the number of adjustable parameters.)
+      If the degrees of freedom is negative the divisor becomes 
+      the number of observations with non-zero weight plus the number of 
+      prior information items with non-zero weight.
+
+   Residuals for observation group "h_piezo":-
+      Number of residuals with non-zero weight                       =   255
+      Mean value of non-zero weighted residuals                      =  3.8417E-02
+      Maximum weighted residual [observation "h_g40_0013_211"]       =  0.7603    
+      Minimum weighted residual [observation "h_sutherland_215"]     = -0.2341    
+      "Variance" of weighted residuals                               =  2.9333E-02
+      "Standard error" of weighted residuals                         =  0.1713    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "h_single_3":-
+      Number of residuals with non-zero weight                       =   267
+      Mean value of non-zero weighted residuals                      =  8.6611E-02
+      Maximum weighted residual [observation "h_g40_0008_168"]       =  0.5881    
+      Minimum weighted residual [observation "h_g40_0139_16"]        = -0.3974    
+      "Variance" of weighted residuals                               =  2.7363E-02
+      "Standard error" of weighted residuals                         =  0.1654    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "h_single_1":-
+      Number of residuals with non-zero weight                       =    26
+      Mean value of non-zero weighted residuals                      = -1.2631E-02
+      Maximum weighted residual [observation "h_f40_0122_224"]       =  0.2524    
+      Minimum weighted residual [observation "h_f40_0396_150"]       = -0.2735    
+      "Variance" of weighted residuals                               =  3.2023E-02
+      "Standard error" of weighted residuals                         =  0.1790    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "h_hf_riv":-
+      Number of residuals with non-zero weight                       =   396
+      Mean value of non-zero weighted residuals                      = -5.4351E-03
+      Maximum weighted residual [observation "h_g40_0041_18"]        =  7.8822E-02
+      Minimum weighted residual [observation "h_g40_0041_252"]       = -0.1330    
+      "Variance" of weighted residuals                               =  1.6072E-03
+      "Standard error" of weighted residuals                         =  4.0090E-02
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "rwh_hf_riv":-
+      Number of residuals with non-zero weight                       =     0
+
+   Residuals for observation group "h_lf":-
+      Number of residuals with non-zero weight                       =     0
+
+   Residuals for observation group "h_hf":-
+      Number of residuals with non-zero weight                       =   624
+      Mean value of non-zero weighted residuals                      =  2.0703E-02
+      Maximum weighted residual [observation "h_g40_0367_139"]       =  0.2432    
+      Minimum weighted residual [observation "h_g40_0415_230"]       = -0.1771    
+      "Variance" of weighted residuals                               =  5.5309E-03
+      "Standard error" of weighted residuals                         =  7.4370E-02
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "rwh_hf":-
+      Number of residuals with non-zero weight                       =     0
+
+   Residuals for observation group "riv":-
+      Number of residuals with non-zero weight                       =     6
+      Mean value of non-zero weighted residuals                      = -9.4315E-02
+      Maximum weighted residual [observation "riv_h1_115"]           =  0.2768    
+      Minimum weighted residual [observation "riv_h3_115"]           = -0.5521    
+      "Variance" of weighted residuals                               =  0.1112    
+      "Standard error" of weighted residuals                         =  0.3334    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+
+ Covariance and other statistical matrices cannot be determined:-
+ Some form or regularisation was implemented so these are not applicable.
+
+ Use the PREDUNC7 utility to obtain a full posterior covariance matrix.
+

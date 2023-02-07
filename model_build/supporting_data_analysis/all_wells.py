@@ -5,9 +5,10 @@ on: 5/09/22
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from model_build.project_model_tools import smt
+from model_build.project_model_tools import smt, get_layer_pinchout_area, get_2d_moraine, get_lake_array
 from model_build.utils import get_colors
 from project_base import processed_model_build_data_dir, base_model_build_data_dir, modelling_dir
+from model_build.supporting_data_analysis.lake_data import get_lake_heads
 import rasterio
 
 base_well_path = base_model_build_data_dir.joinpath('Hawea Wellsdata request ZEB.xlsx')
@@ -39,6 +40,7 @@ def get_all_wells(recalc=False):
     well_data.loc['g40_0041', 'Depth'] = 20
 
     well_data.dropna(subset=['Depth', 'DepthToWater'], how='all', inplace=True)
+    well_data.loc[:, 'missing_elv'] = False
 
     # setting up quality code for elevation data
     # 1 = no elv data, 2 = elv data
@@ -58,6 +60,7 @@ def get_all_wells(recalc=False):
     t = raster.sample(xy)
     t = np.array(list(t)).flatten()
     well_data.loc[idx, 'Elevation'] = t
+    well_data.loc[idx, 'missing_elv'] = True
 
     # changing depth to elevation
     # first filling all the NaNs in Ground_RL with zero
@@ -96,28 +99,58 @@ def get_all_wells(recalc=False):
     well_data.rename(columns=mapper, inplace=True)
 
     well_data.columns = [e.lower() for e in well_data.columns]
-    row, col = smt.convert_coords_to_matix(well_data.nztmx, well_data.nztmy, coords_out_domain='coerce')
+    layer, row, col = smt.convert_coords_to_matix(well_data.nztmx, well_data.nztmy, well_data.depth_elevation,
+                                                  coords_out_domain='coerce')
     well_data.loc[:, 'i'] = row
     well_data.loc[:, 'j'] = col
+    well_data.loc[:, 'k'] = layer
+    special_area = np.isfinite(get_lake_array()) | get_layer_pinchout_area() | get_2d_moraine()
+    well_data.loc[special_area[well_data.i, well_data.j], 'k'] = 2
+    well_data.loc[~special_area[well_data.i, well_data.j], 'k'] = 0
+
     well_data = well_data.loc[well_data.i >= 0]
     ibound = smt.get_no_flow(0)
     well_data.loc[:, 'ibound'] = ibound[well_data.i, well_data.j]
-
+    lake_hds = get_lake_heads(None, None)
+    for i in well_data.index:
+        dd = well_data.drilldate.dt.date.loc[i].isoformat()
+        if dd in lake_hds.index:
+            well_data.loc[i, 'lake_at_drilldate'] = lake_hds.loc[dd]
+    well_data.loc[:, 'dpt_v_lake'] = well_data.lake_at_drilldate - well_data.depth_to_water_elv
     well_data.to_csv(processed_well_path)
+    return well_data
 
 
 def plot_wells():
+    wells = get_all_wells(recalc=True)
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    colors = get_colors(range(smt.layers))
+    for l, c in zip(range(smt.layers), colors):
+        temp = wells.loc[(wells.ibound == 1) & (wells.k == l)]
+        ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'layer_{l}')
+    ax.legend()
+    smt.plot.show()
     fig, ax = smt.plot.plt_matrix(smt.get_model_zeros() * np.nan, base_map=True, no_flow_layer=0)
-    wells = get_all_wells()
     qcs = wells.loc[:, 'quality_code'].unique()
     colors = get_colors(qcs)
     for qc, c in zip(qcs, colors):
         temp = wells.loc[wells.quality_code == qc]
         ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'QC: {qc}')
     ax.legend()
+
+    # plot elv exists
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    temp = wells.loc[wells.missing_elv]
+    ax.scatter(temp.nztmx, temp.nztmy, c='r', label='missing elevation data')
+    temp = wells.loc[~wells.missing_elv]
+    ax.scatter(temp.nztmx, temp.nztmy, c='b', label='has elevation data')
+    ax.legend()
+
     smt.plot.show()
 
 
 if __name__ == '__main__':
+    plot_wells()
     t = get_all_wells(recalc=True)
     plot_wells()
+    # plot of drill date level vs lake level is useful!

@@ -8,8 +8,7 @@ import pandas as pd
 import pyemu
 from pathlib import Path
 from optimisation.model_utils_for_forward_run import _get_param_data
-from project_base import proj_root
-from model_tools.beopest_manager import BeopestManager
+from project_base import proj_root, opt_proj_root, opt_model_tools
 
 base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 
@@ -27,7 +26,8 @@ def copy_forward_run(pst_dir):
     with open(base_pst_data.joinpath("forward_run.py")) as f:
         data = f.read()
 
-    data = data.replace('$$$$$USE_PATH$$$$$', str(proj_root))
+    data = data.replace('$$$$$USE_MODEL_PATH$$$$$', str(opt_proj_root))
+    data = data.replace('$$$$$USE_TOOLS_PATH$$$$$', str(opt_model_tools))
 
     with open(forward_run_path, 'w') as f:
         f.write(data)
@@ -84,7 +84,7 @@ def set_control_data(pst, noptmax):
     pst.control_data.rlambda1 = 10
     pst.control_data.rlamfac = -3
     pst.control_data.phiratsuf = 0.3
-    pst.control_data.phiredlam = 0.1
+    pst.control_data.phiredlam = 0.01
     pst.control_data.numlam = 10
     # what happens if modflow dies, no output files written
     pst.control_data.lamforgive = 'lamforgive'
@@ -102,7 +102,7 @@ def set_control_data(pst, noptmax):
 
     # line 7
     pst.control_data.phiredswh = 0.1  # switch to 3 point at 10% reduction
-    pst.control_data.noptswitch = 1  # wait n itertations to switch to 3 point
+    pst.control_data.noptswitch = 3  # wait n itertations to switch to 3 point
     pst.control_data.doaui = 'noaui'  # no automatic user inter
     pst.control_data.boundscale = 'noboundscale'  # treat the boundaries as confidence intervals for parameter scaling
 
@@ -112,10 +112,10 @@ def set_control_data(pst, noptmax):
     pst.control_data.noptmax = noptmax  # max iterations, set to 0 for trial run
 
     pst.control_data.phiredstp = 0.005  # relative phi change to be 'optimised'
-    pst.control_data.nphistp = 4  # min number of iterations with relative phi change before optimisation is complete
-    pst.control_data.nphinored = 4  # no reduction in phi for n iterations, complete
+    pst.control_data.nphistp = 6  # min number of iterations with relative phi change before optimisation is complete
+    pst.control_data.nphinored = 6  # no reduction in phi for n iterations, complete
     pst.control_data.relparstp = 0.005  # maximum parameter change to finish
-    pst.control_data.nrelpar = 4  # number of iterations below maximum parameter change to finish
+    pst.control_data.nrelpar = 6  # number of iterations below maximum parameter change to finish
 
     # do not include
     # phistopthresh
@@ -142,25 +142,35 @@ def set_control_data(pst, noptmax):
     # end hack
 
 
-def set_parameter_data_groups(pst):
+def set_parameter_data_groups(pst, start_param_vals):
     assert isinstance(pst, pyemu.Pst)
-
     # set tranformation
     # sy, hill, race = none; kh, riv = log
     pst.parameter_data.loc[:, 'partrans'] = 'none'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('kh'), 'partrans'] = 'log'
     pst.parameter_data.loc[pst.parameter_data.index.str.contains('riv'), 'partrans'] = 'log'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('sy'), 'partrans'] = 'log'
 
     param_data = _get_param_data().set_index('name')
     # set inital values, lower, upper bounds
     all_params = pst.parameter_data.index
-    pst.parameter_data.loc[all_params, 'parval1'] = param_data.loc[all_params, 'start']
+    if start_param_vals is None:
+        start_vals = param_data.loc[all_params, 'start']
+    else:
+        assert isinstance(start_param_vals, dict)
+        assert set(all_params) == set(start_param_vals.keys())
+        start_vals = [start_param_vals[k] for k in all_params]
+    pst.parameter_data.loc[all_params, 'parval1'] = start_vals
     pst.parameter_data.loc[all_params, 'parlbnd'] = param_data.loc[all_params, 'low']
     pst.parameter_data.loc[all_params, 'parubnd'] = param_data.loc[all_params, 'up']
     pst.parameter_data.loc[all_params, 'pargp'] = all_params.str.split('_').str.get(0)
     # Not using scale and offset
     # 'dercom' # not using as only 1 model command (so far)
     # default is factor, just changing the multipliers to absolute.
+    # hill, rch, race need to be set to absolute 1, for some reason this isnt happening
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('rch_'), 'parchglim'] = 'absolute(1)'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('hill_'), 'parchglim'] = 'absolute(1)'
+    pst.parameter_data.loc[pst.parameter_data.index.str.contains('race_'), 'parchglim'] = 'absolute(1)'
 
     # parameter group data
     parameter_groups = pd.DataFrame(index=pd.unique(pst.parameter_data.loc[all_params, 'pargp']))
@@ -181,7 +191,7 @@ def set_obs_data(pst, obs_path):
     assert isinstance(pst, pyemu.Pst)
     base_obs = _get_base_obs(obs_path).set_index('name')
     all_obs = pst.observation_data.index
-    pst.observation_data.loc[:, 'obgnme'] = base_obs.loc[all_obs, 'group'].str.split('_').str.get(0)
+    pst.observation_data.loc[:, 'obgnme'] = base_obs.loc[all_obs, 'group']
     pst.observation_data.loc[:, 'obsval'] = base_obs.loc[all_obs, 'measured']
 
     # keynote group weighting happens here
@@ -190,11 +200,15 @@ def set_obs_data(pst, obs_path):
     # double impact of single_3 relative to single_1
     pst.observation_data.loc[base_obs.loc[all_obs, 'group'] == 'single_3', 'weight'] *= 2
 
-    # increase weights on normals near river
-    near_river_reg = ['g40_0041', 'g40_0416']
-    fac = 10
-    for r in near_river_reg:
-        pst.observation_data.loc[pst.observation_data.obsnme.str.contains(r), 'weight'] *= 1 / fac
+    # set weight of each well in regular (far river) heads to be the same despite number of records
+    temp = pst.observation_data.copy(deep=True)
+    temp.loc[:, 'loc_name'] = ['_'.join(e.split('_')[1:-1]) for e in temp.obsnme]
+    idx = temp.obgnme == 'h_hf'
+    obs_num = temp.loc[idx].groupby('loc_name').count().loc[:, 'obgnme']
+    for n, v in obs_num.items():
+        use_idx = (temp.loc[:, 'loc_name'] == n) & idx
+        assert use_idx.sum() == v
+        pst.observation_data.loc[use_idx, 'weight'] *= v / obs_num.sum()
 
     # normalise weights by group totals  (total weight sums to 1) for each group
     weight_totals = pst.observation_data.groupby('obgnme').sum().loc[:, 'weight'].to_dict()
@@ -202,12 +216,19 @@ def set_obs_data(pst, obs_path):
         pst.observation_data.loc[pst.observation_data.obgnme == g, 'weight'] *= 1 / weight_totals[g]
 
     # increase weight of specific groups
+    # keynote remove ngmp well obs
     group_wts = {
-        'regular': 25,
-        'riv': 5e-4,
-        'piezo': 5,
-        'single': 1,
+        'rwh_hf': 0,
+        'rwh_hf_riv': 0,
+        'h_hf': 150,
+        'h_hf_riv': 50,
+        'h_lf': 0,
+        'riv': 1e-3,
+        'h_piezo': 10,
+        'h_single_1': 5,
+        'h_single_3': 5,
     }
+    assert set(group_wts.keys()) == set(pst.observation_data.loc[:, 'obgnme'])
     group_wts_summary = pd.Series(group_wts)
 
     for g in pst.nnz_obs_groups:
@@ -228,7 +249,8 @@ def hack_for_absparmax(file):
 
 
 def raw_pest(name, pst_dir, noptmax,
-             write_trial_paramfile=False, model_template_dir=default_output_path.parent):
+             model_template_dir=default_output_path.parent,
+             start_param_vals=None):
     """
 
     :param name: name for the pest object  e.g. {name}.pst
@@ -249,11 +271,14 @@ def raw_pest(name, pst_dir, noptmax,
 
                        0:PEST will not estimate parameters, nor even calculate a Jacobian matrix. Instead it will
                          terminate execution after just one model run.
-    :param write_trial_paramfile: bool, if true write 'trial.par' for use in utilities
     :param model_template_dir: path to the model direcory that holds the base template data
+    :param start_param_vals: dictionary of start parameter values to apply (e.g. from previous pest run).  It is
+                             assumed that changes in parameter limits requires an optimisation re-start., but this
+                             facilitates changes in weighting, numopt, and other control options midway through a
+                             pest optimisation
     :return:
     """
-    pst_dir.mkdir(exist_ok=True)
+    pst_dir.mkdir(exist_ok=True, parents=True)
     obs_template_path = model_template_dir.joinpath('observations.dat')
     # make parameter files
     input_files, tpl_files = make_template_and_infiles(pst_dir)
@@ -279,7 +304,7 @@ def raw_pest(name, pst_dir, noptmax,
     # No svd assist
 
     # add parameter details
-    set_parameter_data_groups(pst)
+    set_parameter_data_groups(pst, start_param_vals)
 
     # add observation details
     group_wt_summary = set_obs_data(pst, obs_template_path)
@@ -300,22 +325,17 @@ def raw_pest(name, pst_dir, noptmax,
     group_wt_summary.to_csv(pst_dir.joinpath('group_weights_summary.txt'), sep='\t')
     hack_for_absparmax(pst_dir.joinpath(f'{name}.pst'))
 
-    if write_trial_paramfile:
-        trial_data = pd.DataFrame(index=pst.parameter_data.index, columns=['val', 'scale', 'offset'])
-        trial_data.loc[:, 'scale'] = pst.parameter_data.loc[:, 'scale']
-        trial_data.loc[:, 'offset'] = pst.parameter_data.loc[:, 'offset']
-        for n in trial_data.index:
-            l, u = pst.parameter_data.loc[n, ['parlbnd', 'parubnd']]
-            trial_data.loc[n, 'val'] = round(np.random.uniform(l, u), 3)
-        with open(pst_dir.joinpath('trial.par'), 'w') as f:
-            f.write('single point\n')
-            trial_data.to_csv(f, sep='\t', header=False)
+    trial_data = pd.DataFrame(index=pst.parameter_data.index, columns=['val', 'scale', 'offset'])
+    trial_data.loc[:, 'scale'] = pst.parameter_data.loc[:, 'scale']
+    trial_data.loc[:, 'offset'] = pst.parameter_data.loc[:, 'offset']
+    for n in trial_data.index:
+        l, u = pst.parameter_data.loc[n, ['parlbnd', 'parubnd']]
+        trial_data.loc[n, 'val'] = round(np.random.uniform(l, u), 3)
+    with open(pst_dir.joinpath('trial.par'), 'w') as f:
+        f.write('single point\n')
+        trial_data.to_csv(f, sep='\t', header=False)
 
-    # run pestcheck
-    # got warning, It appears that the PEST control file contains a "rsi" section. but I don't think this will impact anything
-    # passed IN Scheck'
-    # passed tempchek
-    return pest_file
+    return pest_file, pst
 
 
 def determine_max_str_size():
@@ -334,39 +354,3 @@ def determine_max_str_size():
 
 if __name__ == '__main__':
     copy_forward_run(base_pst_data.joinpath('example_runfile'))
-    safemode = True
-    from make_test_opt_model import test_path, test_notes
-
-    pdir = Path.home().joinpath('Downloads/beopest_2022-11-1')  # keynote set ss to sy, did not work back to just ss
-
-    if pdir.exists() and safemode:
-        temp = input(f'this will erase all files in: {pdir}\ndo you really want to do this y/n?')
-        if 'y' not in temp.lower():
-            raise KeyboardInterrupt(f'stopped to prevent deletion of all files in {pdir}')
-    for fn in pdir.glob('*'):
-        if fn.is_dir():
-            shutil.rmtree(fn)
-        else:
-            fn.unlink()
-    # copy notes over, as well as version!
-    pest_file = raw_pest(name='opt', pst_dir=pdir, noptmax=50, write_trial_paramfile=False,
-                         model_template_dir=test_path)
-    man = BeopestManager(pest_file=pest_file)
-    man.write_beopest_run_manager()
-    # copy across version and notes
-    with open(pdir.joinpath('1_opt_notes_version.txt'), 'w') as f:
-        f.write(f'version = {test_path.name}\n')
-        f.write(test_notes)
-
-    # todo thoughts after first round:
-    #  I need to see what is causing the model to fall over as it is not suitably optimised
-    #  I need to see why mangawera has such high heads as the inital condition
-    #  I should consider removing some of near river pumping wells as I think this may be causing a lot of my challenges
-    #  I should weight the regular wells near the river much lower than those further away.
-    #  add actual modelled and measured v time to model plots!
-    #  maybe remove limits as percentiles thing, Done
-    #  recharge multiplier?, or carpet drains in mangawera, talk to Jens about streams
-
-# todo steady state budget plot right?
-
-# todo time for optimisation???

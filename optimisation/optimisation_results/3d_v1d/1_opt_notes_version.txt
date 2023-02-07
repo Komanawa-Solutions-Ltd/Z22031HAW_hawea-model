@@ -1,0 +1,17 @@
+version = base_model
+
+mversion = init_3d_v1d
+branch: 3d_v1d
+previous optimisation: init_3d_v1a
+previous branch: 3d_v1a
+
+ 
+* as a bur remove NGMP wells from calibration.
+
+
+
+
+unique start params from: None
+unique start prams: 
+n/a
+

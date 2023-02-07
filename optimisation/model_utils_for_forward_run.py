@@ -7,17 +7,16 @@ import pandas as pd
 from model_build.modflow_model import build_model
 from model_build.project_model_tools import smt, get_starting_heads
 from optimisation.optimisation_period import tdis
-from model_parameterisation.static_params import ss, vka
-from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points
-from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_riv_data
-from targets_and_sensitive_sites.model_output import process_model_output
+from model_parameterisation.static_params import vka
+from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points, set_ss_terms
+from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
 from model_parameterisation.inital_parametersiation import *
 
 
 def _get_param_data():
     param_fs = [get_race_multiplier, get_hillslope_multiplier,
-                get_initial_riv_conductance, get_inital_sy, get_inital_kh]
-    param_groups = ['race', 'hill', 'riv', 'sy', 'kh']
+                get_initial_riv_conductance, get_inital_sy, get_inital_kh, get_initial_rch_mult]
+    param_groups = ['race', 'hill', 'riv', 'sy', 'kh', 'rch']
     param_names = []
     param_starts = []
     param_low = []
@@ -36,8 +35,9 @@ def _get_param_data():
     return param_data
 
 
-def read_param_data(model_ws, parameter_file=None, format='model'):
+def read_param_data(model_ws=None, parameter_file=None, format='model', return_individual=True):
     if parameter_file is None:
+        assert model_ws is not None
         parameter_file = model_ws.joinpath('parameters.dat')
 
     if format == 'model':
@@ -47,22 +47,35 @@ def read_param_data(model_ws, parameter_file=None, format='model'):
     else:
         raise ValueError('bad format for parameter file')
 
-    kh_param = {k: data[f'kh_{k}'] for k in get_inital_kh().keys()}
-    sy_param = {k: data[f'sy_{k}'] for k in get_inital_sy().keys()}
-    riv_params = {k: data[f'riv_{k}'] for k in get_initial_riv_conductance().keys()}
-    hill_param = {k: data[f'hill_{k}'] for k in get_hillslope_multiplier().keys()}
-    race_param = {k: data[f'race_{k}'] for k in get_race_multiplier().keys()}
+    if return_individual:
+        kh_param = {k: data[f'kh_{k}'] for k in get_inital_kh().keys()}
+        sy_param = {k: data[f'sy_{k}'] for k in get_inital_sy().keys()}
+        riv_params = {k: data[f'riv_{k}'] for k in get_initial_riv_conductance().keys()}
+        hill_param = {k: data[f'hill_{k}'] for k in get_hillslope_multiplier().keys()}
+        race_param = {k: data[f'race_{k}'] for k in get_race_multiplier().keys()}
+        rch_param = {k: data[f'rch_{k}'] for k in get_initial_rch_mult().keys()}
 
-    return kh_param, sy_param, riv_params, hill_param, race_param
+        return kh_param, sy_param, riv_params, hill_param, race_param, rch_param
+    else:
+        return data
 
 
-def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param):
+def write_base_param_file(outdir):
+    input_file = outdir.joinpath('parameters.dat')
+    param_data = _get_param_data()
+    param_data.to_csv(input_file, sep='\t', header=False, index=False)
+
+
+def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param):
     exe_name = 'mfnwt'
     run_model = True
     t = time.time()
-    oc_spd = {(p, 0): ['save head', 'save budget'] for p in tdis.pers}
+    oc_spd = {(0, 0): ['save head', 'save budget']}
+    oc_spd.update({(p, 4): ['save head', 'save budget'] for p in
+                   tdis.pers[1:]})  # keynote in future could make the oc data to save every step then mean of all
     # keynote other steps if I end up with them
     sy = interpolate_sy_pilot_points(sy_param)
+    ss = set_ss_terms(sy_param)
     out = build_model(smt=smt,
                       tdis=tdis,
                       oc_spd=oc_spd,
@@ -74,11 +87,11 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       layer_avg=0,
                       ss=ss,
                       sy=sy,
-                      strt=get_starting_heads(),
+                      strt=smt.get_tops(),
                       chani=1,
-                      rch=get_rch_data(tdis),
+                      rch=get_rch_data(tdis, rch_param),
                       ghb_spd=get_ghb_data(tdis),
-                      riv_spd=get_riv_data(tdis, riv_params=riv_params),
+                      str_spd=get_str_data(tdis, riv_params=riv_params),
                       well_spd=get_well_data(tdis,
                                              hill_param=hill_param,
                                              race_param=race_param),
@@ -87,7 +100,8 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       hani=None,
                       mfv='mfnwt',
                       run_model=run_model,
-                      verbose=True,
+                      verbose=False,
                       t=t,
                       noprint=True)
     print(out)
+    return out

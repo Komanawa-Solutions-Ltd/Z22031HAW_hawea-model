@@ -22,6 +22,7 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
                 rch=None,
                 ghb_spd=None,
                 riv_spd=None,
+                str_spd=None,
                 options='COMPLEX',
                 drn_spd=None, well_spd=None, nwt_kwargs={},
                 hani=None, mfv='mfnwt', run_model=False,
@@ -110,6 +111,8 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
     if riv_spd is not None:
         assert isinstance(riv_spd, dict)
         _create_riv_package(m, riv_data=riv_spd, noprint=noprint)
+    if str_spd is not None:
+        _create_str_package(m, str_data=str_spd, noprint=noprint)
     if ghb_spd is not None:
         _create_ghb_package(m, ghb_spd, noprint)
     flopy.modflow.ModflowOc(m, stress_period_data=oc_spd)
@@ -125,7 +128,7 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
         t = time.time()
         if verbose:
             print('running_model')
-        m.run_model()
+        m.run_model(silent=not verbose)
         if verbose:
             print(f'took {time.time() - t}s to run the model in modflow')
 
@@ -408,6 +411,36 @@ def _create_riv_package(m, riv_data, noprint):
         unitnumber=718,
         options=options
     )
+
+
+def _create_str_package(m, str_data, noprint):
+    options = None
+    if noprint:
+        options = ['NOPRINT']
+    t = flopy.modflow.ModflowStr.get_empty()[1]
+    nsss = []
+    mxactss = []
+    for v in str_data.values():
+        mxactss.append(len(v))
+        nsss.append(len(pd.unique(v['segment'])))
+        pass
+    dummy_seg_data = {p: t for p in str_data.keys()}
+    str = flopy.modflow.ModflowStr(
+        m,
+        mxacts=max(mxactss),  # todo do a pull request to read this from these data... this is dumb
+        nss=max(nsss),  # todo do a pull request to read this from these data... this is dumb
+        ntrib=0,
+        ndiv=0,
+        icalc=0,
+        const=86400.0,
+        ipakcb=740,
+        istcb2=740,
+        stress_period_data=str_data,
+        segment_data=dummy_seg_data,
+        options=options,
+
+    )
+    pass
 
 
 def _create_wel_package(m, well_spd, noprint=False):

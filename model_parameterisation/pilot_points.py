@@ -6,9 +6,11 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import RBFInterpolator
 from project_base import base_param_dir, processed_param_dir
-from model_build.project_model_tools import smt, get_lake_array
-from model_parameterisation.static_params import lake_sy
-from model_build.zones import get_param_zones
+from model_build.zones import get_model_zones
+from model_build.project_model_tools import smt, get_lake_array, get_low_cond_array, get_2d_moraine
+from model_build.supporting_data_analysis import get_irrigation_code
+from model_tools.time_discretization import TimeDis
+from model_parameterisation.static_params import lake_sy, lake_ss
 import geopandas as gpd
 
 
@@ -27,29 +29,32 @@ def get_pilot_point_locations(recalc=False):
 
         for k, v in dtypes.items():
             outdata.loc[:, k] = outdata.loc[:, k].astype(v)
-        return outdata
+    else:
+        data = gpd.read_file(data_path)
+        x, y = data.geometry.x, data.geometry.y
 
-    data = gpd.read_file(data_path)
-    x, y = data.geometry.x, data.geometry.y
+        data.loc[:, 'group'] = data.loc[:, 'group'].replace({
+            'rivergroup': 'riv_g',
+            'terrace': 'ter',
+            'haweaflat': 'h_flat',
+            'sandyhill': 'sandy',
+            'mangawera': 'mang',
+            'hillside': 'hill',
+        })
 
-    data.loc[:, 'group'] = data.loc[:, 'group'].replace({
-        'rivergroup': 'riv_g',
-        'terrace': 'ter',
-        'haweaflat': 'h_flat',
-        'sandyhill': 'sandy',
-        'mangawera': 'mang'
-    })
+        outdata = data.loc[:, ['id', 'group']]
+        assert len(outdata.id.unique()) == len(outdata)
+        outdata.loc[:, 'x'] = x
+        outdata.loc[:, 'y'] = y
+        i, j = smt.convert_coords_to_matix(x, y)
+        outdata.loc[:, 'i'] = i
+        outdata.loc[:, 'j'] = j
+        outdata.loc[:, 'name'] = outdata.group.astype(str) + outdata.id.astype(str)
+        outdata.set_index('name', inplace=True)
+        outdata.to_csv(processed_path)
+    # keynote remove some v12 parameterisation
+    outdata = outdata.drop(['h_flat40', 'h_flat41', 'h_flat42', 'h_flat43', 'h_flat44'])
 
-    outdata = data.loc[:, ['id', 'group']]
-    assert len(outdata.id.unique()) == len(outdata)
-    outdata.loc[:, 'x'] = x
-    outdata.loc[:, 'y'] = y
-    i, j = smt.convert_coords_to_matix(x, y)
-    outdata.loc[:, 'i'] = i
-    outdata.loc[:, 'j'] = j
-    outdata.loc[:, 'name'] = outdata.group.astype(str) + outdata.id.astype(str)
-    outdata.set_index('name', inplace=True)
-    outdata.to_csv(processed_path)
     return outdata
 
 
@@ -68,8 +73,6 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
 
     pilot_locs = get_pilot_point_locations()
     pilot_locs.loc[:, 'value'] = [kh_data.get(n) for n in pilot_locs.index]
-    for k in ['sandy', 'mang']:
-        pilot_locs.loc[pilot_locs.group == k, 'value'] = kh_data[k]
     assert pilot_locs.loc[:, 'value'].notnull().all()
     # keynote interpolate on log values!
     pilot_locs.loc[:, 'value'] = np.log10(pilot_locs.loc[:, 'value'])
@@ -83,10 +86,16 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
         # thinplate spline has too much possibility for radically creating extremes,
         # both multiquadric and linear do not provide too much contorition and extreme values.
         # my preference is mutiquadric as it has more curvature about the point
+        terrace_points = pilot_locs.loc[pilot_locs.group == 'ter']
+        other_points = pilot_locs.loc[~(pilot_locs.group == 'ter')]
+        rbf_other = RBFInterpolator(other_points.loc[:, ['i', 'j']].values, other_points['value'].values, kernel=kernal,
+                                    epsilon=1)
+        kh[idx] = rbf_other(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
 
-        rbf = RBFInterpolator(pilot_locs.loc[:, ['i', 'j']].values, pilot_locs['value'].values, kernel=kernal,
-                              epsilon=1)
-        kh[idx] = rbf(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
+        rbf_ter = RBFInterpolator(terrace_points.loc[:, ['i', 'j']].values, terrace_points['value'].values,
+                                  kernel=kernal, epsilon=1)
+        idx = idx & get_model_zones()['terrace']
+        kh[idx] = rbf_ter(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
 
     else:
         # other options include:
@@ -105,45 +114,51 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     lake_array = get_lake_array()
     kh[np.isfinite(lake_array)] = kh_data['lake']
 
-    # set sandy point & mangawera zones
-    zones = get_param_zones()
-    # zone 1 = Sandy point, zone 2 = mangawera valley
-    kh[zones == 1] = kh_data['sandy']
-    kh[zones == 2] = kh_data['mang']
-    kh[~idx] = 0
+    kh[~(ibound == 1)] = 0
     assert np.isfinite(kh).all()
-    kh = kh[np.newaxis]
+    kh = np.repeat(kh[np.newaxis], smt.layers, axis=0)
+
+    kh[get_low_cond_array()] = kh_data['mor_l1']
+    kh[0, get_2d_moraine()] = kh_data['mor_l0']
+
     if return_df:
         return kh, pilot_locs
     return kh
 
 
-def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='multiquadric'):
-    # keynote do not interpolate on log values
+def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False,
+                                kernal='multiquadric'):
+    # keynote interpolate on log values
     sy = smt.get_model_zeros() * np.nan
 
     # set pilot point values
 
     pilot_locs = get_pilot_point_locations()
     pilot_locs.loc[:, 'value'] = [sy_data.get(n) for n in pilot_locs.index]
-    for k in ['sandy', 'mang']:
-        pilot_locs.loc[pilot_locs.group == k, 'value'] = sy_data[k]
     assert pilot_locs.loc[:, 'value'].notnull().all()
 
-    # interpolate kh
+    # interpolate sy
     ibound = smt.get_no_flow(layer=0)
     i, j = smt.get_model_index_grid()
     idx = ibound == 1
+    pilot_locs.loc[:, 'value'] = np.log10(pilot_locs.loc[:, 'value'])
 
     if method == 'rbf':
         # Radial basis function techniques, which kernal
         # thinplate spline has too much possibility for radically creating extremes,
         # both multiquadric and linear do not provide too much contorition and extreme values.
         # my preference is mutiquadric as it has more curvature about the point
+        terrace_points = pilot_locs.loc[pilot_locs.group == 'ter']
+        other_points = pilot_locs.loc[~(pilot_locs.group == 'ter')]
+        rbf_other = RBFInterpolator(other_points.loc[:, ['i', 'j']].values, other_points['value'].values, kernel=kernal,
+                                    epsilon=1)
+        sy[idx] = rbf_other(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
 
-        rbf = RBFInterpolator(pilot_locs.loc[:, ['i', 'j']].values, pilot_locs['value'].values, kernel=kernal,
-                              epsilon=1)
-        sy[idx] = rbf(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
+        rbf_ter = RBFInterpolator(terrace_points.loc[:, ['i', 'j']].values, terrace_points['value'].values,
+                                  kernel=kernal, epsilon=1)
+        idx = idx & get_model_zones()['terrace']
+        sy[idx] = rbf_ter(np.concatenate((i[idx][:, np.newaxis], j[idx][:, np.newaxis]), axis=1))
+
 
     else:
         # other options include:
@@ -155,33 +170,50 @@ def interpolate_sy_pilot_points(sy_data, method='rbf', return_df=False, kernal='
         # I chose to simply use RBF methods
         raise ValueError(f'unexpected method: {method}')
 
+    # undo the log
+    sy = 10 ** sy
+    pilot_locs.loc[:, 'value'] = 10 ** (pilot_locs.loc[:, 'value'])
+
     # set lake values
     lake_array = get_lake_array()
     sy[np.isfinite(lake_array)] = lake_sy
 
-    # set sandy point & mangawera zones
-    zones = get_param_zones()
-    # zone 1 = Sandy point, zone 2 = mangawera valley
-    sy[zones == 1] = sy_data['sandy']
-    sy[zones == 2] = sy_data['mang']
-    sy[~idx] = 0
+    sy[~(ibound == 1)] = 0
     assert np.isfinite(sy).all()
     min_v = min(sy_data.values())
     sy[sy < min_v] = min_v
-    sy[~idx] = 0
-    sy = sy[np.newaxis]
+    sy[~(ibound == 1)] = 0
+    sy = np.repeat(sy[np.newaxis], smt.layers, axis=0)
+
+    sy[get_low_cond_array()] = sy_data['sy_mor_l1']
+    sy[0, get_2d_moraine()] = sy_data['sy_mor_l0']
+
     if return_df:
         return sy, pilot_locs
     return sy
 
 
+def set_ss_terms(sy_data):
+    """
+    make the array for the ss data, ss parameters are being added to the sy_data for easy handling
+    :param sy_data:
+    :return:
+    """
+    ss = smt.get_model_zeros(True) + sy_data['ss_rest']
+    ss[0, get_2d_moraine()] = sy_data['ss_mor_l0']
+    ss[get_low_cond_array()] = sy_data['ss_mor_l1']
+
+    return ss
+
+
 def exampine_kh_interpolation():
     import matplotlib.pyplot as plt
     pps = get_pilot_point_locations()
-    options = [10, 50, 100, 200, 300, 500]
+    options = np.linspace(0.5, 3.5, 10)
     kh_data = {
         'sandy': np.random.choice(options),
         'mang': np.random.choice(options),
+        'lake': 1
     }
 
     ncols = 3
@@ -192,9 +224,6 @@ def exampine_kh_interpolation():
     randoms = np.random.choice(options, len(pps))
     for i, r in zip(pps.index, randoms):
         kh_data[i] = r
-
-    for k, v in kh_data.items():
-        kh_data[k] = np.log10(v)
 
     for i, kernal in enumerate(interpolation_techniques):
         kh, df = interpolate_kh_pilot_points(kh_data, return_df=True, kernal=kernal)
@@ -259,6 +288,47 @@ def examine_sy_interpolation(log_before=False):
     smt.plot.show()
 
 
+def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
+    assert isinstance(tdis, TimeDis)
+    assert isinstance(rch_data, dict)
+    save_path = processed_param_dir.joinpath(f'irrigated_area_{tdis.name}.npy')
+    if save_path.exists() and not recalc:
+        out = np.load(save_path).astype(bool)
+    else:
+        out = np.concatenate(
+            [get_irrigation_code(y)[np.newaxis] >= 0 for y in pd.to_datetime(tdis.per_middle_dates).year], axis=0)
+        np.save(save_path, out)
+    rch_mult = np.full(out.shape, rch_data['all'])
+
+    return rch_mult
+
+
+def check_kh_sy_ss():
+    from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh
+    vas = get_inital_kh(True)
+    vas['lake'] = 20
+    vas['mor_l0'] = 7
+    vas['mor_l1'] = 5
+    kh = interpolate_kh_pilot_points(vas)
+    ss_sy = get_inital_sy(True)
+    ss_sy['sy_mor_l0'] = 0.02
+    ss_sy['sy_mor_l1'] = 0.03
+    ss_sy['ss_rest'] = 0.1
+    ss_sy['ss_mor_l0'] = 0.2
+    ss_sy['ss_mor_l1'] = 0.3
+
+    sy = interpolate_sy_pilot_points(ss_sy)
+
+    ss = set_ss_terms(ss_sy)
+
+    for k in ['kh', 'sy', 'ss']:
+        smt.plot.plt_layer_slices(eval(k), base_map=True, no_flow_layer=0, title=k)
+    smt.plot.show()
+
+
 if __name__ == '__main__':
+    check_kh_sy_ss()
+
     t = get_pilot_point_locations(recalc=True)
+    exampine_kh_interpolation()
     pass

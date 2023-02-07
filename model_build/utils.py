@@ -4,8 +4,25 @@ on: 31/08/22
 """
 import warnings
 
+import numpy as np
 import pandas as pd
 from matplotlib.cm import get_cmap
+
+
+def fill_weekly_mean(data, keys=None):
+    assert isinstance(data, pd.DataFrame) or isinstance(data, pd.Series)
+    if keys is None and isinstance(data, pd.DataFrame):
+        keys = list(data.keys())
+    elif keys is None and isinstance(data, pd.Series):
+        keys = data.name
+    outdata = pd.DataFrame(data.copy(deep=True))
+    outdata.loc[:, 'isoweek'] = outdata.index.isocalendar().week.astype(str)
+    temp = outdata.groupby('isoweek').mean()
+    for k in np.atleast_1d(keys):
+        idx = outdata[k].isna()
+        outdata.loc[idx, k] = outdata.loc[idx, 'isoweek'].replace(temp[k].to_dict())
+
+    return outdata.loc[:, keys]
 
 
 def select_resample(data, start_date, end_date, frequency, func='mean', start_ends_out_bounds='raise'):
@@ -15,11 +32,11 @@ def select_resample(data, start_date, end_date, frequency, func='mean', start_en
         start_date = ht.min()
     else:
         if pd.to_datetime(start_date) < ht.min():
-            if start_ends_out_bounds =='raise':
+            if start_ends_out_bounds == 'raise':
                 raise ValueError(f'start date {start_date} earlier than dataset start date: {ht.min()}')
-            elif start_ends_out_bounds =='warn':
+            elif start_ends_out_bounds == 'warn':
                 warnings.warn(f'start date {start_date} earlier than dataset start date: {ht.min()}')
-            elif start_ends_out_bounds =='pass':
+            elif start_ends_out_bounds == 'pass':
                 pass
             else:
                 raise ValueError('cant get here')
@@ -28,11 +45,11 @@ def select_resample(data, start_date, end_date, frequency, func='mean', start_en
         end_date = ht.max()
     else:
         if pd.to_datetime(end_date) > ht.max():
-            if start_ends_out_bounds =='raise':
+            if start_ends_out_bounds == 'raise':
                 raise ValueError(f'end date {end_date} earlier than dataset start date: {ht.max()}')
-            elif start_ends_out_bounds =='warn':
+            elif start_ends_out_bounds == 'warn':
                 warnings.warn(f'end date {end_date} earlier than dataset start date: {ht.max()}')
-            elif start_ends_out_bounds =='pass':
+            elif start_ends_out_bounds == 'pass':
                 pass
             else:
                 raise ValueError('cant get here')
@@ -69,7 +86,6 @@ def plot_1_to_1(ax, **kwargs):
     limits.extend(xs)
     limits.extend(ys)
     ax.plot(limits, limits, **kwargs)
-
 
 
 int_season_mapper = {

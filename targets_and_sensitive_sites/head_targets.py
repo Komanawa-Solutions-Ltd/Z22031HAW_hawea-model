@@ -11,12 +11,15 @@ import numpy as np
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 from model_build.supporting_data_analysis import get_all_wells
-from model_build.project_model_tools import smt
+from model_build.project_model_tools import smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
+    get_low_cond_array
 from project_base import processed_target_dir, base_target_dir
 from model_build.utils import get_colors, select_resample
 from targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
 from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
 from model_build.zones import get_model_zones
+
+base_regular_groupnames = ['h_hf_riv', 'h_hf', 'h_lf']  # ensures coheriance across functions
 
 
 def get_single_head_targets():
@@ -77,7 +80,13 @@ def get_2011_piezo_survey(recalc=False):
         temp.loc[:, 'use_datetime'] = d
         outdata.append(temp)
     outdata = pd.concat(outdata).reset_index(drop=True)
+
     outdata.loc[:, 'k'] = 0
+    special_area = get_layer_pinchout_area() | get_2d_moraine()
+    outdata.loc[special_area[outdata.i, outdata.j], 'k'] = 2
+    idx = np.repeat(np.isfinite(get_lake_array())[np.newaxis], smt.layers, axis=0) | get_low_cond_array()
+    assert not idx[outdata.k, outdata.i, outdata.j].any(), 'targets in lake or low conductivity zone'
+
     outdata.to_csv(processed_path)
     return outdata
 
@@ -236,36 +245,46 @@ def get_all_hds_targets(tdis, recalc=False):
     need_keys = ['k', 'i', 'j', 'use_datetime', 'head', 'group', 'name']
     all_head_targets = []
     piezo = get_2011_piezo_survey(recalc=recalc).rename(columns={'Site': 'name'})
-    piezo.loc[:, 'name'] = piezo.loc[:, 'name'].str.replace('/', '_').str.replace('bore','')
-    piezo.loc[:, 'group'] = 'piezo'
+    piezo.loc[:, 'name'] = piezo.loc[:, 'name'].str.replace('/', '_').str.replace('bore', '')
+    piezo.loc[:, 'group'] = 'h_piezo'
     all_head_targets.append(piezo.loc[:, need_keys])
 
     single = get_single_head_targets().rename(columns={'well_name': 'name'})
-    single.loc[:, 'group'] = 'single_' + single.quality_code.astype(str)
+    single.loc[:, 'group'] = 'h_single_' + single.quality_code.astype(str)
     all_head_targets.append(single.loc[:, need_keys])
 
     low = get_low_freq_head_targets(*tdis.date_limits, 'W')
-    high = get_high_freq_head_targets(*tdis.date_limits, 'W')
+    all_high = get_high_freq_head_targets(*tdis.date_limits, 'W')
+    high_near_riv = all_high.loc[:, ['g40_0041', 'g40_0416']]
+    high_far_riv = all_high.loc[:, ['g40_0367', 'g40_0366', 'g40_0415']]
 
     all_wells = get_all_wells()
-    regular = pd.merge(low, high, right_index=True, left_index=True, how='outer')
-    regular.index.name = 'use_datetime'
-    for k in regular.columns:
-        temp = pd.DataFrame(regular.loc[:, k]).reset_index().dropna()
-        temp.rename(columns={k: 'head'}, inplace=True)
-        i, j = all_wells.loc[k, ['i', 'j']]
-        temp.loc[:, 'name'] = k
-        temp.loc[:, 'k'] = 0
-        temp.loc[:, 'i'] = i
-        temp.loc[:, 'j'] = j
-        temp.loc[:, 'group'] = 'regular'
-        all_head_targets.append(temp)
+
+    regular_datasets = [high_near_riv, high_far_riv, low]
+    regular_groupnames = ['h_hf_riv', 'h_hf', 'h_lf']
+    assert regular_groupnames == base_regular_groupnames
+
+    for hdatset, group_name in zip(regular_datasets, regular_groupnames):
+        hdatset.index.name = 'use_datetime'
+        for k in hdatset.columns:
+            temp = pd.DataFrame(hdatset.loc[:, k]).reset_index().dropna()
+            temp.rename(columns={k: 'head'}, inplace=True)
+            i, j = all_wells.loc[k, ['i', 'j']]
+            temp.loc[:, 'name'] = k
+            temp.loc[:, 'k'] = 0
+            temp.loc[:, 'i'] = i
+            temp.loc[:, 'j'] = j
+            temp.loc[:, 'group'] = group_name
+            all_head_targets.append(temp)
     all_head_targets = pd.concat(all_head_targets).reset_index(drop=True)
     all_head_targets = all_head_targets.loc[all_head_targets.loc[:, 'head'].notna()]
 
     # add step and per, remove duplicated data
     all_head_targets = tdis.add_nstp_nper_to_df(all_head_targets, datetime_col='use_datetime',
                                                 action_on_duplicates='last')
+    idx = np.repeat(np.isfinite(get_lake_array())[np.newaxis], smt.layers, axis=0) | get_low_cond_array()
+    assert not idx[
+        all_head_targets.k, all_head_targets.i, all_head_targets.j].any(), 'targets in lake or low conductivity zone'
 
     all_head_targets = all_head_targets.loc[all_head_targets.nper > 0]
     all_head_targets = all_head_targets.drop_duplicates(subset=['i', 'j', 'group', 'nper']).reset_index(drop=True)
@@ -295,7 +314,7 @@ def get_all_hds_targets(tdis, recalc=False):
     return all_head_targets
 
 
-def plot_hds_regular_locator(ax, colors_dict):
+def plot_hds_regular_locator(ax, colors_dict, truncate_to_active=True):
     all_wells = get_all_wells()
     smt.plot.plt_basemap(ax=ax, no_flow_layer=0)
 
@@ -303,6 +322,11 @@ def plot_hds_regular_locator(ax, colors_dict):
         k = k.replace('h_', '')
         x, y = all_wells.loc[k, ['nztmx', 'nztmy']]
         ax.scatter(x, y, color=c, label=k, s=80)
+    if truncate_to_active:
+        xs, ys = smt.get_model_x_y()
+        ibound = smt.get_no_flow(0)
+        ys = ys[ibound == 1]
+        ax.set_ylim(ys.min() - 200, ys.max() + 200)
     ax.legend(loc='lower left')
 
 
@@ -324,6 +348,35 @@ def plot_hds_zone_locator(ax, colors_dict, default_zone='east'):
         handles.append(Patch(facecolor=c))
         labels.append(n.capitalize())
     ax.legend(handles, labels, loc='lower left')
+
+
+def get_annual_mean_head_targets(hds_df):
+    """
+
+    :param hds_df: from get_all_hds_targets(tdis)
+    :return:
+    """
+    assert isinstance(hds_df, pd.DataFrame)
+    hds_df = hds_df.copy(deep=True).loc[np.in1d(hds_df.group, base_regular_groupnames[0:-1])]
+
+    t = hds_df.name.str.split('_')
+    hds_df.loc[:, 'well_name'] = t.str.get(1) + '_' + t.str.get(2)
+    hds_df.loc[:, 'week'] = hds_df.use_datetime.dt.isocalendar().loc[:, 'week']
+    out = hds_df.groupby(['well_name', 'week']).agg({
+        'group': 'first',
+        'zone': 'first',
+        'head': 'mean',
+        'modelled': 'mean',
+    })
+    out = out.reset_index()
+    out.loc[:, 'nper'] = out.week * -1
+    out.loc[:, 'name'] = 'h_' + out.well_name + '_rw' + pd.Series([f'{e:02d}' for e in out.week])
+    out = out.replace({
+        'h_hf': 'rwh_hf',
+        'h_hf_riv': 'rwh_hf_riv',
+    })
+
+    return out
 
 
 if __name__ == '__main__':

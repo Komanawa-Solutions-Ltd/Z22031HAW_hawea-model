@@ -24,7 +24,7 @@ catchment_loc_path = processed_model_build_data_dir.joinpath('catchment_locs.csv
 flow_data_path = processed_model_build_data_dir.joinpath('hillside_flows.csv')
 
 
-def get_hillside_catchment_locs(recalc=False, show=False):
+def get_hillside_catchment_locs(recalc=False, show=False, include_hill_str=False):
     if not recalc and catchment_loc_path.exists():
         outdata = pd.read_csv(catchment_loc_path, index_col=0)
         dtypes = {
@@ -39,6 +39,10 @@ def get_hillside_catchment_locs(recalc=False, show=False):
 
         for k, v in dtypes.items():
             outdata.loc[:, k] = outdata.loc[:, k].astype(v)
+        if include_hill_str:
+            pass
+        else:
+            outdata = outdata.drop(index=['Grandview Creek', 'John Creek'])
         return outdata
     catchments = get_catchment_areas()
     ibound = smt.get_no_flow(0)
@@ -47,6 +51,11 @@ def get_hillside_catchment_locs(recalc=False, show=False):
     outdata.loc[:, 'i'] = i
     outdata.loc[:, 'j'] = j
 
+    # remove hillslopes below lugate tarras road
+    x, y = 1308110, 5039985
+    outdata = outdata.loc[outdata.py >= y]
+
+    # move all cells into active domain
     move_direction = {
         'maungawera': ('i', 1),
         'flat_west': ('j', 1),
@@ -55,6 +64,7 @@ def get_hillside_catchment_locs(recalc=False, show=False):
         'south_east': ('j', -1),
         'mt_brown': ('j', 1),
     }
+
     temp = (ibound[outdata.loc[:, 'i'], outdata.loc[:, 'j']]) == 0
     while temp.any():
         if smt.matrix_out_bounds(i=outdata.loc[:, 'i'], j=outdata.loc[:, 'j']).any():
@@ -62,8 +72,30 @@ def get_hillside_catchment_locs(recalc=False, show=False):
         for g, (k, v) in move_direction.items():
             idx = temp & (outdata.group == g)
             outdata.loc[idx, k] += v
-
         temp = (ibound[outdata.loc[:, 'i'], outdata.loc[:, 'j']]) == 0
+
+    # move all cells in 1 more in
+    for g, (k, v) in move_direction.items():
+        idx = outdata.group == g
+        outdata.loc[idx, k] += v
+
+    # expand locations to all around
+
+    use_outdata = []
+    for rname, (px, py, group, i, j) in outdata.iterrows():
+        iss, jss = smt.get_all_adjacent_cells((i, j), return_paired=False, include_diagonal=True, return_flattened=True,
+                                              no_flow_layer=0, exclude_noflow=True)
+        idx = ibound[iss, jss] == 1
+        iss = iss[idx]
+        jss = jss[idx]
+        temp = pd.DataFrame(index=np.repeat(rname, len(iss)), columns=['px', 'py', 'group', 'i', 'j'])
+        for k in ['px', 'py', 'group']:
+            temp.loc[:, k] = eval(k)
+        temp.loc[:, 'i'] = iss
+        temp.loc[:, 'j'] = jss
+        use_outdata.append(temp)
+    outdata = pd.concat(use_outdata)
+
     outdata = smt.io.add_mxmy_to_df(outdata)
     fig, ax = smt.plot.plt_matrix(smt.get_model_zeros() * np.nan, no_flow_layer=0, base_map=True, title='moved points')
     ax.scatter(outdata.px, outdata.py, c='r', label='first')
@@ -74,14 +106,20 @@ def get_hillside_catchment_locs(recalc=False, show=False):
         smt.plot.show()
 
     outdata.reset_index()
-    outdata.loc[np.in1d(outdata.group, ['south_east']), 'param'] = 'south_east'
+    outdata.loc[np.in1d(outdata.group, ['south_east']), 'param'] = 'se'
     outdata.loc[np.in1d(outdata.group, ('flat_east', 'terrace_east', 'flat_west')), 'param'] = 'main'
-    outdata.loc[np.in1d(outdata.group, ['maungawera']), 'param'] = 'maungawera'
+    outdata.loc[np.in1d(outdata.group, ['maungawera']), 'param'] = 'mang'
 
     outdata = outdata.drop(index='ss22')
 
     outdata.loc[:, 'k'] = 0
     outdata.to_csv(catchment_loc_path)
+
+    if include_hill_str:
+        pass
+    else:
+        outdata = outdata.drop(index=['Grandview Creek', 'John Creek'])
+
     return outdata
 
 
@@ -638,13 +676,15 @@ def lindis_correlation_with_malf(return_figs=False):
     return outdata
 
 
-def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
+def get_hillside_flows(start_date, end_date, frequency='D',
+                       recalc=False, include_hill_str=False):
     """
     get hillside flow records from start to end dates (inclusive),
      data is available from 2012-01-01 to 2021-12-31
     :param start_date: none or dates
     :param end_date: none or dates
     :param frequency: pd frequnecy code
+    :param include_hill_str: bool If True include John and Grandview Creek, which are now implemented in the STR package
     :return:
     """
     if flow_data_path.exists() and not recalc:
@@ -656,9 +696,14 @@ def get_hillside_flows(start_date, end_date, frequency='D', recalc=False):
         data, (figs, names) = lindis_correlation_with_malf(return_figs=True)
         data.to_csv(flow_data_path)
 
+    if include_hill_str:
+        pass
+    else:
+        data = data.drop(columns=['Grandview Creek', 'John Creek'])
     return select_resample(data, start_date, end_date, frequency, 'mean')
 
 
 if __name__ == '__main__':
-    t = get_hillside_catchment_locs(recalc=True)
-    get_hillside_flows(None, None, recalc=True)
+    get_hillside_flows(None, None, recalc=False)
+    t = get_hillside_catchment_locs(recalc=True, show=True)
+    raise NotImplementedError

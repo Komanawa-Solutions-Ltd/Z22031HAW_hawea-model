@@ -9,6 +9,17 @@ import numpy as np
 # keynote these set initials and bounds
 # keynote param key in loc data or riv and well
 
+def get_initial_rch_mult(return_just_start=False):
+    # keynote do not use log values
+    # keynote one value for the whole model
+    start_val = (1, (0.5, 1.2))
+    if return_just_start:
+        start_val = start_val[0]
+
+    rch_mult = {'all': start_val}
+
+    return rch_mult
+
 
 def get_initial_riv_conductance(return_just_start=False):
     # these parameters are massively compensatory
@@ -17,7 +28,9 @@ def get_initial_riv_conductance(return_just_start=False):
         'h1': (1000, (100, 10000)),
         'h2': (1000, (100, 10000)),
         'h3': (1000, (100, 10000)),
-        'c1': (1000, (100, 10000))
+        'c1': (1000, (100, 10000)),
+        'gview': (100, (50, 5000)),
+        'john': (100, (50, 5000)),
     }
     if return_just_start:
         for k, v in params.items():
@@ -27,43 +40,58 @@ def get_initial_riv_conductance(return_just_start=False):
 
 def get_inital_kh(return_just_start=False):
     # keynote one value for the whole model based on the 10**mean(log10(scotts parameters))
+    # keynote the tidal reference seems to suggest a kh of 32-43 (assuming 30-40m thickness and a T of 1300)
     # keynote use log values
-    start_val = (10, (0.01, 1000))
-    lake_val = (10, (0.01, 1000))
+    start_val = (300, (0.01, 1000))
+    ter_start_val = (50, (0.01, 1000))
+    lake_val = (300, (0.001, 1000))
+    moraine_l0 = (300, (0.001, 1000))
+    moraine_l1 = (1e-4, (1e-7, 1))
 
     # for reference scott's model ha min = 0.09, max = 300, median = 14
-    if return_just_start:
-        start_val = start_val[0]
-        lake_val = lake_val[0]
     pps = get_pilot_point_locations()
-    pps = pps.loc[~np.in1d(pps.group, ['sandy', 'mang'])]
     kh_data = {
-        'sandy': start_val,
-        'mang': start_val,
-        'lake': lake_val
+        'lake': lake_val,
+        'mor_l0': moraine_l0,  # keynote high conductivy upper area
+        'mor_l1': moraine_l1,  # keynote low conductivity moraine
     }
 
     for i in pps.index:
-        kh_data[i] = start_val
+        if 'ter' in i:
+            kh_data[i] = ter_start_val
+        else:
+            kh_data[i] = start_val
+    if return_just_start:
+        kh_data = {k: v[0] for k, v in kh_data.items()}
 
     return kh_data
 
 
 def get_inital_sy(return_just_start=False):
     # keynote do not use log values
+    # keynote the tidal reference seems to suggest a sy of 0.012
     # keynote one value for the whole model
-    start_val = (0.02, (0.001, 0.3))
-    if return_just_start:
-        start_val = start_val[0]
+    start_val = (0.01, (0.0001, 0.3))
+    ter_start_val = (0.01, (0.0001, 0.3))
+    sy_mor_l1 = (0.001, (0.0001, 0.3))
+    ss_start = (1e-4, (1e-6, 1e-3))
+
     pps = get_pilot_point_locations()
-    pps = pps.loc[~np.in1d(pps.group, ['sandy', 'mang'])]
     sy_data = {
-        'sandy': start_val,
-        'mang': start_val,
+        'sy_mor_l0': start_val,
+        'sy_mor_l1': sy_mor_l1,
+        'ss_rest': ss_start,
+        'ss_mor_l0': ss_start,
+        'ss_mor_l1': ss_start,
     }
 
     for i in pps.index:
-        sy_data[i] = start_val
+        if 'ter' in i:
+            sy_data[i] = ter_start_val
+        else:
+            sy_data[i] = start_val
+    if return_just_start:
+        sy_data = {k: v[0] for k, v in sy_data.items()}
 
     return sy_data
 
