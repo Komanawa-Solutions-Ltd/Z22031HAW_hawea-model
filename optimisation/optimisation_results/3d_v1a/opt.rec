@@ -1,0 +1,1073 @@
+ PEST RUN RECORD: CASE /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt
+
+
+ BEOPEST Version: 17.3
+
+
+ PEST run mode:-
+
+    Parameter estimation mode
+
+
+ Case dimensions:-
+
+    Number of parameters                           :   135
+    Number of adjustable parameters                :   135
+    Number of parameter groups                     :     6
+    Number of observations                         :  1872
+    Number of prior estimates                      :     0
+
+
+ Model command line(s):-
+
+    conda run -n hawea python /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/forward_run.py
+
+
+ Jacobian command line:-
+
+    na
+
+
+ Model interface files:-
+
+    Templates:
+       /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/parameters.dat.tpl
+    for model input files:
+       /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/parameters.dat
+
+    (Parameter values written using single precision protocol.)
+    (Decimal point always included.)
+
+    Instruction files:
+       /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/observations.dat.ins
+    for reading model output files:
+       /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/observations.dat
+
+
+ PEST-to-model message file:-
+
+    na
+
+
+ Singular value decomposition:-
+
+    Perform SVD on XtQX or Q^(1/2)X               : XtQX
+    Max. number of singular values to employ      : 10000000
+    Ratio of lowest/highest singular value        :  1.000000E-06
+    Record eigenvectors in SVD file               : yes
+
+
+ Derivatives calculation:-
+
+ Param        Increment   Increment   Increment   Forward or   Multiplier  Method
+ group        type                    low bound   central      (central)   (central)
+ hill         relative    1.0000E-02   none         switch       2.000     parabolic
+ kh           relative    1.0000E-02   none         switch       2.000     parabolic
+ race         relative    1.0000E-02   none         switch       2.000     parabolic
+ rch          relative    1.0000E-02   none         switch       2.000     parabolic
+ riv          relative    1.0000E-02   none         switch       2.000     parabolic
+ sy           relative    1.0000E-02   none         switch       2.000     parabolic
+
+
+ Parameter definitions:-
+
+ This information not provided as non-verbose run record file requested.
+
+
+ Prior information:-
+
+    No prior information supplied
+
+
+ Observations:-
+
+ This information not provided as non-verbose run record file requested.
+
+
+ Control settings:-
+
+    Initial lambda                                               :  10.000    
+    Lambda adjustment factor                                     : iteration-dependent
+    Value of variable governing adjustment                       : -3.0000    
+    Sufficient new/old phi ratio per optimisation iteration      : 0.30000    
+    Limiting relative phi reduction between lambdas              : 1.00000E-02
+    Maximum trial lambdas per iteration                          :  10
+    Forgive model run failure during lamda testing               : yes
+    Forgive model run failure during Jacobian runs               : yes
+
+    Perform Broyden's update of Jacobian matrix                  : no
+    Undertake observation re-referencing                         : no
+
+    Maximum  factor  parameter change (factor-limited changes)   :  10.000
+    Maximum relative parameter change (relative-limited changes) : na
+    Fraction of initial parameter values used in computing
+    change limit for near-zero parameters                        : 1.00000E-03
+    Absolute parameter change limit (1)                          : 0.10000
+    Allow bending of parameter upgrade vector                    : no
+    Allow parameters to stick to their bounds                    : no
+
+    Relative phi reduction below which to begin use of
+    central derivatives                                          : 0.10000             
+    Iteration at which to first consider derivatives switch      :   3
+
+    Relative phi reduction indicating convergence                : 0.50000E-02
+    Number of phi values required within this range              :   6
+    Maximum number of consecutive failures to lower phi          :   6
+    Minimal relative parameter change indicating convergence     : 0.50000E-02
+    Number of consecutive iterations with minimal param change   :   6
+    Maximum number of optimisation iterations                    : 300
+
+    Attempt automatic user intervention                          : no
+
+    Attempt reuse of parameter sensitivities                     : no
+
+    Scale parameters by their bounds                             : no
+
+
+ File saving options: -
+
+    Save best JCO file                                           : yes
+    Save multiple JCO files                                      : yes
+    Save multiple REI files                                      : yes
+    Save multiple PAR files                                      : yes
+
+
+                             OPTIMISATION RECORD
+
+
+ INITIAL CONDITIONS: 
+    Sum of squared weighted residuals (ie phi)               =   4034.1    
+    Contribution to phi from observation group "h_piezo"     =   29.062    
+    Contribution to phi from observation group "h_single_3"  =   19.142    
+    Contribution to phi from observation group "h_single_1"  =   241.23    
+    Contribution to phi from observation group "h_hf_riv"    =   16.272    
+    Contribution to phi from observation group "rwh_hf_riv"  =   0.0000    
+    Contribution to phi from observation group "h_lf"        =   89.537    
+    Contribution to phi from observation group "h_hf"        =   3443.0    
+    Contribution to phi from observation group "rwh_hf"      =   0.0000    
+    Contribution to phi from observation group "riv"         =   195.85    
+
+
+ OPTIMISATION ITERATION NO.        : 1
+    Model calls so far             : 1
+    Starting phi for this iteration                          :   4034.1    
+    Contribution to phi from observation group "h_piezo"     :   29.062    
+    Contribution to phi from observation group "h_single_3"  :   19.142    
+    Contribution to phi from observation group "h_single_1"  :   241.23    
+    Contribution to phi from observation group "h_hf_riv"    :   16.272    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   89.537    
+    Contribution to phi from observation group "h_hf"        :   3443.0    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   195.85    
+
+    Parameter "kh_mang16" has no effect on observations.
+    Parameter "kh_mang18" has no effect on observations.
+
+        Lambda =   10.000     ----->
+           Phi =   3928.9      (  0.974 of starting phi)
+
+        Lambda =   4.6416     ----->
+           Phi =   3929.0      (  0.974 of starting phi)
+
+        Lambda =   21.544     ----->
+           Phi =   3928.7      (  0.974 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   3928.7    
+    Maximum   factor change:  1.692     ["kh_ter84"]
+    Maximum relative change: 0.6924     ["kh_ter84"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 2
+    Model calls so far             : 144
+    Starting phi for this iteration                          :   3928.7    
+    Contribution to phi from observation group "h_piezo"     :   28.506    
+    Contribution to phi from observation group "h_single_3"  :   18.985    
+    Contribution to phi from observation group "h_single_1"  :   238.95    
+    Contribution to phi from observation group "h_hf_riv"    :   15.848    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   87.349    
+    Contribution to phi from observation group "h_hf"        :   3348.7    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   190.44    
+
+    Parameter "rch_all" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+
+        Lambda =   21.544     ----->
+           Phi =   3623.7      (  0.922 of starting phi)
+
+        Lambda =   7.7426     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   59.948     ----->
+           Phi =   3527.5      (  0.898 of starting phi)
+
+        Lambda =   166.81     ----->
+           Phi =   3302.3      (  0.841 of starting phi)
+
+        Lambda =   464.16     ----->
+           Phi =   2845.3      (  0.724 of starting phi)
+
+        Lambda =   1291.5     ----->
+           Phi =   2761.6      (  0.703 of starting phi)
+
+        Lambda =   3593.8     ----->
+           Phi =   2358.6      (  0.600 of starting phi)
+
+        Lambda =   10000.     ----->
+           Phi = cannot be calculated: model run failure
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   2358.6    
+    Maximum   factor change:  3.775     ["kh_h_flat2"]
+    Maximum relative change:  2.025     ["kh_h_flat7"]
+    Maximum absolute(1) change: 0.1000     ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 3
+    Model calls so far             : 295
+    Starting phi for this iteration                          :   2358.6    
+    Contribution to phi from observation group "h_piezo"     :   24.887    
+    Contribution to phi from observation group "h_single_3"  :   16.348    
+    Contribution to phi from observation group "h_single_1"  :   163.84    
+    Contribution to phi from observation group "h_hf_riv"    :   10.397    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   60.637    
+    Contribution to phi from observation group "h_hf"        :   1970.3    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   112.13    
+
+    Parameter "kh_mang17" has no effect on observations.
+    Parameter "rch_all" has no effect on observations.
+    Parameter "sy_mang17" has no effect on observations.
+    Parameter "sy_mang20" has no effect on observations.
+    Parameter "sy_mang21" has no effect on observations.
+    Parameter "sy_ss_rest" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+
+        Lambda =   3593.8     ----->
+           Phi =   1348.9      (  0.572 of starting phi)
+
+        Lambda =   234.62     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   55048.     ----->
+           Phi = cannot be calculated: model run failure
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   1348.9    
+    Maximum   factor change:  4.503     ["kh_h_flat2"]
+    Maximum relative change:  1.726     ["sy_h_flat8"]
+    Maximum absolute(1) change: 0.1000     ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 4
+    Model calls so far             : 433
+    Starting phi for this iteration                          :   1348.9    
+    Contribution to phi from observation group "h_piezo"     :   20.441    
+    Contribution to phi from observation group "h_single_3"  :   13.613    
+    Contribution to phi from observation group "h_single_1"  :   77.679    
+    Contribution to phi from observation group "h_hf_riv"    :   5.6718    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   27.634    
+    Contribution to phi from observation group "h_hf"        :   1162.8    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   41.157    
+    All frozen parameters freed.
+
+    Parameter "kh_h_flat1" has no effect on observations.
+    Parameter "kh_mang17" has no effect on observations.
+    Parameter "kh_mang18" has no effect on observations.
+    Parameter "kh_mang19" has no effect on observations.
+    Parameter "kh_riv_g28" has no effect on observations.
+    Parameter "kh_riv_g62" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+
+        Lambda =   3593.8     ----->
+           Phi =   995.93      (  0.738 of starting phi)
+
+        Lambda =   234.62     ----->
+           Phi =   1240.2      (  0.919 of starting phi)
+
+        Lambda =   55048.     ----->
+           Phi =   968.05      (  0.718 of starting phi)
+
+        Lambda =  8.43191E+05 ----->
+           Phi =   680.45      (  0.504 of starting phi)
+
+        Lambda =  1.29155E+07 ----->
+           Phi =   967.83      (  0.717 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   680.45    
+    Maximum   factor change:  1.811     ["kh_ter34"]
+    Maximum relative change: 0.4855     ["kh_h_flat89"]
+    Maximum absolute(1) change: 0.1000     ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 5
+    Model calls so far             : 573
+    Starting phi for this iteration                          :   680.45    
+    Contribution to phi from observation group "h_piezo"     :   19.623    
+    Contribution to phi from observation group "h_single_3"  :   11.199    
+    Contribution to phi from observation group "h_single_1"  :   56.889    
+    Contribution to phi from observation group "h_hf_riv"    :   4.8996    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   25.495    
+    Contribution to phi from observation group "h_hf"        :   553.10    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   9.2516    
+    All frozen parameters freed.
+
+    Parameter "rch_all" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat9" frozen: gradient and update vectors out of bounds
+
+        Lambda =  8.43191E+05 ----->
+           Phi =   357.45      (  0.525 of starting phi)
+        param "kh_h_flat51" frozen: - update vector out of bounds
+
+        Lambda =   8925.2     ----->
+           Phi =   572.97      (  0.842 of starting phi)
+
+        Lambda =   94.473     ----->
+           Phi =   632.21      (  0.929 of starting phi)
+
+        Lambda =  8.43191E+05 ----->
+           Phi =   364.25      (  0.535 of starting phi)
+
+        Lambda =  7.96589E+07 ----->
+           Phi =   264.29      (  0.388 of starting phi)
+
+        Lambda =  7.52564E+09 ----->
+           Phi =   263.99      (  0.388 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   263.99    
+    Maximum   factor change:  2.099     ["kh_ter34"]
+    Maximum relative change: 0.9840     ["kh_h_flat2"]
+    Maximum absolute(1) change: 0.1000     ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 6
+    Model calls so far             : 714
+    Starting phi for this iteration                          :   263.99    
+    Contribution to phi from observation group "h_piezo"     :   19.417    
+    Contribution to phi from observation group "h_single_3"  :   8.5285    
+    Contribution to phi from observation group "h_single_1"  :   45.048    
+    Contribution to phi from observation group "h_hf_riv"    :   3.4670    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   23.865    
+    Contribution to phi from observation group "h_hf"        :   162.21    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :   1.4492    
+    All frozen parameters freed.
+
+    Parameter "kh_mang17" has no effect on observations.
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat9" frozen: gradient and update vectors out of bounds
+        param "kh_mor_l0" frozen: gradient and update vectors out of bounds
+
+        Lambda =  7.52564E+09 ----->
+           Phi =   203.95      (  0.773 of starting phi)
+
+        Lambda =  3.84027E+06 ----->
+           Phi =   177.75      (  0.673 of starting phi)
+        param "kh_h_flat5" frozen: - update vector out of bounds
+        param "kh_h_flat51" frozen: - update vector out of bounds
+
+        Lambda =   1959.7     ----->
+           Phi =   233.75      (  0.885 of starting phi)
+
+        Lambda =   1.0000     ----->
+           Phi =   253.30      (  0.960 of starting phi)
+
+        Lambda =  3.84027E+06 ----->
+           Phi =   176.79      (  0.670 of starting phi)
+
+        Lambda =  7.52564E+09 ----->
+           Phi =   208.22      (  0.789 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   176.79    
+    Maximum   factor change:  2.008     ["kh_h_flat2"]
+    Maximum relative change:  1.008     ["kh_h_flat2"]
+    Maximum absolute(1) change: 8.9381E-02 ["race_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 7
+    Model calls so far             : 855
+    Starting phi for this iteration                          :   176.79    
+    Contribution to phi from observation group "h_piezo"     :   19.487    
+    Contribution to phi from observation group "h_single_3"  :   6.8257    
+    Contribution to phi from observation group "h_single_1"  :   17.552    
+    Contribution to phi from observation group "h_hf_riv"    :   3.4013    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   34.997    
+    Contribution to phi from observation group "h_hf"        :   93.659    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.87288    
+    All frozen parameters freed.
+
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  3.84027E+06 ----->
+           Phi =   154.96      (  0.876 of starting phi)
+
+        Lambda =   24523.     ----->
+           Phi =   157.16      (  0.889 of starting phi)
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+
+        Lambda =  6.01381E+08 ----->
+           Phi =   162.70      (  0.920 of starting phi)
+
+        Lambda =  3.84027E+06 ----->
+           Phi =   155.08      (  0.877 of starting phi)
+
+        Lambda =   24523.     ----->
+           Phi =   156.73      (  0.887 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   154.96    
+    Maximum   factor change:  1.188     ["kh_mang16"]
+    Maximum relative change: 0.1585     ["kh_mang16"]
+    Maximum absolute(1) change: 0.1000     ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 8
+    Model calls so far             : 995
+    Starting phi for this iteration                          :   154.96    
+    Contribution to phi from observation group "h_piezo"     :   19.131    
+    Contribution to phi from observation group "h_single_3"  :   6.8631    
+    Contribution to phi from observation group "h_single_1"  :   14.686    
+    Contribution to phi from observation group "h_hf_riv"    :   3.8465    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   35.438    
+    Contribution to phi from observation group "h_hf"        :   74.319    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.67323    
+    All frozen parameters freed.
+
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat9" frozen: gradient and update vectors out of bounds
+
+        Lambda =   24523.     ----->
+           Phi =   137.42      (  0.887 of starting phi)
+
+        Lambda =   844.08     ----->
+           Phi =   138.14      (  0.891 of starting phi)
+
+        Lambda =  7.12470E+05 ----->
+           Phi =   139.10      (  0.898 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   137.42    
+    Maximum   factor change:  1.327     ["kh_h_flat89"]
+    Maximum relative change: 0.2463     ["kh_h_flat89"]
+    Maximum absolute(1) change: 0.1000     ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 9
+    Model calls so far             : 1133
+    Starting phi for this iteration                          :   137.42    
+    Contribution to phi from observation group "h_piezo"     :   18.549    
+    Contribution to phi from observation group "h_single_3"  :   6.8266    
+    Contribution to phi from observation group "h_single_1"  :   12.564    
+    Contribution to phi from observation group "h_hf_riv"    :   3.5733    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   32.389    
+    Contribution to phi from observation group "h_hf"        :   62.842    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.67764    
+    All frozen parameters freed.
+
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat9" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+
+        Lambda =   24523.     ----->
+           Phi =   122.61      (  0.892 of starting phi)
+
+        Lambda =   844.08     ----->
+           Phi =   124.27      (  0.904 of starting phi)
+
+        Lambda =  7.12470E+05 ----->
+           Phi =   123.30      (  0.897 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   122.61    
+    Maximum   factor change:  1.297     ["kh_h_flat89"]
+    Maximum relative change: 0.2288     ["kh_h_flat89"]
+    Maximum absolute(1) change: 0.1000     ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 10
+    Model calls so far             : 1271
+    Starting phi for this iteration                          :   122.61    
+    Contribution to phi from observation group "h_piezo"     :   18.127    
+    Contribution to phi from observation group "h_single_3"  :   6.7936    
+    Contribution to phi from observation group "h_single_1"  :   10.799    
+    Contribution to phi from observation group "h_hf_riv"    :   3.3103    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   29.888    
+    Contribution to phi from observation group "h_hf"        :   53.023    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.67169    
+    All frozen parameters freed.
+
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat9" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+
+        Lambda =   24523.     ----->
+           Phi =   108.71      (  0.887 of starting phi)
+
+        Lambda =   844.08     ----->
+           Phi =   112.87      (  0.921 of starting phi)
+
+        Lambda =  7.12470E+05 ----->
+           Phi =   109.24      (  0.891 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   108.71    
+    Maximum   factor change:  1.317     ["kh_h_flat89"]
+    Maximum relative change: 0.2410     ["kh_h_flat89"]
+    Maximum absolute(1) change: 0.1000     ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 11
+    Model calls so far             : 1409
+    Starting phi for this iteration                          :   108.71    
+    Contribution to phi from observation group "h_piezo"     :   17.718    
+    Contribution to phi from observation group "h_single_3"  :   6.7612    
+    Contribution to phi from observation group "h_single_1"  :   9.0935    
+    Contribution to phi from observation group "h_hf_riv"    :   3.0276    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   27.653    
+    Contribution to phi from observation group "h_hf"        :   43.783    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.67636    
+    All frozen parameters freed.
+
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat9" frozen: gradient and update vectors out of bounds
+
+        Lambda =   24523.     ----->
+           Phi =   95.987      (  0.883 of starting phi)
+
+        Lambda =   844.08     ----->
+           Phi =   101.49      (  0.934 of starting phi)
+
+        Lambda =  7.12470E+05 ----->
+           Phi =   96.199      (  0.885 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   95.987    
+    Maximum   factor change:  1.350     ["kh_h_flat89"]
+    Maximum relative change: 0.2595     ["kh_h_flat89"]
+    Maximum absolute(1) change: 0.1000     ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 12
+    Model calls so far             : 1547
+    Starting phi for this iteration                          :   95.987    
+    Contribution to phi from observation group "h_piezo"     :   17.349    
+    Contribution to phi from observation group "h_single_3"  :   6.7276    
+    Contribution to phi from observation group "h_single_1"  :   7.4934    
+    Contribution to phi from observation group "h_hf_riv"    :   2.7346    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   25.739    
+    Contribution to phi from observation group "h_hf"        :   35.258    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.68447    
+    All frozen parameters freed.
+
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+
+        Lambda =   24523.     ----->
+           Phi =   85.037      (  0.886 of starting phi)
+
+        Lambda =   844.08     ----->
+           Phi =   90.804      (  0.946 of starting phi)
+
+        Lambda =  7.12470E+05 ----->
+           Phi =   84.417      (  0.879 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   84.417    
+    Maximum   factor change:  1.307     ["kh_mang16"]
+    Maximum relative change: 0.2821     ["sy_ss_rest"]
+    Maximum absolute(1) change: 0.1000     ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 13
+    Model calls so far             : 1685
+    Starting phi for this iteration                          :   84.417    
+    Contribution to phi from observation group "h_piezo"     :   17.242    
+    Contribution to phi from observation group "h_single_3"  :   6.6594    
+    Contribution to phi from observation group "h_single_1"  :   6.0754    
+    Contribution to phi from observation group "h_hf_riv"    :   2.6069    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   26.373    
+    Contribution to phi from observation group "h_hf"        :   24.671    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.78928    
+    All frozen parameters freed.
+
+    Parameter "sy_sy_mor_l1" has no effect on observations.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+
+        Lambda =  7.12470E+05 ----->
+           Phi =   76.587      (  0.907 of starting phi)
+
+        Lambda =   7977.1     ----->
+           Phi =   76.787      (  0.910 of starting phi)
+
+        Lambda =  6.36339E+07 ----->
+           Phi =   76.789      (  0.910 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   76.587    
+    Relative phi reduction between optimisation iterations less than 0.1000
+    Switch to higher order derivatives calculation
+    Maximum   factor change:  1.325     ["sy_ss_rest"]
+    Maximum relative change: 0.3248     ["sy_ss_rest"]
+    Maximum absolute(1) change: 6.8489E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 14
+    Model calls so far             : 1823
+    Starting phi for this iteration                          :   76.587    
+    Contribution to phi from observation group "h_piezo"     :   17.225    
+    Contribution to phi from observation group "h_single_3"  :   6.5617    
+    Contribution to phi from observation group "h_single_1"  :   5.2614    
+    Contribution to phi from observation group "h_hf_riv"    :   2.1691    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   25.018    
+    Contribution to phi from observation group "h_hf"        :   19.659    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.69273    
+    All frozen parameters freed.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: gradient and update vectors out of bounds
+
+        Lambda =  7.12470E+05 ----->
+           Phi =   74.960      (  0.979 of starting phi)
+
+        Lambda =   7977.1     ----->
+           Phi =   74.960      (  0.979 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   74.960    
+    Maximum   factor change:  1.633     ["sy_sy_mor_l0"]
+    Maximum relative change: 0.5072     ["sy_riv_g25"]
+    Maximum absolute(1) change: 0.1000     ["hill_mang"]
+
+
+ OPTIMISATION ITERATION NO.        : 15
+    Model calls so far             : 2095
+    Starting phi for this iteration                          :   74.960    
+    Contribution to phi from observation group "h_piezo"     :   16.842    
+    Contribution to phi from observation group "h_single_3"  :   6.5366    
+    Contribution to phi from observation group "h_single_1"  :   5.0449    
+    Contribution to phi from observation group "h_hf_riv"    :   2.1404    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   24.197    
+    Contribution to phi from observation group "h_hf"        :   19.507    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.69190    
+    All frozen parameters freed.
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat3" frozen: gradient and update vectors out of bounds
+
+        Lambda =   7977.1     ----->
+           Phi =   73.720      (  0.983 of starting phi)
+
+        Lambda =   399.24     ----->
+           Phi =   73.720      (  0.983 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   73.720    
+    Maximum   factor change:  1.598     ["sy_riv_g25"]
+    Maximum relative change: 0.5984     ["sy_riv_g25"]
+    Maximum absolute(1) change: 2.4069E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 16
+    Model calls so far             : 2367
+    Starting phi for this iteration                          :   73.720    
+    Contribution to phi from observation group "h_piezo"     :   16.579    
+    Contribution to phi from observation group "h_single_3"  :   6.5471    
+    Contribution to phi from observation group "h_single_1"  :   4.9574    
+    Contribution to phi from observation group "h_hf_riv"    :   2.0768    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   23.960    
+    Contribution to phi from observation group "h_hf"        :   18.914    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.68670    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat3" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat7" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "race_all" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: gradient and update vectors out of bounds
+
+        Lambda =   399.24     ----->
+           Phi =   73.458      (  0.996 of starting phi)
+
+        Lambda =   54.219     ----->
+           Phi =   73.458      (  0.996 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   73.458    
+    Maximum   factor change:  5.912     ["sy_riv_g25"]
+    Maximum relative change:  4.912     ["sy_riv_g25"]
+    Maximum absolute(1) change: 0.1000     ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 17
+    Model calls so far             : 2639
+    Starting phi for this iteration                          :   73.458    
+    Contribution to phi from observation group "h_piezo"     :   15.682    
+    Contribution to phi from observation group "h_single_3"  :   6.3750    
+    Contribution to phi from observation group "h_single_1"  :   4.1827    
+    Contribution to phi from observation group "h_hf_riv"    :   1.7891    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   19.698    
+    Contribution to phi from observation group "h_hf"        :   24.963    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.76698    
+    All frozen parameters freed.
+        param "hill_mang" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat3" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat6" frozen: - update vector out of bounds
+        param "kh_h_flat7" frozen: - update vector out of bounds
+        param "race_all" frozen: - update vector out of bounds
+
+        Lambda =   7.3634     ----->
+           Phi =   72.991      (  0.994 of starting phi)
+
+        Lambda =   3.6817     ----->
+           Phi =   72.991      (  0.994 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   72.991    
+    Maximum   factor change:  1.803     ["kh_riv_g63"]
+    Maximum relative change: 0.8031     ["kh_riv_g63"]
+    Maximum absolute(1) change: 6.3018E-02 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 18
+    Model calls so far             : 2911
+    Starting phi for this iteration                          :   72.991    
+    Contribution to phi from observation group "h_piezo"     :   15.283    
+    Contribution to phi from observation group "h_single_3"  :   6.3329    
+    Contribution to phi from observation group "h_single_1"  :   3.9732    
+    Contribution to phi from observation group "h_hf_riv"    :   1.7239    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   19.568    
+    Contribution to phi from observation group "h_hf"        :   25.394    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.71699    
+    All frozen parameters freed.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat3" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat6" frozen: - update vector out of bounds
+        param "kh_h_flat7" frozen: - update vector out of bounds
+        param "race_all" frozen: - update vector out of bounds
+
+        Lambda =   3.6817     ----->
+           Phi =   69.261      (  0.949 of starting phi)
+
+        Lambda =   1.8408     ----->
+           Phi =   69.261      (  0.949 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   69.261    
+    Maximum   factor change:  2.131     ["sy_ter81"]
+    Maximum relative change:  1.131     ["sy_ter81"]
+    Maximum absolute(1) change: 9.0697E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 19
+    Model calls so far             : 3183
+    Starting phi for this iteration                          :   69.261    
+    Contribution to phi from observation group "h_piezo"     :   14.750    
+    Contribution to phi from observation group "h_single_3"  :   6.3179    
+    Contribution to phi from observation group "h_single_1"  :   3.6369    
+    Contribution to phi from observation group "h_hf_riv"    :   1.6109    
+    Contribution to phi from observation group "rwh_hf_riv"  :   0.0000    
+    Contribution to phi from observation group "h_lf"        :   19.317    
+    Contribution to phi from observation group "h_hf"        :   22.961    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    Contribution to phi from observation group "riv"         :  0.66743    
+    All frozen parameters freed.
+        param "hill_se" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat3" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat5" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat51" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat8" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: gradient and update vectors out of bounds
+        param "riv_john" frozen: gradient and update vectors out of bounds
+        param "sy_riv_g25" frozen: gradient and update vectors out of bounds
+        param "sy_ter34" frozen: gradient and update vectors out of bounds
+        param "sy_ter38" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat45" frozen: gradient and update vectors out of bounds
+        param "hill_mang" frozen: - update vector out of bounds
+        param "kh_h_flat6" frozen: - update vector out of bounds
+        param "kh_h_flat7" frozen: - update vector out of bounds
+        param "kh_hill12" frozen: - update vector out of bounds
+        param "kh_riv_g29" frozen: - update vector out of bounds
+        param "race_all" frozen: - update vector out of bounds
+        param "hill_main" frozen: gradient and update vectors out of bounds
+
+        Lambda =   1.8408     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =  0.92042     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   3.6817     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   7.3634     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   14.727     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   29.453     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   58.907     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   117.81     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   235.63     ----->
+           Phi = cannot be calculated: model run failure
+
+        Lambda =   471.26     ----->
+           Phi = cannot be calculated: model run failure
+
+    No more lambdas: allowed lambdas per iteration = 10
+    Maximum   factor change:  3.219     ["sy_ter81"]
+    Maximum relative change:  2.219     ["sy_ter81"]
+
+    Optimisation complete: too many model run failures.
+    Total model calls:   3463
+
+    The model has been run one final time using best parameters. 
+    Thus all model input files contain best parameter values, and model 
+    output files contain model results based on these parameters.
+
+
+                             OPTIMISATION RESULTS
+
+
+ Parameters ----->
+
+ This information not provided as non-verbose run record file requested.
+
+ See file /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.sen for parameter sensitivities.
+
+
+ Observations ----->
+
+ This information not provided as non-verbose run record file requested.
+
+ See file /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.res for more details of residuals in graph-ready format.
+
+ See file /home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.seo for composite observation sensitivities.
+
+
+ Objective function ----->
+
+   Sum of squared weighted residuals (ie phi)                =   69.261    
+   Contribution to phi from observation group "h_piezo"      =   14.750    
+   Contribution to phi from observation group "h_single_3"   =   6.3179    
+   Contribution to phi from observation group "h_single_1"   =   3.6369    
+   Contribution to phi from observation group "h_hf_riv"     =   1.6109    
+   Contribution to phi from observation group "rwh_hf_riv"   =   0.0000    
+   Contribution to phi from observation group "h_lf"         =   19.317    
+   Contribution to phi from observation group "h_hf"         =   22.961    
+   Contribution to phi from observation group "rwh_hf"       =   0.0000    
+   Contribution to phi from observation group "riv"          =  0.66743    
+
+
+ Correlation Coefficient ----->
+
+   Correlation coefficient                                   =  0.99998    
+
+
+ Analysis of residuals ----->
+
+   All residuals:-
+      Number of residuals with non-zero weight                       =  1609
+      Mean value of non-zero weighted residuals                      = -1.7846E-02
+      Maximum weighted residual [observation "h_g40_0129_126"]       =   3.062    
+      Minimum weighted residual [observation "h_g40_0129_204"]       = -0.6567    
+      Standard variance of weighted residuals                        =  4.6989E-02
+      Standard error of weighted residuals                           =  0.2168    
+
+      Note: the above variance was obtained by dividing the objective 
+      function by the number of system degrees of freedom (ie. number of 
+      observations with non-zero weight plus number of prior information 
+      articles with non-zero weight minus the number of adjustable parameters.)
+      If the degrees of freedom is negative the divisor becomes 
+      the number of observations with non-zero weight plus the number of 
+      prior information items with non-zero weight.
+
+   Residuals for observation group "h_piezo":-
+      Number of residuals with non-zero weight                       =   255
+      Mean value of non-zero weighted residuals                      =  3.5391E-02
+      Maximum weighted residual [observation "h_g40_0013_211"]       =  0.7603    
+      Minimum weighted residual [observation "h_sutherland_215"]     = -0.5980    
+      "Variance" of weighted residuals                               =  5.7841E-02
+      "Standard error" of weighted residuals                         =  0.2405    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "h_single_3":-
+      Number of residuals with non-zero weight                       =   267
+      Mean value of non-zero weighted residuals                      =  7.8853E-02
+      Maximum weighted residual [observation "h_g40_0008_168"]       =  0.5881    
+      Minimum weighted residual [observation "h_g40_0139_16"]        = -0.4047    
+      "Variance" of weighted residuals                               =  2.3663E-02
+      "Standard error" of weighted residuals                         =  0.1538    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "h_single_1":-
+      Number of residuals with non-zero weight                       =    26
+      Mean value of non-zero weighted residuals                      =  6.2560E-02
+      Maximum weighted residual [observation "h_f40_0185_139"]       =  0.4985    
+      Minimum weighted residual [observation "h_f40_0186_107"]       = -0.5218    
+      "Variance" of weighted residuals                               =  0.1399    
+      "Standard error" of weighted residuals                         =  0.3740    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "h_hf_riv":-
+      Number of residuals with non-zero weight                       =   396
+      Mean value of non-zero weighted residuals                      =  1.4703E-03
+      Maximum weighted residual [observation "h_g40_0041_221"]       =  0.1449    
+      Minimum weighted residual [observation "h_g40_0416_205"]       = -0.1971    
+      "Variance" of weighted residuals                               =  4.0680E-03
+      "Standard error" of weighted residuals                         =  6.3781E-02
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "rwh_hf_riv":-
+      Number of residuals with non-zero weight                       =     0
+
+   Residuals for observation group "h_lf":-
+      Number of residuals with non-zero weight                       =    35
+      Mean value of non-zero weighted residuals                      =  0.1602    
+      Maximum weighted residual [observation "h_g40_0129_126"]       =   3.062    
+      Minimum weighted residual [observation "h_g40_0129_204"]       = -0.6567    
+      "Variance" of weighted residuals                               =  0.5519    
+      "Standard error" of weighted residuals                         =  0.7429    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "h_hf":-
+      Number of residuals with non-zero weight                       =   624
+      Mean value of non-zero weighted residuals                      = -0.1046    
+      Maximum weighted residual [observation "h_g40_0367_139"]       =  0.1896    
+      Minimum weighted residual [observation "h_g40_0415_203"]       = -0.4927    
+      "Variance" of weighted residuals                               =  3.6797E-02
+      "Standard error" of weighted residuals                         =  0.1918    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+   Residuals for observation group "rwh_hf":-
+      Number of residuals with non-zero weight                       =     0
+
+   Residuals for observation group "riv":-
+      Number of residuals with non-zero weight                       =     6
+      Mean value of non-zero weighted residuals                      = -0.2188    
+      Maximum weighted residual [observation "riv_h2_134"]           =  9.6406E-02
+      Minimum weighted residual [observation "riv_h3_115"]           = -0.5943    
+      "Variance" of weighted residuals                               =  0.1112    
+      "Standard error" of weighted residuals                         =  0.3335    
+
+      Note: the above "variance" was obtained by dividing the sum of squared 
+      residuals by the number of items with non-zero weight.
+
+
+ Covariance and other statistical matrices cannot be determined:-
+ Some form or regularisation was implemented so these are not applicable.
+
+ Use the PREDUNC7 utility to obtain a full posterior covariance matrix.
+

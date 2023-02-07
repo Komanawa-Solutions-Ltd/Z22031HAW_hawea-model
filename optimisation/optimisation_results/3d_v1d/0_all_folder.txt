@@ -1,0 +1,25 @@
+# this is a convenience list with all local and remote pest folders
+/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent00
+/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent01
+/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent02
+/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent03
+/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent04
+/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent05
+/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent06
+/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent07
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent00
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent01
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent02
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent03
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent04
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent05
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent06
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent07
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent08
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent09
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent10
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent11
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent12
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent13
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent14
+/media/matt_dumont/data/mh_unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/agent15
