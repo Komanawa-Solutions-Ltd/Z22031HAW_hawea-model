@@ -543,11 +543,14 @@ def get_low_cond_array():
     return data
 
 
-def examine_3d(num_plots=10):
+def examine_3d(num_plots=10, show=True):
+    rt_figs = []
+    rt_names = []
     elv_calc()
     get_ibound(True)
     lake = get_lake_array(True)
     moraine = get_2d_moraine(True)
+    smooth = get_layer_pinchout_area(True)
     smt.plot.plt_matrix((moraine | np.isfinite(lake)), base_map=True, no_flow_layer=0)
     azimuth_data = smt.io.azimuth_from_line(base_model_build_data_dir.joinpath('3d_examiner.shp'), 20,
                                             return_array=False).set_index('id')
@@ -558,13 +561,46 @@ def examine_3d(num_plots=10):
     step_points[step_points.new_x > x_max] = x_max
     plt_array = smt.get_model_zeros(True) * np.nan
     plt_array[:, np.isfinite(lake)] = 1
+    plt_array[1:, get_lake_bar()] = 3
     plt_array[:, moraine] = 2
+    plt_array[1, moraine] = 3
+    plt_array[:, smooth] = 4
+    names = {
+        1: 'Lake',
+        2: 'Moraine (permeable)',
+        3: 'Moraine (impermeable)',
+        4: 'Pinchout Area',
+    }
+    colors = {
+        1: 'blue',
+        2: 'sandybrown',
+        3: 'saddlebrown',
+        4: 'lightcoral',
+    }
+    for l in range(smt.layers):
+        fig, ax = plt.subplots(figsize=(10, 8))
+        smt.plot.plt_discrete_matrix(plt_array[l], names=names, colors=colors, base_map=True, no_flow_layer=l,
+                                     alpha=0.6,
+                                     ax=ax, legend_loc='lower right', title=f'layer: {l}')
+        ax.set_ylim(5.051e6, smt.get_xlim_ylim(False)[-1])
+        ax.set_xlim(1.3e6, 1.31e6)
+        fig.tight_layout()
+        rt_figs.append(fig)
+        rt_names.append(f'spatiall{l}')
+
+    l_slice_kwargs = dict(c='k', lw=1, alpha=1, ls='--')
+    i = 0
     for ox, oy, nx, ny in step_points.loc[idxs, ['old_x', 'old_y', 'new_x', 'new_y']].itertuples(False, None):
         fig, (ax, locator_ax) = plt.subplots(nrows=2, gridspec_kw=dict(height_ratios=(3, 1)), figsize=(14, 9))
-        fig, ax = smt.plot.plt_slice(plt_array, [ox, nx], [oy, ny], ax=ax,
-                                     locator_ax=locator_ax, alpha=0.4, color_bar=False, vmin=1, vmax=2)
+        fig, ax = smt.plot.plt_descrete_slice(plt_array, names=names, colors=colors, x_coords=[ox, nx],
+                                              y_coords=[oy, ny], ax=ax,
+                                              locator_ax=locator_ax, alpha=0.4, color_bar=False, no_flow_layer=0,
+                                              locator_lim_pad=1000, lay_slice_kwargs=l_slice_kwargs)
         locator_ax.set_ylim([5.0520e6, max(locator_ax.get_ylim())])
         fig.tight_layout()
+        rt_figs.append(fig)
+        rt_names.append(f'cross_section_{i:02d}')
+        i += 1
     xs = [
         (1302335.8300223248, 1303305.152166307),
         (1302197.3554303276, 1303486.9000683036),
@@ -578,18 +614,24 @@ def examine_3d(num_plots=10):
         (5050803.967523698, 5050829.931509697),
     ]
 
-    for x, y in zip(xs, ys):
+    for i, (x, y) in enumerate(zip(xs, ys)):
         fig, (ax, locator_ax) = plt.subplots(nrows=2, gridspec_kw=dict(height_ratios=(3, 1)), figsize=(14, 9))
-        fig, ax = smt.plot.plt_slice(plt_array, x, y, ax=ax,
-                                     locator_ax=locator_ax, alpha=0.4, color_bar=False, vmin=1, vmax=2)
+        fig, ax = smt.plot.plt_descrete_slice(plt_array, names=names, colors=colors,
+                                              x_coords=x, y_coords=y, ax=ax,
+                                              locator_ax=locator_ax, alpha=0.4, color_bar=False, no_flow_layer=0,
+                                              locator_lim_pad=1000, lay_slice_kwargs=l_slice_kwargs)
         locator_ax.set_ylim([5.0450e6, max(locator_ax.get_ylim())])
         fig.tight_layout()
+        rt_figs.append(fig)
+        rt_names.append(f'river_slice_{i:02d}')
 
     smt.plot.plt_layer_slices(smt.get_thickness(), base_map=True, contour_levels=10, contour=True, title='thick')
     thick = smt.get_thickness()
     thick[thick > 10] = np.nan
     smt.plot.plt_layer_slices(thick, base_map=True, contour_levels=1, contour=True, title='thick')
-    smt.plot.show()
+    if show:
+        smt.plot.show()
+    return rt_names, rt_figs
 
 
 def plot_3d_structure_spatial():
@@ -599,10 +641,10 @@ def plot_3d_structure_spatial():
     pinch = get_layer_pinchout_area()
 
     mapper = {
-        1: 'lake',
-        2: 'lake bar (layers 2 to 3)',
-        3: 'moraine zone',
-        4: 'layer pinch out area',
+        1: 'Lake',
+        2: 'Lake bar (layers 1 & 2)',
+        3: 'Moraine zone',
+        4: 'Layer pinch out area',
     }
     plt_layer = smt.get_model_zeros() * np.nan
     plt_layer[lake] = 1
@@ -611,17 +653,18 @@ def plot_3d_structure_spatial():
     plt_layer[lake_bar] = 2
     fig, ax = plt.subplots(figsize=(10, 8))
     smt.plot.plt_discrete_matrix(plt_layer, names=mapper, base_map=True, no_flow_layer=0, cmap='tab10', alpha=0.6,
-                                 ax=ax,legend_loc='lower right')
+                                 ax=ax, legend_loc='lower right')
     ax.set_ylim(5.051e6, smt.get_xlim_ylim(False)[-1])
     ax.set_xlim(1.3e6, 1.31e6)
     fig.tight_layout()
-    plt.show()
+    return fig, ax
 
 
 if __name__ == '__main__':
+    examine_3d()
+    smt.plot.show()
     plot_3d_structure_spatial()
     t = get_xsection_points()
-    examine_3d()
     temp = get_low_cond_array()
     smt.plot.plt_layer_slices(temp, base_map=True)
     smt.plot.show()
