@@ -234,7 +234,7 @@ def get_era5_land(correct=True, recalc=False, return_figs=False):
 
 def _process_irrigated_area():
     # Keynote irrigated area is additive (e.g. no/minial overlap)
-    data = gpd.read_file(modelling_dir.joinpath('input_data/otago_irrigated_area_26oct2021_model_extent.shp'))
+    data = gpd.read_file(base_model_build_data_dir.joinpath('otago_irrigated_area_26oct2021_model_extent.shp'))
     data.loc[:, 'itype_code'] = data.loc[:, 'type'].replace({v: k for k, v in irrigated_area_codes.items()})
     data.to_file(irrigated_area_dir.joinpath(f'otago_irrigated_area_26oct2021_model_extent.shp'))
     for y in data.loc[:, 'year_irr'].unique():
