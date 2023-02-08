@@ -427,8 +427,8 @@ def _create_str_package(m, str_data, noprint):
     dummy_seg_data = {p: t for p in str_data.keys()}
     str = flopy.modflow.ModflowStr(
         m,
-        mxacts=max(mxactss),  # todo do a pull request to read this from these data... this is dumb
-        nss=max(nsss),  # todo do a pull request to read this from these data... this is dumb
+        mxacts=max(mxactss),  # todo Opensource improvement do a pull request to read this from these data... this is dumb
+        nss=max(nsss),  # todo Opensource improvement do a pull request to read this from these data... this is dumb
         ntrib=0,
         ndiv=0,
         icalc=0,

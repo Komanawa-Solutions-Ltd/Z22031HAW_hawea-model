@@ -94,7 +94,7 @@ def get_river_loc_data(recalc=default_recalc):
     for r in outdata.rname.unique():
         idx = outdata.rname == r
         outdata.loc[idx, 'reach'] = np.arange(idx.sum()) + 1  # keynote the str package is 1 indexed for stream reach
-        # todo add stream reach == 0  check to flopy
+        # todo Opensource improvement add stream reach == 0  check to flopy
 
     outdata.to_csv(riv_loc_data_path)
     return outdata

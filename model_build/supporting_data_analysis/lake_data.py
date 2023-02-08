@@ -60,7 +60,6 @@ def get_lake_heads(start_date, end_date, frequency='D'):
     hawea_data = _read_lake_level()
     hawea_data = hawea_data.resample('D').interpolate()
 
-    # TODO cconfimr this ASAP
     # keynote convert lake levels from  Dunedin 1958 (from NZVD2016) to New Zealand Vertical Datum 2016
     #  conversion by https://www.geodesy.linz.govt.nz/concord/
     hawea_data.loc[:, 'lake_stage'] = hawea_data.loc[:, 'lake_stage'] - 1 / 3
