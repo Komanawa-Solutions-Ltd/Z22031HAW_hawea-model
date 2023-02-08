@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from copy import deepcopy
 
+# todo manage proprietary packages so they don't make the whole thing fall over.
 # todo clone the 'modflow_tools' repo and make a new branch for this model, don't forget to merge
 # when finished
 default_figsize = (8, 10)
