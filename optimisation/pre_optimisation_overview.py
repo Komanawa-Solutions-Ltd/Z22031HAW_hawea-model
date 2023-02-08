@@ -2,18 +2,16 @@
 created matt_dumont 
 on: 19/09/22
 """
-import kslcore
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
-import numpy as np
 import pandas as pd
 from pathlib import Path
 from model_build.project_model_tools import smt, get_starting_heads
 from model_build.utils import get_colors
 from model_parameterisation.pilot_points import get_pilot_point_locations, interpolate_kh_pilot_points, \
-    interpolate_kh_pilot_points, get_param_zones, get_lake_array
+    interpolate_kh_pilot_points, get_lake_array
 from model_parameterisation.static_params import *
 from model_tools.model_plotting import plot_spd, first, last, FakePath
 from model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_str_data
@@ -26,9 +24,6 @@ from targets_and_sensitive_sites.head_targets import plot_head_targets, get_high
     get_low_freq_head_targets, get_2011_piezo_survey, get_single_head_targets, get_all_hds_targets
 from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
 from optimisation.determine_opt_start import get_opt_start_stop
-
-# todo check carefully with multiple layers
-# todo re-run with new 3d version, too much change to trust it
 
 
 def plot_parameterisation(save=False):
@@ -45,7 +40,6 @@ def plot_parameterisation(save=False):
     }
     static_params = {
         'Lake Sy': lake_sy,
-        'SS': ss,
         'VKA': vka,
         'Lake Conductance': lake_conduct
     }
@@ -114,18 +108,14 @@ def plot_parameterisation(save=False):
     b = np.random.choice(options)
     np.random.seed(165653)
     c = np.random.choice(options)
-    kh_data = {
-        'sandy': a,
-        'mang': b,
-        'lake_conductance': c,
-    }
+    kh_data = get_inital_kh(True)
 
     ncols = 3
     fig1, axs1 = plt.subplots(ncols=ncols, figsize=(16, 9))
     np.random.seed(35873)
-    randoms = np.random.choice(options, len(pps))
-    for i, r in zip(pps.index, randoms):
-        kh_data[i] = r
+    randoms = np.random.choice(options, len(kh_data))
+    for k, r in zip(kh_data.keys(), randoms):
+        kh_data[k] = r
 
     kh, df = interpolate_kh_pilot_points(kh_data, return_df=True)
     smt.plot.plt_matrix(kh[0], base_map=True, no_flow_layer=0, title=f'real kh', ax=axs1[0], vmin=0,
@@ -141,71 +131,61 @@ def plot_parameterisation(save=False):
     if save:
         fig1.savefig(outdir.joinpath(f'example_rbf{extension}'))
 
-    # inital transmisivity
-    khs = get_inital_kh()
-    lake = get_lake_array()
-    thick = get_starting_heads()[0] - smt.get_bottoms().sum(axis=0)
-    kh = np.full(smt.model_shape[1:], khs['sandy'][0])
-    kh[np.isfinite(lake)] = khs['lake_conductance'][0]
-
-    thick[smt.get_no_flow(0) != 1] = np.nan
-    fig, ax = smt.plot.plt_matrix(thick, title='Initial Transmissivity', base_map=True,
-                                  no_flow_layer=0, contour=True, label_contours=True,
-                                  contour_levels=[0, 10, 20, 30, 40, 50, 60, 80, 100])
-    fig.tight_layout()
-
-    if save:
-        fig.savefig(outdir.joinpath(f'inital_trans{extension}'))
-
     # parameter zones
+    fig, (ax, terax) = plt.subplots(ncols=2,
+                                    figsize=(14, 9))
+    handles, labels = [Patch(facecolor='grey')], ['Pilot points do not apply']
+    terrace = get_model_zones()['terrace']
+    plt_array = smt.get_model_zeros() * np.nan
+    plt_array[terrace] = 1
+    smt.plot.plt_discrete_matrix(plt_array, colors={1: 'grey'}, names={1: 'pilot points do not apply'}, base_map=True,
+                                 no_flow_layer=0, ax=ax, title='Model Zone')
+    plt_array = smt.get_model_zeros() * np.nan
+    plt_array[~terrace] = 1
+    smt.plot.plt_discrete_matrix(plt_array, colors={1: 'grey'}, names={1: 'pilot points do not apply'}, base_map=True,
+                                 no_flow_layer=0, ax=terax, title='Terrace Zone')
     pilot_locs = get_pilot_point_locations()
-    zone_plotter = smt.get_model_zeros() * np.nan
-    zone_plotter[np.isfinite(get_lake_array())] = 0
-    param_zones = get_param_zones()
-    zone_plotter[param_zones == 1] = 1
-    zone_plotter[param_zones == 2] = 2
-
-    # plot zones
-    zone_colors = ['b', 'tan', 'thistle']
-    zone_names = ['lake_conductance', 'sandy', 'mang']
-    cmap = ListedColormap(zone_colors)
-
-    fig, (ax1, legendax) = plt.subplots(ncols=2, gridspec_kw={'width_ratios': [5, 1], },
-                                        figsize=(10, 9))
-    fig, ax = smt.plot.plt_matrix(zone_plotter, title='Kh / sy zones and pilot points', ax=ax1, base_map=True,
-                                  cmap=cmap, color_bar=False, no_flow_layer=0)
-    handles, labels = [Patch(facecolor='w')], ['name: (initial, (min, max)']
-    for c, n in zip(zone_colors, zone_names):
-        handles.append(Patch(facecolor=c))
-        labels.append(f'{n.capitalize()} zone: {khs[n]}')
 
     # plot pilot points
     groups = pilot_locs.group.unique()
-    markersize = 3
+    markersize = 2
     marker = 'o'
-    for group, c in zip(groups, get_colors(groups)):
+    colors = [
+        'red',
+        'lightcoral',
+        'orchid',
+        'gold',
+        'orange',
+        'deepskyblue'
+    ]
+    for group, c in zip(groups, colors):
         temp = pilot_locs.loc[pilot_locs.group == group]
-        ax.scatter(temp.x, temp.y, color=c, marker='o')
+        if group == 'ter':
+            terax.scatter(temp.x, temp.y, color=c, marker='o', s=markersize * 70)
+
+        else:
+            ax.scatter(temp.x, temp.y, color=c, marker='o', s=markersize * 70)
         handles.append(Line2D([0], [0], marker=marker, color='w',
                               markerfacecolor=c, markersize=markersize * 5))
         labels.append(f'PP Group: {group.capitalize()}')
-
-    legendax.legend(handles, labels)
-    legendax.set_xticks([])
-    legendax.set_yticks([])
-    legendax.spines["top"].set_visible(False)
-    legendax.spines["right"].set_visible(False)
-    legendax.spines["left"].set_visible(False)
-    legendax.spines["bottom"].set_visible(False)
+    ax.legend(handles, labels)
+    terax.legend(handles, labels)
     fig.tight_layout()
     if save:
         fig.savefig(outdir.joinpath(f'kh_sy_params{extension}'))
 
 
 def plot_thickness_top_bot(save=False):
-    data = {'Model tops': smt.get_tops()[0],
-            'Model bottoms': smt.get_bottoms()[0],
-            'Model thickness': smt.get_thickness()[0]}
+    data = {'Model top': smt.get_tops()[0],
+            'Model bottom L0': smt.get_bottoms()[0],
+            'Model bottom L1': smt.get_bottoms()[1],
+            'Model bottom L2': smt.get_bottoms()[2],
+            'Model thickness L0': smt.get_thickness()[0],
+            'Model thickness L1': smt.get_thickness()[1],
+            'Model thickness L2': smt.get_thickness()[2],
+            'Model thickness full': smt.get_thickness().sum(axis=0),
+
+            }
 
     for k, v in data.items():
         dist = 20
@@ -216,9 +196,18 @@ def plot_thickness_top_bot(save=False):
                                       base_map=True, contour=True, label_contours=True,
                                       contour_levels=contours)
         if save:
-            outpath = save_path.joinpath('model_structure', f'{k}{extension}')
+            outpath = save_path.joinpath('model_structure',
+                                         f'{k}{extension}')
             outpath.parent.mkdir(exist_ok=True)
             fig.savefig(outpath)
+    from model_build.project_model_tools import examine_3d
+    rt_names, rt_figs = examine_3d(show=False)
+    for n, f in zip(rt_names, rt_figs):
+        if save:
+            outpath = save_path.joinpath('model_structure', '3d_xsections',
+                                         f'{n}{extension}')
+            outpath.parent.mkdir(exist_ok=True)
+            f.savefig(outpath)
 
 
 def plot_all_spd(save=False):
@@ -259,7 +248,7 @@ def plot_all_spd(save=False):
     colors = get_colors(k_cs, cmap_name='winter')
     temp_data = get_river_loc_data()
     tops = smt.get_tops()[0]
-    bottoms = smt.get_bottoms()[0] # todo this is probbly wrong
+    bottoms = smt.get_bottoms()[-1]
     temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
     temp_data.loc[:, 'model_bot'] = bottoms[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
     hawea_clutha_divide = temp_data.loc[temp_data.rname == 'hawea', 'dist'].max()
@@ -387,17 +376,11 @@ def plot_steady_state_water_bud_locs(save):
     rch[ibound != 1] = np.nan
     wel = get_well_data(tdis, get_hillslope_multiplier(True), get_race_multiplier(True), return_unique_spd=True)
     wel = {k: v[0] for k, v in wel.items()}
-    start = get_starting_heads()[0]
-    start[ibound != 1] = np.nan
     # plot mean recharge
     fig, ax = smt.plot.plt_matrix(rch * 1000, no_flow_layer=0, base_map=True, title='Mean Recharge (mm)')
     if save:
         fig.savefig(outdir.joinpath(f'spatial_mean_recharge{extension}'))
 
-    # plot starting heads
-    fig, ax = smt.plot.plt_matrix(start, no_flow_layer=0, base_map=True, title='Starting Heads (m)', contour=True,
-                                  contour_levels=np.arange(np.nanmin(start), np.nanmax(start), 20),
-                                  label_contours=True)
     if save:
         fig.savefig(outdir.joinpath(f'spatial_start_heads{extension}'))
 
@@ -756,25 +739,24 @@ def make_all_preopt(save):
         print(f.__name__)
         f(save)
         if save:
-            plt.close()
+            plt.close('all')
         else:
             plt.show()
     print('Done with everything!!!')
 
 
 if __name__ == '__main__':
-
-    # todo need to incorpoate changes to stream package (grandview and john creek)
+    base = proj_root.joinpath('optimisation')
     save = True
     for extension in ['.png']:
         if extension == '.png':
-            save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_png')
+            save_path = base.joinpath('pre_optimisation_plots_png')
         elif extension == '.pdf':
-            save_path = proj_root.joinpath('optimisation/pre_optimisation_plots_pdf')
+            save_path = base.joinpath('pre_optimisation_plots_pdf')
         else:
             raise ValueError('nope')
 
-        save_path.mkdir(exist_ok=True)
+        save_path.mkdir(exist_ok=True, parents=True)
 
         # checked and finished, but not saved
         make_all_preopt(save)

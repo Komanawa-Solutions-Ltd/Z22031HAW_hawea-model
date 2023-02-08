@@ -135,5 +135,4 @@ def build_slideshow(outpath):
 
 
 if __name__ == '__main__':
-    # todo rerun?
     build_slideshow(Path.home().joinpath('Downloads/model_overview_slideshow.pdf'))
