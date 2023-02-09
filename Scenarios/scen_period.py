@@ -7,11 +7,11 @@ import pandas as pd
 from model_tools.time_discretization import TimeDis
 
 # hill: '1976-09-23' to '2021-06-30'
-# rch: '1950-01-01' to '2020-12-27' # todo could increase this?
+# rch: '1950-01-01' to '2020-12-27'
 # lake: 1975-12-30 to 2021-12-31
-
-start = ''  # todo
-end = ''  # todo
+# start 1980 or later to avoid significant problems with low lake levels (that's its own scenario)
+start = '1980-07-18'
+end = '2020-12-01'
 base_time = pd.date_range(start, end, freq='W')
 indates = [(base_time.min(), base_time.max() + datetime.timedelta(days=6))]
 indates.extend(zip(base_time, base_time + datetime.timedelta(days=6)))
@@ -19,7 +19,7 @@ indates.extend(zip(base_time, base_time + datetime.timedelta(days=6)))
 steady = [True] + [False for e in base_time]
 nper = len(base_time) + 1  # one steady stated period and then the transient period
 
-tdis = TimeDis(
+scen_tdis = TimeDis(
     name='scenario_period',
     nper=nper,
     tsmult=1.2,
@@ -29,12 +29,11 @@ tdis = TimeDis(
     tunit='day',
     check_dates_in_order=False
 )
-tdis.perlen[0] = 1  # manually set first stress period to length of 1
+scen_tdis.perlen[0] = 1  # manually set first stress period to length of 1
 pass
 
 
-def data_checks():  # todo look at variability to set start and end dates!,
-    # todo look at correlation!!, discuss with Zeb
+def data_checks():
     from model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch
     from model_build.supporting_data_analysis import get_lake_heads, get_hillside_flows
     import matplotlib.pyplot as plt
@@ -44,6 +43,7 @@ def data_checks():  # todo look at variability to set start and end dates!,
     fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, sharex=True)
 
     ax1.set_title('lake ')
+    ax1.axhline(338)
     for k, c in zip(['min', 'mean', 'max'], ['r', 'b', 'k']):
         temp = lake.resample('Y').agg(k)
         ax1.plot(temp.index, temp, color=c, label=k)
@@ -72,8 +72,6 @@ def data_checks():  # todo look at variability to set start and end dates!,
     ax2.set_ylabel('lake')
     ax2.set_xlabel('rch')
     plt.show()
-
-    # todo look at daily, weekly, monthly, annually matched data for correllation
 
 
 
