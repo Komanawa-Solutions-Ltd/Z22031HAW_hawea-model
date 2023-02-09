@@ -10,6 +10,12 @@ from matplotlib.cm import get_cmap
 
 
 def fill_weekly_mean(data, keys=None):
+    """
+    fill dataset with weekly mean
+    :param data: pd. Dataframe or pd.Series, with datetime index
+    :param keys: keys to return or None (all keys)
+    :return:
+    """
     assert isinstance(data, pd.DataFrame) or isinstance(data, pd.Series)
     if keys is None and isinstance(data, pd.DataFrame):
         keys = list(data.keys())
@@ -26,6 +32,16 @@ def fill_weekly_mean(data, keys=None):
 
 
 def select_resample(data, start_date, end_date, frequency, func='mean', start_ends_out_bounds='raise'):
+    """
+    select and resample dataset between time dates to appropriate frequency
+    :param data: pandas dataframe/series with datetime index
+    :param start_date: start date anything passalbe to pd.to_datetime
+    :param end_date: end date anything passalbe to pd.to_datetime
+    :param frequency: pandas frequency code
+    :param func: function to aggregate the resample (pd.resample.agg())
+    :param start_ends_out_bounds: what to do if the startdate or end date is out of bounds, ('raise', 'warn', 'pass')
+    :return:
+    """
     assert start_ends_out_bounds in ['raise', 'warn', 'pass']
     ht = data.index
     if start_date is None:
@@ -63,6 +79,12 @@ def select_resample(data, start_date, end_date, frequency, func='mean', start_en
 
 
 def get_colors(vals, cmap_name='tab10'):
+    """
+    get colors from values
+    :param vals:
+    :param cmap_name:
+    :return:
+    """
     n_scens = len(vals)
     if n_scens < 20:
         cmap = get_cmap(cmap_name)
@@ -80,6 +102,12 @@ def get_colors(vals, cmap_name='tab10'):
 
 
 def plot_1_to_1(ax, **kwargs):
+    """
+    plot a 1 to 1 line
+    :param ax: matplotlib.axes
+    :param kwargs: other kwargs passed to ax.plot()
+    :return:
+    """
     xs = ax.get_xlim()
     ys = ax.get_ylim()
     limits = []
