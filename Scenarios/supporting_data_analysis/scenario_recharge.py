@@ -17,15 +17,14 @@ from project_base import processed_scen_dir
 import gc
 
 
-def get_scenario_rch_model_results(recalc=False, from_year=None, to_year=None):
+def _get_scenario_rch_model_results(from_year=None, to_year=None, dryland=False, recalc=False):
     """
-
-    :param data_source:
-    :param limited_irrigation:
-    :param recalc:
-    :param from_year:
-    :param to_year:
-    :return: rch in mm
+    get scenario recharge modelling results.  Either dryland or all pivot irrigation
+    :param from_year: start year or None (full record)
+    :param to_year: end year or None (full record)
+    :param dryland: bool if true dryland recharge (no irrigation)
+    :param recalc:  bool recalc from datasets
+    :return:
     """
     data_source = 'era5'
     assert data_source in ['historical', 'era5']
@@ -34,8 +33,11 @@ def get_scenario_rch_model_results(recalc=False, from_year=None, to_year=None):
     else:
         assert to_year is not None
 
+    extra = 'unlimited'
+    if dryland:
+        extra = 'dryland'
     irrigation_record_dir = processed_scen_dir.joinpath(
-        f'rch_historical_record_from_{data_source}_unlimited')
+        f'rch_historical_record_from_{data_source}_{extra}')
     irrigation_record_dir.mkdir(exist_ok=True)
 
     # get met data
@@ -84,7 +86,9 @@ def get_scenario_rch_model_results(recalc=False, from_year=None, to_year=None):
     irrig_init_store = smt.get_model_zeros()
 
     irrig_codes = get_irrigation_code(2022)
-    irrig_codes[irrig_codes <= 0] = 2  # keynote set all irrigation to pivot
+    irrig_codes[irrig_codes >= 0] = 2  # keynote set all irrigation to pivot
+    if dryland:
+        irrig_codes[:] = -1
 
     for y in water_years:
         print(f'starting to run year: {y}')
@@ -169,14 +173,15 @@ def get_scenario_rch_model_results(recalc=False, from_year=None, to_year=None):
     return dates, outdata
 
 
-def get_weekly_plus_scenario_era5_rch(start_date=None, end_date=None, frequency='W', fun='mean'):
+def get_weekly_plus_scenario_era5_rch(start_date=None, end_date=None, frequency='W', fun='mean',
+                                      dryland=False):
     """
-
-    :param start_date:
-    :param end_date:
-    :param frequency:
-    :param limited_irrigation:
-    :param fun:
+    get weekly era rcecharge (daily is really big)
+    :param start_date: start date
+    :param end_date: end date
+    :param frequency: pd. frequency code (must be weekly or greater)
+    :param fun: function to aggregate recharge
+    :param dryland: bool if true return dryland recharge (no irrigation)
     :return: rch in mm
     """
     if start_date is None:
@@ -190,7 +195,7 @@ def get_weekly_plus_scenario_era5_rch(start_date=None, end_date=None, frequency=
     outdates, outdata = [], []
     num_years = 5
     for sy in range(start_water_year, end_water_year, num_years):
-        dates, rch = get_scenario_rch_model_results(from_year=sy, to_year=sy + num_years)
+        dates, rch = _get_scenario_rch_model_results(from_year=sy, to_year=sy + num_years, dryland=dryland)
 
         temp = pd.DataFrame(index=pd.to_datetime(dates),
                             data=rch.reshape(rch.shape[0], np.prod(rch.shape[1:]))
@@ -216,28 +221,31 @@ def get_weekly_plus_scenario_era5_rch(start_date=None, end_date=None, frequency=
 
 
 def get_corrected_scenario_era5_rch(start_date, end_date, recalc=False,
-                                    frequency='W', fun='mean'):
+                                    frequency='W', fun='mean',
+                                    dryland=False):
     """
     # keynote corrected recharge is a little low for dryland, but about right for irrigated.
     :param start_date: None or start date
     :param end_date: None or end date
     :param recalc: boolean recaclualte
-    :param limited_irrigation: boolean limit amount of irrigation applied
     :param frequency: pd freq code (weekly plus)
     :param fun: function to resample if needed
+    :param dryland: bool if true only non-irrigated recharge.
     :return: rch in mm
     """
     if frequency == 'D':
         raise ValueError('must be weekly plus')
-
-    processed_rch_path = processed_scen_dir.joinpath(f'corrected_weekly_sen_era5_rch_unlimited_irr.npz')
-    processed_dates_path = processed_scen_dir.joinpath(f'corrected_weekly_sen_era5_rch_dates_unlimited_irr.npz')
+    extra = 'unlimited'
+    if dryland:
+        extra = 'dryland'
+    processed_rch_path = processed_scen_dir.joinpath(f'corrected_weekly_sen_era5_rch_{extra}_irr.npz')
+    processed_dates_path = processed_scen_dir.joinpath(f'corrected_weekly_sen_era5_rch_dates_{extra}_irr.npz')
     if processed_dates_path.exists() and processed_rch_path.exists() and not recalc:
         print('loading from repo')
         dates = np.load(processed_dates_path).get('arr_0')
         rch = np.load(processed_rch_path).get('arr_0')
     else:
-        dates, rch = _correct_sen_rch()
+        dates, rch = _correct_sen_rch(dryland)
         np.savez_compressed(processed_rch_path, rch)
         np.savez_compressed(processed_dates_path, dates)
 
@@ -255,11 +263,11 @@ def get_corrected_scenario_era5_rch(start_date, end_date, recalc=False,
     return temp.index, out_rch
 
 
-def _correct_sen_rch():
+def _correct_sen_rch(dryland):
     ibound, regr_irrig, regr_unirrig = _make_corrections()
 
     # predict new data
-    era5_dates_scen, outdata_scen = _predict_scenario_data(ibound, regr_irrig, regr_unirrig)
+    era5_dates_scen, outdata_scen = _predict_scenario_data(ibound, regr_irrig, regr_unirrig, dryland=dryland)
 
     return era5_dates_scen, outdata_scen
 
@@ -363,30 +371,37 @@ def _make_corrections():
     return ibound, regr_irrig, regr_unirrig
 
 
-def _predict_scenario_data(ibound, regr_irrig, regr_unirrig):
-    y = 2021  # keynote all irrigated area
-    era5_dates, era5_rch_raw = get_weekly_plus_scenario_era5_rch()
-    t = get_irrigation_code(y, recalc=True)
+def _predict_scenario_data(ibound, regr_irrig, regr_unirrig, dryland=False):
+    y = 2021  # keynote no irrigation expansion beyond current irrigated area
+    era5_dates, era5_rch_raw = get_weekly_plus_scenario_era5_rch(dryland=dryland)
+    if dryland:
+        t = np.full(ibound.shape, -1)  # set all to unirrigated
+    else:
+        t = get_irrigation_code(y, recalc=True)  # code is only to identify irrigated area
+
     era5_season = np.array([int_season_mapper[e.month] for e in era5_dates])
 
     irrigated = (t >= 0) & (ibound == 1)
     outdata = np.full(era5_rch_raw.shape, np.nan)
 
     # irrigated
-    data = era5_rch_raw[:, irrigated]
-    expect_shape = data.shape
-    seasons = np.repeat(era5_season[:, np.newaxis], expect_shape[-1], axis=1)
-    assert data.shape == seasons.shape
-    temp = regr_irrig.predict(np.concatenate((data.flatten()[:, np.newaxis],
-                                              seasons.flatten()[:, np.newaxis]), axis=1))
-    outdata[:, irrigated] = temp.reshape(expect_shape)
+    if irrigated.sum() > 0:
+        data = era5_rch_raw[:, irrigated]
+        expect_shape = data.shape
+        seasons = np.repeat(era5_season[:, np.newaxis], expect_shape[-1], axis=1)
+        assert data.shape == seasons.shape
+        temp = regr_irrig.predict(np.concatenate((data.flatten()[:, np.newaxis],
+                                                  seasons.flatten()[:, np.newaxis]), axis=1))
+        outdata[:, irrigated] = temp.reshape(expect_shape)
 
     # unirrigated
-    data = era5_rch_raw[:, ~irrigated & (ibound == 1)]
-    expect_shape = data.shape
-    seasons = np.repeat(era5_season[:, np.newaxis], expect_shape[-1], axis=1)
-    temp = regr_unirrig.predict(data.flatten()[:, np.newaxis])
-    outdata[:, ~irrigated & (ibound == 1)] = temp.reshape(expect_shape)
+    un_irrigated = ~irrigated & (ibound == 1)
+    if un_irrigated.sum() > 0:
+        data = era5_rch_raw[:, un_irrigated]
+        expect_shape = data.shape
+        seasons = np.repeat(era5_season[:, np.newaxis], expect_shape[-1], axis=1)
+        temp = regr_unirrig.predict(data.flatten()[:, np.newaxis])
+        outdata[:, un_irrigated] = temp.reshape(expect_shape)
 
     gc.collect()
     idx = np.isfinite(outdata[:, ibound == 1]).all(axis=1)
@@ -395,5 +410,60 @@ def _predict_scenario_data(ibound, regr_irrig, regr_unirrig):
     return era5_dates, outdata
 
 
-def data_checks():  # todo
-    raise NotImplementedError
+def data_checks(save=False):
+    from model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch, get_rch
+    recalc = False
+    if save:
+        outdir = processed_scen_dir.parent.joinpath('boundary_condition_plots')
+        outdir.mkdir(exist_ok=True)
+
+    dryland_dates, dryland_rch = get_corrected_scenario_era5_rch(start_date=None, end_date=None, dryland=True,
+                                                                 frequency='Y',
+                                                                 fun='mean', recalc=recalc)
+    irr_dates, irr_rch = get_corrected_scenario_era5_rch(start_date=None, end_date=None, dryland=False, frequency='Y',
+                                                         fun='mean', recalc=recalc)
+    hist_era5_dates, hist_era5_rch = get_corrected_historical_era5_rch(start_date=None, end_date=None, frequency='Y',
+                                                                       fun='mean')
+    hist_dates, hist_rch = get_rch(None, None, frequency='Y', fun='mean')
+    irrig_area = get_irrigation_code(2021) >= 0
+    ibound = smt.get_no_flow(0) == 1
+    scens = ['dryland_rch', 'irr_rch', 'hist_rch', 'hist_era5_rch']
+    temp = []
+    for s in scens:
+        temp.append(eval(s)[:, ibound].flatten())
+    temp = np.concatenate(temp)
+    vmin = np.percentile(temp, 1) * 365
+    vmax = np.percentile(temp, 99) * 365
+    # look at dryland vs irrigated recharge, spatially
+
+    for nm in scens:
+        data = eval(nm).mean(axis=0)
+        fig, ax = smt.plot.plt_matrix(data * 365, vmin=vmin, vmax=vmax, title=nm, no_flow_layer=0, base_map=True,
+                                      )
+        fig.tight_layout()
+        if save:
+            fig.savefig(outdir.joinpath(f'spatial_rch_{nm}.png'))
+    from model_build.utils import get_colors
+    colors = get_colors(scens)
+
+    # look at mean recharge through time
+    # look at mean irrigated recharge through time
+    # look at mean dryland recharge throughtime
+    for idx, nm in zip([ibound, irrig_area, ~irrig_area],
+                       ['full_model', 'irrigated_area_2021', 'not_irrigated_area_2021']):
+        fig, ax = plt.subplots(figsize=(14, 9))
+        ax.set_title(nm)
+        for sc, c in zip(scens, colors):
+            x = eval(sc.replace('rch', 'dates'))
+            y = eval(sc)[:, idx & ibound].mean(axis=1)
+            ax.plot(x, y, c=c, label=sc)
+        ax.legend()
+        fig.tight_layout()
+        if save:
+            fig.savefig(outdir.joinpath(f'temporal_rch_{nm}.png'))
+
+    smt.plot.show()
+
+
+if __name__ == '__main__':
+    data_checks(save=False)
