@@ -60,9 +60,11 @@ def get_scen_hill_race_data(tdis, recalc):
     :param recalc: bool recalc from original data
     :return:
     """
-    save_path = processed_scen_dir.joinpath(f'hill_race_stress_period_data-{tdis.name}.p')
-    if save_path.exists() and not recalc:
-        (race_spd, hill_spd) = pickle.load(open(save_path, 'rb'))
+    save_path_race = processed_scen_dir.joinpath(f'race_stress_period_data-{tdis.name}.p')
+    save_path_hill = processed_scen_dir.joinpath(f'hill_stress_period_data-{tdis.name}.p')
+    if save_path_race.exists() and save_path_hill.exists() and not recalc:
+        race_spd = pickle.load(open(save_path_race, 'rb'))
+        hill_spd = pickle.load(open(save_path_hill, 'rb'))
     else:
         # race data
         race_locs = get_race_locs()
@@ -89,7 +91,8 @@ def get_scen_hill_race_data(tdis, recalc):
                                            manage_datatypes=False,
                                            loc_duplicate_action='apportion'
                                            )
-        pickle.dump((race_spd, hill_spd), open(save_path, 'wb'))
+        pickle.dump(race_spd, open(save_path_race, 'wb'))
+        pickle.dump(hill_spd, open(save_path_hill, 'wb'))
     return race_spd, hill_spd
 
 
@@ -143,9 +146,12 @@ def get_scen_ghb_data(tdis, recalc=False):
     :param recalc: bool if true recalc from the original datasets
     :return:
     """
-    save_path = processed_scen_dir.joinpath(f'ghb_stress_period_data-{tdis.name}.p')
-    if save_path.exists() and not recalc:
-        out = pickle.load(open(save_path, 'rb'))
+    nfiles = 6
+    save_paths = [processed_scen_dir.joinpath(f'ghb_stress_period_data-{tdis.name}-{i}.p') for i in range(nfiles)]
+    if all([s.exists() for s in save_paths]) and not recalc:
+        out = {}
+        for s in save_paths:
+            out.update(pickle.load(open(s, 'rb')))
         return out
     lake_locs = get_lake_hawea_loc()
     lake_locs.loc[:, 'cond'] = lake_conduct
@@ -156,8 +162,11 @@ def get_scen_ghb_data(tdis, recalc=False):
     # transform into GHB data
     out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
                                   flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
-
-    pickle.dump(out, open(save_path, 'wb'))
+    from model_build.project_model_tools import smt
+    groups = list(smt.grouper(len(out.keys()) // 6 + 1, list(out.keys()), None))
+    assert len(groups) == len(save_paths)
+    for g, p in zip(groups, save_paths):
+        pickle.dump({k: out[k] for k in g if k is not None}, open(p, 'wb'))
     return out
 
 
@@ -180,7 +189,7 @@ def _get_str_stage_flow(start_date, end_date, frequency='W'):
     return riv_flow, riv_stage
 
 
-def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, return_unique=False):
+def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, return_unique=False, recalc=False):
     """
     get stream data.  Stream flow and stage data are set from weekly averages during the inflow period
     :param tdis: time discritsiation class
@@ -189,80 +198,95 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
     :param small_static: bool if true then set the small rivers (grandview/john) to static (e.g. steady state)
     :return:
     """
-    # todo really slow fix with recalc? how to manage riv params??? fix!
-    riv_locs = get_river_loc_data()
-    # add conductance value
-    riv_locs.loc[:, 'cond'] = riv_locs.param.replace(riv_params)
-    riv_locs = riv_locs.rename(columns={
-        'seg': 'segment',
-        'rbot': 'sbot',
-        'rtop': 'stop',
-    })
-    riv_locs.loc[:, ['width', 'slope', 'rough']] = 1.  # Keynote dummy values as I am not calculating stage
-    riv_flow, riv_stage = _get_str_stage_flow(*tdis.date_limits)
-    use_riv_flow = riv_stage.copy(deep=True) * 0
-    for k in riv_locs.rname.unique():
-        sreach = int(riv_locs.loc[riv_locs.rname == k, 'dist'].min())
-        use_riv_flow.loc[:, f"{k}_{sreach:05d}"] = riv_flow.loc[:, k]
-
+    param_mapper = {'h1': -1, 'h2': -2, 'h3': -3, 'c1': -4, 'gview': -5, 'john': -6}
+    streams = ['gview', 'john', 'hawea', 'clutha']
+    pickle_paths = [processed_scen_dir.joinpath(f'stream_spd_{s}_{tdis.name}.p') for s in streams]
     spd_dtype, seg_dtype = flopy.modflow.ModflowStr.get_default_dtype()
 
-    print('mapping_clutha')
-    out_clutha = tdis.map_data_locations(
-        riv_locs.loc[np.in1d(riv_locs.rname, ['clutha'])],
-        {'stage': riv_stage[[e for e in riv_stage.columns if 'clutha' in e]],
-         'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'clutha' in e]],
-         },
-        spd_dtype,
-    )
-    print('mapping_hawea')
-    out_hawea = tdis.map_data_locations(
-        riv_locs.loc[np.in1d(riv_locs.rname, ['hawea'])],
-        {'stage': riv_stage[[e for e in riv_stage.columns if 'hawea' in e]],
-         'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'hawea' in e]],
-         },
-        spd_dtype,
-    )
-    print('mapping_john')
-    out_john = tdis.map_data_locations(
-        riv_locs.loc[np.in1d(riv_locs.rname, ['john'])],
-        {'stage': riv_stage[[e for e in riv_stage.columns if 'john' in e]],
-         'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'john' in e]],
-         },
-        spd_dtype,
-    )
-    print('mapping_grandview')
-    out_gview = tdis.map_data_locations(
-        riv_locs.loc[np.in1d(riv_locs.rname, ['gview'])],
-        {'stage': riv_stage[[e for e in riv_stage.columns if 'gview' in e]],
-         'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'gview' in e]],
-         },
-        spd_dtype,
-    )
+    if all([p.exists() for p in pickle_paths]) and not recalc:
+        data = {s: pickle.load(p.open('rb')) for s, p in zip(streams, pickle_paths)}
+    else:
+        riv_locs = get_river_loc_data()
+        # add conductance value
+        riv_locs.loc[:, 'cond'] = riv_locs.param.replace(param_mapper)
+        riv_locs = riv_locs.rename(columns={
+            'seg': 'segment',
+            'rbot': 'sbot',
+            'rtop': 'stop',
+        })
+        riv_locs.loc[:, ['width', 'slope', 'rough']] = 1.  # Keynote dummy values as I am not calculating stage
+        riv_flow, riv_stage = _get_str_stage_flow(*tdis.date_limits)
+        use_riv_flow = riv_stage.copy(deep=True) * 0
+        for k in riv_locs.rname.unique():
+            sreach = int(riv_locs.loc[riv_locs.rname == k, 'dist'].min())
+            use_riv_flow.loc[:, f"{k}_{sreach:05d}"] = riv_flow.loc[:, k]
 
-    if small_static:
-        out_gview = tdis.make_spd_steady(out_gview)
-        out_john = tdis.make_spd_steady(out_john)
-    if big_static:
-        out_hawea = tdis.make_spd_steady(out_hawea)
-        out_clutha = tdis.make_spd_steady(out_clutha)
-    if return_unique:
-        out = {
+        print('mapping_clutha')
+        out_clutha = tdis.map_data_locations(
+            riv_locs.loc[np.in1d(riv_locs.rname, ['clutha'])],
+            {'stage': riv_stage[[e for e in riv_stage.columns if 'clutha' in e]],
+             'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'clutha' in e]],
+             },
+            spd_dtype,
+        )
+        print('mapping_hawea')
+        out_hawea = tdis.map_data_locations(
+            riv_locs.loc[np.in1d(riv_locs.rname, ['hawea'])],
+            {'stage': riv_stage[[e for e in riv_stage.columns if 'hawea' in e]],
+             'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'hawea' in e]],
+             },
+            spd_dtype,
+        )
+        print('mapping_john')
+        out_john = tdis.map_data_locations(
+            riv_locs.loc[np.in1d(riv_locs.rname, ['john'])],
+            {'stage': riv_stage[[e for e in riv_stage.columns if 'john' in e]],
+             'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'john' in e]],
+             },
+            spd_dtype,
+        )
+        print('mapping_grandview')
+        out_gview = tdis.map_data_locations(
+            riv_locs.loc[np.in1d(riv_locs.rname, ['gview'])],
+            {'stage': riv_stage[[e for e in riv_stage.columns if 'gview' in e]],
+             'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'gview' in e]],
+             },
+            spd_dtype,
+        )
+        data = {
             'gview': out_gview,
             'john': out_john,
             'hawea': out_hawea,
             'clutha': out_clutha,
         }
+        for s, p in zip(streams, pickle_paths):
+            pickle.dump(data[s], p.open('wb'))
+
+    # manage parameter data!
+    use_riv_params = {v: riv_params[k] for k, v in param_mapper.items()}
+    for v in data.values():
+        for spdv in v.values():
+            for k, pval in use_riv_params.items():
+                t = spdv['cond'].copy()
+                t[np.isclose(t, k)] = pval
+                spdv['cond'] = t
+            pass
+
+    if small_static:
+        for k in ['gview', 'john']:
+            data[k] = tdis.make_spd_steady(data[k])
+    if big_static:
+        for k in ['hawea', 'clutha', ]:
+            data[k] = tdis.make_spd_steady(data[k])
+
+    if return_unique:
+        return data
     else:
-        out = tdis.merge_spd(to_merge=(out_gview,
-                                       out_john,
-                                       out_hawea,
-                                       out_clutha,), dtype=spd_dtype)
-
-    return out
+        out = tdis.merge_spd(to_merge=list(data.values()), dtype=spd_dtype)
+        return out
 
 
-def data_checks(save=False):  # todo check then save
+def data_checks(save=False):
     """
     data checks for boundary conditions, exlcudes recharge and well boundary conditiosn (see
     Scenarios.supporting_data_analysis.scenario_recharge.data_checks
@@ -274,43 +298,12 @@ def data_checks(save=False):  # todo check then save
     from Scenarios.scen_period import scen_tdis
     from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
-    tickper = 20
+    tickper = 50
     if save:
         outdir = processed_scen_dir.parent.joinpath('boundary_condition_plots')
         outdir.mkdir(exist_ok=True)
     else:
         outdir = FakePath()
-
-    temp = get_scen_well_data('no_pump', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
-                              return_unique_spd=True)
-    race_spd = temp['race']
-    hill_spd = temp['hill']
-
-    # race data
-    print('race data')
-    plot_spd(race_spd, smt, scen_tdis, np.nansum, key='flux', title='race pump', tick_per=tickper, units='m3/day',
-             outpath=outdir.joinpath('race_spd_variable.png'))
-    plot_spd(scen_tdis.make_spd_steady(race_spd), smt, scen_tdis, np.nansum, key='flux', title='race pump',
-             tick_per=tickper, units='m3/day',
-             outpath=outdir.joinpath('race_spd_static.png'))
-
-    # hillslope data
-    print('hillslope data')
-    plot_spd(hill_spd, smt, scen_tdis, np.nansum, key='flux', title='race pump', tick_per=tickper, units='m3/day',
-             outpath=outdir.joinpath('race_spd_variable.png'))
-    plot_spd(scen_tdis.make_spd_steady(hill_spd), smt, scen_tdis, np.nansum, key='flux', title='race pump',
-             tick_per=tickper, units='m3/day',
-             outpath=outdir.joinpath('race_spd_static.png'))
-
-    # lake heads
-    print('lake heads')
-    lake_spd = get_scen_ghb_data(scen_tdis)
-    plot_spd(lake_spd, smt, scen_tdis,
-             func=np.nanmean,
-             key='bhead', title='lake heads', outpath=outdir.joinpath(f'lake_spd_variable.png'), units='m msl')
-    plot_spd(scen_tdis.make_spd_steady(lake_spd), smt, scen_tdis,
-             func=np.nanmean,
-             key='bhead', title='lake heads', outpath=outdir.joinpath(f'lake_spd_static.png'), units='m msl')
 
     # stream stages and flows, statics and not statics
     print('stream flows/stages')
@@ -325,14 +318,48 @@ def data_checks(save=False):  # todo check then save
             else:
                 static_nm = 'variable'
             plot_spd(data[k], smt, scen_tdis,
-                     func=first, key='stage', title='first river cell stage', units='m msl',
-                     outpath=outdir.joinpath(f'{k}_stage_{static_nm}.png'))
+                     func=first, key='stage', title=f'first river cell stage {k} {static_nm}', units='m msl',
+                     outpath=outdir.joinpath(f'{k}_stage_{static_nm}.png'), tick_per=tickper)
             plot_spd(data[k], smt, scen_tdis,
-                     func=first, key='flow', title='first river cell flow', units='m msl',
-                     outpath=outdir.joinpath(f'{k}_flow_{static_nm}.png'))
+                     func=first, key='flow', title=f'first river cell flow {k} {static_nm}', units='m3/day',
+                     outpath=outdir.joinpath(f'{k}_flow_{static_nm}.png'), tick_per=tickper)
 
-    plt.show()
+    temp = get_scen_well_data('no_pump', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                              return_unique_spd=True)
+    race_spd = temp['race']
+    hill_spd = temp['hill']
+
+    # race data
+    print('race data')
+    plot_spd(race_spd, smt, scen_tdis, np.nansum, key='flux', title='race pump variable', tick_per=tickper,
+             units='m3/day',
+             outpath=outdir.joinpath('race_spd_variable.png'))
+    plot_spd(scen_tdis.make_spd_steady(race_spd), smt, scen_tdis, np.nansum, key='flux', title='race pump static',
+             tick_per=tickper, units='m3/day',
+             outpath=outdir.joinpath('race_spd_static.png'))
+
+    # hillslope data
+    print('hillslope data')
+    plot_spd(hill_spd, smt, scen_tdis, np.nansum, key='flux', title='hill slope inflows variable', tick_per=tickper,
+             units='m3/day',
+             outpath=outdir.joinpath('hillslope_variable.png'))
+    plot_spd(scen_tdis.make_spd_steady(hill_spd), smt, scen_tdis, np.nansum, key='flux',
+             title='hill slope inflows static',
+             tick_per=tickper, units='m3/day',
+             outpath=outdir.joinpath('hillslope_static.png'))
+
+    # lake heads
+    print('lake heads')
+    lake_spd = get_scen_ghb_data(scen_tdis)
+    plot_spd(lake_spd, smt, scen_tdis,
+             func=np.nanmean,
+             key='bhead', title='lake heads variable', outpath=outdir.joinpath(f'lake_spd_variable.png'), units='m msl',
+             tick_per=tickper)
+    plot_spd(scen_tdis.make_spd_steady(lake_spd), smt, scen_tdis,
+             func=np.nanmean,
+             key='bhead', title='lake heads static', outpath=outdir.joinpath(f'lake_spd_static.png'), units='m msl',
+             tick_per=tickper)
 
 
 if __name__ == '__main__':
-    data_checks()
+    data_checks(save=True)
