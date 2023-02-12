@@ -79,6 +79,10 @@ def get_model_zones(recalc=False):
 
 
 if __name__ == '__main__':
+    t = get_model_zones()
+    for k,v in t.items():
+        smt.plot.plt_matrix(v, title=k, base_map=True, no_flow_layer=0)
+    smt.plot.show()
     smt.plot.plt_matrix(get_param_zones(True), base_map=True, no_flow_layer=0)
     for k in zone_keys:
         smt.plot.plt_matrix(_get_other_zones(k, recalc=True), no_flow_layer=0, title=k, base_map=True)
