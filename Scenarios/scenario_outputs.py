@@ -111,7 +111,7 @@ if __name__ == '__main__':
     from Scenarios.scen_period import scen_tdis
     from Scenarios.boundary_conditions import get_scen_well_data, get_scen_rch, get_scen_ghb_data
     from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
-
+    # todo some of these are too big for github!!! break up!!!
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
     ghb_data = get_scen_ghb_data(tdis=scen_tdis)
     rch_data = get_scen_rch(scen_tdis, rch_param=rch_param, dryland=False)

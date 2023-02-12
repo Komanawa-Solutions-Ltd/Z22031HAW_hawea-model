@@ -360,6 +360,6 @@ def data_checks(save=False):
              key='bhead', title='lake heads static', outpath=outdir.joinpath(f'lake_spd_static.png'), units='m msl',
              tick_per=tickper)
 
-
+# todo some of these are too big for github!!! break up!!!, where are they coming from
 if __name__ == '__main__':
     data_checks(save=True)
