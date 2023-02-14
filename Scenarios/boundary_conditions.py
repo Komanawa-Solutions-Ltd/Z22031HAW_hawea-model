@@ -24,14 +24,15 @@ def get_scen_rch(tdis, rch_param, dryland=False, recalc=False):
     extra = 'wirr'
     if dryland:
         extra = 'dryland'
-    save_path = processed_scen_dir.joinpath(f'rch_stress_period_data-{tdis.name}_{extra}.p')
+    save_path = processed_scen_dir.joinpath(f'rch_stress_period_data-{tdis.name}_{extra}.npz')
     if save_path.exists() and not recalc:
-        out = pickle.load(open(save_path, 'rb'))
+        out = np.load(save_path)
+        out = {int(k): v for k, v in out.items()}
     else:
         rch_dates, rch_raw = get_corrected_scenario_era5_rch(*tdis.date_limits, frequency='W', dryland=dryland)
         rch_raw *= 1 / 1000  # convert from mm/day to m/day
         out = tdis.map_array_to_spd(rch_dates, rch_raw)
-        pickle.dump(out, open(save_path, 'wb'))
+        np.savez_compressed(save_path, **{str(k): v for k, v in out.items()})
 
     # add rch mult
     rch_mult = get_spatial_temporal_rch_mult(rch_param, tdis)
@@ -328,7 +329,8 @@ def data_checks(save=False):
                               return_unique_spd=True)
     race_spd = temp['race']
     hill_spd = temp['hill']
-
+    get_scen_rch(scen_tdis, rch_param, True)
+    get_scen_rch(scen_tdis, rch_param, False)
     # race data
     print('race data')
     plot_spd(race_spd, smt, scen_tdis, np.nansum, key='flux', title='race pump variable', tick_per=tickper,
@@ -359,6 +361,7 @@ def data_checks(save=False):
              func=np.nanmean,
              key='bhead', title='lake heads static', outpath=outdir.joinpath(f'lake_spd_static.png'), units='m msl',
              tick_per=tickper)
+
 
 # todo some of these are too big for github!!! break up!!!, where are they coming from
 if __name__ == '__main__':

@@ -115,6 +115,8 @@ if __name__ == '__main__':
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
     ghb_data = get_scen_ghb_data(tdis=scen_tdis)
     rch_data = get_scen_rch(scen_tdis, rch_param=rch_param, dryland=False)
+    rch_data2 = get_scen_rch(scen_tdis, rch_param=rch_param, dryland=False, recalc=True)
+    assert all([np.isclose(rch_data[k], rch_data2[k],equal_nan=True).all() for k in rch_data.keys()])
     well_data = get_scen_well_data('no_pump', scen_tdis, hill_param, race_param)
     t = time.time()
     extract_input_data(ghb_data=ghb_data,
