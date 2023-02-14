@@ -169,7 +169,7 @@ def try_shift_hflat():
                        safemode=False, rm_remote_files=True)
 
 
-# todo play with morain l0 kh, play with rasing kh above 1000, play with setting sy to higher values, remove ngmp wells as targets
+#  play with morain l0 kh, play with rasing kh above 1000, play with setting sy to higher values, remove ngmp wells as targets
 #  re-run opt from "manual" param file.
 
 

@@ -113,7 +113,7 @@ def make_opt_preso(outdir, pst_dir, all_obs_files, names):
 
     ]
 
-    # todo join into pdf
+    # join into pdf
 
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     # imagelist is the list with all image filenames
@@ -172,4 +172,3 @@ if __name__ == '__main__':
                    ]
                    )
 
-    # todo add 3d_v1d newer if possible

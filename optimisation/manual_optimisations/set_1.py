@@ -447,7 +447,7 @@ def explore_kh_south3():
 
 replot = False
 
-# todo can I fit the south most without lake wave??, nope
+# can I fit the south most without lake wave??, nope
 # keynote bulk parameters are ok:  ['bulk_kh', 'bulk_sy', 'bulk_riv', 'bulk_hill', 'bulk_race', 'bulk_rch']
 if __name__ == '__main__':
     if replot:

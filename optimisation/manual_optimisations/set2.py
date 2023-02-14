@@ -87,7 +87,7 @@ replot = False
 #  bulk kh and sy are applied to everything other than the terrace, the lake, the low cond and moraine zone
 # keynote bulkter parameters are supported ['bulkter_kh', 'bulkter_sy'] theses apply to all terrace pilot points
 if __name__ == '__main__':
-    initial_manual2()  # todo didn't run
+    initial_manual2()  #  didn't run
     if replot:
         test_2()
         pass

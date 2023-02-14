@@ -12,9 +12,6 @@ from Scenarios.scenario_outputs import extract_input_data, generate_scenario_out
 from pathlib import Path
 
 
-# todo manage both outputs and inputs.
-
-
 def build_run_model(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_spd, str_spd, well_spd, outdir):
     """
     run the scenario model
@@ -33,7 +30,7 @@ def build_run_model(model_name, model_ws, tdis, sy_param, kh_param, rch_data, gh
     exe_name = 'mfnwt'
     run_model = True
     t = time.time()
-    
+
     # save input data (here yes)
     key_input_data = extract_input_data(ghb_data=ghb_spd, rch_data=rch_data, well_data=well_spd, tdis=tdis)
     key_input_data.to_csv(Path(model_ws).joinpath(key_input_data_file_name))
@@ -70,8 +67,7 @@ def build_run_model(model_name, model_ws, tdis, sy_param, kh_param, rch_data, gh
                       t=t,
                       noprint=True)
     print(out)
-    
-    generate_scenario_outputs(model_ws, outdir=outdir)
 
-    # todo process model data
+    generate_scenario_outputs(model_ws, outdir=outdir)  # todo finish
+
     return out
