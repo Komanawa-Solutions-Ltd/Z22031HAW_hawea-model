@@ -133,11 +133,11 @@ def generate_outputs(hds_path, cbc_path):
     return out_obs, all_riv_obs, dry_hds, flooded_cells, all_hds, all_riv, all_str_flow, str_flow_out
 
 
-def plot_lake_moraine_smoothed_areas(all_hds, plot_dir):
+def plot_lake_moraine_smoothed_areas(all_hds, plot_dir, index=0, nm=None):
     # plot all three layers of the area that is smoothed, etc. all in 1 plot
     idx = np.isfinite(get_lake_array()) | get_layer_pinchout_area() | get_2d_moraine()
     fig, axs = plt.subplots(ncols=3, figsize=(14, 9), sharex=True, sharey=True)
-    temp = deepcopy(all_hds[0])
+    temp = deepcopy(all_hds[index])
     temp[:, ~idx] = np.nan
     for l, ax in zip(range(smt.layers), axs):
         smt.plot.plt_matrix(temp[l], no_flow_layer=0, base_map=True, title=f'layer {l}', vmin=np.nanmin(temp), vmax=
@@ -147,7 +147,9 @@ def plot_lake_moraine_smoothed_areas(all_hds, plot_dir):
     ax.set_xlim([1.301e6, 1.308e6])
     fig.suptitle('steady state heads')
     fig.tight_layout()
-    fig.savefig(plot_dir.joinpath('3d_hds.png'))
+    if nm is None:
+        nm = ''
+    fig.savefig(plot_dir.joinpath(f'3d_hds_{nm}.png'))
     plt.close(fig)
 
 

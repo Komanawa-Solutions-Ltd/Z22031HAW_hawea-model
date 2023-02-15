@@ -149,7 +149,15 @@ def plot_wells():
     smt.plot.show()
 
 
+def get_regular_wells():
+    all_wells = get_all_wells()
+    names = ['g40_0367', 'g40_0415', 'g40_0416', 'g40_0041', 'g40_0366']
+
+    return all_wells.loc[names, ['nztmx', 'nztmy', 'i', 'j']]
+
+
 if __name__ == '__main__':
+    t = get_regular_wells()
     plot_wells()
     t = get_all_wells(recalc=True)
     plot_wells()

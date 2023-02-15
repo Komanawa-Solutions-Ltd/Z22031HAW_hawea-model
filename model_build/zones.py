@@ -38,6 +38,8 @@ zone_keys = {'terrace': 'terrace.shp',
              'hawea_town': 'hawea_town.shp',
              'main': 'None',  # made from ibound or other zones
              'active': 'None',  # made from ibound or other zones
+             'clutha': 'clutha.shp',
+             'sub_terrace': 'sub_terrace.shp',
              }
 
 
@@ -49,12 +51,25 @@ def _get_other_zones(name, recalc=False):
     if processed_path.exists() and not recalc:
         out = np.loadtxt(processed_path) == 1
         return out
+    pzones = get_param_zones()
+    ibound = smt.get_no_flow(0)
     if name == 'main':
-        pzones = get_param_zones()
-        ibound = smt.get_no_flow(0)
         out = (pzones < 0) & (ibound > 0)
     elif name == 'active':
         out = smt.get_no_flow(0) > 0
+    elif name == 'clutha':
+        out = np.isfinite(smt.io.shape_file_to_model_array(base_path, 'id', True))
+        idx = np.isfinite(smt.io.shape_file_to_model_array(base_path.parent.joinpath(zone_keys['terrace']), 'id', True))
+        out[(pzones > 0) | (ibound < 0)] = False
+        out[idx] = False
+    elif name == 'sub_terrace':
+        out = np.isfinite(smt.io.shape_file_to_model_array(base_path, 'id', True))
+        idx = np.isfinite(smt.io.shape_file_to_model_array(base_path.parent.joinpath(zone_keys['terrace']), 'id', True))
+        out[idx] = False
+        idx = np.isfinite(smt.io.shape_file_to_model_array(base_path.parent.joinpath(zone_keys['clutha']), 'id', True))
+        out[idx] = False
+        out[(pzones > 0) | (ibound < 0)] = False
+
     else:
         out = np.isfinite(smt.io.shape_file_to_model_array(base_path, 'id', True))
         ibound = smt.get_no_flow(0)
@@ -79,8 +94,8 @@ def get_model_zones(recalc=False):
 
 
 if __name__ == '__main__':
-    t = get_model_zones()
-    for k,v in t.items():
+    t = get_model_zones(True)
+    for k, v in t.items():
         smt.plot.plt_matrix(v, title=k, base_map=True, no_flow_layer=0)
     smt.plot.show()
     smt.plot.plt_matrix(get_param_zones(True), base_map=True, no_flow_layer=0)

@@ -30,3 +30,8 @@ def get_high_freq_head_targets(start_date, end_date, freq='D'):
     data.set_index('datetime', inplace=True)
     data.drop(columns='timestamp', inplace=True)
     return select_resample(data, start_date, end_date, freq)
+
+
+if __name__ == '__main__':
+    t = get_high_freq_head_targets(None, None)
+    pass
