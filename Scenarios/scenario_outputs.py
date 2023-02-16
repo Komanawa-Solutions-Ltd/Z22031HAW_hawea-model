@@ -11,7 +11,7 @@ import numpy as np
 from model_build.supporting_data_analysis.recharge_model import get_irrigation_code
 from model_build.supporting_data_analysis.hillside_inflows import get_hillside_catchment_locs
 from model_build.supporting_data_analysis.river_data import get_river_loc_data
-from model_build.project_model_tools import smt
+from model_build.project_model_tools import smt, get_low_cond_array
 from pathlib import Path
 from model_tools.time_discretization import TimeDis
 from targets_and_sensitive_sites.model_output import plot_list_failures, modflow_converged, \
@@ -31,7 +31,6 @@ def _get_indicator_wells(recalc=False):
         return out
     import geopandas as gpd
     data = gpd.read_file(base_scen_dir.joinpath('indicator_wells.shp'))
-    # todo decide names and groups (for plotting togeather after interigating base data)
 
     out = pd.DataFrame(index=data.loc[:, 'name'])
     out.index.name = 'well_name'
@@ -47,10 +46,10 @@ def _get_indicator_wells(recalc=False):
     return out
 
 
-def get_indicator_well_locs(plot=False):
+def get_indicator_well_locs():
     reg_wells = get_regular_wells()
     reg_wells.loc[:, 'type'] = 'monitoring'
-    reg_wells.loc[:, 'group'] = reg_wells.index
+    reg_wells.loc[:, 'group'] = 'monitoring'
     ind_wells = _get_indicator_wells()
     out = pd.concat((reg_wells, ind_wells))
     out.loc[:, 'k'] = 0
@@ -68,7 +67,7 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis):
     # save only outputs to github repo, model is run in external directory (not saved)
 
     # copy key input data
-    # todo after debug shutil.copyfile(model_ws.joinpath(key_input_data_file_name), outdir.joinpath(key_input_data_file_name))
+    shutil.copyfile(model_ws.joinpath(key_input_data_file_name), outdir.joinpath(key_input_data_file_name))
     model_ws = Path(model_ws)
     hds_file = model_ws.joinpath(f'{model_name}.hds')
     list_file = hds_file.with_suffix('.list')
@@ -102,11 +101,12 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis):
     for p in riv_locs.param.unique():
         temp = riv_locs.loc[riv_locs.param == p]
         output_data.loc[:, f'riv_{p}_flux'] = np.nansum(all_riv[:, temp.i, temp.j], axis=1)
-
+    input_data = pd.read_csv(model_ws.joinpath(key_input_data_file_name), index_col=0)
     _extract_zone_budget_fluxes(output_data, cbc_file, outdir)
-    output_data.to_csv(outdir.joinpath('output_dataset.csv'))
-    _plot_outputs(plot_dir=outdir.joinpath('plots'), list_file=list_file, hds_array=hds, output_data=output_data,
-                  model_nm=model_name, tdis=tdis)
+    output_data.to_csv(outdir.joinpath(key_output_data_file_name))
+    _plot_single_model_outputs_inputs(plot_dir=outdir.joinpath('plots'), list_file=list_file, hds_array=hds,
+                                      output_data=output_data,
+                                      model_nm=model_name, tdis=tdis, input_data=input_data)
 
 
 def _plot_spatial_heads(all_hds, plot_dir):
@@ -161,27 +161,174 @@ def _plot_spatial_heads(all_hds, plot_dir):
         smt.plot.close(fig)
 
 
-def _plot_outputs(tdis, plot_dir, list_file, hds_array, output_data, model_nm):
+def _plot_single_model_outputs_inputs(tdis, plot_dir, list_file, hds_array, output_data, model_nm, input_data):
     plot_dir.mkdir(exist_ok=True)
-    figs, axs = _plot_output_data(tdis, output_data, model_nm=model_nm)
     plot_list_failures(list_file, plot_dir)
     _plot_spatial_heads(all_hds=hds_array, plot_dir=plot_dir)
     all_hds = hds_array
     all_hds[all_hds < -666] = np.nan
-    # todo plot key input data
 
-    # todo steady state moraine heads
-    plot_lake_moraine_smoothed_areas(all_hds, plot_dir, index=None, nm=None) # todo only the steady state?? or include the max/min lake heads, todo set index and nm
-    # todo max_lake (at g40_0415) moraine heads
-    # todo min_lake (at g40_0415) moraine heads
+    # steady state moraine heads
+    idx = np.where(tdis.steady)[0][0]
+    plot_lake_moraine_smoothed_areas(all_hds, plot_dir, index=idx,
+                                     nm='Model heads at Steady state\n(1m contours)',
+                                     svnm='steady_state')
+    # max_lake (at g40_0415) moraine heads
+    idx = output_data['hds_g40_0415'].argmax()
+    plot_lake_moraine_smoothed_areas(all_hds, plot_dir, index=idx,
+                                     nm='Model heads at lake max\n(1m contours)',
+                                     svnm='lake_max')
+    # min_lake (at g40_0415) moraine heads
+    idx = output_data['hds_g40_0415'].argmin()
+    plot_lake_moraine_smoothed_areas(all_hds, plot_dir, index=idx, nm='Model heads at lake min\n(1m contours)',
+                                     svnm='lake_min')
 
+    figs, axs = _plot_output_data(tdis, output_data, model_nm=model_nm)
+    for k, fig in figs.items():
+        fig.tight_layout()
+        fig.savefig(plot_dir.joinpath(f'{k}.png'))
+    plt.close('all')
+
+    _plot_moraine_cross_sections(
+        all_hds, plot_dir,
+        indexs=[
+            np.where(tdis.steady)[0][0],
+            output_data['hds_g40_0415'].argmax(),
+            output_data['hds_g40_0415'].argmin()
+        ],
+        nms=[
+            'Model heads at Steady state',
+            'Model heads at lake max',
+            'Model heads at lake min'
+        ],
+        lss=[
+            'solid',
+            ':',
+            '--',
+        ],
+        svnm='')
+
+    # plot key input data
+    figs, axs = _plot_input_data(tdis=tdis, input_data=input_data, model_nm=model_nm)
     for k, fig in figs.items():
         fig.tight_layout()
         fig.savefig(plot_dir.joinpath(f'{k}.png'))
     plt.close('all')
 
 
-def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None, tick_per=50):
+def _plot_moraine_cross_sections(all_hds, plot_dir, indexs, nms, lss, svnm):
+    plot_dir = Path(plot_dir)
+    # 3 sections
+    sections = dict(
+        hawea_town=([1303469.330938903, 1303500.6849574826],
+                    [5053811.5626237625, 5052580.91739451]),
+        cemetary=([1305366.221641333, 1305885.8342329387],
+                  [5053896.7875498105, 5052653.428848469]),
+        mid=([1306245.1774635299, 1307072.3634277452],
+             [5054731.313333146, 5053449.757613939]),
+        off=([1307268.289996199, 1305935.0975676565],
+             [5055058.288127857, 5053561.239646644]),
+    )
+    fig, ((ax1, ax2), (ax3, loc_ax)) = plt.subplots(nrows=2, ncols=2, figsize=(14, 14))
+    loc_ax.get_shared_x_axes().remove(loc_ax)
+    loc_ax.get_shared_y_axes().remove(loc_ax)
+
+    loc_cond = get_low_cond_array()
+    loc_cond = loc_cond.astype(float)
+    loc_cond[loc_cond == 0] = np.nan
+    first = True
+    from matplotlib.patches import Patch
+    handles = [Patch(facecolor='saddlebrown', label='Low conductivity')]
+    from matplotlib.lines import Line2D
+    for idx, nm, ls in zip(indexs, nms, lss):
+        handles.append(Line2D([0], [0], linestyle=ls, label=f'$H_20$ table - {nm}', linewidth=2))
+        for (sect_key, ax, letter) in zip(['hawea_town', 'cemetary', 'mid'], [ax1, ax2, ax3], ['A', 'B', 'C']):
+            if first:
+                no_flow_layer = 0
+            else:
+                no_flow_layer = None
+            x_coords, y_coords = sections[sect_key]
+            smt.plot.plt_descrete_slice(loc_cond,
+                                        names={1: 'low conductivity'}, colors={1: 'saddlebrown'}, x_coords=x_coords,
+                                        y_coords=y_coords, plot_locator=False, ax=ax, alpha=0.5, plt_legend=False)
+            smt.plot.plt_slice_watertable(all_hds[idx], x_coords=x_coords, y_coords=y_coords,
+                                          plt_background=False, plt_layer_slice=True,
+                                          plot_locator=True, ax=ax, locator_ax=loc_ax,
+                                          background_alpha=0.5, no_flow_layer=no_flow_layer, locator_lim_pad=None,
+                                          lay_slice_kwargs=None,
+                                          slice_letter=letter, plt_basemap=first, color='b', linewidth=2, ls=ls)
+            first = False
+    loc_ax.legend(handles=handles)
+    loc_ax.set_ylim([5.051e6, 5.058e6])
+    loc_ax.set_xlim([1.301e6, 1.308e6])
+    fig.tight_layout()
+    fig.savefig(plot_dir.joinpath(f'xsections_{svnm}.png'))
+
+
+def _plot_input_data(tdis, input_data, model_nm, figs=None, axs=None, ls=None, tick_per=50):
+    """
+    to plot multiple verions pass figs, axs from perivous time
+    :param input_data:
+    :param model_nm:
+    :param figs:
+    :param axs:
+    :param ls:
+    :return:
+    """
+    if ls is None:
+        ls = 'solid'
+    if figs is None:
+        assert axs is None
+        figs, axs = _setup_input_plots()
+    else:
+        assert isinstance(figs, dict)
+        assert isinstance(axs, dict)
+
+    # do the plotting
+
+    fig, use_axs = figs['lake_rch'], axs['lake_rch']
+    plot_keys = ['lake', 'total_rch', 'dryland_rch', 'irr_rch']
+
+    for ax, k in zip(use_axs, plot_keys):
+        ax.plot(input_data.index, input_data[k], color='k', ls=ls, label=model_nm)
+        ax.set_title(k)
+        ax.legend()
+
+    fig, use_axs = figs['hill'], axs['hill']
+    plot_keys = ['hill_total', 'hill_maungawera', 'hill_flat_west', 'hill_flat_east', 'hill_terrace_east',
+                 'hill_south_east']
+    for ax, k in zip(use_axs, plot_keys):
+        ax.plot(input_data.index, input_data[k], color='k', ls=ls, label=model_nm)
+        ax.set_title(k)
+        ax.legend()
+
+    # manage ax ticks...
+    for v in axs.values():
+        for ax in v:
+            ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
+            all_labs = [f'{p}: {d.date().isoformat()}' for p, d in zip(tdis.pers, pd.Series(tdis.per_middle_dates))]
+            ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-60)
+
+    return figs, axs
+
+
+def _setup_input_plots():
+    figs, axs = {}, {}
+
+    fig, use_axs = plt.subplots(2, 2, figsize=(14, 14), sharex=True)
+    figs['lake_rch'] = fig
+    axs['lake_rch'] = use_axs.flatten()
+    # lake	total_rch	dryland_rch	irr_rch
+
+    fig, use_axs = plt.subplots(3, 2, figsize=(14, 14), sharex=True)
+    figs['hill'] = fig
+    axs['hill'] = use_axs.flatten()
+    return figs, axs
+    # hill_maungawera	hill_flat_west	hill_flat_east	hill_terrace_east	hill_south_east	hill_total
+
+
+def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None, tick_per=100):
+    # todo may need to adjust tickper
     """
     to plot multiple verions pass figs, axs from perivous time
     :param output_data:
@@ -200,8 +347,6 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
     else:
         assert isinstance(figs, dict)
         assert isinstance(axs, dict)
-
-    # todo plot data
 
     # hds groups
     for g in indicator_wells.group.unique():
@@ -231,11 +376,26 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
         ax.set_title(print_key)
 
     # manage ax ticks...
-    for v in axs.values():
-        for ax in v:
+    all_labs = []
+    for p, d, stdy in zip(tdis.pers, pd.Series(tdis.per_middle_dates), tdis.steady):
+        if stdy:
+            all_labs.append(f'{p}: steady')
+
+        else:
+            all_labs.append(f'{p}: {d.date().isoformat()}')
+
+    for k, v in axs.items():
+        if 'hds' in k:
+            for ax in v:
+                ax.set_xticklabels([])
+            ax = v[-1]
             ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
-            all_labs = [f'{p}: {d.date().isoformat()}' for p, d in zip(tdis.pers, pd.Series(tdis.per_middle_dates))]
-            ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-60)
+            ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
+
+        else:
+            for ax in v:
+                ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
+                ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
 
     return figs, axs
 
@@ -261,9 +421,9 @@ def _setup_output_plots(indicator_wells):
         smt.plot.plt_basemap(ax=temp_ax, no_flow_layer=0)
         colors = smt.plot.get_colors(range(num))
         for c, (nm, x, y) in zip(colors, temp_wells[['nztmx', 'nztmy']].itertuples(True, None)):
-            temp_ax.scatter(x, y, color=c, label=nm)
+            temp_ax.scatter(x, y, color=c, label=nm, s=100)
         temp_ax.legend()
-        smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 500, temp_ax)
+        smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
 
     # river fluxes
     fig, temp_axs = plt.subplots(3, 2, sharex=True, figsize=(14, 14))
@@ -277,6 +437,7 @@ def _setup_output_plots(indicator_wells):
     return figs, axs
 
 
+key_output_data_file_name = 'output_dataset.csv'
 key_input_data_file_name = 'key_input_data.csv'
 
 
@@ -378,7 +539,7 @@ def extract_input_data(ghb_data, rch_data, well_data, tdis):
         temp = hill_locs.loc[hill_locs.group == g]
         temp = smt.io.df_to_array(temp, 'i', True, duplicate_action=None)
         temp = np.isfinite(temp)
-        use_data = [smt.io.select_df_from_idx_array(pd.DataFrame(well_data[p]), temp, ) for p in tdis.pers]
+        use_data = [smt.io.select_df_from_idx_array(pd.DataFrame(well_data[p]), temp, ).flux.sum() for p in tdis.pers]
         outdata.loc[:, f'hill_{g}'] = use_data
         hill_names.append(f'hill_{g}')
     outdata.loc[:, 'hill_total'] = outdata.loc[:, hill_names].sum(axis=1)
@@ -386,35 +547,82 @@ def extract_input_data(ghb_data, rch_data, well_data, tdis):
     return outdata
 
 
-def compare_scenarios():  # todo
-    # compare multiple results
+def compare_scenarios(outdir, tdis, data_dirs, model_names, lss):
+    """
+    compare multiple models (models id by linestyle)
+    must have same timedis
+    :param outdir: directory to save files
+    :param tdis: TimeDis
+    :param data_dirs: directories with the output data and input data list like
+    :param model_names: model names (for legends) list like
+    :param lss: linestyles list like
+    :return:
+    """
 
-    raise NotImplementedError
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+    data_dirs = np.atleast_1d(data_dirs)
+    model_names = np.atleast_1d(model_names)
+    lss = np.atleast_1d(lss)
+    assert isinstance(tdis, TimeDis)
+    assert data_dirs.shape == model_names.shape == lss.shape
+    output_figs, output_axs = None, None
+    input_figs, input_axs = None, None
+    for dd, mn, ls in zip(data_dirs, model_names, lss):
+        dd = Path(dd)
+        input_data = pd.read_csv(dd.joinpath(key_input_data_file_name), index_col=0)
+        output_data = pd.read_csv(dd.joinpath())
+        output_figs, output_axs = _plot_output_data(tdis, output_data=output_data, model_nm=mn, figs=output_figs,
+                                                    axs=output_axs, ls=ls)
+        input_figs, input_axs = _plot_input_data(tdis, input_data=input_data, model_nm=mn, figs=input_figs,
+                                                 axs=output_figs, ls=ls)
+    # savefigs
+    figs = {}
+    figs.update(input_figs)
+    figs.update(output_figs)
+    for k, fig in figs.items():
+        fig.tight_layout()
+        fig.savefig(outdir.joinpath(f'{k}.png'))
+    plt.close('all')
+
+
+def test_with_base_model():
+    outdir = Path.home().joinpath('unbacked/temp/test_outputs')
+    if outdir.exists():
+        shutil.rmtree(outdir)
+    base_model_path = Path('/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/Final_opt_model/')
+    use_path = Path.home().joinpath('unbacked/temp/test_model')
+    if use_path.exists():
+        shutil.rmtree(use_path)
+    shutil.copytree(base_model_path, use_path)
+
+    # generate input data in the use path
+    print('creating key input data')
+    from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
+    from optimisation.optimisation_period import tdis as opt_tids
+    from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
+    temp = extract_input_data(ghb_data=get_ghb_data(opt_tids),
+                              rch_data=get_rch_data(opt_tids, rch_param),
+                              well_data=get_well_data(opt_tids, hill_param, race_param),
+                              tdis=opt_tids)
+    temp.to_csv(use_path.joinpath(key_input_data_file_name))
+
+    # generate outputs
+    print('generating outputs')
+    generate_scenario_outputs(use_path,
+                              'final_opt_model', outdir=outdir,
+                              tdis=opt_tids)
+
+
+def test_3d_xsections():
+    all_hds = np.load('/home/matt_dumont/unbacked/temp/test_outputs/final_opt_model_hds.npz')['heads']
+    _plot_moraine_cross_sections(all_hds, None, [1, 4, 8], ['1', '2', '3'], ['solid', ':', '--'], 'tst')
 
 
 if __name__ == '__main__':
-    from Scenarios.scen_period import scen_tdis
-    from Scenarios.boundary_conditions import get_scen_well_data, get_scen_rch, get_scen_ghb_data
-    from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
-    from optimisation.optimisation_period import tdis as opt_tids
-
     _get_indicator_wells(True)
-    get_indicator_wells = get_indicator_well_locs()
-    generate_scenario_outputs('/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/Final_opt_model/',
-                              'final_opt_model', outdir=Path.home().joinpath('unbacked/temp/test_outputs'),
-                              tdis=opt_tids)
-    raise NotImplementedError
-    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
-    ghb_data = get_scen_ghb_data(tdis=scen_tdis)
-    rch_data = get_scen_rch(scen_tdis, rch_param=rch_param, dryland=False)
-    rch_data2 = get_scen_rch(scen_tdis, rch_param=rch_param, dryland=False, recalc=True)
-    assert all([np.isclose(rch_data[k], rch_data2[k], equal_nan=True).all() for k in rch_data.keys()])
-    well_data = get_scen_well_data('no_pump', scen_tdis, hill_param, race_param)
     t = time.time()
-    extract_input_data(ghb_data=ghb_data,
-                       rch_data=rch_data,
-                       well_data=well_data,
-                       tdis=scen_tdis)
-
+    test_with_base_model()
     print(time.time() - t, 'seconds to run')
     pass
