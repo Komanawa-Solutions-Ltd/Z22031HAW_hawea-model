@@ -38,10 +38,12 @@ def get_scen_rch(tdis, rch_param, dryland=False, recalc=False):
     rch_mult = get_spatial_temporal_rch_mult(rch_param, tdis)
     assert rch_mult.shape[0] == len(out.keys())
     out = {k: v * rmult for (k, v), rmult in zip(out.items(), rch_mult)}
+    for v in out.values():
+        v[np.isnan(v)] = 0
     return out
 
 
-def get_scen_race_losses(start_date, end_date, frequency='W'):
+def _get_scen_race_losses(start_date, end_date, frequency='W'):
     """
     get the scenario race losses (iso weekly mean
     :param start_date:  start date
@@ -54,7 +56,7 @@ def get_scen_race_losses(start_date, end_date, frequency='W'):
     return out
 
 
-def get_scen_hill_race_data(tdis, recalc):
+def _get_scen_hill_race_data(tdis, recalc):
     """
     get the raw hill inflow and race loss data (no multipliers
     :param tdis: time discritisation
@@ -69,7 +71,7 @@ def get_scen_hill_race_data(tdis, recalc):
     else:
         # race data
         race_locs = get_race_locs()
-        race_flow = get_scen_race_losses(*tdis.date_limits)
+        race_flow = _get_scen_race_losses(*tdis.date_limits)
 
         race_spd = tdis.map_data_locations(race_locs, {'flux': race_flow.flow},
                                            flopy.modflow.ModflowWel.get_default_dtype(),
@@ -110,7 +112,7 @@ def get_scen_well_data(pump_name, tdis, hill_param, race_param, return_unique_sp
     :return:
     """
     assert pump_name in accepted_pump_names, f'unknown pump name: {pump_name}, expected on of: {accepted_pump_names}'
-    race_spd, hill_spd = get_scen_hill_race_data(tdis, recalc)
+    race_spd, hill_spd = _get_scen_hill_race_data(tdis, recalc)
     pumping_spd = get_scen_pumping_data(pump_name, tdis, recalc)
     # manage parameters
     for p, d in race_spd.items():
@@ -283,11 +285,13 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
     if return_unique:
         return data
     else:
-        out = tdis.merge_spd(to_merge=list(data.values()), dtype=spd_dtype)
+        order = ['hawea', 'clutha', 'gview', 'john']  # order is essential!
+        out = tdis.merge_spd(to_merge=[data[r] for r in order],
+                             dtype=spd_dtype)
         return out
 
 
-def data_checks(save=False):
+def _data_checks(save=False):
     """
     data checks for boundary conditions, exlcudes recharge and well boundary conditiosn (see
     Scenarios.supporting_data_analysis.scenario_recharge.data_checks
@@ -363,5 +367,43 @@ def data_checks(save=False):
              tick_per=tickper)
 
 
+def _check_all_in_domain():
+    from model_tools.model_plotting import plot_spd, first, last, FakePath
+    from model_build.project_model_tools import smt
+    from Scenarios.scen_period import scen_tdis
+    from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
+    data = dict(
+        well=get_scen_well_data('no_pump', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                                return_unique_spd=False),
+        well2=get_scen_well_data('extended_pump', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                                 return_unique_spd=False),
+        well3=get_scen_well_data('static_pump', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                                 return_unique_spd=False),
+        lake_spd=get_scen_ghb_data(scen_tdis),
+        str1=get_scen_str_data(scen_tdis, riv_params, big_static=True, small_static=True),
+        str2=get_scen_str_data(scen_tdis, riv_params, big_static=True, small_static=False),
+        str3=get_scen_str_data(scen_tdis, riv_params, big_static=False, small_static=True),
+        str4=get_scen_str_data(scen_tdis, riv_params, big_static=False, small_static=False),
+    )
+    iss = range(smt.rows)
+    jss = range(smt.cols)
+    kss = range(smt.layers)
+    for k, v in data.items():
+        print(k)
+        is_in = np.array([np.in1d(e['i'], iss) for e in v.values()]).flatten()
+        js_in = np.array([np.in1d(e['j'], jss) for e in v.values()]).flatten()
+        ks_in = np.array([np.in1d(e['k'], kss) for e in v.values()]).flatten()
+        assert all(is_in), f'iss out for {k}'
+        assert all(js_in), f'jss out for {k}'
+        assert all(ks_in), f'kss out for {k}'
+
+    rch = get_scen_rch(scen_tdis, rch_param, False)
+    assert all([e.shape == smt.model_2d_shape for e in rch.values()])
+    rch2 = get_scen_rch(scen_tdis, rch_param, True)
+    assert all([e.shape == smt.model_2d_shape for e in rch2.values()])
+
+
 if __name__ == '__main__':
-    data_checks(save=True)
+    _check_all_in_domain()
+    # _data_checks(save=True)

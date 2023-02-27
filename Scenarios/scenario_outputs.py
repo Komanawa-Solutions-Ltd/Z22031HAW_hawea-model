@@ -518,6 +518,11 @@ def extract_input_data(ghb_data, rch_data, well_data, tdis):
     :param tdis: time dis object for run
     :return:
     """
+
+    ghb_data = deepcopy(ghb_data)
+    rch_data = deepcopy(rch_data)
+    well_data = deepcopy(well_data)
+
     assert isinstance(tdis, TimeDis)
     outdata = pd.DataFrame(index=tdis.pers, data={'datetime': tdis.per_middle_dates})
 

@@ -66,7 +66,8 @@ def write_base_param_file(outdir):
     param_data.to_csv(input_file, sep='\t', header=False, index=False)
 
 
-def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param):
+def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param,
+                    verbose=False):
     exe_name = 'mfnwt'
     run_model = True
     t = time.time()
@@ -100,7 +101,7 @@ def build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_p
                       hani=None,
                       mfv='mfnwt',
                       run_model=run_model,
-                      verbose=False,
+                      verbose=verbose,
                       t=t,
                       noprint=True)
     print(out)

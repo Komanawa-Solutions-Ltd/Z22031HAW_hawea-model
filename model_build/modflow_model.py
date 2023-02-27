@@ -4,7 +4,6 @@
  Created: 03-Oct-19 8:52 AM
  """
 import time
-
 import flopy
 import os
 import pandas as pd
@@ -424,6 +423,8 @@ def _create_str_package(m, str_data, noprint):
         mxactss.append(len(v))
         nsss.append(len(pd.unique(v['segment'])))
         pass
+
+    # todo Opensource improvment sort stream by segments, check is in order without issues!!!!
     dummy_seg_data = {p: t for p in str_data.keys()}
     str = flopy.modflow.ModflowStr(
         m,
