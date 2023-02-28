@@ -21,6 +21,7 @@ from model_build.project_model_tools import get_2d_moraine, get_layer_pinchout_a
 from model_build.zones import get_model_zones
 from model_build.supporting_data_analysis.all_wells import get_regular_wells
 from project_base import base_scen_dir, processed_scen_dir
+from optimisation.final_opt_models.compress_uncompress_model import split_hds_npz
 
 
 def _get_indicator_wells(recalc=False):
@@ -59,7 +60,7 @@ def get_indicator_well_locs():
     return out
 
 
-def generate_scenario_outputs(model_ws, model_name, outdir, tdis):
+def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100):
     assert isinstance(tdis, TimeDis)
     model_ws = Path(model_ws)
     outdir = Path(outdir)
@@ -77,7 +78,11 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis):
     hds = temp.get_alldata()
     kstpkper = temp.get_kstpkper()
     hds[hds > 1e20] = np.nan
-    np.savez_compressed(outdir.joinpath(f'{model_name}_hds.npz'), heads=hds, kstpkper=kstpkper)
+    nper = len(hds)
+    np.savez_compressed(outdir.joinpath(f'{model_name}_hds.npz'), heads=hds,
+                        kstpkper=kstpkper)
+    split_hds_npz(outdir.joinpath(f'{model_name}_hds.npz'), outdir.joinpath(f'{model_name}_hds'))
+    outdir.joinpath(f'{model_name}_hds.npz').unlink()
     conv = modflow_converged(list_file)
     with open(outdir.joinpath('converged.txt'), 'w') as f:
         f.write(str(conv))
@@ -89,7 +94,7 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis):
     head_locs = get_indicator_well_locs()
     assert isinstance(head_locs, pd.DataFrame)
     for nm, k, i, j in head_locs[['k', 'i', 'j']].itertuples(name=None):
-        output_data.loc[:, f'hds_{nm}'] = hds[:, k, i, j]
+        output_data.loc[range(nper), f'hds_{nm}'] = hds[:, k, i, j]
 
     # river fluxes summed by area
     with flopy.utils.CellBudgetFile(cbc_file) as f:
@@ -100,13 +105,13 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis):
     riv_locs = get_river_loc_data()
     for p in riv_locs.param.unique():
         temp = riv_locs.loc[riv_locs.param == p]
-        output_data.loc[:, f'riv_{p}_flux'] = np.nansum(all_riv[:, temp.i, temp.j], axis=1)
+        output_data.loc[range(nper), f'riv_{p}_flux'] = np.nansum(all_riv[:, temp.i, temp.j], axis=1)
     input_data = pd.read_csv(model_ws.joinpath(key_input_data_file_name), index_col=0)
-    _extract_zone_budget_fluxes(output_data, cbc_file, outdir)
+    _extract_zone_budget_fluxes(nper, output_data, cbc_file, outdir)
     output_data.to_csv(outdir.joinpath(key_output_data_file_name))
     _plot_single_model_outputs_inputs(plot_dir=outdir.joinpath('plots'), list_file=list_file, hds_array=hds,
                                       output_data=output_data,
-                                      model_nm=model_name, tdis=tdis, input_data=input_data)
+                                      model_nm=model_name, tdis=tdis, input_data=input_data, tick_per=tickper)
 
 
 def _plot_spatial_heads(all_hds, plot_dir):
@@ -161,7 +166,8 @@ def _plot_spatial_heads(all_hds, plot_dir):
         smt.plot.close(fig)
 
 
-def _plot_single_model_outputs_inputs(tdis, plot_dir, list_file, hds_array, output_data, model_nm, input_data):
+def _plot_single_model_outputs_inputs(tdis, plot_dir, list_file, hds_array, output_data, model_nm, input_data,
+                                      tick_per=100):
     plot_dir.mkdir(exist_ok=True)
     plot_list_failures(list_file, plot_dir)
     _plot_spatial_heads(all_hds=hds_array, plot_dir=plot_dir)
@@ -183,7 +189,7 @@ def _plot_single_model_outputs_inputs(tdis, plot_dir, list_file, hds_array, outp
     plot_lake_moraine_smoothed_areas(all_hds, plot_dir, index=idx, nm='Model heads at lake min\n(1m contours)',
                                      svnm='lake_min')
 
-    figs, axs = _plot_output_data(tdis, output_data, model_nm=model_nm)
+    figs, axs = _plot_output_data(tdis, output_data, model_nm=model_nm, tick_per=tick_per)
     for k, fig in figs.items():
         fig.tight_layout()
         fig.savefig(plot_dir.joinpath(f'{k}.png'))
@@ -209,7 +215,7 @@ def _plot_single_model_outputs_inputs(tdis, plot_dir, list_file, hds_array, outp
         svnm='')
 
     # plot key input data
-    figs, axs = _plot_input_data(tdis=tdis, input_data=input_data, model_nm=model_nm)
+    figs, axs = _plot_input_data(tdis=tdis, input_data=input_data, model_nm=model_nm, tick_per=tick_per)
     for k, fig in figs.items():
         fig.tight_layout()
         fig.savefig(plot_dir.joinpath(f'{k}.png'))
@@ -314,21 +320,29 @@ def _plot_input_data(tdis, input_data, model_nm, figs=None, axs=None, ls=None, t
 
 def _setup_input_plots():
     figs, axs = {}, {}
-
-    fig, use_axs = plt.subplots(2, 2, figsize=(14, 14), sharex=True)
+    use_plots = []
+    fig, use_axs = plt.subplots(2, 1, figsize=(14, 14), sharex=True)
+    use_plots.extend(use_axs.flatten())
+    fig2, use_axs = plt.subplots(2, 1, figsize=(14, 14), sharex=True)
+    use_plots.extend(use_axs.flatten())
     figs['lake_rch'] = fig
-    axs['lake_rch'] = use_axs.flatten()
+    figs['lake_rch2'] = fig2
+    axs['lake_rch'] = use_plots
     # lake	total_rch	dryland_rch	irr_rch
 
-    fig, use_axs = plt.subplots(3, 2, figsize=(14, 14), sharex=True)
+    use_plots = []
+    fig, use_axs = plt.subplots(3, 1, figsize=(14, 14), sharex=True)
+    use_plots.extend(use_axs.flatten())
+    fig2, use_axs = plt.subplots(3, 1, figsize=(14, 14), sharex=True)
+    use_plots.extend(use_axs.flatten())
     figs['hill'] = fig
-    axs['hill'] = use_axs.flatten()
+    figs['hill2'] = fig2
+    axs['hill'] = use_plots
     return figs, axs
     # hill_maungawera	hill_flat_west	hill_flat_east	hill_terrace_east	hill_south_east	hill_total
 
 
 def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None, tick_per=100):
-    # todo may need to adjust tickper
     """
     to plot multiple verions pass figs, axs from perivous time
     :param output_data:
@@ -387,7 +401,9 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
     for k, v in axs.items():
         if 'hds' in k:
             for ax in v:
+                ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
                 ax.set_xticklabels([])
+                ax.set_xlim(min(tdis.pers) - 1, max(tdis.pers) + 1)
             ax = v[-1]
             ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
             ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
@@ -407,12 +423,12 @@ def _setup_output_plots(indicator_wells):
     for g in indicator_wells.group.unique():
         temp_wells = indicator_wells.loc[indicator_wells.group == g]
         num = len(temp_wells)
-        fig = plt.Figure(figsize=(14, 14))
+        fig = plt.Figure(figsize=(16, 14))
         fig.suptitle(f'Hds {g}')
         gs = fig.add_gridspec(nrows=num, ncols=2, width_ratios=(2, 1))
         temp_axs = []
         temp_axs.append(fig.add_subplot(gs[0, 0]))
-        temp_axs.extend([fig.add_subplot(gs[i, 0], sharex=temp_axs[0]) for i in range(1, num)])
+        temp_axs.extend([fig.add_subplot(gs[i, 0]) for i in range(1, num)])
         figs[f'hds_{g}'] = fig
         axs[f'hds_{g}'] = temp_axs
 
@@ -426,14 +442,27 @@ def _setup_output_plots(indicator_wells):
         smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
 
     # river fluxes
-    fig, temp_axs = plt.subplots(3, 2, sharex=True, figsize=(14, 14))
+    use_axs = []
+    fig, temp_axs = plt.subplots(3, 1, sharex=True, figsize=(14, 14))
+    use_axs.extend(temp_axs.flatten())
+    fig2, temp_axs = plt.subplots(3, 1, sharex=True, figsize=(14, 14))
+    use_axs.extend(temp_axs.flatten())
     figs['river_flux'] = fig
-    axs['river_flux'] = temp_axs.flatten()
+    figs['river_flux2'] = fig2
+    axs['river_flux'] = use_axs
 
     # zone budget plots
-    fig, temp_axs = plt.subplots(3, 3, sharex=True, figsize=(14, 14))
+    use_axs = []
+    fig, temp_axs = plt.subplots(3, 1, sharex=True, figsize=(14, 14))
+    use_axs.extend(temp_axs.flatten())
+    fig1, temp_axs = plt.subplots(3, 1, sharex=True, figsize=(14, 14))
+    use_axs.extend(temp_axs.flatten())
+    fig2, temp_axs = plt.subplots(3, 1, sharex=True, figsize=(14, 14))
+    use_axs.extend(temp_axs.flatten())
     figs['zone_budget'] = fig
-    axs['zone_budget'] = temp_axs.flatten()
+    figs['zone_budget1'] = fig1
+    figs['zone_budget2'] = fig2
+    axs['zone_budget'] = use_axs
     return figs, axs
 
 
@@ -494,7 +523,7 @@ z_bud_to_from = (
 )
 
 
-def _extract_zone_budget_fluxes(output_data, cbc_file, outdir):
+def _extract_zone_budget_fluxes(nper, output_data, cbc_file, outdir):
     zones, mapper = get_zone_budget_array()
     t = flopy.utils.ZoneBudget(str(cbc_file), zones, kstpkper=None,
                                aliases=mapper)
@@ -506,7 +535,7 @@ def _extract_zone_budget_fluxes(output_data, cbc_file, outdir):
         fr = dfs.loc[f'FROM_{from_zone}', to_zone]
         to = dfs.loc[f'TO_{from_zone}', to_zone]
         tot = fr - to
-        output_data.loc[:, f'{from_zone}_to_{to_zone}'] = tot.values
+        output_data.loc[range(nper), f'{from_zone}_to_{to_zone}'] = tot.values
 
 
 def extract_input_data(ghb_data, rch_data, well_data, tdis):
@@ -552,7 +581,7 @@ def extract_input_data(ghb_data, rch_data, well_data, tdis):
     return outdata
 
 
-def compare_scenarios(outdir, tdis, data_dirs, model_names, lss):
+def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100):
     """
     compare multiple models (models id by linestyle)
     must have same timedis
@@ -578,9 +607,9 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss):
         input_data = pd.read_csv(dd.joinpath(key_input_data_file_name), index_col=0)
         output_data = pd.read_csv(dd.joinpath())
         output_figs, output_axs = _plot_output_data(tdis, output_data=output_data, model_nm=mn, figs=output_figs,
-                                                    axs=output_axs, ls=ls)
+                                                    axs=output_axs, ls=ls, tick_per=tickper)
         input_figs, input_axs = _plot_input_data(tdis, input_data=input_data, model_nm=mn, figs=input_figs,
-                                                 axs=output_figs, ls=ls)
+                                                 axs=output_figs, ls=ls, tick_per=tickper)
     # savefigs
     figs = {}
     figs.update(input_figs)

@@ -14,7 +14,7 @@ from model_tools.time_discretization import TimeDis
 
 
 def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_spd, str_spd, well_spd, outdir,
-                 build_run_model=True, process_results=True, stress_periods=None):
+                 build_run_model=True, process_results=True, stress_periods=None, tickper=100):
     """
     run the scenario model
     :param model_name: model name.
@@ -95,4 +95,5 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
                           noprint=True)
         print(out)
     if process_results:
-        generate_scenario_outputs(model_ws=model_ws, model_name=model_name, outdir=outdir, tdis=use_tdis)
+        generate_scenario_outputs(model_ws=model_ws, model_name=model_name, outdir=outdir, tdis=use_tdis,
+                                  tickper=tickper)

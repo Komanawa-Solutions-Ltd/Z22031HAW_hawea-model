@@ -68,7 +68,7 @@ def mixed_optimised():
                  str_spd=opt_str_spd,
                  well_spd=opt_well_spd,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=True, process_results=False,
+                 build_run_model=run_modflow, process_results=False,
                  stress_periods=[0])
 
 
@@ -91,7 +91,7 @@ def long_naturalised():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=True, process_results=True)
+                 build_run_model=run_modflow, process_results=process_results)
 
 
 def long_current_state():
@@ -113,7 +113,7 @@ def long_current_state():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=True, process_results=True,
+                 build_run_model=False, process_results=process_results,
                  )
 
 
@@ -136,7 +136,7 @@ def lake_only_var():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=True, process_results=True)
+                 build_run_model=run_modflow, process_results=process_results)
 
 
 def rch_only_var():
@@ -158,7 +158,7 @@ def rch_only_var():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=True, process_results=True)
+                 build_run_model=run_modflow, process_results=process_results)
 
 
 def hillslope_only_var():
@@ -180,15 +180,11 @@ def hillslope_only_var():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=True, process_results=True)
+                 build_run_model=run_modflow, process_results=process_results)
 
 
-def low_lake_scenario_1():  # todo need to make lake data
-    print_myself()
-
-    raise NotImplementedError
-
-
+process_results = True
+run_modflow = False
 if __name__ == '__main__':
     long_current_state()
     long_naturalised()
