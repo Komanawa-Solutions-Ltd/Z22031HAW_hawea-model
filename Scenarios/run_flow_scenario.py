@@ -14,7 +14,8 @@ from model_tools.time_discretization import TimeDis
 
 
 def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_spd, str_spd, well_spd, outdir,
-                 build_run_model=True, process_results=True, stress_periods=None, tickper=100):
+                 build_run_model=True, process_results=True, stress_periods=None, tickper=100, save_hds=True,
+                 plot_data=True):
     """
     run the scenario model
     :param model_name: model name.
@@ -30,6 +31,8 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     :param build_run_model: bool do it or not
     :param process_results: bool do it or not
     :param stress_periods: None or a list of stress periods to run (in order)
+    :param tickper: ticks every x weeks on plots
+    :param save_hds: bool if true save compressed (and split) hds files.
     :return: 
     """
     exe_name = 'mfnwt'
@@ -96,4 +99,4 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
         print(out)
     if process_results:
         generate_scenario_outputs(model_ws=model_ws, model_name=model_name, outdir=outdir, tdis=use_tdis,
-                                  tickper=tickper)
+                                  tickper=tickper, save_hds=save_hds, plot_data=plot_data)

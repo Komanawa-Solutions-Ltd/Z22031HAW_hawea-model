@@ -22,6 +22,7 @@ from model_build.zones import get_model_zones
 from model_build.supporting_data_analysis.all_wells import get_regular_wells
 from project_base import base_scen_dir, processed_scen_dir
 from optimisation.final_opt_models.compress_uncompress_model import split_hds_npz
+from scipy.stats import percentileofscore
 
 
 def _get_indicator_wells(recalc=False):
@@ -60,7 +61,7 @@ def get_indicator_well_locs():
     return out
 
 
-def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100):
+def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100, save_hds=True, plot_data=True):
     assert isinstance(tdis, TimeDis)
     model_ws = Path(model_ws)
     outdir = Path(outdir)
@@ -79,10 +80,12 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100):
     kstpkper = temp.get_kstpkper()
     hds[hds > 1e20] = np.nan
     nper = len(hds)
-    np.savez_compressed(outdir.joinpath(f'{model_name}_hds.npz'), heads=hds,
-                        kstpkper=kstpkper)
-    split_hds_npz(outdir.joinpath(f'{model_name}_hds.npz'), outdir.joinpath(f'{model_name}_hds'))
-    outdir.joinpath(f'{model_name}_hds.npz').unlink()
+    if save_hds:
+        np.savez_compressed(outdir.joinpath(f'{model_name}_hds.npz'), heads=hds,
+                            kstpkper=kstpkper)
+        split = split_hds_npz(outdir.joinpath(f'{model_name}_hds.npz'), outdir.joinpath(f'{model_name}_hds'))
+        if split:
+            outdir.joinpath(f'{model_name}_hds.npz').unlink()
     conv = modflow_converged(list_file)
     with open(outdir.joinpath('converged.txt'), 'w') as f:
         f.write(str(conv))
@@ -109,9 +112,11 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100):
     input_data = pd.read_csv(model_ws.joinpath(key_input_data_file_name), index_col=0)
     _extract_zone_budget_fluxes(nper, output_data, cbc_file, outdir)
     output_data.to_csv(outdir.joinpath(key_output_data_file_name))
-    _plot_single_model_outputs_inputs(plot_dir=outdir.joinpath('plots'), list_file=list_file, hds_array=hds,
-                                      output_data=output_data,
-                                      model_nm=model_name, tdis=tdis, input_data=input_data, tick_per=tickper)
+
+    if plot_data:
+        _plot_single_model_outputs_inputs(plot_dir=outdir.joinpath('plots'), list_file=list_file, hds_array=hds,
+                                          output_data=output_data,
+                                          model_nm=model_name, tdis=tdis, input_data=input_data, tick_per=tickper)
 
 
 def _plot_spatial_heads(all_hds, plot_dir):
@@ -416,7 +421,7 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
     return figs, axs
 
 
-def _setup_output_plots(indicator_wells):
+def _setup_output_plots(indicator_wells, hds_only=False):
     figs, axs = {}, {}
 
     # indicator_hds_groups  (incl regular heads)
@@ -441,6 +446,8 @@ def _setup_output_plots(indicator_wells):
         temp_ax.legend()
         smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
 
+    if hds_only:
+        return figs, axs
     # river fluxes
     use_axs = []
     fig, temp_axs = plt.subplots(3, 1, sharex=True, figsize=(14, 14))
@@ -605,7 +612,7 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100):
     for dd, mn, ls in zip(data_dirs, model_names, lss):
         dd = Path(dd)
         input_data = pd.read_csv(dd.joinpath(key_input_data_file_name), index_col=0)
-        output_data = pd.read_csv(dd.joinpath())
+        output_data = pd.read_csv(dd.joinpath(key_output_data_file_name), index_col=0)
         output_figs, output_axs = _plot_output_data(tdis, output_data=output_data, model_nm=mn, figs=output_figs,
                                                     axs=output_axs, ls=ls, tick_per=tickper)
         input_figs, input_axs = _plot_input_data(tdis, input_data=input_data, model_nm=mn, figs=input_figs,
@@ -618,6 +625,158 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100):
         fig.tight_layout()
         fig.savefig(outdir.joinpath(f'{k}.png'))
     plt.close('all')
+
+
+def _setup_qq_plots(indicator_wells):
+    figs, axs, legend_axs = {}, {}, {}
+
+    # indicator_hds_groups  (incl regular heads)
+    for g in indicator_wells.group.unique():
+        temp_wells = indicator_wells.loc[indicator_wells.group == g]
+        num = len(temp_wells)
+        fig = plt.Figure(figsize=(16, 14))
+        fig.suptitle(f'Hds {g}')
+        gs = fig.add_gridspec(nrows=num, ncols=2, width_ratios=(2, 1))
+        temp_axs = []
+        temp_axs.append(fig.add_subplot(gs[0, 0]))
+        temp_axs.extend([fig.add_subplot(gs[i, 0]) for i in range(1, num)])
+        figs[f'hds_{g}'] = fig
+        axs[f'hds_{g}'] = temp_axs
+
+        # make/ plot locator (color for well, ls for scenario)
+        temp_ax = fig.add_subplot(gs[0, 1])
+        temp_ax.set_xticks([])
+        temp_ax.set_yticks([])
+        temp_ax.spines["top"].set_visible(False)
+        temp_ax.spines["right"].set_visible(False)
+        temp_ax.spines["left"].set_visible(False)
+        temp_ax.spines["bottom"].set_visible(False)
+        legend_axs[f'hds_{g}'] = temp_ax
+
+        temp_ax = fig.add_subplot(gs[1:, 1])
+        smt.plot.plt_basemap(ax=temp_ax, no_flow_layer=0)
+        colors = smt.plot.get_colors(range(num))
+        for c, (nm, x, y) in zip(colors, temp_wells[['nztmx', 'nztmy']].itertuples(True, None)):
+            temp_ax.scatter(x, y, color=c, label=nm, s=100)
+        temp_ax.legend()
+        smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
+
+    return figs, axs, legend_axs
+
+
+def quantile_plots(scenarios, senario_ls, outdir):  # todo check
+    # todo add adiquate penetration to these plots (as a line)
+    assert set(scenarios.keys()) == set(senario_ls.keys())
+    indicator_wells = get_indicator_well_locs()
+    figs, axs, legend_axs = _setup_qq_plots(indicator_wells)
+    scens = sorted(list(scenarios.keys()))
+
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+
+    # setup data
+    scen_data = {}
+    for scen in scens:
+        scen_data[scen] = pd.read_csv(Path(scenarios[scen]).joinpath(key_output_data_file_name), index_col=0)
+
+    # hds groups
+    for g in indicator_wells.group.unique():
+        fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
+        temp_wells = indicator_wells.loc[indicator_wells.group == g]
+        colors = smt.plot.get_colors(range(len(temp_wells)))
+        for ax, nm, c in zip(use_axs, temp_wells.index, colors):
+
+            quantiles = np.arange(1, 100)
+            for scen in scens:
+                data = scen_data[scen][f'hds_{nm}'].dropna()
+                plt_values = [np.nanpercentile(data, p) for p in quantiles]
+
+                ls = scenarios[scen]
+                ax.plot(quantiles, plt_values, color=c, ls=ls, linewidth=4, label=f'{scen}')
+                ax.legend()
+    for k, fig in figs.items():
+        fig.supxlabel(f'percentile')
+        fig.supylabel(f'head (m)')
+        fig.tight_layout()
+        fig.savefig(outdir.joinpath(f'{k}.png'))
+    plt.close('all')
+
+
+def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_scen_ls: dict):
+    # todo add adiquate penetration to these plots (as a line)
+    """
+
+    :param base_scen_dir: directory for the base data
+    :param base_scen_name: name of the base scenario
+    :param other_scens: dict  {name: output directory for another scenario}
+    :param other_scen_ls:  dict  {name: linestyle to use for plot}
+    :param outdir
+    :return:
+    """
+    assert set(other_scens.keys()) == set(other_scen_ls.keys())
+    indicator_wells = get_indicator_well_locs()
+    figs, axs, legend_axs = _setup_qq_plots(indicator_wells)
+    scens = sorted(list(other_scens.keys()))
+
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+
+    # setup data
+    base_data = pd.read_csv(Path(base_scen_dir).joinpath(key_output_data_file_name), index_col=0)
+    scen_data = {}
+    for scen in scens:
+        scen_data[scen] = pd.read_csv(Path(other_scens[scen]).joinpath(key_output_data_file_name), index_col=0)
+
+    # hds groups
+    for g in indicator_wells.group.unique():
+        fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
+        temp_wells = indicator_wells.loc[indicator_wells.group == g]
+        colors = smt.plot.get_colors(range(len(temp_wells)))
+        for ax, nm, c in zip(use_axs, temp_wells.index, colors):
+
+            quantiles = np.arange(1, 100)
+            base_values = [np.nanpercentile(base_data[f'hds_{nm}'], q) for q in quantiles]
+            ax.plot(quantiles, quantiles, color='k', alpha=0.5, label='1:1')
+            ax.fill_between(quantiles, np.zeros(quantiles.shape), quantiles, color='skyblue', alpha=0.3,
+                            label=('scenario is less likely to have groundwater levels\n'
+                                   'as low or lower than the nth percentile\n'
+                                   'of the base scenario'))
+            ax.fill_between(quantiles, quantiles, np.zeros(quantiles.shape) + 100, color='lightcoral', alpha=0.3,
+                            label=('scenario is more likely to have groundwater levels\n'
+                                   'as low or lower than the nth percentile\n'
+                                   'of the base scenario'))
+            for scen in scens:
+                data = scen_data[scen][f'hds_{nm}'].dropna()
+                plt_values = [percentileofscore(data, e) for e in base_values]
+                scen_values = [np.nanpercentile(data, p) for p in plt_values]
+
+                ls = other_scen_ls[scen]
+                ax.plot(quantiles, plt_values, color=c, ls=ls, linewidth=4, label=f'{scen}')
+        leg_ax.legend(*ax.get_legend_handles_labels(), loc='upper left')
+    for k, fig in figs.items():
+        fig.supxlabel(f'{base_scen_name} percentile')
+        fig.supylabel(f'scenario percentile of {base_scen_name} value')
+        fig.tight_layout()
+        fig.savefig(outdir.joinpath(f'{k}.png'))
+    plt.close('all')
+
+
+def test_qqplot():
+    q_qplots(
+        base_scen_dir='/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/Scenarios/model_info_scen_results/long_nat',
+        outdir=Path.home().joinpath('unbacked/temp/test_plots'),
+        base_scen_name='long_nat',
+        other_scens={
+            'long_current': '/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/Scenarios/model_info_scen_results/long_current',
+            'lake_only_var': '/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/Scenarios/model_info_scen_results/lake_only_var'
+
+        },
+        other_scen_ls={
+
+            'long_current': ':',
+            'lake_only_var': '--',
+
+        })
 
 
 def test_with_base_model():
@@ -655,6 +814,8 @@ def test_3d_xsections():
 
 
 if __name__ == '__main__':
+    test_qqplot()
+    raise NotImplementedError
     _get_indicator_wells(True)
     t = time.time()
     test_with_base_model()
