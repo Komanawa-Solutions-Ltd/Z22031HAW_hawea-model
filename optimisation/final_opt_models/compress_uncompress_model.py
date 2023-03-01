@@ -99,13 +99,13 @@ def uncompress_model(indir, outdir):
                 zip_path = fname.parent.joinpath(f'{fname.name}.{i:04d}')
 
 
-def split_hds_npz(path, outdir): # todo check!
-    outdir = Path(outdir)
-    outdir.mkdir(exist_ok=True)
+def split_hds_npz(path, outdir):
     path = Path(path)
     path_pat = path.name + '.split{:04d}'
     filesize = path.stat().st_size / (1024 * 1024)
     if filesize > limit * 0.9:
+        outdir = Path(outdir)
+        outdir.mkdir(exist_ok=True)
         num_files = int(filesize // (limit * .9) + 1)
         with path.open('rb') as f:
             lines = f.readlines()
@@ -118,11 +118,13 @@ def split_hds_npz(path, outdir): # todo check!
             start = stop
         with outdir.joinpath(path_pat.format(nf+1)).open('wb') as f:
             f.writelines(lines[start:])
+        split=True
     else:
+        split=False
         print('no need to split')
+    return split
 
-
-def unsplit_hds_npz(basedir, base_path_name, outpath): # todo check!!!
+def unsplit_hds_npz(basedir, base_path_name, outpath):
     basedir = Path(basedir)
     paths = sorted(basedir.glob(base_path_name + '.split[0-9][0-9][0-9][0-9]'))
     outpath = Path(outpath)
