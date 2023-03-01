@@ -42,6 +42,7 @@ rows = int(abs(uly - lry) // grid_space) + 1
 layers = 3
 layer_type = [1, 0, 0]
 bund_top = 335
+l2_top = 328
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,
@@ -373,7 +374,7 @@ def old_to_3d(top, bot):
 
     moraine = get_2d_moraine()
     bot1[moraine | np.isfinite(get_lake_array())] = bund_top
-    bot2[moraine | np.isfinite(get_lake_array())] = 328
+    bot2[moraine | np.isfinite(get_lake_array())] = l2_top
 
     azimuth_data = temp_smt.io.azimuth_from_line(base_model_build_data_dir.joinpath('3d_smoother.shp'), 20,
                                                  return_array=False).set_index('id')
