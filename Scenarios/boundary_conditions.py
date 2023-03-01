@@ -16,7 +16,8 @@ from model_build.supporting_data_analysis import get_race_locs, get_hillside_cat
     get_race_well_losses, get_lake_hawea_loc, get_lake_heads, get_river_loc_data, get_river_stage_data, \
     get_river_flow_data
 from model_parameterisation.static_params import lake_conduct
-from Scenarios.supporting_data_analysis.pumping_data import accepted_pump_names, get_scen_pumping_data
+from Scenarios.supporting_data_analysis.pumping_data import accepted_pump_names, get_scen_pumping_data, \
+    get_gridded_pumping
 from Scenarios.supporting_data_analysis.utils import make_long_weekly_mean
 
 
@@ -136,6 +137,52 @@ def get_scen_well_data(pump_name, tdis, hill_param, race_param, return_unique_sp
         return out
     else:
         out_spd = tdis.merge_spd((race_spd, hill_spd, pumping_spd),
+                                 flopy.modflow.ModflowWel.get_default_dtype(),
+                                 group_cells=True,
+                                 grouper='sum')
+        return out_spd
+
+
+def get_grid_pump_scen_well_data(idx_array: np.ndarray, total_increase, tdis, hill_param, race_param,
+                                 return_unique_spd=False, recalc=False):
+    """
+    get scenario pumping data including hillslope inflows, race data, and pumping rates
+    :param idx_array: index array for the additional pumping to be applied (model_2d_grid.shape)
+    :param total_increase: the total amount of abstraction to apply (spread evenly across the grid wells)
+    :param tdis: time discritsation object
+    :param hill_param: hill slope multipler
+    :param race_param: race multiplier
+    :param return_unique_spd: bool If False return data to go into model, if True then return dictionary of
+                              different datasets.
+    :param recalc: bool recalc from base datasets
+    :return:
+    """
+
+    grid_pump = get_gridded_pumping(idx_array, total_increase)
+    race_spd, hill_spd = _get_scen_hill_race_data(tdis, recalc)
+    pumping_spd = get_scen_pumping_data('extended_full_allo', tdis, recalc)
+    # manage parameters
+    for p, d in race_spd.items():
+        d.loc[:, 'flux'] *= race_param['all']
+
+    for p, d in hill_spd.items():
+        for k, v in hill_param.items():
+            idx = d.param == k
+            d.loc[idx, 'flux'] *= v
+
+    # convert to numpy arrays (well is done before pickle)
+    race_spd = tdis.manage_dtypes(race_spd, flopy.modflow.ModflowWel.get_default_dtype(),
+                                  group_cells=True,
+                                  grouper='sum', )
+    hill_spd = tdis.manage_dtypes(hill_spd, flopy.modflow.ModflowWel.get_default_dtype(),
+                                  group_cells=True,
+                                  grouper='sum', )
+
+    if return_unique_spd:
+        out = {'race': race_spd, 'hill': hill_spd, 'pump': pumping_spd, 'grid': grid_pump}
+        return out
+    else:
+        out_spd = tdis.merge_spd((race_spd, hill_spd, pumping_spd, grid_pump),
                                  flopy.modflow.ModflowWel.get_default_dtype(),
                                  group_cells=True,
                                  grouper='sum')

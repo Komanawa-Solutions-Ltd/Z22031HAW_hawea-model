@@ -7,19 +7,25 @@ import pickle
 import flopy.modflow
 import matplotlib.pyplot as plt
 import numpy as np
-
+import pandas as pd
+import geopandas as gpd
 from model_tools.time_discretization import TimeDis
 from model_build.get_boundary_condition_data import get_well_data
 from optimisation.optimisation_period import tdis as opt_tdis
 from model_parameterisation.inital_parametersiation import get_race_multiplier, get_hillslope_multiplier
 from model_build.supporting_data_analysis.get_pumping_data import get_pumping_locs, get_historical_pumping_data
-from project_base import processed_scen_dir
+from project_base import processed_scen_dir, base_scen_dir
 from Scenarios.supporting_data_analysis.utils import make_long_weekly_mean
+from model_build.project_model_tools import smt, get_layer_pinchout_area, get_2d_moraine, get_lake_array, \
+    get_low_cond_array
+from model_build.supporting_data_analysis.get_pumping_data import get_pump_to_l1
 
-accepted_pump_names = (  # todo more pumping scenarios??
+accepted_pump_names = (
     'no_pump',  # no groundwater abstraction
     'static_pump',  # static pumping (e.g. steady state for all)
     'extended_pump',  # iso week mean pumping for per-optimisation period, then known pumping for optimization period
+    'extended_full_allo'  # as per extended_pump but at full allocation (temporally mapped to usage
+    'extended_max_allo'  # as per extended_pump but at full allocation for every single day
 )
 
 
@@ -43,6 +49,8 @@ def get_scen_pumping_data(pump_name, tdis, recalc=False):
         return out
     elif pump_name == 'extended_pump':
         return _get_iso_week_normal_pumping(tdis, recalc=recalc)
+    elif pump_name == 'extended_full_allo':
+        return _get_iso_week_full_allo_pumping(tdis, recalc=recalc)
     else:
         raise NotImplementedError(f'shouldnt get here unless {pump_name} is not fully implemented')
 
@@ -65,6 +73,88 @@ def _get_iso_week_normal_pumping(tids, recalc):
     with save_path.open('wb') as f:
         pickle.dump(outdata, f)
     return outdata
+
+
+def _get_iso_week_full_allo_pumping(tids, recalc):  # todo useage data from mike has max allocation for each day normalise to usage data???.
+    assert isinstance(tids, TimeDis)
+    save_path = processed_scen_dir.joinpath(f'iso_week_pump_full_allo_{tids.name}.p')
+    if save_path.exists() and not recalc:
+        with save_path.open('rb') as f:
+            data = pickle.load(f)
+        return data
+
+    raise NotImplementedError  # todo below here needs updating to full allo rather than
+    historical_data = make_long_weekly_mean(get_historical_pumping_data(None, None), *tids.date_limits)
+    pumping_locs = get_pumping_locs()
+    historical_data *= -1
+    historical_data.fillna(0, inplace=True)
+    historical_data = historical_data.loc[:, pumping_locs.index]
+    outdata = tids.map_data_locations(loc_data=pumping_locs, transient_data_dict=dict(flux=historical_data),
+                                      datatype=flopy.modflow.ModflowWel.get_default_dtype(),
+                                      group_cells=True, grouper=np.nansum)
+    with save_path.open('wb') as f:
+        pickle.dump(outdata, f)
+    return outdata
+
+
+def get_gridded_pumping(tdis, idx_array, total_increase):  # todo check, do we want to smooth it!!
+    """
+    get gridded pumping spd
+    :param idx_array:
+    :param total_increase: float maximum daily rate to add to model, >0 = abstraction
+    :return:
+    """
+    assert isinstance(tdis, TimeDis)
+    grid_locs = _get_grid_locs()
+    grid_locs = smt.io.select_df_from_idx_array(grid_locs, idx_array, True)
+    pump_curve = get_historical_pumping_data(None, None).sum(axis=1)
+    pump_curve = pump_curve - pump_curve.min() / (pump_curve.max() - pump_curve.min())
+    pump_curve = make_long_weekly_mean(pump_curve, *tdis.date_limits)
+    pump_curve = pump_curve * total_increase / len(grid_locs)
+    pump_curve *= -1  # switch to abstraction
+
+    out = tdis.map_data_locations(loc_data=grid_locs, transient_data_dict=dict(flux=pump_curve),
+                                  datatype=flopy.modflow.ModflowWel.get_default_dtype(), apply_to_all=False)
+    return out
+
+
+def _get_grid_locs(recalc=False):
+    save_path = processed_scen_dir.joinpath('grid_locs.csv')
+    base_data_path = base_scen_dir.joinpath('grid_well.shp')
+
+    if save_path.exists() and not recalc:
+        return pd.read_csv(save_path, index_col=0, dtype=int)
+
+    lake_array = get_lake_array()
+    data = gpd.read_file(base_data_path)
+    xs = data.geometry.x
+    ys = data.geometry.y
+    i, j = smt.convert_coords_to_matix(xs, ys, coords_out_domain='coerce')
+    i = i[i >= 0]
+    j = j[j >= 0]
+    data = pd.DataFrame({'i': i, 'j': j}, dtype=int)
+    data.loc[:, 'k'] = 1
+    special_area = np.isfinite(get_lake_array()) | get_layer_pinchout_area() | get_2d_moraine()
+    data.loc[special_area[i, j], 'k'] = 2
+
+    # move hawea flat bores to layer 1 so that they cannot go dry (reduce model instability)
+    idx = get_pump_to_l1()[data.i, data.j] & (data.k == 0)
+    data.loc[idx, 'k'] = 1
+
+    data.loc[:, 'ibound'] = smt.get_no_flow()[data.k, data.i, data.j]
+    data = data.loc[data.ibound == 1]
+    data = data.loc[~np.isfinite(lake_array[data.i, data.j])]
+    # check for bad data
+    idx = get_low_cond_array()
+    moraine = get_2d_moraine()
+    for l in range(len(idx)):
+        idx[l] = idx[l] | np.isfinite(lake_array)
+    idx[0] = idx[0] | moraine
+    assert not idx[data.k, data.i, data.j].any(), 'pumping in lake or low cond cells, or thin layer'
+    data = smt.io.add_mxmy_to_df(data)
+
+    data.to_csv(save_path)
+    return data
 
 
 def data_checks(save=True):  # todo check, re-run on new pumping names
@@ -108,4 +198,9 @@ def data_checks(save=True):  # todo check, re-run on new pumping names
 
 
 if __name__ == '__main__':
+    d = _get_grid_locs()
+    fig, ax = smt.plot.plt_basemap()
+    ax.scatter(d.mx, d.my)
+    smt.plot.show()
+    raise NotImplementedError
     data_checks()
