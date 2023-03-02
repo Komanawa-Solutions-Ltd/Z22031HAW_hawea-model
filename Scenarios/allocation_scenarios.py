@@ -21,11 +21,11 @@ def print_myself(name):
     print(f'{inspect.stack()[1][3]}: {name}')
 
 
-def get_allocation_zone(zone):  # todo make these zones!!
+def get_allocation_zone(zone):  # todo make these zones!! use both scotts and my zones (maybe small zones as well)
     raise NotImplementedError
 
 def plot_pumping_in_zones():
-    # todo for each zone plot current, full allo, and max allo
+    # todo for each zone plot current, full allo, and max allo across normal year.
     raise NotImplementedError
 
 
