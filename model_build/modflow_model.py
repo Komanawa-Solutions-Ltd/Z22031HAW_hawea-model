@@ -25,7 +25,7 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
                 options='COMPLEX',
                 drn_spd=None, well_spd=None, nwt_kwargs={},
                 hani=None, mfv='mfnwt', run_model=False,
-                verbose=False, t=None, noprint=False):
+                verbose=False, t=None, noprint=False, make_ftl=False):
     """
     build modflow model
     :param smt: instance of ModelTools
@@ -118,6 +118,13 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
     if verbose:
         print(f'took {time.time() - t}s to build the model in python{extra}')
     t = time.time()
+
+    if make_ftl:
+        mt3d_outunit = 54
+        mt3d_outname = '{}.ftl'.format(m.name)
+        link = flopy.modflow.ModflowLmt(m, output_file_name=mt3d_outname, output_file_unit=mt3d_outunit, unitnumber=21,
+                                        output_file_format='formatted', package_flows=['sfr'])
+
     if run_model:
         if verbose:
             print('writing_model')
