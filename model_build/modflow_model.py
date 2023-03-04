@@ -123,7 +123,7 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
         mt3d_outunit = 54
         mt3d_outname = '{}.ftl'.format(m.name)
         link = flopy.modflow.ModflowLmt(m, output_file_name=mt3d_outname, output_file_unit=mt3d_outunit, unitnumber=21,
-                                        output_file_format='formatted', package_flows=['sfr'])
+                                        output_file_format='unformatted')
 
     if run_model:
         if verbose:

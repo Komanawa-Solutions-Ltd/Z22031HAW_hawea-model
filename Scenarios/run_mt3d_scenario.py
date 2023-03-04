@@ -2,6 +2,8 @@
 created matt_dumont 
 on: 13/02/23
 """
+import tempfile
+
 import pandas as pd
 from Scenarios.run_flow_scenario import run_scenario
 import os
@@ -16,6 +18,8 @@ from model_build.project_model_tools import smt
 from model_build.supporting_data_analysis import get_river_loc_data, get_race_locs, get_hillside_catchment_locs, \
     get_lake_hawea_loc
 from model_tools.regular_modeltools import ModelTools_RegularGrid
+from optimisation.final_opt_models.compress_uncompress_model import uncompress_model
+from pathlib import Path
 
 
 def get_ftl(recalc=False):
@@ -25,7 +29,7 @@ def get_ftl(recalc=False):
     model_ws = base_run_dir.joinpath(model_name)
 
     ftl_path = model_ws.joinpath(f'{model_name}.ftl')
-    if ftl_path.exists():
+    if ftl_path.exists() and not recalc:
         return ftl_path
 
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
@@ -221,11 +225,11 @@ def create_mt3d(ftl_path, mt3d_name, mt3d_ws, smt, run_model=True, num_species=1
     if not os.path.dirname(ftl_path) == mt3d_ws:
         shutil.copyfile(ftl_path, os.path.join(mt3d_ws, ftl_name))
 
-    # packages I'll likely need
+    # packages I'll likely need  # todo try unformatted???
     mt3d = flopy.mt3d.Mt3dms(modelname=mt3d_name,
                              modflowmodel=None,
                              ftlfilename=ftl_name,
-                             ftlfree=True,  # formatted FTL to handle bug
+                             ftlfree=False,  # formatted FTL to handle bug
                              version='mt3d-usgs',
                              exe_name='mt3dusgs',
                              structured=True,
@@ -240,6 +244,7 @@ def create_mt3d(ftl_path, mt3d_name, mt3d_ws, smt, run_model=True, num_species=1
     # BTN
     elv_db = smt.get_elv_db()
 
+    # todo when using mt3dms the dry cell line in the BTN (via flopy) is a bug fix!!!  # A3; Keywords, also a user warning for setting them
     btn = flopy.mt3d.Mt3dBtn(mt3d,
                              MFStyleArr=False,  # defualt it's a reader, should hopefully not cause problems
                              DRYCell=True,  # pass through dry cells
@@ -376,5 +381,5 @@ def create_mt3d(ftl_path, mt3d_name, mt3d_ws, smt, run_model=True, num_species=1
 
 
 if __name__ == '__main__':
-    get_ftl()
+    get_ftl(True)
     pass
