@@ -24,58 +24,6 @@ def print_myself():
     print(inspect.stack()[1][3])
 
 
-def optimised_model():  # todo make optimised model in this form
-    # to check if I cna still run it!
-    print_myself()
-    model_name = 'optimised'
-
-    model_ws = base_run_dir.joinpath(model_name)
-    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
-    build_run_model(model_name, model_ws, kh_param, sy_param, riv_params, hill_param, race_param, rch_param)
-
-
-def mixed_optimised():
-    # for depbugging purposes only
-    #  could not run trying:  ulimit -s unlimited, did not fix.. cant be memory, smaller model failed
-    #  checking boundary condition ijk and shape
-    #  checking periods... unlikely
-    #  removed nan values in rch array
-    #  not bas, dis, nam, nwt, oc, upw
-    #  not saving key inputdata
-    from optimisation.optimisation_period import tdis as opt_tdis
-    print_myself()
-    model_name = 'old_str'
-    from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
-
-    model_ws = base_run_dir.joinpath(model_name)
-    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
-    opt_ghb_spd = get_ghb_data(opt_tdis)
-    opt_rch = get_rch_data(opt_tdis, rch_param)
-    opt_str_spd = get_str_data(opt_tdis, riv_params=riv_params)
-    opt_well_spd = get_well_data(opt_tdis,
-                                 hill_param=hill_param,
-                                 race_param=race_param)
-
-    scen_str_vals = get_scen_str_data(scen_tdis, riv_params, big_static=False,
-                                      small_static=False)  # problem with stream seg order
-
-    # this worked scen_nat_rch = get_scen_rch(scen_tdis, rch_param, dryland=True)
-    # this worked scen_lake = get_scen_ghb_data(scen_tdis)
-    # this ran scen_wel_data = get_scen_well_data('no_pump', scen_tdis, hill_param, race_param, False)
-
-    run_scenario(model_name=model_name, model_ws=model_ws,
-                 tdis=scen_tdis,
-                 sy_param=sy_param,
-                 kh_param=kh_param,
-                 rch_data=opt_rch,
-                 ghb_spd=opt_ghb_spd,
-                 str_spd=opt_str_spd,
-                 well_spd=opt_well_spd,
-                 outdir=base_outdir.joinpath(model_name),
-                 build_run_model=run_modflow, process_results=False,
-                 stress_periods=[0])
-
-
 def opt_on_long_timescale():  # todo check!!
     from optimisation.optimisation_period import tdis as opt_tdis
     print_myself()
@@ -112,9 +60,9 @@ def opt_on_long_timescale():  # todo check!!
 
     # re-format results
     temp = pd.DataFrame(index=opt_tdis.pers, data={'date': opt_tdis.per_middle_dates})
-    scen_tdis.add_nstp_nper_to_df(temp, 'date', action_on_duplicates='last')
+    temp = scen_tdis.add_nstp_nper_to_df(temp, 'date', action_on_duplicates='last')
     temp.loc[0, 'nper'] = 0
-    mapper = temp.loc['nper'].to_dict()
+    mapper = temp.loc[:, 'nper'].to_dict()
 
     from Scenarios.scenario_outputs import key_output_data_file_name, key_input_data_file_name
     outdir = base_outdir.joinpath(model_name)
@@ -199,7 +147,7 @@ def lake_only_var():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=run_modflow, process_results=process_results)
+                 build_run_model=run_modflow, process_results=process_results, save_hds=False, plot_data=False)
 
 
 def rch_only_var():
@@ -221,7 +169,8 @@ def rch_only_var():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=run_modflow, process_results=process_results)
+                 build_run_model=run_modflow, process_results=process_results, save_hds=False, plot_data=False,
+                 )
 
 
 def static_pumping():
@@ -243,7 +192,7 @@ def static_pumping():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=run_modflow, process_results=process_results,
+                 build_run_model=run_modflow, process_results=process_results, save_hds=False, plot_data=False
                  )
 
 
@@ -274,7 +223,8 @@ def pump_only_var():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=run_modflow, process_results=process_results)
+                 build_run_model=run_modflow, process_results=process_results,
+                 save_hds=False, plot_data=False)
 
 
 def hillslope_only_var():
@@ -296,19 +246,20 @@ def hillslope_only_var():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=run_modflow, process_results=process_results)
+                 build_run_model=run_modflow, process_results=process_results,
+                 save_hds=False, plot_data=False)
 
 
 process_results = True
 run_modflow = True
 if __name__ == '__main__':
-    rerun = False
+    rerun = True  # todo delete all data and re-run with new pumping!, check data
     if rerun:
         long_current_state()
         long_naturalised()
         lake_only_var()
         rch_only_var()
         hillslope_only_var()
-    static_pumping()
-    pump_only_var()
-    opt_on_long_timescale()
+        static_pumping()
+        pump_only_var()
+        opt_on_long_timescale()

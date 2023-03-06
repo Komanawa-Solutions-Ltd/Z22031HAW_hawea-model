@@ -158,7 +158,7 @@ def get_grid_pump_scen_well_data(idx_array: np.ndarray, total_increase, tdis, hi
     :return:
     """
 
-    grid_pump = get_gridded_pumping(idx_array, total_increase)
+    grid_pump = get_gridded_pumping(tdis, idx_array, total_increase)
     race_spd, hill_spd = _get_scen_hill_race_data(tdis, recalc)
     pumping_spd = get_scen_pumping_data('extended_full_allo', tdis, recalc)
     # manage parameters

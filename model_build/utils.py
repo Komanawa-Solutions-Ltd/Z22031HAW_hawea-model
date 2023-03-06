@@ -9,7 +9,7 @@ import pandas as pd
 from matplotlib.cm import get_cmap
 
 
-def fill_weekly_mean(data, keys=None):
+def fill_weekly_mean(data, keys=None, only_where_na=True):
     """
     fill dataset with weekly mean
     :param data: pd. Dataframe or pd.Series, with datetime index
@@ -25,9 +25,11 @@ def fill_weekly_mean(data, keys=None):
     outdata.loc[:, 'isoweek'] = outdata.index.isocalendar().week.astype(str)
     temp = outdata.groupby('isoweek').mean()
     for k in np.atleast_1d(keys):
-        idx = outdata[k].isna()
-        outdata.loc[idx, k] = outdata.loc[idx, 'isoweek'].replace(temp[k].to_dict())
-
+        if only_where_na:
+            idx = outdata[k].isna()
+            outdata.loc[idx, k] = outdata.loc[idx, 'isoweek'].replace(temp[k].to_dict())
+        else:
+            outdata.loc[:, k] = outdata.loc[:, 'isoweek'].replace(temp[k].to_dict())
     return outdata.loc[:, keys]
 
 

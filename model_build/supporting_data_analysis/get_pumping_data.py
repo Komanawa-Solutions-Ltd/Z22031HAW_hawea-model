@@ -25,6 +25,53 @@ def _load_usage_data():
     return data
 
 
+def get_historical_full_allo_pumping_data(start_date, end_date, frequency='D', func='mean'):
+    max_allo = get_historical_max_allo_pumping_data(start_date=None, end_date=None)
+    usage = get_historical_pumping_data(start_date=None, end_date=None)
+    norm_usage = usage / usage.quantile(0.95)
+    full_allo = max_allo * norm_usage
+    return select_resample(full_allo, start_date, end_date, frequency, func=func)
+
+
+def get_historical_max_allo_pumping_data(start_date, end_date, frequency='D', recalc=False, func='mean'):
+    processed_path = processed_model_build_data_dir.joinpath('historical_pumping_max_allo.csv')
+    if processed_path.exists() and not recalc:
+        data = pd.read_csv(processed_path)
+        data.loc[:, 'date'] = pd.to_datetime(data.loc[:, 'date'])
+        data.set_index('date', inplace=True)
+        return select_resample(data, start_date, end_date, frequency, func=func)
+
+    pumping_key = 'gw_allo'
+    pumping_data = _load_usage_data()
+    pumping_data.loc[:, 'uname'] = pumping_data.loc[:, 'permit_id'] + '_' + pumping_data.loc[:, 'water_meter_no']
+    well_names = get_well_flowmeter_mapper()
+    well_names.loc[:, 'uname'] = well_names.loc[:, 'permit_id'] + '_' + well_names.loc[:, 'water_meter_no']
+
+    outdata = pd.DataFrame(index=pd.unique(pumping_data.loc[:, 'date']), columns=well_names.index)
+    outdata.index.name = 'date'
+    duplicated = well_names.index[well_names.loc[:, ['permit_id', 'water_meter_no']].duplicated(keep=False)]
+    unique_names = well_names.index[~well_names.loc[:, ['permit_id', 'water_meter_no']].duplicated(keep=False)]
+
+    for n in unique_names:
+        idx = np.in1d(pumping_data.loc[:, 'uname'], well_names.loc[n, 'uname'])
+        temp = pumping_data.loc[idx, ['date', pumping_key]].set_index('date')
+        outdata.loc[temp.index, n] = temp.values[:, 0]
+
+    for uname in pd.unique(well_names.loc[duplicated, 'uname']):
+        use_well_names = well_names.index[np.in1d(well_names.uname, uname)]
+        assert not np.in1d(use_well_names, unique_names).any()
+        temp = pumping_data.loc[pumping_data.uname == uname]
+        temp = temp.groupby('date').sum().loc[:, pumping_key]
+        for n in use_well_names:
+            outdata.loc[temp.index, n] = temp.values / len(use_well_names)
+
+    assert np.isclose(pumping_data.groupby('date').sum().loc[:, pumping_key], outdata.sum(axis=1)).all()
+    outdata = outdata.loc[:, well_names.loc[well_names.ibound == 1].index]
+    outdata.drop(columns=['w_068', 'w_025'], inplace=True)
+    outdata.to_csv(processed_path)
+    return select_resample(outdata, start_date, end_date, frequency, func=func)
+
+
 def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=False, func='mean'):
     """
 
@@ -192,6 +239,7 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    get_historical_full_allo_pumping_data(None, None)
     locs = get_pumping_locs()
     get_model_zones(True)
     data_checks()
