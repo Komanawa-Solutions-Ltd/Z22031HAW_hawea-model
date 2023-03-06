@@ -14,20 +14,19 @@ outdir.mkdir(exist_ok=True)
 def get_allo_zones(recalc=False):
     shp_path = proj_root.joinpath('Scenarios/base_data/recommended_zones/new_zones.shp')
     save_path = processed_scen_dir.joinpath('allo_zones.npy')
+    data = gpd.read_file(shp_path)
+    mapper = data.set_index('ID')['Zone'].to_dict()
     if save_path.exists() and not recalc:
-        return np.load(save_path)
+        return np.load(save_path), mapper
     data = smt.io.shape_file_to_model_array(shp_path, 'ID', alltouched=True)
     np.save(save_path, data)
-    return data
+    return data, mapper
 
 
 def plot_allocation_zone(save=False):
-    shp_path = proj_root.joinpath('Scenarios/base_data/recommended_zones/new_zones.shp')
     line_path = proj_root.joinpath('Scenarios/base_data/recommended_zones/hflat_split.shp')
-    data = gpd.read_file(shp_path)
-    mapper = data.set_index('ID')['Zone'].to_dict()
+    plot_data, mapper = get_allo_zones()
     mapper_keys = list(mapper.keys())
-    plot_data = get_allo_zones()
     plot_data[~np.isfinite(plot_data)] = -1
     colors = {i: c for i, c in zip(mapper_keys, smt.plot.get_colors(mapper_keys))}
     mapper[-1] = 'Out of Domain'
