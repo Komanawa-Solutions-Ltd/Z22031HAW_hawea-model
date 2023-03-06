@@ -602,21 +602,21 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100):
 
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
-    data_dirs = np.atleast_1d(data_dirs)
-    model_names = np.atleast_1d(model_names)
-    lss = np.atleast_1d(lss)
+    assert isinstance(data_dirs, dict)
+    assert isinstance(lss, dict)
     assert isinstance(tdis, TimeDis)
-    assert data_dirs.shape == model_names.shape == lss.shape
+    assert set(data_dirs.keys()) == set(model_names) == set(lss.keys())
     output_figs, output_axs = None, None
     input_figs, input_axs = None, None
-    for dd, mn, ls in zip(data_dirs, model_names, lss):
+    for mn in model_names:
+        dd, ls = data_dirs[mn], lss[mn]
         dd = Path(dd)
         input_data = pd.read_csv(dd.joinpath(key_input_data_file_name), index_col=0)
         output_data = pd.read_csv(dd.joinpath(key_output_data_file_name), index_col=0)
         output_figs, output_axs = _plot_output_data(tdis, output_data=output_data, model_nm=mn, figs=output_figs,
                                                     axs=output_axs, ls=ls, tick_per=tickper)
         input_figs, input_axs = _plot_input_data(tdis, input_data=input_data, model_nm=mn, figs=input_figs,
-                                                 axs=output_figs, ls=ls, tick_per=tickper)
+                                                 axs=input_axs, ls=ls, tick_per=tickper)
     # savefigs
     figs = {}
     figs.update(input_figs)
@@ -691,8 +691,8 @@ def quantile_plots(scenarios, senario_ls, outdir):  # todo check
                 data = scen_data[scen][f'hds_{nm}'].dropna()
                 plt_values = [np.nanpercentile(data, p) for p in quantiles]
 
-                ls = scenarios[scen]
-                ax.plot(quantiles, plt_values, color=c, ls=ls, linewidth=4, label=f'{scen}')
+                ls = senario_ls[scen]
+                ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
                 ax.legend()
     for k, fig in figs.items():
         fig.supxlabel(f'percentile')
@@ -751,7 +751,7 @@ def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_sce
                 scen_values = [np.nanpercentile(data, p) for p in plt_values]
 
                 ls = other_scen_ls[scen]
-                ax.plot(quantiles, plt_values, color=c, ls=ls, linewidth=4, label=f'{scen}')
+                ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
         leg_ax.legend(*ax.get_legend_handles_labels(), loc='upper left')
     for k, fig in figs.items():
         fig.supxlabel(f'{base_scen_name} percentile')

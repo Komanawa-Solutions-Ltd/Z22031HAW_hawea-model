@@ -16,7 +16,7 @@ def run_indictors(rerun=False):
     ftl = get_ftl()
     base_run_dir.mkdir(exist_ok=True)
 
-    data = dict(race_con=1, all_hill=1,
+    data = dict(race_con=1, all_hill=1, lake_con=1,
                 # Note for some reason the str package is causing problems
                 # hawear_con=1, clutha_con=1, lake_con=1, john_con=1, gview_con=1
                 )
@@ -115,8 +115,19 @@ def extract_data():
             fig.tight_layout()
             fig.savefig(base_plots.joinpath(f'{outname}.png'))
             smt.plot.close(fig)
+def ucn_to_raster():
+    base_out = proj_root.joinpath('Scenarios/mt3d_indicator_scenarios')
+    base_ucn = base_out.joinpath('ucn_data')
+    outdir = base_ucn.home().joinpath('unbacked/hawea/rasters')
+    outdir.mkdir(exist_ok=True)
+    for p in base_ucn.glob('*.npz'):
+        data = np.load(p)['id_conc'][2]
+        smt.io.array_to_raster(outdir.joinpath(p.with_suffix('.tif').name), data, no_flow_layer=0)
+
+
 
 
 if __name__ == '__main__':
     run_indictors(rerun=False)
     extract_data()
+    ucn_to_raster()

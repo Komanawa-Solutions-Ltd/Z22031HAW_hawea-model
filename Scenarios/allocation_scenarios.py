@@ -11,9 +11,9 @@ from Scenarios.scen_period import scen_tdis
 from project_base import unbacked_dir, proj_root
 import inspect
 
-base_run_dir = unbacked_dir.joinpath('allo_scenarios')
+base_run_dir = unbacked_dir.joinpath('allocation_scenarios')
 base_run_dir.mkdir(exist_ok=True)
-base_outdir = proj_root.joinpath('Scenarios/allo_scen_results')
+base_outdir = proj_root.joinpath('Scenarios/allocation_scenarios')
 base_outdir.mkdir(exist_ok=True)
 
 

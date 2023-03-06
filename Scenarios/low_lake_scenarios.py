@@ -231,7 +231,7 @@ def run_low_lake_scenario(key, base_run_dir, base_outdir, build_run_model=True, 
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(key),
                  build_run_model=build_run_model, process_results=process_results,
-                 tickper=8)
+                 tickper=8,save_hds=False, plot_data=False)
 
 
 def try_run_all(rerun=False, subset=None):
