@@ -225,7 +225,7 @@ def create_mt3d(ftl_path, mt3d_name, mt3d_ws, smt, run_model=True, num_species=1
     if not os.path.dirname(ftl_path) == mt3d_ws:
         shutil.copyfile(ftl_path, os.path.join(mt3d_ws, ftl_name))
 
-    # packages I'll likely need  # todo try unformatted???
+    # packages I'll likely need
     mt3d = flopy.mt3d.Mt3dms(modelname=mt3d_name,
                              modflowmodel=None,
                              ftlfilename=ftl_name,

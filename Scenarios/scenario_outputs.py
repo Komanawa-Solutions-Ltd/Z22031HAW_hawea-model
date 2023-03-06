@@ -664,7 +664,7 @@ def _setup_qq_plots(indicator_wells):
     return figs, axs, legend_axs
 
 
-def quantile_plots(scenarios, senario_ls, outdir):  # todo check
+def quantile_plots(scenarios, senario_ls, outdir):
     # todo add adiquate penetration to these plots (as a line)
     assert set(scenarios.keys()) == set(senario_ls.keys())
     indicator_wells = get_indicator_well_locs()
