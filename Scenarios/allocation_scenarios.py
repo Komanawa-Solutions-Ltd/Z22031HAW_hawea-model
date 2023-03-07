@@ -2,10 +2,13 @@
 created matt_dumont 
 on: 1/03/23
 """
+import shutil
+import traceback
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
+from pathlib import Path
 from model_build.project_model_tools import smt
 # todo plot the locs in the allocation system.
 from Scenarios.run_flow_scenario import run_scenario
@@ -15,7 +18,7 @@ from Scenarios.supporting_data_analysis.pumping_data import get_grid_locs
 from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
 from Scenarios.scen_period import scen_tdis
 from Scenarios.allocation_zones import get_allo_zones
-from project_base import unbacked_dir, proj_root
+from project_base import unbacked_dir, proj_root, opt_proj_root, opt_model_tools
 import inspect
 
 base_run_dir = unbacked_dir.joinpath('allocation_scenarios')
@@ -113,10 +116,24 @@ def plot_pumping_in_zones(save=False):
             plt.show()
 
 
-def run_grid_allocation_scenario(zone, total_increase):  # todo
+def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base_outputs_dir: Path,
+                                 rerun=False):  # todo
+    """
+    plan is to run this via ssh dist
+    :param zone:
+    :param total_increase:
+    :param local_run_dir:
+    :param base_outputs_dir:
+    :param rerun:
+    :return:
+    """
     model_name = f'{zone}_{int(total_increase):06d}'  # todo max value???,
     # todo what are increased pumping values to use, should I make this more standartised (look at pumping in the zone)
-    model_ws = base_run_dir.joinpath(model_name)
+    model_ws = local_run_dir.joinpath(model_name)
+    lst_file = model_ws.joinpath(f'{model_name}.list')
+    build_run_model = True
+    if not rerun and lst_file.exists():
+        build_run_model = False
     print_myself(model_name)
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
     idx_array = get_allocation_zone(zone)
@@ -134,11 +151,71 @@ def run_grid_allocation_scenario(zone, total_increase):  # todo
                  ghb_spd=lake,
                  str_spd=str_vals,
                  well_spd=wel_data,
-                 outdir=base_outdir.joinpath(model_name),
-                 build_run_model=run_modflow, process_results=process_results,
-                 plot_data=plot_data, save_hds=save_hds,
+                 outdir=base_outputs_dir.joinpath(model_name),
+                 build_run_model=build_run_model, process_results=process_results,
+                 plot_data=False, save_hds=False,
                  )
+    shutil.rmtree(model_ws)  # files get big!
 
+
+def run_grid_allocation_scenario_mp(kwargs):
+    try:
+        run_grid_allocation_scenario(**kwargs)
+    except Exception:
+        problem = traceback.format_exc()
+        model_name = kwargs("model_name")
+        brd = Path(kwargs.get('local_run_dir'))
+        base_outputs_dir = Path(kwargs.get('base_outputs_dir'))
+        logfile = base_outputs_dir.joinpath(f'0_{model_name}.log')
+        with logfile.open('w') as f:
+            f.write(f'model_name: {model_name}')
+            f.write(f'model_ws: {brd.joinpath(model_name)}')
+            f.write(f'outdir: {base_outputs_dir.joinpath(model_name)}')
+            f.write(problem)
+
+
+def run_all_grid_allocation_scens(flows: dict):
+    from run_managers.ssh_distributor import SshDist
+    branch = 'main'
+    # todo work with ssh distributor
+    ssh_dist = SshDist(
+        base_path={
+            '100.124.148.71': unbacked_dir.joinpath('grid_scenarios'),
+            '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath('grid_scenarios')
+        },
+        ips=['100.124.148.71',
+             '100.121.150.68'],
+        script_path=opt_proj_root.joinpath('Scenarios/run_scenario.py'),
+        conda_env='hawea',
+        num_cores={
+            '100.124.148.71': 8,
+            '100.121.150.68': None,
+        },
+        core_weigtings={
+            '100.124.148.71': 2.6675381999814873,
+            '100.121.150.68': 1.0},
+        user_names=None,
+        short_names=None,
+        prepend_bash_commands={
+            '100.124.148.71': [
+                f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+                f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+            ],
+            '100.121.150.68': [
+                f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+                f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+            ]},
+        use_tailscale=True,
+        python_paths=[opt_proj_root, opt_model_tools],
+        sys_paths="default"
+    )
+
+
+    raise NotImplementedError  # todo work with ssh distributor, start here!
+
+    print(f'running {len(runs)} models')
+    ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=rm_remote_files, run=True, compile=True,
+                             run_in_series=False, kwargs_relative_to_base_dir=['base_dir'])
 
 def full_allocation():
     model_name = 'full_allocation'
@@ -194,7 +271,7 @@ process_results = True
 run_modflow = True
 
 if __name__ == '__main__':
-    plot_grid_locs(True)
-    plot_pumping_in_zones(True)
+    full_allocation()
+    max_allocation()
 
     pass
