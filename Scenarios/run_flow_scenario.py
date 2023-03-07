@@ -15,7 +15,7 @@ from model_tools.time_discretization import TimeDis
 
 def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_spd, str_spd, well_spd, outdir,
                  build_run_model=True, process_results=True, stress_periods=None, tickper=100, save_hds=True,
-                 plot_data=True, make_ftl=False):
+                 plot_data=True, make_ftl=False, nwt_kwargs=None, ):
     """
     run the scenario model
     :param model_name: model name.
@@ -35,6 +35,9 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     :param save_hds: bool if true save compressed (and split) hds files.
     :return: 
     """
+    if nwt_kwargs is None:
+        nwt_kwargs = {'maxiterout': 1000, 'maxitinner': 100}
+
     exe_name = 'mfnwt'
     t = time.time()
     outdir = Path(outdir)
@@ -89,7 +92,7 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
                           str_spd=str_spd,
                           well_spd=well_spd,
                           options='COMPLEX',
-                          nwt_kwargs={'maxiterout': 1000, 'maxitinner': 100},
+                          nwt_kwargs=nwt_kwargs,
                           hani=None,
                           mfv='mfnwt',
                           run_model=True,

@@ -20,7 +20,7 @@ from copy import deepcopy
 from model_build.project_model_tools import get_2d_moraine, get_layer_pinchout_area, get_lake_array, get_lake_bar
 from model_build.zones import get_model_zones
 from model_build.supporting_data_analysis.all_wells import get_regular_wells
-from project_base import base_scen_dir, processed_scen_dir
+from project_base import base_scen_dir, processed_scen_dir, proj_root
 from optimisation.final_opt_models.compress_uncompress_model import split_hds_npz
 from scipy.stats import percentileofscore
 
@@ -347,7 +347,7 @@ def _setup_input_plots():
     # hill_maungawera	hill_flat_west	hill_flat_east	hill_terrace_east	hill_south_east	hill_total
 
 
-def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None, tick_per=100):
+def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None, tick_per=100, aq_pen=None):
     """
     to plot multiple verions pass figs, axs from perivous time
     :param output_data:
@@ -374,6 +374,20 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
         colors = smt.plot.get_colors(range(len(temp_wells)))
         for ax, nm, c in zip(use_axs, temp_wells.index, colors):
             ax.plot(output_data.index, output_data[f'hds_{nm}'], color=c, ls=ls, label=f'{nm}-{model_nm}')
+            if aq_pen is not None:
+                aq_pen = np.atleast_1d(aq_pen)
+                for i, pen in enumerate(aq_pen):
+                    labs, hands = ax.get_legend_handles_labels()
+                    if f'adequate pen. from {pen}' not in labs:
+                        p = get_adiquate_penetration(f'hds_{nm}', pen)
+                        ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
+                                   color='k', alpha=0.5)
+                        # add text label
+                        if i % 2 == 0:
+                            idx = -1
+                        else:
+                            idx = 0
+                        ax.text(output_data.index[idx], p, pen, color='k')
             ax.legend()
 
     # river fluxes
@@ -391,8 +405,9 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
     for ax, (from_zone, to_zone) in zip(use_axs, z_bud_to_from):
         key = f'{from_zone}_to_{to_zone}'
         print_key = f'{from_zone.capitalize()} to {to_zone.capitalize()}'
-        ax.plot(output_data.index, output_data[key], ls=ls, label=f'{print_key}-{model_nm}')
+        ax.plot(output_data.index, output_data[key], ls=ls, label=f'{model_nm}')
         ax.set_title(print_key)
+        ax.legend()
 
     # manage ax ticks...
     all_labs = []
@@ -588,7 +603,7 @@ def extract_input_data(ghb_data, rch_data, well_data, tdis):
     return outdata
 
 
-def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100):
+def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, usepers=None, aq_pen=None):
     """
     compare multiple models (models id by linestyle)
     must have same timedis
@@ -599,7 +614,6 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100):
     :param lss: linestyles list like
     :return:
     """
-
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
     assert isinstance(data_dirs, dict)
@@ -608,14 +622,27 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100):
     assert set(data_dirs.keys()) == set(model_names) == set(lss.keys())
     output_figs, output_axs = None, None
     input_figs, input_axs = None, None
+    if usepers is not None:
+        assert set(usepers).issubset(tdis.pers)
+        use_tids = tdis.get_sub_tids(usepers)
+    else:
+        use_tids = tdis
+
     for mn in model_names:
         dd, ls = data_dirs[mn], lss[mn]
         dd = Path(dd)
         input_data = pd.read_csv(dd.joinpath(key_input_data_file_name), index_col=0)
         output_data = pd.read_csv(dd.joinpath(key_output_data_file_name), index_col=0)
-        output_figs, output_axs = _plot_output_data(tdis, output_data=output_data, model_nm=mn, figs=output_figs,
-                                                    axs=output_axs, ls=ls, tick_per=tickper)
-        input_figs, input_axs = _plot_input_data(tdis, input_data=input_data, model_nm=mn, figs=input_figs,
+
+        if usepers is not None:
+            input_data = input_data.loc[sorted(usepers)]
+            input_data.index = range(len(input_data))
+            output_data = output_data.loc[sorted(usepers)]
+            output_data.index = range(len(output_data))
+
+        output_figs, output_axs = _plot_output_data(use_tids, output_data=output_data, model_nm=mn, figs=output_figs,
+                                                    axs=output_axs, ls=ls, tick_per=tickper, aq_pen=aq_pen)
+        input_figs, input_axs = _plot_input_data(use_tids, input_data=input_data, model_nm=mn, figs=input_figs,
                                                  axs=input_axs, ls=ls, tick_per=tickper)
     # savefigs
     figs = {}
@@ -664,8 +691,7 @@ def _setup_qq_plots(indicator_wells):
     return figs, axs, legend_axs
 
 
-def quantile_plots(scenarios, senario_ls, outdir):
-    # todo add adiquate penetration to these plots (as a line)
+def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None):
     assert set(scenarios.keys()) == set(senario_ls.keys())
     indicator_wells = get_indicator_well_locs()
     figs, axs, legend_axs = _setup_qq_plots(indicator_wells)
@@ -677,7 +703,10 @@ def quantile_plots(scenarios, senario_ls, outdir):
     # setup data
     scen_data = {}
     for scen in scens:
-        scen_data[scen] = pd.read_csv(Path(scenarios[scen]).joinpath(key_output_data_file_name), index_col=0)
+        t = pd.read_csv(Path(scenarios[scen]).joinpath(key_output_data_file_name), index_col=0)
+        if usepers is not None:
+            t = t.loc[usepers]
+        scen_data[scen] = t
 
     # hds groups
     for g in indicator_wells.group.unique():
@@ -693,6 +722,20 @@ def quantile_plots(scenarios, senario_ls, outdir):
 
                 ls = senario_ls[scen]
                 ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
+                if aq_pen is not None:
+                    aq_pen = np.atleast_1d(aq_pen)
+                    for i, pen in enumerate(aq_pen):
+                        hands, labs = ax.get_legend_handles_labels()
+                        if f'adequate pen. from {pen}' not in labs:
+                            p = get_adiquate_penetration(f'hds_{nm}', pen)
+                            ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
+                                       color='k', alpha=0.5)
+                            # add text label
+                            if i % 2 == 0:
+                                idx = -1
+                            else:
+                                idx = 0
+                            ax.text(quantiles[idx], p, pen, color='k')
                 ax.legend()
     for k, fig in figs.items():
         fig.supxlabel(f'percentile')
@@ -702,8 +745,8 @@ def quantile_plots(scenarios, senario_ls, outdir):
     plt.close('all')
 
 
-def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_scen_ls: dict):
-    # todo add adiquate penetration to these plots (as a line)
+def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_scen_ls: dict,
+             usepers=None):
     """
 
     :param base_scen_dir: directory for the base data
@@ -725,7 +768,11 @@ def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_sce
     base_data = pd.read_csv(Path(base_scen_dir).joinpath(key_output_data_file_name), index_col=0)
     scen_data = {}
     for scen in scens:
-        scen_data[scen] = pd.read_csv(Path(other_scens[scen]).joinpath(key_output_data_file_name), index_col=0)
+        t = pd.read_csv(Path(other_scens[scen]).joinpath(key_output_data_file_name), index_col=0)
+
+        if usepers is not None:
+            t = t.loc[usepers]
+        scen_data[scen] = t
 
     # hds groups
     for g in indicator_wells.group.unique():
@@ -759,6 +806,50 @@ def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_sce
         fig.tight_layout()
         fig.savefig(outdir.joinpath(f'{k}.png'))
     plt.close('all')
+
+
+def get_adiquate_penetration(well, base_model, recalc=False):
+    locs = get_indicator_well_locs()
+    locs.index = [f'hds_{e}' for e in locs.index]
+    assert well in locs.index or well == 'all', f'got weird well: {well}'
+    assert base_model in ['long_current', 'long_nat', 'optimised']
+    save_path = processed_scen_dir.joinpath(f'adequate_penetration_{base_model}.csv')
+    if save_path.exists() and not recalc:
+        data = pd.read_csv(save_path, index_col=0)['adequate_pen']
+        if well == 'all':
+            return data
+        else:
+            return data.loc[well]
+
+    output_data = pd.read_csv(
+        proj_root.joinpath('Scenarios/model_info_scen_results', base_model, key_output_data_file_name))
+    output_data = output_data.drop(index=[0])
+    output_data.loc[:, 'date'] = pd.to_datetime(output_data['date'])
+    output_data.loc[:, 'year'] = output_data['date'].dt.year
+    output_data.loc[:, 'month'] = output_data['date'].dt.month
+
+    # remove partial years!
+    drop_years = []
+    for y in output_data.year.unique():
+        got_months = output_data.loc[output_data.year == y, 'month']
+        if set(got_months) != set(range(1, 13)):
+            drop_years.append(y)
+    output_data = output_data.loc[~np.in1d(output_data.year, drop_years)]
+    annual_mean = output_data.groupby('year').mean()
+    annual_min = output_data.groupby('year').quantile(0.10)
+    annual_max = output_data.groupby('year').quantile(0.90)
+    t = 3 * (annual_max.mean() - annual_min.mean())
+    t[t > 15] = 15  # basically just addresses the weirdness at buterfield
+    t[t < 1] = 1
+    t = annual_mean.mean() - t
+    data = pd.Series(index=locs.index, name='adequate_pen')
+    data.loc[:] = t.loc[data.index]
+
+    data.to_csv(save_path)
+    if well == 'all':
+        return data
+    else:
+        return data.loc[well]
 
 
 def test_qqplot():
@@ -814,10 +905,14 @@ def test_3d_xsections():
 
 
 if __name__ == '__main__':
+    get_adiquate_penetration('all', 'long_current', True)
+    get_adiquate_penetration('all', 'optimised', True)
+    get_adiquate_penetration('all', 'long_nat', True)
+
     test_qqplot()
     raise NotImplementedError
     _get_indicator_wells(True)
-    t = time.time()
+    tm = time.time()
     test_with_base_model()
-    print(time.time() - t, 'seconds to run')
+    print(time.time() - tm, 'seconds to run')
     pass
