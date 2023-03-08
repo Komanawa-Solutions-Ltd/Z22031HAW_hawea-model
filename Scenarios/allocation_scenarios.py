@@ -2,6 +2,7 @@
 created matt_dumont 
 on: 1/03/23
 """
+import datetime
 import shutil
 import traceback
 
@@ -174,10 +175,19 @@ def run_grid_allocation_scenario_mp(kwargs):
             f.write(problem)
 
 
-def run_all_grid_allocation_scens(flows: dict):
+def run_all_grid_allocation_scens(name, local_cores:int, pump_rate: dict, rm_remote_files=True):
+    """
+
+    :param pump_rate: dict {zone:[p1, p2, p3]}
+    :param rm_remote_files: remove files on remote machine
+    :return:
+    """
+    for z, pr in pump_rate.items():
+        assert z in zones_to_model, f'bad rate: zone: {z}, rate:{pr}'
+        assert np.issubdtype(np.atleast_1d(pr).dtype, np.number)
+
     from run_managers.ssh_distributor import SshDist
     branch = 'main'
-    # todo work with ssh distributor
     ssh_dist = SshDist(
         base_path={
             '100.124.148.71': unbacked_dir.joinpath('grid_scenarios'),
@@ -188,7 +198,7 @@ def run_all_grid_allocation_scens(flows: dict):
         script_path=opt_proj_root.joinpath('Scenarios/run_scenario.py'),
         conda_env='hawea',
         num_cores={
-            '100.124.148.71': 8,
+            '100.124.148.71': local_cores,
             '100.121.150.68': None,
         },
         core_weigtings={
@@ -210,12 +220,20 @@ def run_all_grid_allocation_scens(flows: dict):
         sys_paths="default"
     )
 
-
-    raise NotImplementedError  # todo work with ssh distributor, start here!
+    # make runs
+    runs = []
+    for z, all_tinc in pump_rate.items():
+        all_tinc = np.atleast_1d(all_tinc)
+        for tinc in all_tinc:
+            runs.append(
+                dict(zone=z, total_increase=tinc, local_run_dir=unbacked_dir.joinpath('grid_runs'),
+                     base_outputs_dir=unbacked_dir.joinpath('grid_outputs'))
+            )
 
     print(f'running {len(runs)} models')
     ssh_dist.distribute_runs(run_name=name, runs=runs, rm_remote_files=rm_remote_files, run=True, compile=True,
-                             run_in_series=False, kwargs_relative_to_base_dir=['base_dir'])
+                             run_in_series=False, kwargs_relative_to_base_dir=['base_outputs_dir', 'local_run_dir'])
+
 
 def full_allocation():
     model_name = 'full_allocation'
@@ -262,6 +280,7 @@ def max_allocation():
                  outdir=base_outdir.joinpath(model_name),
                  build_run_model=run_modflow, process_results=process_results,
                  plot_data=plot_data, save_hds=save_hds,
+                 nwt_kwargs=dict(maxiterout=1500, maxitinner=300, headtol=0.25, fluxtol=1000)
                  )
 
 
@@ -271,7 +290,7 @@ process_results = True
 run_modflow = True
 
 if __name__ == '__main__':
-    full_allocation()
+    # already run full_allocation()
     max_allocation()
 
     pass
