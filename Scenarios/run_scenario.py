@@ -5,6 +5,9 @@ on: 7/03/23
 import sys
 
 print(sys.path)
+import warnings
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 from pathlib import Path
 import pickle
 import socket
