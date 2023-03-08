@@ -61,7 +61,8 @@ def get_indicator_well_locs():
     return out
 
 
-def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100, save_hds=True, plot_data=True):
+def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100, save_hds=True, plot_data=True,
+                              save_list=True):
     assert isinstance(tdis, TimeDis)
     model_ws = Path(model_ws)
     outdir = Path(outdir)
@@ -87,6 +88,10 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100, s
         if split:
             outdir.joinpath(f'{model_name}_hds.npz').unlink()
     conv = modflow_converged(list_file)
+    if save_list:
+        outpath = list_file.relative_to(outdir)
+        outpath.unlink(missing_ok=True)
+        shutil.copyfile(list_file, outpath)
     with open(outdir.joinpath('converged.txt'), 'w') as f:
         f.write(str(conv))
 
@@ -593,7 +598,7 @@ def extract_input_data(ghb_data, rch_data, well_data, tdis):
     hill_names = []
     for g in hill_locs.group.unique():
         temp = hill_locs.loc[hill_locs.group == g]
-        temp = smt.io.df_to_array(temp, 'i', True, duplicate_action=None)
+        temp = smt.io.df_to_array(temp, 'i', True, duplicate_action=np.nansum)
         temp = np.isfinite(temp)
         use_data = [smt.io.select_df_from_idx_array(pd.DataFrame(well_data[p]), temp, ).flux.sum() for p in tdis.pers]
         outdata.loc[:, f'hill_{g}'] = use_data

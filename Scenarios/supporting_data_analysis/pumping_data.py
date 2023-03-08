@@ -143,7 +143,7 @@ def _get_iso_week_max_allo_pumping(tids,
     return outdata
 
 
-def get_gridded_pumping(tdis, idx_array, total_increase):  # todo check, do we want to smooth it!!
+def get_gridded_pumping(tdis, idx_array, total_increase):  # todo check, do we want to smooth it!!, can I save this in a faster way?, plot pumming curve
     """
     get gridded pumping spd
     :param idx_array:
@@ -155,12 +155,13 @@ def get_gridded_pumping(tdis, idx_array, total_increase):  # todo check, do we w
     grid_locs = smt.io.select_df_from_idx_array(grid_locs, idx_array, True)
     pump_curve = get_historical_pumping_data(None, None).sum(axis=1)
     pump_curve = pump_curve - pump_curve.min() / (pump_curve.max() - pump_curve.min())
+    pump_curve.name = 'flux'
     pump_curve = make_long_weekly_mean(pump_curve, *tdis.date_limits, only_where_na=False)
     pump_curve = pump_curve * total_increase / len(grid_locs)
     pump_curve *= -1  # switch to abstraction
 
-    out = tdis.map_data_locations(loc_data=grid_locs, transient_data_dict=dict(flux=pump_curve),
-                                  datatype=flopy.modflow.ModflowWel.get_default_dtype(), apply_to_all=False)
+    out = tdis.map_data_locations(loc_data=grid_locs, transient_data_dict=dict(flux=pump_curve['flux']),
+                                  datatype=flopy.modflow.ModflowWel.get_default_dtype(), apply_to_all=True)
     return out
 
 

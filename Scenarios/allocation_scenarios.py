@@ -130,6 +130,7 @@ def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base
     """
     model_name = f'{zone}_{int(total_increase):06d}'  # todo max value???,
     # todo what are increased pumping values to use, should I make this more standartised (look at pumping in the zone)
+    model_name = model_name.replace(" ", "_")
     model_ws = local_run_dir.joinpath(model_name)
     lst_file = model_ws.joinpath(f'{model_name}.list')
     build_run_model = True
@@ -144,6 +145,9 @@ def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base
     wel_data = get_grid_pump_scen_well_data(idx_array=idx_array,
                                             total_increase=total_increase,
                                             tdis=scen_tdis, hill_param=hill_param, race_param=race_param, )
+    use_out = base_outputs_dir.joinpath(model_name)
+    use_out.mkdir(exist_ok=True, parents=True)
+    model_ws.mkdir(exist_ok=True, parents=True)
     run_scenario(model_name=model_name, model_ws=model_ws,
                  tdis=scen_tdis,
                  sy_param=sy_param,
@@ -152,9 +156,9 @@ def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base
                  ghb_spd=lake,
                  str_spd=str_vals,
                  well_spd=wel_data,
-                 outdir=base_outputs_dir.joinpath(model_name),
+                 outdir=use_out,
                  build_run_model=build_run_model, process_results=process_results,
-                 plot_data=False, save_hds=False,
+                 plot_data=False, save_hds=False, save_list=True,
                  )
     shutil.rmtree(model_ws)  # files get big!
 
@@ -164,7 +168,7 @@ def run_grid_allocation_scenario_mp(kwargs):
         run_grid_allocation_scenario(**kwargs)
     except Exception:
         problem = traceback.format_exc()
-        model_name = kwargs("model_name")
+        model_name = kwargs.get("model_name")
         brd = Path(kwargs.get('local_run_dir'))
         base_outputs_dir = Path(kwargs.get('base_outputs_dir'))
         logfile = base_outputs_dir.joinpath(f'0_{model_name}.log')
@@ -175,7 +179,7 @@ def run_grid_allocation_scenario_mp(kwargs):
             f.write(problem)
 
 
-def run_all_grid_allocation_scens(name, local_cores:int, pump_rate: dict, rm_remote_files=True):
+def run_all_grid_allocation_scens(name, local_cores: int, pump_rate: dict, rm_remote_files=True):
     """
 
     :param pump_rate: dict {zone:[p1, p2, p3]}
@@ -255,7 +259,7 @@ def full_allocation():
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
                  build_run_model=run_modflow, process_results=process_results,
-                 plot_data=plot_data, save_hds=save_hds,
+                 plot_data=plot_data, save_hds=save_hds, save_list=True
                  )
 
 
@@ -279,8 +283,8 @@ def max_allocation():
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
                  build_run_model=run_modflow, process_results=process_results,
-                 plot_data=plot_data, save_hds=save_hds,
-                 nwt_kwargs=dict(maxiterout=1500, maxitinner=300, headtol=0.25, fluxtol=1000)
+                 plot_data=plot_data, save_hds=save_hds, save_list=True,
+                 nwt_kwargs=dict(maxiterout=1500, maxitinner=300, headtol=0.25, fluxtol=1000, )
                  )
 
 
