@@ -230,8 +230,8 @@ def run_all_grid_allocation_scens(name, local_cores: int, pump_rate: dict, rm_re
         all_tinc = np.atleast_1d(all_tinc)
         for tinc in all_tinc:
             runs.append(
-                dict(zone=z, total_increase=tinc, local_run_dir=unbacked_dir.joinpath('grid_runs'),
-                     base_outputs_dir=unbacked_dir.joinpath('grid_outputs'))
+                dict(zone=z, total_increase=tinc, local_run_dir='grid_runs',
+                     base_outputs_dir='grid_outputs')
             )
 
     print(f'running {len(runs)} models')

@@ -89,7 +89,7 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100, s
             outdir.joinpath(f'{model_name}_hds.npz').unlink()
     conv = modflow_converged(list_file)
     if save_list:
-        outpath = list_file.relative_to(outdir)
+        outpath = outdir.joinpath(list_file.name)
         outpath.unlink(missing_ok=True)
         shutil.copyfile(list_file, outpath)
     with open(outdir.joinpath('converged.txt'), 'w') as f:
