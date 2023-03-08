@@ -143,7 +143,34 @@ def _get_iso_week_max_allo_pumping(tids,
     return outdata
 
 
-def get_gridded_pumping(tdis, idx_array, total_increase):  # todo check, do we want to smooth it!!, can I save this in a faster way?, plot pumming curve
+def get_pump_curve(tdis):
+    pump_curve = get_historical_pumping_data(None, None, frequency='W').sum(axis=1)
+    pump_curve.name = 'flux'
+    pump_curve = make_long_weekly_mean(pump_curve, *tdis.date_limits, only_where_na=False)
+    pump_curve.loc[:, f'flux'] = pump_curve.flux.rolling(9, center=True).mean()
+    pump_curve = (pump_curve - pump_curve.min()) / (pump_curve.max() - pump_curve.min())
+    pump_curve = make_long_weekly_mean(pump_curve, *tdis.date_limits, only_where_na=False)
+    return pump_curve
+
+
+def plot_pump_curve(save=False):
+    from Scenarios.scen_period import scen_tdis
+    pump = get_pump_curve(scen_tdis)
+    pump = pump.iloc[1:105]
+    fig, ax = plt.subplots(figsize=(10, 8))
+    ax.plot(pump.index, pump.flux)
+    ax.set_xlabel('indicative date (all years are identical)')
+    ax.set_ylabel('fraction of pumping applied')
+    ax.set_title('pumping curve')
+    fig.tight_layout()
+    if save:
+        outdir = processed_scen_dir.parent.joinpath('boundary_condition_plots', 'pumping')
+        fig.savefig(outdir.joinpath('grid_pumping_curve.png'))
+    plt.show()
+
+
+def get_gridded_pumping(tdis, idx_array,
+                        total_increase):
     """
     get gridded pumping spd
     :param idx_array:
@@ -153,10 +180,7 @@ def get_gridded_pumping(tdis, idx_array, total_increase):  # todo check, do we w
     assert isinstance(tdis, TimeDis)
     grid_locs = get_grid_locs()
     grid_locs = smt.io.select_df_from_idx_array(grid_locs, idx_array, True)
-    pump_curve = get_historical_pumping_data(None, None).sum(axis=1)
-    pump_curve = pump_curve - pump_curve.min() / (pump_curve.max() - pump_curve.min())
-    pump_curve.name = 'flux'
-    pump_curve = make_long_weekly_mean(pump_curve, *tdis.date_limits, only_where_na=False)
+    pump_curve = get_pump_curve(tdis)
     pump_curve = pump_curve * total_increase / len(grid_locs)
     pump_curve *= -1  # switch to abstraction
 
@@ -246,4 +270,5 @@ def data_checks(save=True):
 
 
 if __name__ == '__main__':
+    plot_pump_curve(True)
     data_checks()
