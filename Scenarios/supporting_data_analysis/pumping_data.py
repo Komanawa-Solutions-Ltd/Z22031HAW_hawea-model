@@ -102,6 +102,7 @@ def _get_iso_week_full_allo_pumping(tids, recalc):
     use_data = historical_data / historical_data.max() * allo_pumping
 
     pumping_locs = get_pumping_locs()
+    pumping_locs.loc[pumping_locs['mangawera'], 'k'] = 1  # keynote set to l1 to prevent model from failing
     use_data *= -1
     use_data.fillna(0, inplace=True)
     use_data = use_data.loc[:, pumping_locs.index]
@@ -270,5 +271,5 @@ def data_checks(save=True):
 
 
 if __name__ == '__main__':
-    plot_pump_curve(True)
     data_checks()
+    plot_pump_curve(True)

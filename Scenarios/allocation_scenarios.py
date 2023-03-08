@@ -18,7 +18,7 @@ from Scenarios.supporting_data_analysis.pumping_data import get_grid_locs
 from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
 from Scenarios.scen_period import scen_tdis
 from Scenarios.allocation_zones import get_allo_zones
-from project_base import unbacked_dir, proj_root, opt_proj_root, opt_model_tools
+from project_base import unbacked_dir, proj_root, opt_proj_root, opt_model_tools, processed_scen_dir
 import inspect
 
 base_run_dir = unbacked_dir.joinpath('allocation_scenarios')
@@ -59,23 +59,61 @@ def get_allocation_zone(zone):
     assert zone in mapper
     return np.isclose(zones, mapper[zone])
 
+# todo look at running smaller lengh simulations...!
+
+def get_pumping_in_zones(recalc=False): # todo check, use as basis for increasing allocation
+    out_path = processed_scen_dir.joinpath('current_full_max_allo.csv')
+    if out_path.exists() and not recalc:
+        outdata = pd.read_csv(out_path, index_col=0)
+        return outdata
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
+    usage = get_scen_well_data('extended_pump', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                               return_unique_spd=True, recalc=False)['pump']
+    full_allo = get_scen_well_data('extended_full_allo', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                                   return_unique_spd=True, recalc=False)['pump']
+    max_allo = get_scen_well_data('extended_max_allo', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                                  return_unique_spd=True, recalc=False)['pump']
+    pers = np.arange(1, 53)
+    plot_data = {'usage': [], 'full_allo': [], 'max_allo': []}
+    for w in pers:
+        for k, v in plot_data.items():
+            temp = pd.DataFrame(eval(k)[w])
+            temp.loc[:, 'per'] = w
+            v.append(temp)
+    for k, v in plot_data.items():
+        plot_data[k] = pd.concat(v)
+    outdata = pd.DataFrame(index=zones_to_model)
+    for zone in zones_to_model:
+        zone_idx = get_allocation_zone(zone)
+        colos = smt.plot.get_colors(plot_data.keys())
+        lss = ['solid', '--', ':']
+        for (k, data), c, ls in zip(plot_data.items(), colos, lss):
+            data = smt.io.select_df_from_idx_array(data, zone_idx, True)
+            data.loc[:, 'site'] = [f'{i}-{j}' for i, j in data.loc[:, ['i', 'j']].itertuples(False, None)]
+            total_data = data.groupby('per').sum()
+
+            outdata.loc[zone, f'{k}_mean'] = total_data.flux.mean()
+            outdata.loc[zone, f'{k}_min'] = total_data.flux.min()
+            outdata.loc[zone, f'{k}_max'] = total_data.flux.max()
+    outdata.to_csv(out_path)
+    return outdata
 
 def plot_pumping_in_zones(save=False):
     out_plot_dir = proj_root.joinpath('Scenarios/boundary_condition_plots/pumping_use_allo_difs')
     out_plot_dir.mkdir(exist_ok=True)
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
     usage = get_scen_well_data('extended_pump', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
-                               return_unique_spd=True, recalc=True)['pump']
+                               return_unique_spd=True, recalc=False)['pump']
     full_allo = get_scen_well_data('extended_full_allo', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
-                                   return_unique_spd=True, recalc=True)['pump']
+                                   return_unique_spd=True, recalc=False)['pump']
     max_allo = get_scen_well_data('extended_max_allo', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
-                                  return_unique_spd=True, recalc=True)['pump']
-    weeks = np.arange(1, 53)
+                                  return_unique_spd=True, recalc=False)['pump']
+    pers = np.arange(1, 53)
     plot_data = {'usage': [], 'full_allo': [], 'max_allo': []}
-    for w in weeks:
+    for w in pers:
         for k, v in plot_data.items():
             temp = pd.DataFrame(eval(k)[w])
-            temp.loc[:, 'week'] = w
+            temp.loc[:, 'per'] = w
             v.append(temp)
     for k, v in plot_data.items():
         plot_data[k] = pd.concat(v)
@@ -89,13 +127,13 @@ def plot_pumping_in_zones(save=False):
         for (k, data), c, ls in zip(plot_data.items(), colos, lss):
             data = smt.io.select_df_from_idx_array(data, zone_idx, True)
             data.loc[:, 'site'] = [f'{i}-{j}' for i, j in data.loc[:, ['i', 'j']].itertuples(False, None)]
-            total_data = data.groupby('week').sum()
+            total_data = data.groupby('per').sum()
             ax.plot(total_data.index, total_data.flux, color=c, label=k)
-            site_data = data.groupby(['site', 'week']).mean().reset_index()
+            site_data = data.groupby(['site', 'per']).mean().reset_index()
             sites = site_data.site.unique()
             site_colors = smt.plot.get_colors(sites, 'tab20')
             for site, sc in zip(sites, site_colors):
-                ax_site.plot(data.loc[data.site == site, 'week'], data.loc[data.site == site, 'flux'], color=sc,
+                ax_site.plot(data.loc[data.site == site, 'per'], data.loc[data.site == site, 'flux'], color=sc,
                              label=f'{site}-{k}', ls=ls)
             pass
 
@@ -104,9 +142,18 @@ def plot_pumping_in_zones(save=False):
         ax.set_ylabel('pumping flux')
         ax.legend()
         ax_site.set_title(f'{zone} by site')
-        ax_site.set_xlabel('ISO week')
+        ax_site.set_xlabel('Indicative Date')
         ax_site.set_ylabel('pumping flux')
         ax_site.legend()
+
+        tick_per = 4
+        dates = pd.Series(scen_tdis.per_middle_dates)
+        all_labs = [d.date().isoformat() for d in dates.loc[pers]]
+        ax.set_xticks([e for i, e in enumerate(pers) if i % tick_per == 0])
+        ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
+        ax_site.set_xticks([e for i, e in enumerate(pers) if i % tick_per == 0])
+        ax_site.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
+
         fig.tight_layout()
         fig_site.tight_layout()
         if save:
@@ -282,14 +329,16 @@ def max_allocation():
                  outdir=base_outdir.joinpath(model_name),
                  build_run_model=run_modflow, process_results=process_results,
                  plot_data=True, save_hds=save_hds, save_list=True,
-                 nwt_kwargs=dict(maxiterout=1500, maxitinner=300, headtol=0.25, fluxtol=1000, )
+                 nwt_kwargs=dict(maxiterout=1500, maxitinner=300,
+                                 #headtol=0.5, fluxtol=1000,
+                                 )
                  )
 
 
 plot_data = False
 save_hds = False
 process_results = True
-run_modflow = False
+run_modflow = True
 
 if __name__ == '__main__':
     # already run full_allocation()
