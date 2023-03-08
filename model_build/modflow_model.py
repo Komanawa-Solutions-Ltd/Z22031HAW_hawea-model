@@ -431,12 +431,12 @@ def _create_str_package(m, str_data, noprint):
         nsss.append(len(pd.unique(v['segment'])))
         pass
 
-    # todo Opensource improvment sort stream by segments, check is in order without issues!!!!
+    # Open source improve sort stream by segments, check is in order without issues!!!!
     dummy_seg_data = {p: t for p in str_data.keys()}
     str = flopy.modflow.ModflowStr(
         m,
-        mxacts=max(mxactss),  # todo Opensource improvement do a pull request to read this from these data... this is dumb
-        nss=max(nsss),  # todo Opensource improvement do a pull request to read this from these data... this is dumb
+        mxacts=max(mxactss),  # Open source improve do a pull request to read this from these data... this is dumb
+        nss=max(nsss),  # Open source improve do a pull request to read this from these data... this is dumb
         ntrib=0,
         ndiv=0,
         icalc=0,

@@ -244,7 +244,7 @@ def create_mt3d(ftl_path, mt3d_name, mt3d_ws, smt, run_model=True, num_species=1
     # BTN
     elv_db = smt.get_elv_db()
 
-    # todo when using mt3dms the dry cell line in the BTN (via flopy) is a bug fix!!!  # A3; Keywords, also a user warning for setting them
+    # Open source improve mt3dms the dry cell line in the BTN (via flopy) is a bug fix!!!  # A3; Keywords, also a user warning for setting them
     btn = flopy.mt3d.Mt3dBtn(mt3d,
                              MFStyleArr=False,  # defualt it's a reader, should hopefully not cause problems
                              DRYCell=True,  # pass through dry cells

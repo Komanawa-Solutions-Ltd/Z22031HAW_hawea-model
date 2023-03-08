@@ -126,7 +126,7 @@ def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
     return model_ws.joinpath(f'{name}.list')
 
 
-# todo version here to run pest and base model
+# keynote version here to run pest and base model
 #  for structural changes pre_optimisation_overview.py
 #  The pest optimisation will be run in unbacked_dir.joinpath(mversion,'optimisation')
 #  dont forget to update the git branch on tuke
@@ -135,7 +135,7 @@ mversion = 'init_3d_v1d'
 previous_mversion = 'init_3d_v1a'
 branch = '3d_v1d'
 previous_branch = '3d_v1a'
-# todo to use previous parameters, put file here, else None
+# keynote to use previous parameters, put file here, else None
 param_file = None
 notes = f""" 
 * as a bur remove NGMP wells from calibration.
@@ -149,7 +149,7 @@ build_pest = True
 safemode = True
 local_cores = 8  # set to a lower number of core if you plan on using the local machine at the same time as a run
 
-# todo fill above here
+# keynote fill above here
 
 if param_file is not None:
     start_param = read_param_data(parameter_file=param_file,

@@ -24,7 +24,7 @@ def print_myself():
     print(inspect.stack()[1][3])
 
 
-def opt_on_long_timescale():  # todo check!!
+def opt_on_long_timescale():
     from optimisation.optimisation_period import tdis as opt_tdis
     print_myself()
     model_name = 'optimised'
@@ -253,7 +253,7 @@ def hillslope_only_var():
 process_results = True
 run_modflow = True
 if __name__ == '__main__':
-    rerun = True  # todo delete all data and re-run with new pumping!, check data
+    rerun = True
     if rerun:
         long_current_state()
         long_naturalised()

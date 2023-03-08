@@ -22,15 +22,13 @@ def test_ind_mp():
                                          base_outputs_dir=unbacked_dir.joinpath('grid_outputs')))
 
 
-def test_grid_allo():  # todo run as test
+def test_grid_allo():
     runs = {}
     for z in zones_to_model:
         runs[z] = [5000]
 
     run_all_grid_allocation_scens(name='test_grid_run', local_cores=3, pump_rate=runs, rm_remote_files=False)
 
-
-# todo how long per run???
 
 def how_long_per_run():
     """
@@ -86,6 +84,7 @@ def how_long_per_run():
 
 
 def main_grid_allo():
+    # todo what are increased pumping values to use, should I make this more standartised (look at pumping in the zone)
     raise NotImplementedError
 
 

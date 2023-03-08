@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from model_build.project_model_tools import smt
-# todo plot the locs in the allocation system.
 from Scenarios.run_flow_scenario import run_scenario
 from Scenarios.boundary_conditions import get_scen_ghb_data, get_scen_well_data, get_scen_str_data, get_scen_rch, \
     get_grid_pump_scen_well_data
@@ -118,7 +117,7 @@ def plot_pumping_in_zones(save=False):
 
 
 def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base_outputs_dir: Path,
-                                 rerun=False):  # todo
+                                 rerun=False):
     """
     plan is to run this via ssh dist
     :param zone:
@@ -129,7 +128,6 @@ def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base
     :return:
     """
     model_name = f'{zone}_{int(total_increase):06d}'  # todo max value???,
-    # todo what are increased pumping values to use, should I make this more standartised (look at pumping in the zone)
     model_name = model_name.replace(" ", "_")
     model_ws = local_run_dir.joinpath(model_name)
     lst_file = model_ws.joinpath(f'{model_name}.list')
@@ -283,7 +281,7 @@ def max_allocation():
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
                  build_run_model=run_modflow, process_results=process_results,
-                 plot_data=plot_data, save_hds=save_hds, save_list=True,
+                 plot_data=True, save_hds=save_hds, save_list=True,
                  nwt_kwargs=dict(maxiterout=1500, maxitinner=300, headtol=0.25, fluxtol=1000, )
                  )
 
@@ -291,7 +289,7 @@ def max_allocation():
 plot_data = False
 save_hds = False
 process_results = True
-run_modflow = True
+run_modflow = False
 
 if __name__ == '__main__':
     # already run full_allocation()
