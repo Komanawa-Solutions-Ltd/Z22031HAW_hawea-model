@@ -166,7 +166,7 @@ def plot_pumping_in_zones(save=False):
 
 
 def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base_outputs_dir: Path,
-                                 rerun=False):
+                                 rerun=False, pers=None):
     """
     plan is to run this via ssh dist
     :param zone:
@@ -174,6 +174,7 @@ def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base
     :param local_run_dir:
     :param base_outputs_dir:
     :param rerun:
+    :param pers pers to run
     :return:
     """
     model_name = f'{zone}_{int(total_increase):06d}'  # todo max value???,
@@ -206,6 +207,7 @@ def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base
                  outdir=use_out,
                  build_run_model=build_run_model, process_results=process_results,
                  plot_data=False, save_hds=False, save_list=True,
+                 stress_periods=pers
                  )
     shutil.rmtree(model_ws)  # files get big!
 

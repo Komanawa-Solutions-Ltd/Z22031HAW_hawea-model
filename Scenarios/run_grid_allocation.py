@@ -77,7 +77,7 @@ def how_long_per_run():
     z = zones_to_model[-1]
     tinc = 2000
     test_runs = [dict(zone=z, total_increase=tinc, local_run_dir='grid_runs',
-                      base_outputs_dir='grid_outputs')]
+                      base_outputs_dir='grid_outputs', pers=list(range(0, 50)))]
     ssh_dist.get_core_weightings_from_test_runs(test_runs,
                                                 kwargs_relative_to_base_dir=['base_outputs_dir', 'local_run_dir'],
                                                 rm_files=True)
@@ -85,6 +85,7 @@ def how_long_per_run():
 
 def main_grid_allo():
     # todo what are increased pumping values to use, should I make this more standartised (look at pumping in the zone)
+    # todo roughly 1hr on wanganui, 5 hrs on tuke... need to shorten...
     raise NotImplementedError
 
 
@@ -92,4 +93,4 @@ if __name__ == '__main__':
     # test_indvidual()
     # test_ind_mp()
     # test_grid_allo()
-    how_long_per_run() # todo re-run now that it will likely converge!
+    how_long_per_run()  # todo re-run now that it will likely converge!
