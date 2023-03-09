@@ -27,6 +27,7 @@ accepted_pump_names = (
     'extended_pump',  # iso week mean pumping for per-optimisation period, then known pumping for optimization period
     'extended_full_allo',  # as per extended_pump but at full allocation (temporally mapped to usage
     'extended_max_allo',  # as per extended_pump but at full allocation for every single day
+    'extended_max_allo_pc',  # maximum allocation on the pumping curve.
 )
 
 
@@ -54,6 +55,8 @@ def get_scen_pumping_data(pump_name, tdis, recalc=False):
         return _get_iso_week_full_allo_pumping(tdis, recalc=recalc)
     elif pump_name == 'extended_max_allo':
         return _get_iso_week_max_allo_pumping(tids=tdis, recalc=recalc)
+    elif pump_name == 'extended_max_allo_pc':
+        raise NotImplementedError # todo !!!
     else:
         raise NotImplementedError(f'shouldnt get here unless {pump_name} is not fully implemented')
 

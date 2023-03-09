@@ -91,5 +91,5 @@ def main_grid_allo():
 if __name__ == '__main__':
     # test_indvidual()
     # test_ind_mp()
-    test_grid_allo()
-    # how_long_per_run() # todo re-run now that it will likely converge!
+    # test_grid_allo()
+    how_long_per_run() # todo re-run now that it will likely converge!

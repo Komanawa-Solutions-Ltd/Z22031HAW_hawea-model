@@ -59,9 +59,10 @@ def get_allocation_zone(zone):
     assert zone in mapper
     return np.isclose(zones, mapper[zone])
 
+
 # todo look at running smaller lengh simulations...!
 
-def get_pumping_in_zones(recalc=False): # todo check, use as basis for increasing allocation
+def get_pumping_in_zones(recalc=False):  # todo check, use as basis for increasing allocation
     out_path = processed_scen_dir.joinpath('current_full_max_allo.csv')
     if out_path.exists() and not recalc:
         outdata = pd.read_csv(out_path, index_col=0)
@@ -97,6 +98,7 @@ def get_pumping_in_zones(recalc=False): # todo check, use as basis for increasin
             outdata.loc[zone, f'{k}_max'] = total_data.flux.max()
     outdata.to_csv(out_path)
     return outdata
+
 
 def plot_pumping_in_zones(save=False):
     out_plot_dir = proj_root.joinpath('Scenarios/boundary_condition_plots/pumping_use_allo_difs')
@@ -330,8 +332,33 @@ def max_allocation():
                  build_run_model=run_modflow, process_results=process_results,
                  plot_data=True, save_hds=save_hds, save_list=True,
                  nwt_kwargs=dict(maxiterout=1500, maxitinner=300,
-                                 #headtol=0.5, fluxtol=1000,
+                                 headtol=0.5, fluxtol=2500,
                                  )
+                 )
+
+
+def max_allocation_on_pump_curve():
+    model_name = 'max_allocation_on_pump_curve'
+    print_myself(model_name)
+    model_ws = base_run_dir.joinpath(model_name)
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
+
+    rch = get_scen_rch(scen_tdis, rch_param, dryland=False)
+    lake = get_scen_ghb_data(scen_tdis)
+    str_vals = get_scen_str_data(scen_tdis, riv_params, big_static=False, small_static=False)
+    wel_data = get_scen_well_data('extended_max_allo_pc', scen_tdis, hill_param, race_param, False)  # todo make/run
+    run_scenario(model_name=model_name, model_ws=model_ws,
+                 tdis=scen_tdis,
+                 sy_param=sy_param,
+                 kh_param=kh_param,
+                 rch_data=rch,
+                 ghb_spd=lake,
+                 str_spd=str_vals,
+                 well_spd=wel_data,
+                 outdir=base_outdir.joinpath(model_name),
+                 build_run_model=run_modflow, process_results=process_results,
+                 plot_data=True, save_hds=save_hds, save_list=True,
+                 nwt_kwargs=dict(maxiterout=1500, maxitinner=300)
                  )
 
 
