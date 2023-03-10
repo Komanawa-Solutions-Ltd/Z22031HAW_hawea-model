@@ -64,23 +64,18 @@ def opt_on_long_timescale():
     temp.loc[0, 'nper'] = 0
     mapper = temp.loc[:, 'nper'].to_dict()
 
-    from Scenarios.scenario_outputs import key_output_data_file_name, key_input_data_file_name
+    from Scenarios.scenario_outputs import key_output_data_file_name, key_input_data_file_name, \
+        key_all_well_data_file_name
     outdir = base_outdir.joinpath(model_name)
-    org_input_path = outdir.joinpath(f'org_{key_input_data_file_name}')
-    org_input_path.unlink(True)
-    shutil.copyfile(outdir.joinpath(key_input_data_file_name), org_input_path)
-    use_input_path = outdir.joinpath(key_input_data_file_name)
-    input_data = pd.read_csv(org_input_path, index_col=0)
-    input_data.index = [mapper[e] for e in input_data.index]
-    input_data.to_csv(use_input_path)
 
-    org_output_path = outdir.joinpath(f'org_{key_output_data_file_name}')
-    org_output_path.unlink(True)
-    shutil.copyfile(outdir.joinpath(key_output_data_file_name), org_output_path)
-    use_output_path = outdir.joinpath(key_output_data_file_name)
-    output_data = pd.read_csv(org_output_path, index_col=0)
-    output_data.index = [mapper[e] for e in output_data.index]
-    output_data.to_csv(use_output_path)
+    for n in [key_output_data_file_name, key_input_data_file_name, key_all_well_data_file_name]:
+        org_input_path = outdir.joinpath(f'org_{n}')
+        org_input_path.unlink(True)
+        shutil.copyfile(outdir.joinpath(n), org_input_path)
+        use_input_path = outdir.joinpath(n)
+        input_data = pd.read_csv(org_input_path, index_col=0)
+        input_data.index = [mapper[e] for e in input_data.index]
+        input_data.to_csv(use_input_path)
 
 
 def long_naturalised():
@@ -251,15 +246,15 @@ def hillslope_only_var():
 
 
 process_results = True
-run_modflow = True
+run_modflow = False
 if __name__ == '__main__':
     rerun = True
+    long_current_state()
+    long_naturalised()
+    opt_on_long_timescale()
     if rerun:
-        long_current_state()
-        long_naturalised()
         lake_only_var()
         rch_only_var()
         hillslope_only_var()
         static_pumping()
         pump_only_var()
-        opt_on_long_timescale()

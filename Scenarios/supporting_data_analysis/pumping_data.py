@@ -22,12 +22,12 @@ from model_build.project_model_tools import smt, get_layer_pinchout_area, get_2d
 from model_build.supporting_data_analysis.get_pumping_data import get_pump_to_l1
 
 accepted_pump_names = (
+    'extended_max_allo_pc',  # maximum allocation on the pumping curve.
     'no_pump',  # no groundwater abstraction
     'static_pump',  # static pumping (e.g. steady state for all)
     'extended_pump',  # iso week mean pumping for per-optimisation period, then known pumping for optimization period
     'extended_full_allo',  # as per extended_pump but at full allocation (temporally mapped to usage
     'extended_max_allo',  # as per extended_pump but at full allocation for every single day
-    'extended_max_allo_pc',  # maximum allocation on the pumping curve.
 )
 
 
@@ -56,9 +56,36 @@ def get_scen_pumping_data(pump_name, tdis, recalc=False):
     elif pump_name == 'extended_max_allo':
         return _get_iso_week_max_allo_pumping(tids=tdis, recalc=recalc)
     elif pump_name == 'extended_max_allo_pc':
-        raise NotImplementedError # todo !!!
+        return _get_iso_week_max_allo_pumping_pc(tdis, recalc)
     else:
         raise NotImplementedError(f'shouldnt get here unless {pump_name} is not fully implemented')
+
+
+def _get_iso_week_max_allo_pumping_pc(tdis, recalc):  # todo check
+    assert isinstance(tdis, TimeDis)
+    save_path = processed_scen_dir.joinpath(f'iso_week_max_allo_pc_{tdis.name}.p')
+    if save_path.exists() and not recalc:
+        with save_path.open('rb') as f:
+            data = pickle.load(f)
+        return data
+    historical_data = make_long_weekly_mean(get_historical_max_allo_pumping_data(*opt_tdis.date_limits),
+                                            *tdis.date_limits,
+                                            only_where_na=False)
+    historical_max = historical_data.max()
+    pump_curve = get_pump_curve(tdis)
+    historical_data = pd.DataFrame(index=pump_curve.index)
+    for k, v in historical_max.to_dict().items():
+        historical_data.loc[:, k] = pump_curve * v
+    pumping_locs = get_pumping_locs()
+    historical_data *= -1
+    historical_data.fillna(0, inplace=True)
+    historical_data = historical_data.loc[:, pumping_locs.index]
+    outdata = tdis.map_data_locations(loc_data=pumping_locs, transient_data_dict=dict(flux=historical_data),
+                                      datatype=flopy.modflow.ModflowWel.get_default_dtype(),
+                                      group_cells=True, grouper=np.nansum)
+    with save_path.open('wb') as f:
+        pickle.dump(outdata, f)
+    return outdata
 
 
 def _get_iso_week_normal_pumping(tids, recalc):

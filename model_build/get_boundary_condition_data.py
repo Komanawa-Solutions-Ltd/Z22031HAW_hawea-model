@@ -153,7 +153,7 @@ def get_str_data(tdis, riv_params):
     riv_flow = get_river_flow_data(*tdis.date_limits)
     use_riv_flow = riv_stage.copy(deep=True) * 0
     for k in riv_locs.rname.unique():
-        sreach = int(riv_locs.loc[riv_locs.rname==k,'dist'].min())
+        sreach = int(riv_locs.loc[riv_locs.rname == k, 'dist'].min())
         use_riv_flow.loc[:, f"{k}_{sreach:05d}"] = riv_flow.loc[:, k]
 
     spd_dtype, seg_dtype = flopy.modflow.ModflowStr.get_default_dtype()

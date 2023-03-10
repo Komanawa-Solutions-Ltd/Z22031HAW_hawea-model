@@ -23,6 +23,7 @@ from model_build.supporting_data_analysis.all_wells import get_regular_wells
 from project_base import base_scen_dir, processed_scen_dir, proj_root
 from optimisation.final_opt_models.compress_uncompress_model import split_hds_npz
 from scipy.stats import percentileofscore
+from model_build.supporting_data_analysis import get_all_wells
 
 
 def _get_indicator_wells(recalc=False):
@@ -117,6 +118,17 @@ def generate_scenario_outputs(model_ws, model_name, outdir, tdis, tickper=100, s
     input_data = pd.read_csv(model_ws.joinpath(key_input_data_file_name), index_col=0)
     _extract_zone_budget_fluxes(nper, output_data, cbc_file, outdir)
     output_data.to_csv(outdir.joinpath(key_output_data_file_name))
+
+    out = get_all_wells()
+    out = out.loc[out.ibound == 1]
+    out.loc[:, 'k'] = 0
+    idx = (get_2d_moraine() | get_layer_pinchout_area())[out.i, out.j]
+    out.loc[idx, 'k'] = 2
+
+    all_well_outdata = pd.DataFrame(index=tdis.pers, data=dict(date=tdis.per_middle_dates))
+    for w, k, i, j in out[['k', 'i', 'j']].itertuples(True, None):
+        all_well_outdata.loc[range(nper), w] = hds[:, k, i, j]
+    all_well_outdata.to_csv(outdir.joinpath(key_all_well_data_file_name))
 
     if plot_data:
         _plot_single_model_outputs_inputs(plot_dir=outdir.joinpath('plots'), list_file=list_file, hds_array=hds,
@@ -495,6 +507,7 @@ def _setup_output_plots(indicator_wells, hds_only=False):
 
 key_output_data_file_name = 'output_dataset.csv'
 key_input_data_file_name = 'key_input_data.csv'
+key_all_well_data_file_name = 'all_well_output_dataset.csv'
 
 
 def get_zone_budget_array(plot=False):

@@ -157,8 +157,8 @@ def get_regular_wells():
 
 
 if __name__ == '__main__':
+    t = get_all_wells(recalc=True)
     t = get_regular_wells()
     plot_wells()
-    t = get_all_wells(recalc=True)
     plot_wells()
     # plot of drill date level vs lake level is useful!
