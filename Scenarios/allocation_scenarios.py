@@ -60,9 +60,7 @@ def get_allocation_zone(zone):
     return np.isclose(zones, mapper[zone])
 
 
-# todo look at running smaller lengh simulations...!
-
-def get_pumping_in_zones(recalc=False):  # todo check, use as basis for increasing allocation
+def get_pumping_in_zones(recalc=False):
     out_path = processed_scen_dir.joinpath('current_full_max_allo.csv')
     if out_path.exists() and not recalc:
         outdata = pd.read_csv(out_path, index_col=0)
@@ -74,8 +72,11 @@ def get_pumping_in_zones(recalc=False):  # todo check, use as basis for increasi
                                    return_unique_spd=True, recalc=False)['pump']
     max_allo = get_scen_well_data('extended_max_allo', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
                                   return_unique_spd=True, recalc=False)['pump']
+    max_allo_pc =get_scen_well_data('extended_max_allo_pc',
+                                    tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                           return_unique_spd=True, recalc=False)['pump']
     pers = np.arange(1, 53)
-    plot_data = {'usage': [], 'full_allo': [], 'max_allo': []}
+    plot_data = {'usage': [], 'full_allo': [], 'max_allo': [], 'max_allo_pc': []}
     for w in pers:
         for k, v in plot_data.items():
             temp = pd.DataFrame(eval(k)[w])
@@ -86,9 +87,7 @@ def get_pumping_in_zones(recalc=False):  # todo check, use as basis for increasi
     outdata = pd.DataFrame(index=zones_to_model)
     for zone in zones_to_model:
         zone_idx = get_allocation_zone(zone)
-        colos = smt.plot.get_colors(plot_data.keys())
-        lss = ['solid', '--', ':']
-        for (k, data), c, ls in zip(plot_data.items(), colos, lss):
+        for k, data in plot_data.items():
             data = smt.io.select_df_from_idx_array(data, zone_idx, True)
             data.loc[:, 'site'] = [f'{i}-{j}' for i, j in data.loc[:, ['i', 'j']].itertuples(False, None)]
             total_data = data.groupby('per').sum()
@@ -110,8 +109,11 @@ def plot_pumping_in_zones(save=False):
                                    return_unique_spd=True, recalc=False)['pump']
     max_allo = get_scen_well_data('extended_max_allo', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
                                   return_unique_spd=True, recalc=False)['pump']
+    max_allo_pc =    get_scen_well_data('extended_max_allo_pc',
+                                        tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                           return_unique_spd=True, recalc=False)['pump']
     pers = np.arange(1, 53)
-    plot_data = {'usage': [], 'full_allo': [], 'max_allo': []}
+    plot_data = {'usage': [], 'full_allo': [], 'max_allo': [], 'max_allo_pc': []}
     for w in pers:
         for k, v in plot_data.items():
             temp = pd.DataFrame(eval(k)[w])
@@ -125,7 +127,7 @@ def plot_pumping_in_zones(save=False):
         fig, ax = plt.subplots(figsize=(10, 10))
         fig_site, ax_site = plt.subplots(figsize=(10, 10))
         colos = smt.plot.get_colors(plot_data.keys())
-        lss = ['solid', '--', ':']
+        lss = ['solid', '--', ':', 'dashdot']
         for (k, data), c, ls in zip(plot_data.items(), colos, lss):
             data = smt.io.select_df_from_idx_array(data, zone_idx, True)
             data.loc[:, 'site'] = [f'{i}-{j}' for i, j in data.loc[:, ['i', 'j']].itertuples(False, None)]
@@ -177,7 +179,7 @@ def run_grid_allocation_scenario(zone, total_increase, local_run_dir: Path, base
     :param pers pers to run
     :return:
     """
-    model_name = f'{zone}_{int(total_increase):06d}'  # todo max value???,
+    model_name = f'{zone}_{int(total_increase):010d}'
     model_name = model_name.replace(" ", "_")
     model_ws = local_run_dir.joinpath(model_name)
     lst_file = model_ws.joinpath(f'{model_name}.list')
@@ -348,7 +350,7 @@ def max_allocation_on_pump_curve():
     rch = get_scen_rch(scen_tdis, rch_param, dryland=False)
     lake = get_scen_ghb_data(scen_tdis)
     str_vals = get_scen_str_data(scen_tdis, riv_params, big_static=False, small_static=False)
-    wel_data = get_scen_well_data('extended_max_allo_pc', scen_tdis, hill_param, race_param, False)  # todo make/run
+    wel_data = get_scen_well_data('extended_max_allo_pc', scen_tdis, hill_param, race_param, False)
     run_scenario(model_name=model_name, model_ws=model_ws,
                  tdis=scen_tdis,
                  sy_param=sy_param,
@@ -359,7 +361,7 @@ def max_allocation_on_pump_curve():
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
                  build_run_model=run_modflow, process_results=process_results,
-                 plot_data=True, save_hds=save_hds, save_list=True,
+                 plot_data=False, save_hds=save_hds, save_list=True,
                  nwt_kwargs=dict(maxiterout=1500, maxitinner=300)
                  )
 
@@ -367,10 +369,11 @@ def max_allocation_on_pump_curve():
 plot_data = False
 save_hds = False
 process_results = True
-run_modflow = True
+run_modflow = False
 
 if __name__ == '__main__':
-    # already run full_allocation()
+    full_allocation()
     max_allocation()
+    max_allocation_on_pump_curve()
 
     pass
