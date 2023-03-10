@@ -3,7 +3,7 @@ created matt_dumont
 on: 8/03/23
 """
 from Scenarios.allocation_scenarios import run_all_grid_allocation_scens, zones_to_model, run_grid_allocation_scenario, \
-    run_grid_allocation_scenario_mp
+    run_grid_allocation_scenario_mp, get_pumping_in_zones
 from project_base import unbacked_dir, opt_model_tools, opt_proj_root
 from pathlib import Path
 
@@ -77,13 +77,35 @@ def how_long_per_run():
     z = zones_to_model[-1]
     tinc = 2000
     test_runs = [dict(zone=z, total_increase=tinc, local_run_dir='grid_runs',
-                      base_outputs_dir='grid_outputs', pers=list(range(0, 50)))]
+                      base_outputs_dir='grid_outputs', pers=list(range(1173, 2108)))]
     ssh_dist.get_core_weightings_from_test_runs(test_runs,
                                                 kwargs_relative_to_base_dir=['base_outputs_dir', 'local_run_dir'],
                                                 rm_files=True)
 
 
 def main_grid_allo():
+    local_cores = 4  # todo how many
+    max_allo = get_pumping_in_zones().loc[:, 'max_allo_min'].abs()
+    max_allo.loc[max_allo.isna()] = 1
+    max_allo = max_allo.to_dict()
+    base_runs = {
+        # fraction increase from current max allocation
+        'Terrace-River': [],
+        'Terrace-Hill': [],
+        'Mangawera Valley': [],
+        'Hawea Flat': [],
+
+        # no useage/allocation presently (values of pumping to add)
+        'Te Awa': [],
+        'Maungawera Flat': [],
+    }
+    runs = {}
+    for zone, pump_increases in base_runs.items():
+        runs[zone] = [max_allo[zone] * pinc for pinc in pump_increases]
+
+    run_all_grid_allocation_scens(name='test_grid_run', local_cores=local_cores,
+                                  pump_rate=runs, rm_remote_files=False)
+
     # todo what are increased pumping values to use, should I make this more standartised (look at pumping in the zone)
     # todo roughly 1hr on wanganui, 5 hrs on tuke... need to shorten...
     raise NotImplementedError
