@@ -160,7 +160,7 @@ def get_grid_pump_scen_well_data(idx_array: np.ndarray, total_increase, tdis, hi
 
     grid_pump = get_gridded_pumping(tdis, idx_array, total_increase)
     race_spd, hill_spd = _get_scen_hill_race_data(tdis, recalc)
-    pumping_spd = get_scen_pumping_data('extended_full_allo', tdis, recalc)
+    pumping_spd = get_scen_pumping_data('extended_max_allo_pc', tdis, recalc)
     # manage parameters
     for p, d in race_spd.items():
         d.loc[:, 'flux'] *= race_param['all']
