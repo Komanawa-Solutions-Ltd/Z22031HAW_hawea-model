@@ -2,6 +2,7 @@
 created matt_dumont 
 on: 12/03/23
 """
+import shutil
 import sys
 import time
 
@@ -19,8 +20,9 @@ def mp_runner(kwargs):
     brd = Path(kwargs.get('local_run_dir'))
     model_name = kwargs.get("model_name")
     base_outputs_dir = Path(kwargs.get('base_outputs_dir'))
+    shutil.rmtree(base_outputs_dir)
     logfile = base_outputs_dir.joinpath(f'0_{model_name}.log')
-    logfile.mkdir(exist_ok=True, parents=True)
+    logfile.parent.mkdir(exist_ok=True, parents=True)
     with logfile.open('w') as f:
         f.write(f'host: {host}')
         f.write(f'model_name: {model_name}')
