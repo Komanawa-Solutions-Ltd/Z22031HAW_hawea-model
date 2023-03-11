@@ -364,7 +364,8 @@ def _setup_input_plots():
     # hill_maungawera	hill_flat_west	hill_flat_east	hill_terrace_east	hill_south_east	hill_total
 
 
-def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None, tick_per=100, aq_pen=None):
+def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None, tick_per=100, aq_pen=None,
+                      single_figs=False, c=None):
     """
     to plot multiple verions pass figs, axs from perivous time
     :param output_data:
@@ -374,38 +375,61 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
     :param ls:
     :return:
     """
-    if ls is None:
+    if ls is None and not single_figs:
         ls = 'solid'
     indicator_wells = get_indicator_well_locs()
     if figs is None:
         assert axs is None
-        figs, axs = _setup_output_plots(indicator_wells)
+        figs, axs = _setup_output_plots(indicator_wells, single_figs=single_figs)
     else:
         assert isinstance(figs, dict)
         assert isinstance(axs, dict)
 
     # hds groups
-    for g in indicator_wells.group.unique():
-        fig, use_axs = figs[f'hds_{g}'], axs[f'hds_{g}']
-        temp_wells = indicator_wells.loc[indicator_wells.group == g]
-        colors = smt.plot.get_colors(range(len(temp_wells)))
-        for ax, nm, c in zip(use_axs, temp_wells.index, colors):
-            ax.plot(output_data.index, output_data[f'hds_{nm}'], color=c, ls=ls, label=f'{nm}-{model_nm}')
-            if aq_pen is not None:
-                aq_pen = np.atleast_1d(aq_pen)
-                for i, pen in enumerate(aq_pen):
-                    labs, hands = ax.get_legend_handles_labels()
-                    if f'adequate pen. from {pen}' not in labs:
-                        p = get_adiquate_penetration(f'hds_{nm}', pen)
-                        ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
-                                   color='k', alpha=0.5)
-                        # add text label
-                        if i % 2 == 0:
-                            idx = -1
-                        else:
-                            idx = 0
-                        ax.text(output_data.index[idx], p, pen, color='k')
-            ax.legend()
+    if single_figs:
+        assert c is not None
+        for g in indicator_wells.group.unique():
+            fig, use_axs = figs[f'hds_{g}'], axs[f'hds_{g}']
+            temp_wells = indicator_wells.loc[indicator_wells.group == g]
+            for ax, nm, in zip(use_axs, temp_wells.index):
+                ax.plot(output_data.index, output_data[f'hds_{nm}'], color=c, label=f'{nm}-{model_nm}')
+                if aq_pen is not None:
+                    aq_pen = np.atleast_1d(aq_pen)
+                    for i, pen in enumerate(aq_pen):
+                        labs, hands = ax.get_legend_handles_labels()
+                        if f'adequate pen. from {pen}' not in labs:
+                            p = get_adiquate_penetration(f'hds_{nm}', pen)
+                            ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
+                                       color='k', alpha=0.5)
+                            # add text label
+                            if i % 2 == 0:
+                                idx = -1
+                            else:
+                                idx = 0
+                            ax.text(output_data.index[idx], p, pen, color='k')
+                ax.legend()
+    else:
+        for g in indicator_wells.group.unique():
+            fig, use_axs = figs[f'hds_{g}'], axs[f'hds_{g}']
+            temp_wells = indicator_wells.loc[indicator_wells.group == g]
+            colors = smt.plot.get_colors(range(len(temp_wells)))
+            for ax, nm, c in zip(use_axs, temp_wells.index, colors):
+                ax.plot(output_data.index, output_data[f'hds_{nm}'], color=c, ls=ls, label=f'{nm}-{model_nm}')
+                if aq_pen is not None:
+                    aq_pen = np.atleast_1d(aq_pen)
+                    for i, pen in enumerate(aq_pen):
+                        labs, hands = ax.get_legend_handles_labels()
+                        if f'adequate pen. from {pen}' not in labs:
+                            p = get_adiquate_penetration(f'hds_{nm}', pen)
+                            ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
+                                       color='k', alpha=0.5)
+                            # add text label
+                            if i % 2 == 0:
+                                idx = -1
+                            else:
+                                idx = 0
+                            ax.text(output_data.index[idx], p, pen, color='k')
+                ax.legend()
 
     # river fluxes
     fig, use_axs = figs['river_flux'], axs['river_flux']
@@ -453,30 +477,43 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
     return figs, axs
 
 
-def _setup_output_plots(indicator_wells, hds_only=False):
+def _setup_output_plots(indicator_wells, hds_only=False, single_figs=False):
     figs, axs = {}, {}
 
     # indicator_hds_groups  (incl regular heads)
     for g in indicator_wells.group.unique():
         temp_wells = indicator_wells.loc[indicator_wells.group == g]
         num = len(temp_wells)
-        fig = plt.Figure(figsize=(16, 14))
-        fig.suptitle(f'Hds {g}')
-        gs = fig.add_gridspec(nrows=num, ncols=2, width_ratios=(2, 1))
-        temp_axs = []
-        temp_axs.append(fig.add_subplot(gs[0, 0]))
-        temp_axs.extend([fig.add_subplot(gs[i, 0]) for i in range(1, num)])
-        figs[f'hds_{g}'] = fig
+        temp_axs, loc_axs = [], []
+        if single_figs:
+            for i in range(num):
+                fig = plt.Figure(figsize=(10, 8))
+                gs = fig.add_gridspec(nrows=1, ncols=2, width_ratios=(2, 1))
+                temp_axs.append(fig.add_subplot(gs[0, 0]))
+                temp_ax = fig.add_subplot(gs[0, 1])
+                loc_axs.append(temp_ax)
+                figs[f'hds_{g}_{i}'] = fig
+
+        else:
+            fig = plt.Figure(figsize=(16, 14))
+            fig.suptitle(f'Hds {g}')
+            gs = fig.add_gridspec(nrows=num, ncols=2, width_ratios=(2, 1))
+            temp_axs.append(fig.add_subplot(gs[0, 0]))
+            temp_axs.extend([fig.add_subplot(gs[i, 0]) for i in range(1, num)])
+            figs[f'hds_{g}'] = fig
+            temp_ax = fig.add_subplot(gs[:, 1])
+            loc_axs.append(temp_ax)
+
         axs[f'hds_{g}'] = temp_axs
 
         # make/ plot locator (color for well, ls for scenario)
-        temp_ax = fig.add_subplot(gs[:, 1])
-        smt.plot.plt_basemap(ax=temp_ax, no_flow_layer=0)
-        colors = smt.plot.get_colors(range(num))
-        for c, (nm, x, y) in zip(colors, temp_wells[['nztmx', 'nztmy']].itertuples(True, None)):
-            temp_ax.scatter(x, y, color=c, label=nm, s=100)
-        temp_ax.legend()
-        smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
+        for temp_ax in loc_axs:
+            smt.plot.plt_basemap(ax=temp_ax, no_flow_layer=0)
+            colors = smt.plot.get_colors(range(num))
+            for c, (nm, x, y) in zip(colors, temp_wells[['nztmx', 'nztmy']].itertuples(True, None)):
+                temp_ax.scatter(x, y, color=c, label=nm, s=100)
+            temp_ax.legend()
+            smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
 
     if hds_only:
         return figs, axs
@@ -621,7 +658,8 @@ def extract_input_data(ghb_data, rch_data, well_data, tdis):
     return outdata
 
 
-def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, usepers=None, aq_pen=None):
+def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, usepers=None, aq_pen=None,
+                      single_figs=False):
     """
     compare multiple models (models id by linestyle)
     must have same timedis
@@ -645,8 +683,15 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, us
         use_tids = tdis.get_sub_tids(usepers)
     else:
         use_tids = tdis
-
-    for mn in model_names:
+    model_names = sorted(model_names)
+    if single_figs:
+        cmap = 'tab20b'
+        if len(model_names) <= 10:
+            cmap = 'set1'
+        colors = smt.plot.get_colors(model_names, cmap)
+    else:
+        colors = [None for e in model_names]  # dummy
+    for mn, c in zip(model_names, colors):
         dd, ls = data_dirs[mn], lss[mn]
         dd = Path(dd)
         input_data = pd.read_csv(dd.joinpath(key_input_data_file_name), index_col=0)
@@ -659,7 +704,8 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, us
             output_data.index = range(len(output_data))
 
         output_figs, output_axs = _plot_output_data(use_tids, output_data=output_data, model_nm=mn, figs=output_figs,
-                                                    axs=output_axs, ls=ls, tick_per=tickper, aq_pen=aq_pen)
+                                                    axs=output_axs, ls=ls, tick_per=tickper, aq_pen=aq_pen,
+                                                    single_figs=single_figs, c=c)
         input_figs, input_axs = _plot_input_data(use_tids, input_data=input_data, model_nm=mn, figs=input_figs,
                                                  axs=input_axs, ls=ls, tick_per=tickper)
     # savefigs
@@ -672,47 +718,63 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, us
     plt.close('all')
 
 
-def _setup_qq_plots(indicator_wells):
+def _setup_qq_plots(indicator_wells, single_figs=False):
     figs, axs, legend_axs = {}, {}, {}
 
     # indicator_hds_groups  (incl regular heads)
     for g in indicator_wells.group.unique():
         temp_wells = indicator_wells.loc[indicator_wells.group == g]
         num = len(temp_wells)
-        fig = plt.Figure(figsize=(16, 14))
-        fig.suptitle(f'Hds {g}')
-        gs = fig.add_gridspec(nrows=num, ncols=2, width_ratios=(2, 1))
         temp_axs = []
-        temp_axs.append(fig.add_subplot(gs[0, 0]))
-        temp_axs.extend([fig.add_subplot(gs[i, 0]) for i in range(1, num)])
-        figs[f'hds_{g}'] = fig
+        loc_axs = []
+        if single_figs:
+            for i in range(num):
+                fig = plt.Figure(figsize=(10, 8))
+                gs = fig.add_gridspec(nrows=1, ncols=2, width_ratios=(2, 1))
+                temp_axs.append(fig.add_subplot(gs[0, 0]))
+                temp_ax = fig.add_subplot(gs[0, 1])
+                loc_axs.append(temp_ax)
+                figs[f'hds_{g}_{i}'] = fig
+
+        else:
+            fig = plt.Figure(figsize=(16, 14))
+            fig.suptitle(f'Hds {g}')
+            gs = fig.add_gridspec(nrows=num, ncols=2, width_ratios=(2, 1))
+            temp_axs.append(fig.add_subplot(gs[0, 0]))
+            temp_axs.extend([fig.add_subplot(gs[i, 0]) for i in range(1, num)])
+            figs[f'hds_{g}'] = fig
+            temp_ax = fig.add_subplot(gs[0, 1])
+            temp_ax.set_xticks([])
+            temp_ax.set_yticks([])
+            temp_ax.spines["top"].set_visible(False)
+            temp_ax.spines["right"].set_visible(False)
+            temp_ax.spines["left"].set_visible(False)
+            temp_ax.spines["bottom"].set_visible(False)
+            legend_axs[f'hds_{g}'] = temp_ax
+
+            temp_ax = fig.add_subplot(gs[1:, 1])
+            loc_axs.append(temp_ax)
+
         axs[f'hds_{g}'] = temp_axs
 
         # make/ plot locator (color for well, ls for scenario)
-        temp_ax = fig.add_subplot(gs[0, 1])
-        temp_ax.set_xticks([])
-        temp_ax.set_yticks([])
-        temp_ax.spines["top"].set_visible(False)
-        temp_ax.spines["right"].set_visible(False)
-        temp_ax.spines["left"].set_visible(False)
-        temp_ax.spines["bottom"].set_visible(False)
-        legend_axs[f'hds_{g}'] = temp_ax
+        for temp_ax in loc_axs:
 
-        temp_ax = fig.add_subplot(gs[1:, 1])
-        smt.plot.plt_basemap(ax=temp_ax, no_flow_layer=0)
-        colors = smt.plot.get_colors(range(num))
-        for c, (nm, x, y) in zip(colors, temp_wells[['nztmx', 'nztmy']].itertuples(True, None)):
-            temp_ax.scatter(x, y, color=c, label=nm, s=100)
-        temp_ax.legend()
-        smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
+            smt.plot.plt_basemap(ax=temp_ax, no_flow_layer=0)
+            colors = smt.plot.get_colors(range(num))
+            for c, (nm, x, y) in zip(colors, temp_wells[['nztmx', 'nztmy']].itertuples(True, None)):
+                temp_ax.scatter(x, y, color=c, label=nm, s=100)
+            temp_ax.legend()
+            smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
 
     return figs, axs, legend_axs
 
 
-def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None):
+def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None,
+                   single_figs=False):
     assert set(scenarios.keys()) == set(senario_ls.keys())
     indicator_wells = get_indicator_well_locs()
-    figs, axs, legend_axs = _setup_qq_plots(indicator_wells)
+    figs, axs, legend_axs = _setup_qq_plots(indicator_wells, single_figs=single_figs)
     scens = sorted(list(scenarios.keys()))
 
     outdir = Path(outdir)
@@ -727,34 +789,68 @@ def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None):
         scen_data[scen] = t
 
     # hds groups
-    for g in indicator_wells.group.unique():
-        fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
-        temp_wells = indicator_wells.loc[indicator_wells.group == g]
-        colors = smt.plot.get_colors(range(len(temp_wells)))
-        for ax, nm, c in zip(use_axs, temp_wells.index, colors):
+    if single_figs:
+        cmap = 'tab20b'
+        if len(scens) <= 10:
+            cmap = 'set1'
+        colors = smt.plot.get_colors(scens, cmap)
+        for g in indicator_wells.group.unique():
+            fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
+            temp_wells = indicator_wells.loc[indicator_wells.group == g]
+            for ax, nm in zip(use_axs, temp_wells.index):
+                quantiles = np.arange(1, 100)
+                for scen, c in zip(scens, colors):
+                    data = scen_data[scen][f'hds_{nm}'].dropna()
+                    plt_values = [np.nanpercentile(data, p) for p in quantiles]
 
-            quantiles = np.arange(1, 100)
-            for scen in scens:
-                data = scen_data[scen][f'hds_{nm}'].dropna()
-                plt_values = [np.nanpercentile(data, p) for p in quantiles]
+                    ax.plot(quantiles, plt_values, color=c, label=f'{scen}')
+                    ax.set_title(nm)
+                    if aq_pen is not None:
+                        aq_pen = np.atleast_1d(aq_pen)
+                        for i, pen in enumerate(aq_pen):
+                            hands, labs = ax.get_legend_handles_labels()
+                            if f'adequate pen. from {pen}' not in labs:
+                                p = get_adiquate_penetration(f'hds_{nm}', pen)
+                                ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
+                                           color='k', alpha=0.5)
+                                # add text label
+                                if i % 2 == 0:
+                                    idx = -1
+                                else:
+                                    idx = 0
+                                ax.text(quantiles[idx], p, pen, color='k')
+                    ax.legend()
 
-                ls = senario_ls[scen]
-                ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
-                if aq_pen is not None:
-                    aq_pen = np.atleast_1d(aq_pen)
-                    for i, pen in enumerate(aq_pen):
-                        hands, labs = ax.get_legend_handles_labels()
-                        if f'adequate pen. from {pen}' not in labs:
-                            p = get_adiquate_penetration(f'hds_{nm}', pen)
-                            ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
-                                       color='k', alpha=0.5)
-                            # add text label
-                            if i % 2 == 0:
-                                idx = -1
-                            else:
-                                idx = 0
-                            ax.text(quantiles[idx], p, pen, color='k')
-                ax.legend()
+        raise NotImplementedError
+    else:
+        for g in indicator_wells.group.unique():
+            fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
+            temp_wells = indicator_wells.loc[indicator_wells.group == g]
+            colors = smt.plot.get_colors(range(len(temp_wells)))
+            for ax, nm, c in zip(use_axs, temp_wells.index, colors):
+
+                quantiles = np.arange(1, 100)
+                for scen in scens:
+                    data = scen_data[scen][f'hds_{nm}'].dropna()
+                    plt_values = [np.nanpercentile(data, p) for p in quantiles]
+
+                    ls = senario_ls[scen]
+                    ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
+                    if aq_pen is not None:
+                        aq_pen = np.atleast_1d(aq_pen)
+                        for i, pen in enumerate(aq_pen):
+                            hands, labs = ax.get_legend_handles_labels()
+                            if f'adequate pen. from {pen}' not in labs:
+                                p = get_adiquate_penetration(f'hds_{nm}', pen)
+                                ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
+                                           color='k', alpha=0.5)
+                                # add text label
+                                if i % 2 == 0:
+                                    idx = -1
+                                else:
+                                    idx = 0
+                                ax.text(quantiles[idx], p, pen, color='k')
+                    ax.legend()
     for k, fig in figs.items():
         fig.supxlabel(f'percentile')
         fig.supylabel(f'head (m)')
@@ -764,7 +860,7 @@ def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None):
 
 
 def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_scen_ls: dict,
-             usepers=None):
+             usepers=None, single_figs=False):
     """
 
     :param base_scen_dir: directory for the base data
@@ -776,7 +872,7 @@ def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_sce
     """
     assert set(other_scens.keys()) == set(other_scen_ls.keys())
     indicator_wells = get_indicator_well_locs()
-    figs, axs, legend_axs = _setup_qq_plots(indicator_wells)
+    figs, axs, legend_axs = _setup_qq_plots(indicator_wells, single_figs=single_figs)
     scens = sorted(list(other_scens.keys()))
 
     outdir = Path(outdir)
@@ -792,32 +888,64 @@ def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_sce
             t = t.loc[usepers]
         scen_data[scen] = t
 
-    # hds groups
-    for g in indicator_wells.group.unique():
-        fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
-        temp_wells = indicator_wells.loc[indicator_wells.group == g]
-        colors = smt.plot.get_colors(range(len(temp_wells)))
-        for ax, nm, c in zip(use_axs, temp_wells.index, colors):
+    if single_figs:
+        cmap = 'tab20b'
+        if len(scens) <= 10:
+            cmap = 'set1'
+        colors = smt.plot.get_colors(scens, cmap)
+        for g in indicator_wells.group.unique():
+            fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
+            temp_wells = indicator_wells.loc[indicator_wells.group == g]
+            for ax, nm in zip(use_axs, temp_wells.index):
 
-            quantiles = np.arange(1, 100)
-            base_values = [np.nanpercentile(base_data[f'hds_{nm}'], q) for q in quantiles]
-            ax.plot(quantiles, quantiles, color='k', alpha=0.5, label='1:1')
-            ax.fill_between(quantiles, np.zeros(quantiles.shape), quantiles, color='skyblue', alpha=0.3,
-                            label=('scenario is less likely to have groundwater levels\n'
-                                   'as low or lower than the nth percentile\n'
-                                   'of the base scenario'))
-            ax.fill_between(quantiles, quantiles, np.zeros(quantiles.shape) + 100, color='lightcoral', alpha=0.3,
-                            label=('scenario is more likely to have groundwater levels\n'
-                                   'as low or lower than the nth percentile\n'
-                                   'of the base scenario'))
-            for scen in scens:
-                data = scen_data[scen][f'hds_{nm}'].dropna()
-                plt_values = [percentileofscore(data, e) for e in base_values]
-                scen_values = [np.nanpercentile(data, p) for p in plt_values]
+                quantiles = np.arange(1, 100)
+                base_values = [np.nanpercentile(base_data[f'hds_{nm}'], q) for q in quantiles]
+                ax.plot(quantiles, quantiles, color='k', alpha=0.5, label='1:1')
+                ax.set_title(nm)
+                ax.fill_between(quantiles, np.zeros(quantiles.shape), quantiles, color='skyblue', alpha=0.1,
+                                label=('scenario is less likely to have groundwater levels\n'
+                                       'as low or lower than the nth percentile\n'
+                                       'of the base scenario'))
+                ax.fill_between(quantiles, quantiles, np.zeros(quantiles.shape) + 100, color='lightcoral', alpha=0.1,
+                                label=('scenario is more likely to have groundwater levels\n'
+                                       'as low or lower than the nth percentile\n'
+                                       'of the base scenario'))
+                for scen, c in zip(scens, colors):
+                    data = scen_data[scen][f'hds_{nm}'].dropna()
+                    plt_values = [percentileofscore(data, e) for e in base_values]
+                    scen_values = [np.nanpercentile(data, p) for p in plt_values]
 
-                ls = other_scen_ls[scen]
-                ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
-        leg_ax.legend(*ax.get_legend_handles_labels(), loc='upper left')
+                    ls = other_scen_ls[scen]
+                    ax.plot(quantiles, plt_values, color=c, label=f'{scen}')
+                ax.legend()
+
+    else:
+        # hds groups
+        for g in indicator_wells.group.unique():
+            fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
+            temp_wells = indicator_wells.loc[indicator_wells.group == g]
+            colors = smt.plot.get_colors(range(len(temp_wells)))
+            for ax, nm, c in zip(use_axs, temp_wells.index, colors):
+
+                quantiles = np.arange(1, 100)
+                base_values = [np.nanpercentile(base_data[f'hds_{nm}'], q) for q in quantiles]
+                ax.plot(quantiles, quantiles, color='k', alpha=0.5, label='1:1')
+                ax.fill_between(quantiles, np.zeros(quantiles.shape), quantiles, color='skyblue', alpha=0.3,
+                                label=('scenario is less likely to have groundwater levels\n'
+                                       'as low or lower than the nth percentile\n'
+                                       'of the base scenario'))
+                ax.fill_between(quantiles, quantiles, np.zeros(quantiles.shape) + 100, color='lightcoral', alpha=0.3,
+                                label=('scenario is more likely to have groundwater levels\n'
+                                       'as low or lower than the nth percentile\n'
+                                       'of the base scenario'))
+                for scen in scens:
+                    data = scen_data[scen][f'hds_{nm}'].dropna()
+                    plt_values = [percentileofscore(data, e) for e in base_values]
+                    scen_values = [np.nanpercentile(data, p) for p in plt_values]
+
+                    ls = other_scen_ls[scen]
+                    ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
+            leg_ax.legend(*ax.get_legend_handles_labels(), loc='upper left')
     for k, fig in figs.items():
         fig.supxlabel(f'{base_scen_name} percentile')
         fig.supylabel(f'scenario percentile of {base_scen_name} value')

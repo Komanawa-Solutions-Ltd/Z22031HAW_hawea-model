@@ -76,8 +76,62 @@ def how_long_per_run():
     )
     z = zones_to_model[-1]
     tinc = 2000
+    pers = ([0] + list(range(1173, 2108)))[0:15]
     test_runs = [dict(zone=z, total_increase=tinc, local_run_dir='grid_runs',
-                      base_outputs_dir='grid_outputs', pers=list(range(1173, 2108)))]
+                      base_outputs_dir='grid_outputs', pers=pers)]
+    ssh_dist.get_core_weightings_from_test_runs(test_runs,
+                                                kwargs_relative_to_base_dir=['base_outputs_dir', 'local_run_dir'],
+                                                rm_files=True)
+
+def test_ssh_dist():
+    """
+    individual times:
+      * 100.124.148.71: 281.27804684638977s
+      * 100.121.150.68: 1003.0472960472107s
+
+    weights: {'100.124.148.71': 3.566034773396269, '100.121.150.68': 1.0}
+    :return:
+    """
+
+    from run_managers.ssh_distributor import SshDist
+    branch = 'main'
+    local_cores = 4
+    ssh_dist = SshDist(
+        base_path={
+            '100.124.148.71': unbacked_dir.joinpath('test_ssh'),
+            '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath('test_ssh')
+        },
+        ips=['100.124.148.71',
+             '100.121.150.68'],
+        script_path=opt_proj_root.joinpath('Scenarios/t_ssh_dist.py'),
+        conda_env='hawea',
+        num_cores={
+            '100.124.148.71': local_cores,
+            '100.121.150.68': None,
+        },
+        core_weigtings={
+            '100.124.148.71': 2.6675381999814873,
+            '100.121.150.68': 1.0},
+        user_names=None,
+        short_names=None,
+        prepend_bash_commands={
+            '100.124.148.71': [
+                f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+                f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+            ],
+            '100.121.150.68': [
+                f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+                f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+            ]},
+        use_tailscale=True,
+        python_paths=[opt_proj_root, opt_model_tools],
+        sys_paths="default"
+    )
+    z = zones_to_model[-1]
+    tinc = 2000
+    pers = ([0] + list(range(1173, 2108)))[0:15]
+    test_runs = [dict(zone=z, total_increase=tinc, local_run_dir='grid_runs',
+                      base_outputs_dir='grid_outputs', pers=pers)]
     ssh_dist.get_core_weightings_from_test_runs(test_runs,
                                                 kwargs_relative_to_base_dir=['base_outputs_dir', 'local_run_dir'],
                                                 rm_files=True)
@@ -104,7 +158,8 @@ def main_grid_allo():
         runs[zone] = [max_allo[zone] * pinc for pinc in pump_increases]
 
     run_all_grid_allocation_scens(name='test_grid_run', local_cores=local_cores,
-                                  pump_rate=runs, rm_remote_files=False)
+                                  pump_rate=runs, rm_remote_files=False,
+                                  )
 
     # todo what are increased pumping values to use, should I make this more standartised (look at pumping in the zone)
     # todo roughly 1hr on wanganui, 5 hrs on tuke... need to shorten...

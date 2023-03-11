@@ -42,17 +42,22 @@ def compare_long_current_max_full_allo():  # todo run to see what scenarios to r
     all_lss = {k: l[-1] for k, l in zip(use_keys, linestyle_tuple)}
 
     quantile_plots(scenarios=data_dirs, senario_ls=all_lss, outdir=use_outdir.joinpath('quantile_plots'),
-                   aq_pen=['long_nat', 'long_current'])
+                   aq_pen=['long_nat', 'long_current'], single_figs=True)
     compare_scenarios(outdir=use_outdir.joinpath('comp_plots'),
                       tdis=scen_tdis,
                       data_dirs=data_dirs,
-                      model_names=use_keys, lss=all_lss, tickper=100, aq_pen=['long_nat', 'long_current'])
+                      model_names=use_keys, lss=all_lss, tickper=100, aq_pen=['long_nat', 'long_current'],
+                      single_figs=True)
     base_name = 'long_current'
     base = data_dirs.pop(base_name)
     all_lss.pop(base_name)
     q_qplots(base_scen_dir=base, outdir=use_outdir.joinpath('qq_plots'), base_scen_name=base_name,
-             other_scens=data_dirs, other_scen_ls=all_lss)
+             other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
 
 
 def compare_grid_allocation_scens():  # todo
     raise NotImplementedError
+
+
+if __name__ == '__main__':
+    compare_long_current_max_full_allo()
