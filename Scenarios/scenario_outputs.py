@@ -389,7 +389,7 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
     if single_figs:
         assert c is not None
         for g in indicator_wells.group.unique():
-            fig, use_axs = figs[f'hds_{g}'], axs[f'hds_{g}']
+            use_axs = axs[f'hds_{g}']
             temp_wells = indicator_wells.loc[indicator_wells.group == g]
             for ax, nm, in zip(use_axs, temp_wells.index):
                 ax.plot(output_data.index, output_data[f'hds_{nm}'], color=c, label=f'{nm}-{model_nm}')
@@ -488,9 +488,9 @@ def _setup_output_plots(indicator_wells, hds_only=False, single_figs=False):
         if single_figs:
             for i in range(num):
                 fig = plt.Figure(figsize=(10, 8))
-                gs = fig.add_gridspec(nrows=1, ncols=2, width_ratios=(2, 1))
+                gs = fig.add_gridspec(nrows=2, ncols=1)
                 temp_axs.append(fig.add_subplot(gs[0, 0]))
-                temp_ax = fig.add_subplot(gs[0, 1])
+                temp_ax = fig.add_subplot(gs[1, 0])
                 loc_axs.append(temp_ax)
                 figs[f'hds_{g}_{i}'] = fig
 
@@ -687,7 +687,7 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, us
     if single_figs:
         cmap = 'tab20b'
         if len(model_names) <= 10:
-            cmap = 'set1'
+            cmap = 'Set1'
         colors = smt.plot.get_colors(model_names, cmap)
     else:
         colors = [None for e in model_names]  # dummy
@@ -730,11 +730,12 @@ def _setup_qq_plots(indicator_wells, single_figs=False):
         if single_figs:
             for i in range(num):
                 fig = plt.Figure(figsize=(10, 8))
-                gs = fig.add_gridspec(nrows=1, ncols=2, width_ratios=(2, 1))
+                gs = fig.add_gridspec(nrows=2, ncols=1, )
                 temp_axs.append(fig.add_subplot(gs[0, 0]))
-                temp_ax = fig.add_subplot(gs[0, 1])
+                temp_ax = fig.add_subplot(gs[1, 0])
                 loc_axs.append(temp_ax)
                 figs[f'hds_{g}_{i}'] = fig
+                legend_axs[f'hds_{g}'] = None
 
         else:
             fig = plt.Figure(figsize=(16, 14))
@@ -792,10 +793,10 @@ def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None,
     if single_figs:
         cmap = 'tab20b'
         if len(scens) <= 10:
-            cmap = 'set1'
+            cmap = 'Set1'
         colors = smt.plot.get_colors(scens, cmap)
         for g in indicator_wells.group.unique():
-            fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
+            use_axs, leg_ax = axs[f'hds_{g}'], legend_axs[f'hds_{g}']
             temp_wells = indicator_wells.loc[indicator_wells.group == g]
             for ax, nm in zip(use_axs, temp_wells.index):
                 quantiles = np.arange(1, 100)
@@ -821,7 +822,6 @@ def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None,
                                 ax.text(quantiles[idx], p, pen, color='k')
                     ax.legend()
 
-        raise NotImplementedError
     else:
         for g in indicator_wells.group.unique():
             fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
@@ -891,10 +891,10 @@ def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_sce
     if single_figs:
         cmap = 'tab20b'
         if len(scens) <= 10:
-            cmap = 'set1'
+            cmap = 'Set1'
         colors = smt.plot.get_colors(scens, cmap)
         for g in indicator_wells.group.unique():
-            fig, use_axs, leg_ax = figs[f'hds_{g}'], axs[f'hds_{g}'], legend_axs[f'hds_{g}']
+            use_axs, leg_ax = axs[f'hds_{g}'], legend_axs[f'hds_{g}']
             temp_wells = indicator_wells.loc[indicator_wells.group == g]
             for ax, nm in zip(use_axs, temp_wells.index):
 

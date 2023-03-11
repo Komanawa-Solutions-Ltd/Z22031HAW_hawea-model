@@ -232,20 +232,22 @@ def run_grid_allocation_scenario_mp(kwargs):
             f.write(problem)
 
 
-def run_all_grid_allocation_scens(name, local_cores: int, pump_rate: dict, rm_remote_files=True):
+def run_all_grid_allocation_scens(name, local_cores: int, pump_rate: dict, rm_remote_files=True, include_vms=True):
     """
 
     :param pump_rate: dict {zone:[p1, p2, p3]}
     :param rm_remote_files: remove files on remote machine
     :return:
     """
+    if include_vms:
+        raise NotImplementedError
     for z, pr in pump_rate.items():
         assert z in zones_to_model, f'bad rate: zone: {z}, rate:{pr}'
         assert np.issubdtype(np.atleast_1d(pr).dtype, np.number)
 
     from run_managers.ssh_distributor import SshDist
     branch = 'main'
-    ssh_dist = SshDist(
+    ssh_dist = SshDist( # todo add vms!
         base_path={
             '100.124.148.71': unbacked_dir.joinpath('grid_scenarios'),
             '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath('grid_scenarios')
