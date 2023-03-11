@@ -8,6 +8,7 @@ import time
 
 print(sys.path)
 import warnings
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 from pathlib import Path
 import pickle
@@ -18,7 +19,9 @@ from run_managers.run_multiprocess import run_multiprocess
 def mp_runner(kwargs):
     host = socket.gethostname()
     brd = Path(kwargs.get('local_run_dir'))
-    model_name = kwargs.get("model_name")
+    zone = kwargs.get('zone')
+    total_increase = kwargs.get('total_increase')
+    model_name = f'{zone}_{int(total_increase):010d}'
     base_outputs_dir = Path(kwargs.get('base_outputs_dir'))
     if base_outputs_dir.exists():
         shutil.rmtree(base_outputs_dir)

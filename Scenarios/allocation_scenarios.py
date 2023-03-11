@@ -72,9 +72,9 @@ def get_pumping_in_zones(recalc=False):
                                    return_unique_spd=True, recalc=False)['pump']
     max_allo = get_scen_well_data('extended_max_allo', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
                                   return_unique_spd=True, recalc=False)['pump']
-    max_allo_pc =get_scen_well_data('extended_max_allo_pc',
-                                    tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
-                           return_unique_spd=True, recalc=False)['pump']
+    max_allo_pc = get_scen_well_data('extended_max_allo_pc',
+                                     tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                                     return_unique_spd=True, recalc=False)['pump']
     pers = np.arange(1, 53)
     plot_data = {'usage': [], 'full_allo': [], 'max_allo': [], 'max_allo_pc': []}
     for w in pers:
@@ -109,9 +109,9 @@ def plot_pumping_in_zones(save=False):
                                    return_unique_spd=True, recalc=False)['pump']
     max_allo = get_scen_well_data('extended_max_allo', tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
                                   return_unique_spd=True, recalc=False)['pump']
-    max_allo_pc =    get_scen_well_data('extended_max_allo_pc',
-                                        tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
-                           return_unique_spd=True, recalc=False)['pump']
+    max_allo_pc = get_scen_well_data('extended_max_allo_pc',
+                                     tdis=scen_tdis, hill_param=hill_param, race_param=race_param,
+                                     return_unique_spd=True, recalc=False)['pump']
     pers = np.arange(1, 53)
     plot_data = {'usage': [], 'full_allo': [], 'max_allo': [], 'max_allo_pc': []}
     for w in pers:
@@ -219,7 +219,9 @@ def run_grid_allocation_scenario_mp(kwargs):
         run_grid_allocation_scenario(**kwargs)
     except Exception:
         problem = traceback.format_exc()
-        model_name = kwargs.get("model_name")
+        zone = kwargs.get('zone')
+        total_increase = kwargs.get('total_increase')
+        model_name = f'{zone}_{int(total_increase):010d}'
         brd = Path(kwargs.get('local_run_dir'))
         base_outputs_dir = Path(kwargs.get('base_outputs_dir'))
         logfile = base_outputs_dir.joinpath(f'0_{model_name}.log')
