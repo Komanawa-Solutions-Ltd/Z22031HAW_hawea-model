@@ -30,7 +30,7 @@ def test_grid_allo():
     run_all_grid_allocation_scens(name='test_grid_run', local_cores=3, pump_rate=runs, rm_remote_files=False)
 
 
-def how_long_per_run():
+def how_long_per_run():  # todo run once I have droplet setup
     """
     individual times:
       * 100.124.148.71: 281.27804684638977s
@@ -58,7 +58,7 @@ def how_long_per_run():
         },
         core_weigtings={
             '100.124.148.71': 2.6675381999814873,
-            '100.121.150.68': 1.0},
+            '100.121.150.68': 1.0},  # todo update
         user_names=None,
         short_names=None,
         prepend_bash_commands={
@@ -76,12 +76,13 @@ def how_long_per_run():
     )
     z = zones_to_model[-1]
     tinc = 2000
-    pers = ([0] + list(range(1173, 2108)))[0:15]
+    pers = ([0] + list(range(1173, 2108)))
     test_runs = [dict(zone=z, total_increase=tinc, local_run_dir='grid_runs',
                       base_outputs_dir='grid_outputs', pers=pers)]
     ssh_dist.get_core_weightings_from_test_runs(test_runs,
                                                 kwargs_relative_to_base_dir=['base_outputs_dir', 'local_run_dir'],
-                                                rm_files=True)
+                                                rm_files=False, compile=True)
+
 
 def test_ssh_dist():
     """
@@ -134,7 +135,7 @@ def test_ssh_dist():
                       base_outputs_dir='grid_outputs', pers=pers)]
     ssh_dist.get_core_weightings_from_test_runs(test_runs,
                                                 kwargs_relative_to_base_dir=['base_outputs_dir', 'local_run_dir'],
-                                                rm_files=True)
+                                                rm_files=False, compile=True)
 
 
 def main_grid_allo():
@@ -144,20 +145,20 @@ def main_grid_allo():
     max_allo = max_allo.to_dict()
     base_runs = {
         # fraction increase from current max allocation
-        'Terrace-River': [],
-        'Terrace-Hill': [],
-        'Mangawera Valley': [],
-        'Hawea Flat': [],
+        'Terrace-River': [0.1, 0.25, 0.5, 1, 1.5],
+        'Terrace-Hill': [0.1, 0.25, 0.5, 1, 1.5],
+        # 'Mangawera Valley': [],  No runs needed, current allocation could cause problems
+        'Hawea Flat': [0.05, 0.1, 0.2, 0.3, 0.5, .75, 1, 1.5],
 
         # no useage/allocation presently (values of pumping to add)
-        'Te Awa': [],
-        'Maungawera Flat': [],
+        'Te Awa': [500, 1000, 2500, 5000, 7500, 10000],  # todo significant number of runs
+        'Maungawera Flat': [500, 1000, 2500, 5000, 7500, 10000],  # todo significant number of runs
     }
     runs = {}
     for zone, pump_increases in base_runs.items():
         runs[zone] = [max_allo[zone] * pinc for pinc in pump_increases]
 
-    run_all_grid_allocation_scens(name='test_grid_run', local_cores=local_cores,
+    run_all_grid_allocation_scens(name='grid_allo_v1', local_cores=local_cores,
                                   pump_rate=runs, rm_remote_files=False,
                                   )
 
@@ -170,5 +171,5 @@ if __name__ == '__main__':
     # test_indvidual()
     # test_ind_mp()
     # test_grid_allo()
-    #how_long_per_run()  # todo re-run now that it will likely converge!
-    test_ssh_dist()
+    how_long_per_run()  # todo re-run now that it will likely converge!
+    # test_ssh_dist()
