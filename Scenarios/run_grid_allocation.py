@@ -170,4 +170,5 @@ if __name__ == '__main__':
     # test_indvidual()
     # test_ind_mp()
     # test_grid_allo()
-    how_long_per_run()  # todo re-run now that it will likely converge!
+    #how_long_per_run()  # todo re-run now that it will likely converge!
+    test_ssh_dist()
