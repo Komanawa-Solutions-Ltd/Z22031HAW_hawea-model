@@ -46,27 +46,36 @@ def how_long_per_run():  # todo run once I have droplet setup
     ssh_dist = SshDist(
         base_path={
             '100.124.148.71': unbacked_dir.joinpath('grid_scenarios'),
-            '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath('grid_scenarios')
+            '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath('grid_scenarios'),
+            '170.64.166.193': Path.home().joinpath('hawea', 'grid_scenarios')
         },
         ips=['100.124.148.71',
-             '100.121.150.68'],
+             '100.121.150.68',
+             '170.64.166.193'],
         script_path=opt_proj_root.joinpath('Scenarios/run_scenario.py'),
         conda_env='hawea',
         num_cores={
             '100.124.148.71': local_cores,
             '100.121.150.68': None,
+            '170.64.166.193': None
         },
         core_weigtings={
             '100.124.148.71': 2.6675381999814873,
-            '100.121.150.68': 1.0},  # todo update
+            '100.121.150.68': 1.0,
+            '170.64.166.193': 1.0,  # todo update with high cpu option
+        },  # todo update
         user_names=None,
-        short_names=None,
+        short_names={'170.64.166.193': 'do1'},
         prepend_bash_commands={
             '100.124.148.71': [
                 f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
                 f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
             ],
             '100.121.150.68': [
+                f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+                f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+            ],
+            '170.64.166.193': [
                 f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
                 f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
             ]},
@@ -76,7 +85,7 @@ def how_long_per_run():  # todo run once I have droplet setup
     )
     z = zones_to_model[-1]
     tinc = 2000
-    pers = ([0] + list(range(1173, 2108)))
+    pers = ([0] + list(range(1173, 2108)))[0:5]
     test_runs = [dict(zone=z, total_increase=tinc, local_run_dir='grid_runs',
                       base_outputs_dir='grid_outputs', pers=pers)]
     ssh_dist.get_core_weightings_from_test_runs(test_runs,
@@ -153,8 +162,8 @@ def main_grid_allo():
         'Hawea Flat': [0.05, 0.1, 0.2, 0.3, 0.5, .75, 1, 1.5],
 
         # no useage/allocation presently (values of pumping to add)
-        'Te Awa': [500, 1000, 2500, 5000, 7500, 10000],  # todo significant number of runs
-        'Maungawera Flat': [500, 1000, 2500, 5000, 7500, 10000],  # todo significant number of runs
+        'Te Awa': [500, 1000, 2500, 5000, 7500, 10000],
+        'Maungawera Flat': [500, 1000, 2500, 5000, 7500, 10000],
     }
     runs = {}
     for zone, pump_increases in base_runs.items():
@@ -163,10 +172,6 @@ def main_grid_allo():
     run_all_grid_allocation_scens(name='grid_allo_v1', local_cores=local_cores,
                                   pump_rate=runs, rm_remote_files=False,
                                   )
-
-    # todo what are increased pumping values to use, should I make this more standartised (look at pumping in the zone)
-    # todo roughly 1hr on wanganui, 5 hrs on tuke... need to shorten...
-    raise NotImplementedError
 
 
 if __name__ == '__main__':

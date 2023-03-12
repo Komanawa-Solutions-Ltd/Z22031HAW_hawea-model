@@ -29,7 +29,7 @@ linestyle_tuple = [
     ('densely dashdotdotted', (0, (3, 1, 1, 1, 1, 1)))]
 
 
-def compare_long_current_max_full_allo():  # todo run to see what scenarios to run
+def compare_long_current_max_full_allo():
     use_outdir = outdir.joinpath('nat_current_full')
     use_outdir.mkdir(exist_ok=True)
     use_keys = ['long_current', 'long_nat']
