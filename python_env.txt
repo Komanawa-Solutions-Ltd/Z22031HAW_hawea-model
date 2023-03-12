@@ -10,7 +10,7 @@ pip install fpdf
 pip install pdfkit
 
 # optional to interface with interal KSL data:
-pip install git+https://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@github.com/Komanawa-Solutions-Ltd/kslcore.git
+# todo KSL_ENV
 
 # todo save the env and update whenever new packages are added:
 # todo at end of project remake the env and check!
