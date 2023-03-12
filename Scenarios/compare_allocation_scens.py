@@ -5,6 +5,8 @@ on: 1/03/23
 from project_base import proj_root
 from Scenarios.scenario_outputs import quantile_plots, q_qplots, compare_scenarios
 from Scenarios.model_info_scenarios import scen_tdis
+from Scenarios.allocation_scenarios import zones_to_model, get_pumping_in_zones
+from Scenarios.allo_rch_hillside import get_allo_zone_rch_hillside
 
 outdir = proj_root.joinpath('Scenarios/allocation_results')
 outdir.mkdir(exist_ok=True)
@@ -55,7 +57,51 @@ def compare_long_current_max_full_allo():
              other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
 
 
-def compare_grid_allocation_scens():  # todo
+def compare_grid_allocation_scens():  # todo run and check
+    for zone in zones_to_model:
+        if zone == 'Mangawera Valley':
+            continue  # did not run scenarios as already seeing implications at full allo
+
+        # plot comparisons modifing below
+        use_outdir = outdir.joinpath(f'{zone}_results')
+        use_outdir.mkdir(exist_ok=True)
+        use_keys = ['long_current']
+        data_dirs = {k: info_data_dir.joinpath(k) for k in use_keys}
+
+        use_keys2 = ['full_allocation', 'max_allocation', 'max_allocation_on_pump_curve']
+        data_dirs2 = {k: allo_data_dir.joinpath(k) for k in use_keys2}
+        use_keys = use_keys + use_keys2
+        data_dirs.update(data_dirs2)
+
+        # todo add datadirs for grid runs (where are these)
+
+        all_lss = {k: l[-1] for k, l in zip(use_keys, linestyle_tuple)}
+
+        quantile_plots(scenarios=data_dirs, senario_ls=all_lss, outdir=use_outdir.joinpath('quantile_plots'),
+                       aq_pen=['long_nat', 'long_current'], single_figs=True)
+        compare_scenarios(outdir=use_outdir.joinpath('comp_plots'),
+                          tdis=scen_tdis,
+                          data_dirs=data_dirs,
+                          model_names=use_keys, lss=all_lss, tickper=100, aq_pen=['long_nat', 'long_current'],
+                          single_figs=True)
+        base_name = 'long_current'
+        base = data_dirs.pop(base_name)
+        all_lss.pop(base_name)
+        q_qplots(base_scen_dir=base, outdir=use_outdir.joinpath('qq_plots'), base_scen_name=base_name,
+                 other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
+
+
+def compare_current_allo_to_rch_hillside():
+    rch_hill = get_allo_zone_rch_hillside()
+    # todo get current annual usage (min/mean/max)
+    # todo get max allocation (on pump curve)
+    # todo get max allocation (total)
+
+    # todo barchart??? probably
+
+
+
+    # todo
     raise NotImplementedError
 
 

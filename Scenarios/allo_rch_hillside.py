@@ -17,7 +17,7 @@ def get_allo_zone_rch_hillside(recalc=False):
     savepaths = [outdir.joinpath(f'allo_zone_rch_hillslope_{z}.csv') for z in zone_mapper.values()]
     save_paths_exist = [e.exists() for e in savepaths]
     if all(save_paths_exist) and not recalc:
-        out = {z: pd.read_csv(processed_scen_dir.joinpath(f'allo_zone_rch_hillslope_{z}.csv')) for z in
+        out = {z: pd.read_csv(outdir.joinpath(f'allo_zone_rch_hillslope_{z}.csv')) for z in
                zone_mapper.values()}
         return out
     percentiles = [0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, ]
