@@ -90,7 +90,7 @@ def how_long_per_run():  # todo run once I have droplet setup
                       base_outputs_dir='grid_outputs', pers=pers)]
     ssh_dist.get_core_weightings_from_test_runs(test_runs,
                                                 kwargs_relative_to_base_dir=['base_outputs_dir', 'local_run_dir'],
-                                                rm_files=False, compile=True)
+                                                rm_files=False, compile=True, run_name='core_test2')
 
 
 def test_ssh_dist():
