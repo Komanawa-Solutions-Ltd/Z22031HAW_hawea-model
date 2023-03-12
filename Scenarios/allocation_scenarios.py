@@ -232,48 +232,52 @@ def run_grid_allocation_scenario_mp(kwargs):
             f.write(problem)
 
 
-def run_all_grid_allocation_scens(name, local_cores: int, pump_rate: dict, rm_remote_files=True, include_vms=True):
+def run_all_grid_allocation_scens(name, local_cores: int, pump_rate: dict, rm_remote_files=True, external_ips=None,
+                                  pers=None):
     """
 
     :param pump_rate: dict {zone:[p1, p2, p3]}
     :param rm_remote_files: remove files on remote machine
     :return:
     """
-    if include_vms:
-        raise NotImplementedError
     for z, pr in pump_rate.items():
         assert z in zones_to_model, f'bad rate: zone: {z}, rate:{pr}'
         assert np.issubdtype(np.atleast_1d(pr).dtype, np.number)
 
     from run_managers.ssh_distributor import SshDist
+
+    base_paths = {'100.124.148.71': unbacked_dir.joinpath('grid_scenarios'),
+                  '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath('grid_scenarios')}
+
+    num_cores = {
+        '100.124.148.71': local_cores,
+        '100.121.150.68': None,
+    }
+
+    core_weigtings = {'100.124.148.71': 5.774154806025006, '100.121.150.68': 1.0}
+
+    for ip in external_ips:
+        if ip not in base_paths:
+            base_paths[ip] = unbacked_dir.joinpath('grid_scenarios')
+        if ip not in num_cores:
+            num_cores[ip] = None
+        if ip not in core_weigtings:
+            core_weigtings[ip] = 3.1815599663742145
+
     branch = 'main'
-    ssh_dist = SshDist( # todo add vms!
-        base_path={
-            '100.124.148.71': unbacked_dir.joinpath('grid_scenarios'),
-            '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath('grid_scenarios')
-        },
-        ips=['100.124.148.71',
-             '100.121.150.68'],
+    ssh_dist = SshDist(
+        base_path=base_paths,
+        ips=['100.124.148.71'] + external_ips,
         script_path=opt_proj_root.joinpath('Scenarios/run_scenario.py'),
         conda_env='hawea',
-        num_cores={
-            '100.124.148.71': local_cores,
-            '100.121.150.68': None,
-        },
-        core_weigtings={
-            '100.124.148.71': 2.6675381999814873,
-            '100.121.150.68': 1.0},
+        num_cores=num_cores,
+        core_weigtings=core_weigtings,
         user_names=None,
         short_names=None,
-        prepend_bash_commands={
-            '100.124.148.71': [
-                f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
-                f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
-            ],
-            '100.121.150.68': [
-                f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
-                f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
-            ]},
+        prepend_bash_commands=[
+            f"cd {opt_model_tools} ; git fetch --all ; git reset --hard origin/Z22031HAW_hawea-model",
+            f"cd {opt_proj_root} ; git fetch --all ; git reset --hard origin/{branch}"
+        ],
         use_tailscale=True,
         python_paths=[opt_proj_root, opt_model_tools],
         sys_paths="default"
@@ -286,7 +290,7 @@ def run_all_grid_allocation_scens(name, local_cores: int, pump_rate: dict, rm_re
         for tinc in all_tinc:
             runs.append(
                 dict(zone=z, total_increase=tinc, local_run_dir='grid_runs',
-                     base_outputs_dir='grid_outputs')
+                     base_outputs_dir='grid_outputs', pers=pers)
             )
 
     print(f'running {len(runs)} models')

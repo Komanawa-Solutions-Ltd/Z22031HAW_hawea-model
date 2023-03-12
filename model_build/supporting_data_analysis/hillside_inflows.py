@@ -677,7 +677,7 @@ def lindis_correlation_with_malf(return_figs=False):
 
 
 def get_hillside_flows(start_date, end_date, frequency='D',
-                       recalc=False, include_hill_str=False):
+                       recalc=False, include_hill_str=False, func='mean'):
     """
     get hillside flow records from start to end dates (inclusive),
      data is available from 2012-01-01 to 2021-12-31
@@ -700,7 +700,7 @@ def get_hillside_flows(start_date, end_date, frequency='D',
         pass
     else:
         data = data.drop(columns=['Grandview Creek', 'John Creek'])
-    return select_resample(data, start_date, end_date, frequency, 'mean')
+    return select_resample(data, start_date, end_date, frequency, func=func)
 
 
 if __name__ == '__main__':
