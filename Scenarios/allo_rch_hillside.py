@@ -2,6 +2,7 @@
 created matt_dumont 
 on: 13/03/23
 """
+import matplotlib.pyplot as plt
 import pandas as pd
 from project_base import proj_root
 from Scenarios.allocation_zones import get_allo_zones
@@ -17,10 +18,9 @@ def get_allo_zone_rch_hillside(recalc=False):
     savepaths = [outdir.joinpath(f'allo_zone_rch_hillslope_{z}.csv') for z in zone_mapper.values()]
     save_paths_exist = [e.exists() for e in savepaths]
     if all(save_paths_exist) and not recalc:
-        out = {z: pd.read_csv(outdir.joinpath(f'allo_zone_rch_hillslope_{z}.csv')) for z in
+        out = {z: pd.read_csv(outdir.joinpath(f'allo_zone_rch_hillslope_{z}.csv'), index_col=0) for z in
                zone_mapper.values()}
         return out
-    percentiles = [0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, ]
     start = '1981-01-01'
     end = '2020-12-31'
 
@@ -32,21 +32,19 @@ def get_allo_zone_rch_hillside(recalc=False):
     scen_rch *= smt.grid_space**2 / 1000
     out = {}
     for id_num, zone in zone_mapper.items():
-        outdata = pd.DataFrame(index=pd.Series([1]).describe(percentiles=percentiles).index)
+        outdata = pd.DataFrame(index=range(1981, 2021))
         # scen period
-        temp_scen_rch = pd.Series(index=scen_dates, data=scen_rch[:, allo_zone == id_num].sum(axis=1))
-        outdata.loc[:, f'scen_rch_full'] = temp_scen_rch.describe(percentiles)
+        temp_scen_rch = pd.Series(index=scen_dates.year, data=scen_rch[:, allo_zone == id_num].sum(axis=1))
+        outdata.loc[:, f'scen_rch'] = temp_scen_rch
 
         temp_locs = smt.io.select_df_from_idx_array(hillside_locs, allo_zone == id_num, d2_only=True)
         temp_flows = hillside_flow.loc[:, temp_locs.index].sum(axis=1)
-        outdata.loc[:, f'hill_full'] = temp_flows.describe(percentiles)
+        temp_flows.index = temp_flows.index.year
+        outdata.loc[:, f'hill'] = temp_flows
 
         # opt_period
-        outdata.loc[:, f'scen_rch_opt'] = temp_scen_rch.loc[temp_scen_rch.index.year >= 2016].describe(
-            percentiles)
-        outdata.loc[:, f'hill_opt'] = temp_flows.loc[temp_flows.index.year >= 2016].describe(percentiles)
-        outdata.loc[:, f'opt_rch_opt'] = pd.Series(opt_rch[:, allo_zone == id_num].sum(axis=1)).describe(percentiles)
-        pass
+        outdata.loc[:, f'opt_rch'] = pd.Series(opt_rch[:, allo_zone == id_num].sum(axis=1),
+                                                   index=pd.Series(opt_dates).dt.year)
         out[zone] = outdata
         outdata.to_csv(outdir.joinpath(f'allo_zone_rch_hillslope_{zone}.csv'))
 
@@ -54,4 +52,15 @@ def get_allo_zone_rch_hillside(recalc=False):
 
 
 if __name__ == '__main__':
-    get_allo_zone_rch_hillside(True)
+    all_rch = get_allo_zone_rch_hillside(False)
+    for k,v in all_rch.items():
+        fig,ax = plt.subplots(figsize=(10,8))
+        colors = smt.plot.get_colors(v.keys())
+        for k0, c in zip(v.keys(), colors):
+            ax.plot(v.index, v[k0], color=c, label=k0)
+        ax.set_title(k)
+        ax.set_yscale('log')
+        ax.legend()
+    plt.show()
+
+

@@ -33,6 +33,15 @@ def get_historical_full_allo_pumping_data(start_date, end_date, frequency='D', f
     return select_resample(full_allo, start_date, end_date, frequency, func=func)
 
 
+def get_most_upto_date_allocation_info(recalc):  # todo
+
+    processed_path = processed_model_build_data_dir.joinpath('allo_info.csv')
+    pumping_data = _load_usage_data()
+    if processed_path.exists() and not recalc:
+        raise NotImplementedError  # todo
+    raise NotImplementedError
+
+
 def get_historical_max_allo_pumping_data(start_date, end_date, frequency='D', recalc=False, func='mean'):
     processed_path = processed_model_build_data_dir.joinpath('historical_pumping_max_allo.csv')
     if processed_path.exists() and not recalc:

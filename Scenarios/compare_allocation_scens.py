@@ -2,11 +2,14 @@
 created matt_dumont 
 on: 1/03/23
 """
+import matplotlib.pyplot as plt
+
 from project_base import proj_root, unbacked_dir
 from Scenarios.scenario_outputs import quantile_plots, q_qplots, compare_scenarios
 from Scenarios.model_info_scenarios import scen_tdis
 from Scenarios.allocation_scenarios import zones_to_model, get_pumping_in_zones
 from Scenarios.allo_rch_hillside import get_allo_zone_rch_hillside
+from model_build.supporting_data_analysis.get_pumping_data import get_most_upto_date_allocation_info
 
 outdir = proj_root.joinpath('Scenarios/allocation_results')
 outdir.mkdir(exist_ok=True)
@@ -57,7 +60,7 @@ def compare_long_current_max_full_allo():
              other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
 
 
-def compare_grid_allocation_scens_v2():  # todo run and check
+def compare_grid_allocation_scens():
     for zone in zones_to_model:
         print(zone)
         if zone == 'Mangawera Valley':
@@ -69,20 +72,25 @@ def compare_grid_allocation_scens_v2():  # todo run and check
         use_keys = ['long_current']
         data_dirs = {k: info_data_dir.joinpath(k) for k in use_keys}
 
-        use_keys2 = ['max_allocation_on_pump_curve', 'max_allocation']
+        use_keys2 = ['max_allocation_on_pump_curve']
         data_dirs2 = {k: allo_data_dir.joinpath(k) for k in use_keys2}
         use_keys = use_keys + use_keys2
         data_dirs.update(data_dirs2)
 
+        grid_keys = []
         # add datadirs for grid runs (where are these)
         grid_runs = sorted(unbacked_dir.joinpath('grid_scenarios',
-                                                 'grid_allo_v2/all_grid_outputs').glob(f'{zone.replace(" ", "_")}*'))
+                                                 'all_grid_outputs').glob(f'{zone.replace(" ", "_")}*'))
+        max_num = max([len(str(int(p.name.split("_")[-1]))) for p in grid_runs])
         for p in grid_runs:
-            name = f'{zone} {int(p.name.split("_")[-1])}'
+            num = int(p.name.split("_")[-1])
+            name = f'{zone} {num:0{max_num}d}'
             data_dirs[name] = p
-            use_keys.append(name)
+            grid_keys.append(name)
 
-        all_lss = {k: 'solid' for k in use_keys} # dummy
+        all_lss = {k: 'dashed' for k in use_keys}
+        all_lss.update({k: 'solid' for k in grid_keys})
+        use_keys = use_keys + sorted(grid_keys)
 
         quantile_plots(scenarios=data_dirs, senario_ls=all_lss, outdir=use_outdir.joinpath('quantile_plots'),
                        aq_pen=['long_nat', 'long_current'], single_figs=True)
@@ -99,17 +107,46 @@ def compare_grid_allocation_scens_v2():  # todo run and check
 
 
 def compare_current_allo_to_rch_hillside():
-    rch_hill = get_allo_zone_rch_hillside()
+    all_rch_hill = get_allo_zone_rch_hillside()
     # todo get current annual usage (min/mean/max)
-    # todo get max allocation (on pump curve)
     # todo get max allocation (total)
+    # todo get max allocation (on pump curve)
+    allo_data = get_most_upto_date_allocation_info()
 
-    # todo barchart??? probably
+    for zone, rch_hill in all_rch_hill.items():
+        rch_hill.loc[:, 'total'] = rch_hill[['hill', 'scen_rch']].sum(axis=1)
+        names = ['Hill inflow', 'Recharge', 'Total inflow']
+        dfnames = ['hill', 'scen_rch', 'total']
+        plot_data = []
+        positions = []
+        for i, n in enumerate(dfnames):
+            temp = rch_hill[n]
+            if temp.sum() < 500:
+                continue
+            else:
+                plot_data.append(temp.values)
+                positions.append(i)
 
-    # todo
+        fig, ax = plt.subplots(figsize=(10, 8))
+        ax.violinplot(plot_data, positions=positions)
+        ax.set_yscale('log')
+        ax.set_title(zone)
+        ax.set_ylabel('m3/year')
+        ax.set_xticks(range(len(names)))
+        ax.set_xticklabels(names)
+        ax.set_xlim(-0.5, len(names)-0.5)
+
+        # todo usage as hlines
+
+        fig.tight_layout()
+        plt.show() # todo dadb and save
+
+        # todo
     raise NotImplementedError
 
 
 if __name__ == '__main__':
-    #compare_long_current_max_full_allo()
-    compare_grid_allocation_scens_v2()
+    compare_current_allo_to_rch_hillside()
+    # compare_long_current_max_full_allo()
+    # compare_grid_allocation_scens()
+    pass

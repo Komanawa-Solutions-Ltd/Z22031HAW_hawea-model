@@ -211,7 +211,7 @@ def _plot_single_model_outputs_inputs(tdis, plot_dir, list_file, hds_array, outp
     plot_lake_moraine_smoothed_areas(all_hds, plot_dir, index=idx, nm='Model heads at lake min\n(1m contours)',
                                      svnm='lake_min')
 
-    figs, axs = _plot_output_data(tdis, output_data, model_nm=model_nm, tick_per=tick_per)
+    figs, axs, leg_axs = _plot_output_data(tdis, output_data, model_nm=model_nm, tick_per=tick_per)
     for k, fig in figs.items():
         fig.tight_layout()
         fig.savefig(plot_dir.joinpath(f'{k}.png'))
@@ -364,7 +364,8 @@ def _setup_input_plots():
     # hill_maungawera	hill_flat_west	hill_flat_east	hill_terrace_east	hill_south_east	hill_total
 
 
-def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None, tick_per=100, aq_pen=None,
+def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, leg_axs=None, ls=None, tick_per=100,
+                      aq_pen=None,
                       single_figs=False, c=None):
     """
     to plot multiple verions pass figs, axs from perivous time
@@ -380,18 +381,22 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
     indicator_wells = get_indicator_well_locs()
     if figs is None:
         assert axs is None
-        figs, axs = _setup_output_plots(indicator_wells, single_figs=single_figs)
+        assert leg_axs is None
+        figs, axs, leg_axs = _setup_output_plots(indicator_wells, single_figs=single_figs)
     else:
         assert isinstance(figs, dict)
         assert isinstance(axs, dict)
-
+        assert isinstance(leg_axs, dict)
     # hds groups
     if single_figs:
         assert c is not None
         for g in indicator_wells.group.unique():
             use_axs = axs[f'hds_{g}']
+            all_leg = leg_axs[f'hds_{g}']
             temp_wells = indicator_wells.loc[indicator_wells.group == g]
-            for ax, nm, in zip(use_axs, temp_wells.index):
+            for ax, nm, leg in zip(use_axs, temp_wells.index, all_leg):
+                temp = output_data.loc[:, f'hds_{nm}']
+                temp[temp < -666] = np.nan
                 ax.plot(output_data.index, output_data[f'hds_{nm}'], color=c, label=f'{nm}-{model_nm}')
                 if aq_pen is not None:
                     aq_pen = np.atleast_1d(aq_pen)
@@ -407,7 +412,7 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
                             else:
                                 idx = 0
                             ax.text(output_data.index[idx], p, pen, color='k')
-                ax.legend()
+                leg.legend(*ax.get_legend_handles_labels())
     else:
         for g in indicator_wells.group.unique():
             fig, use_axs = figs[f'hds_{g}'], axs[f'hds_{g}']
@@ -461,37 +466,61 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
 
     for k, v in axs.items():
         if 'hds' in k:
-            for ax in v:
+            if single_figs:
+                for ax in v:
+                    ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
+                    ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
+            else:
+                for ax in v:
+                    ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
+                    ax.set_xticklabels([])
+                    ax.set_xlim(min(tdis.pers) - 1, max(tdis.pers) + 1)
                 ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
-                ax.set_xticklabels([])
-                ax.set_xlim(min(tdis.pers) - 1, max(tdis.pers) + 1)
-            ax = v[-1]
-            ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
-            ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
+                ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
+                ax = v[-1]
 
         else:
             for ax in v:
                 ax.set_xticks([e for i, e in enumerate(tdis.pers) if i % tick_per == 0])
                 ax.set_xticklabels([e for i, e in enumerate(all_labs) if i % tick_per == 0], rotation=-30)
 
-    return figs, axs
+    return figs, axs, leg_axs
 
 
 def _setup_output_plots(indicator_wells, hds_only=False, single_figs=False):
-    figs, axs = {}, {}
+    figs, axs, all_leg_axs = {}, {}, {}
 
     # indicator_hds_groups  (incl regular heads)
     for g in indicator_wells.group.unique():
         temp_wells = indicator_wells.loc[indicator_wells.group == g]
         num = len(temp_wells)
-        temp_axs, loc_axs = [], []
+        temp_axs, loc_axs, leg_axs = [], [], []
+        loc_legs = []
         if single_figs:
             for i in range(num):
                 fig = plt.Figure(figsize=(10, 8))
-                gs = fig.add_gridspec(nrows=2, ncols=1)
-                temp_axs.append(fig.add_subplot(gs[0, 0]))
+                gs = fig.add_gridspec(nrows=2, ncols=3, height_ratios=(3, 2))
+                temp_axs.append(fig.add_subplot(gs[0, :]))
                 temp_ax = fig.add_subplot(gs[1, 0])
                 loc_axs.append(temp_ax)
+
+                temp_ax = fig.add_subplot(gs[1, 1])
+                temp_ax.set_xticks([])
+                temp_ax.set_yticks([])
+                temp_ax.spines["top"].set_visible(False)
+                temp_ax.spines["right"].set_visible(False)
+                temp_ax.spines["left"].set_visible(False)
+                temp_ax.spines["bottom"].set_visible(False)
+                loc_legs.append(temp_ax)
+
+                temp_ax = fig.add_subplot(gs[1, 2])
+                temp_ax.set_xticks([])
+                temp_ax.set_yticks([])
+                temp_ax.spines["top"].set_visible(False)
+                temp_ax.spines["right"].set_visible(False)
+                temp_ax.spines["left"].set_visible(False)
+                temp_ax.spines["bottom"].set_visible(False)
+                leg_axs.append(temp_ax)
                 figs[f'hds_{g}_{i}'] = fig
 
         else:
@@ -505,18 +534,22 @@ def _setup_output_plots(indicator_wells, hds_only=False, single_figs=False):
             loc_axs.append(temp_ax)
 
         axs[f'hds_{g}'] = temp_axs
+        all_leg_axs[f'hds_{g}'] = leg_axs
 
         # make/ plot locator (color for well, ls for scenario)
-        for temp_ax in loc_axs:
+        for i, temp_ax in enumerate(loc_axs):
             smt.plot.plt_basemap(ax=temp_ax, no_flow_layer=0)
             colors = smt.plot.get_colors(range(num))
             for c, (nm, x, y) in zip(colors, temp_wells[['nztmx', 'nztmy']].itertuples(True, None)):
                 temp_ax.scatter(x, y, color=c, label=nm, s=100)
-            temp_ax.legend()
+            if single_figs:
+                loc_legs[i].legend(*temp_ax.get_legend_handles_labels(), title='Site locations', loc='upper center')
+            else:
+                temp_ax.legend()
             smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
 
     if hds_only:
-        return figs, axs
+        return figs, axs, all_leg_axs
     # river fluxes
     use_axs = []
     fig, temp_axs = plt.subplots(3, 1, sharex=True, figsize=(14, 14))
@@ -539,7 +572,7 @@ def _setup_output_plots(indicator_wells, hds_only=False, single_figs=False):
     figs['zone_budget1'] = fig1
     figs['zone_budget2'] = fig2
     axs['zone_budget'] = use_axs
-    return figs, axs
+    return figs, axs, all_leg_axs
 
 
 key_output_data_file_name = 'output_dataset.csv'
@@ -676,7 +709,7 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, us
     assert isinstance(lss, dict)
     assert isinstance(tdis, TimeDis)
     assert set(data_dirs.keys()) == set(model_names) == set(lss.keys())
-    output_figs, output_axs = None, None
+    output_figs, output_axs, leg_axes = None, None, None
     input_figs, input_axs = None, None
     if usepers is not None:
         assert set(usepers).issubset(tdis.pers)
@@ -703,9 +736,11 @@ def compare_scenarios(outdir, tdis, data_dirs, model_names, lss, tickper=100, us
             output_data = output_data.loc[sorted(usepers)]
             output_data.index = range(len(output_data))
 
-        output_figs, output_axs = _plot_output_data(use_tids, output_data=output_data, model_nm=mn, figs=output_figs,
-                                                    axs=output_axs, ls=ls, tick_per=tickper, aq_pen=aq_pen,
-                                                    single_figs=single_figs, c=c)
+        output_figs, output_axs, leg_axes = _plot_output_data(use_tids, output_data=output_data,
+                                                              model_nm=mn, figs=output_figs,
+                                                              axs=output_axs, leg_axs=leg_axes, ls=ls,
+                                                              tick_per=tickper, aq_pen=aq_pen,
+                                                              single_figs=single_figs, c=c)
         input_figs, input_axs = _plot_input_data(use_tids, input_data=input_data, model_nm=mn, figs=input_figs,
                                                  axs=input_axs, ls=ls, tick_per=tickper)
     # savefigs
@@ -727,15 +762,35 @@ def _setup_qq_plots(indicator_wells, single_figs=False):
         num = len(temp_wells)
         temp_axs = []
         loc_axs = []
+        loc_legs = []
+        legends = []
         if single_figs:
             for i in range(num):
-                fig = plt.Figure(figsize=(10, 8))
-                gs = fig.add_gridspec(nrows=2, ncols=1, )
-                temp_axs.append(fig.add_subplot(gs[0, 0]))
+                fig = plt.Figure(figsize=(14, 9))
+                gs = fig.add_gridspec(nrows=2, ncols=3, height_ratios=(3, 2))
+                temp_axs.append(fig.add_subplot(gs[0, :]))
                 temp_ax = fig.add_subplot(gs[1, 0])
                 loc_axs.append(temp_ax)
+
+                temp_ax = fig.add_subplot(gs[1, 1])
+                temp_ax.set_xticks([])
+                temp_ax.set_yticks([])
+                temp_ax.spines["top"].set_visible(False)
+                temp_ax.spines["right"].set_visible(False)
+                temp_ax.spines["left"].set_visible(False)
+                temp_ax.spines["bottom"].set_visible(False)
+                loc_legs.append(temp_ax)
+
                 figs[f'hds_{g}_{i}'] = fig
-                legend_axs[f'hds_{g}'] = None
+                temp_ax = fig.add_subplot(gs[1, 2])
+                temp_ax.set_xticks([])
+                temp_ax.set_yticks([])
+                temp_ax.spines["top"].set_visible(False)
+                temp_ax.spines["right"].set_visible(False)
+                temp_ax.spines["left"].set_visible(False)
+                temp_ax.spines["bottom"].set_visible(False)
+                legends.append(temp_ax)
+            legend_axs[f'hds_{g}'] = legends
 
         else:
             fig = plt.Figure(figsize=(16, 14))
@@ -759,13 +814,16 @@ def _setup_qq_plots(indicator_wells, single_figs=False):
         axs[f'hds_{g}'] = temp_axs
 
         # make/ plot locator (color for well, ls for scenario)
-        for temp_ax in loc_axs:
+        for i, temp_ax in enumerate(loc_axs):
 
             smt.plot.plt_basemap(ax=temp_ax, no_flow_layer=0)
             colors = smt.plot.get_colors(range(num))
             for c, (nm, x, y) in zip(colors, temp_wells[['nztmx', 'nztmy']].itertuples(True, None)):
                 temp_ax.scatter(x, y, color=c, label=nm, s=100)
-            temp_ax.legend()
+            if single_figs:
+                loc_legs[i].legend(*temp_ax.get_legend_handles_labels(), title='Site locations', loc='upper center')
+            else:
+                temp_ax.legend()
             smt.plot.set_plot_lims_padded(temp_wells.nztmx, temp_wells.nztmy, 1000, temp_ax)
 
     return figs, axs, legend_axs
@@ -798,13 +856,16 @@ def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None,
         for g in indicator_wells.group.unique():
             use_axs, leg_ax = axs[f'hds_{g}'], legend_axs[f'hds_{g}']
             temp_wells = indicator_wells.loc[indicator_wells.group == g]
-            for ax, nm in zip(use_axs, temp_wells.index):
+            for ax, nm, leg in zip(use_axs, temp_wells.index, leg_ax):
                 quantiles = np.arange(1, 100)
                 for scen, c in zip(scens, colors):
-                    data = scen_data[scen][f'hds_{nm}'].dropna()
+                    ls = senario_ls[scen]
+                    data = scen_data[scen].loc[:, f'hds_{nm}']
+                    data[data < -666] = np.nan
+                    data = data.dropna()
                     plt_values = [np.nanpercentile(data, p) for p in quantiles]
 
-                    ax.plot(quantiles, plt_values, color=c, label=f'{scen}')
+                    ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
                     ax.set_title(nm)
                     if aq_pen is not None:
                         aq_pen = np.atleast_1d(aq_pen)
@@ -820,7 +881,7 @@ def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None,
                                 else:
                                     idx = 0
                                 ax.text(quantiles[idx], p, pen, color='k')
-                    ax.legend()
+                    leg.legend(*ax.get_legend_handles_labels())
 
     else:
         for g in indicator_wells.group.unique():
@@ -896,7 +957,7 @@ def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_sce
         for g in indicator_wells.group.unique():
             use_axs, leg_ax = axs[f'hds_{g}'], legend_axs[f'hds_{g}']
             temp_wells = indicator_wells.loc[indicator_wells.group == g]
-            for ax, nm in zip(use_axs, temp_wells.index):
+            for ax, nm, leg in zip(use_axs, temp_wells.index, leg_ax):
 
                 quantiles = np.arange(1, 100)
                 base_values = [np.nanpercentile(base_data[f'hds_{nm}'], q) for q in quantiles]
@@ -916,8 +977,8 @@ def q_qplots(base_scen_dir, outdir, base_scen_name, other_scens: dict, other_sce
                     scen_values = [np.nanpercentile(data, p) for p in plt_values]
 
                     ls = other_scen_ls[scen]
-                    ax.plot(quantiles, plt_values, color=c, label=f'{scen}')
-                ax.legend()
+                    ax.plot(quantiles, plt_values, color=c, ls=ls, label=f'{scen}')
+                leg.legend(*ax.get_legend_handles_labels())
 
     else:
         # hds groups

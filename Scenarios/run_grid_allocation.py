@@ -132,8 +132,8 @@ def main_grid_allo(test=False, print_runs_only=False):
 
 
 def main_grid_allov3(test=False, print_runs_only=False):
-    local_cores = None  # todo how many
-    external_ips = []  # todo
+    local_cores = 2
+    external_ips = ['170.64.172.84']
 
     max_allo = get_pumping_in_zones().loc[:, 'max_allo_min'].abs()
     max_allo.loc[max_allo.isna()] = 1
@@ -175,7 +175,7 @@ def main_grid_allov3(test=False, print_runs_only=False):
 if __name__ == '__main__':
     main_grid_allov3(print_runs_only=True)
     # how_long_per_run()
-    # main_grid_allov3(test=False)
+    main_grid_allov3(test=False)
     # test_indvidual()
     # test_ind_mp()
     # test_grid_allo()
