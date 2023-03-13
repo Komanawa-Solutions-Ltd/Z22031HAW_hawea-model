@@ -2,7 +2,7 @@
 created matt_dumont 
 on: 1/03/23
 """
-from project_base import proj_root
+from project_base import proj_root, unbacked_dir
 from Scenarios.scenario_outputs import quantile_plots, q_qplots, compare_scenarios
 from Scenarios.model_info_scenarios import scen_tdis
 from Scenarios.allocation_scenarios import zones_to_model, get_pumping_in_zones
@@ -57,8 +57,9 @@ def compare_long_current_max_full_allo():
              other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
 
 
-def compare_grid_allocation_scens():  # todo run and check
+def compare_grid_allocation_scens_v2():  # todo run and check
     for zone in zones_to_model:
+        print(zone)
         if zone == 'Mangawera Valley':
             continue  # did not run scenarios as already seeing implications at full allo
 
@@ -68,14 +69,20 @@ def compare_grid_allocation_scens():  # todo run and check
         use_keys = ['long_current']
         data_dirs = {k: info_data_dir.joinpath(k) for k in use_keys}
 
-        use_keys2 = ['full_allocation', 'max_allocation', 'max_allocation_on_pump_curve']
+        use_keys2 = ['max_allocation_on_pump_curve', 'max_allocation']
         data_dirs2 = {k: allo_data_dir.joinpath(k) for k in use_keys2}
         use_keys = use_keys + use_keys2
         data_dirs.update(data_dirs2)
 
-        # todo add datadirs for grid runs (where are these)
+        # add datadirs for grid runs (where are these)
+        grid_runs = sorted(unbacked_dir.joinpath('grid_scenarios',
+                                                 'grid_allo_v2/all_grid_outputs').glob(f'{zone.replace(" ", "_")}*'))
+        for p in grid_runs:
+            name = f'{zone} {int(p.name.split("_")[-1])}'
+            data_dirs[name] = p
+            use_keys.append(name)
 
-        all_lss = {k: l[-1] for k, l in zip(use_keys, linestyle_tuple)}
+        all_lss = {k: 'solid' for k in use_keys} # dummy
 
         quantile_plots(scenarios=data_dirs, senario_ls=all_lss, outdir=use_outdir.joinpath('quantile_plots'),
                        aq_pen=['long_nat', 'long_current'], single_figs=True)
@@ -99,11 +106,10 @@ def compare_current_allo_to_rch_hillside():
 
     # todo barchart??? probably
 
-
-
     # todo
     raise NotImplementedError
 
 
 if __name__ == '__main__':
-    compare_long_current_max_full_allo()
+    #compare_long_current_max_full_allo()
+    compare_grid_allocation_scens_v2()

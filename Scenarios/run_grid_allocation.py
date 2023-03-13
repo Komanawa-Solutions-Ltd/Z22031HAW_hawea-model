@@ -90,8 +90,9 @@ def how_long_per_run():  # todo run once I have droplet setup
 
 
 def main_grid_allo(test=False, print_runs_only=False):
-    local_cores = 4  # todo how many
-    external_ips = ['170.64.170.143']  # todo
+    raise NotImplementedError('already run')
+    local_cores = 4
+    external_ips = ['170.64.170.143']
 
     max_allo = get_pumping_in_zones().loc[:, 'max_allo_min'].abs()
     max_allo.loc[max_allo.isna()] = 1
@@ -130,10 +131,51 @@ def main_grid_allo(test=False, print_runs_only=False):
                                   )
 
 
+def main_grid_allov3(test=False, print_runs_only=False):
+    local_cores = None  # todo how many
+    external_ips = []  # todo
+
+    max_allo = get_pumping_in_zones().loc[:, 'max_allo_min'].abs()
+    max_allo.loc[max_allo.isna()] = 1
+    max_allo = max_allo.to_dict()
+    base_runs = {
+        # fraction increase from current max allocation
+        # 'Terrace-River': [0.1, 0.25, 0.5, 1, 1.5], # no more runs needed
+        'Terrace-Hill': [2, 2.5, 5, 7.5, 10],
+        # 'Mangawera Valley': [],  No runs needed, current allocation could cause problems
+        # 'Hawea Flat': [],  # no more runs needed
+
+        # no useage/allocation presently (values of pumping to add)
+        'Te Awa': [15000, 20000, 25000, 50000],
+        'Maungawera Flat': [15000, 20000, 30000],
+    }
+    num_runs = 0
+    for zone, pump_increases in base_runs.items():
+        num_runs += len(pump_increases)
+
+    print(f'number of runs: {num_runs}')
+    if print_runs_only:
+        return
+    runs = {}
+    for zone, pump_increases in base_runs.items():
+        runs[zone] = [max_allo[zone] * pinc for pinc in pump_increases]
+
+    if test:
+        pers = ([0] + list(range(1173, 2108)))[0:10]
+        rname = 'grid_allo_v3_test2'
+    else:
+        rname = 'grid_allo_v3'  # note v1 got lost in the learning to do stuff.
+        pers = None
+
+    run_all_grid_allocation_scens(name=rname, local_cores=local_cores,
+                                  pump_rate=runs, rm_remote_files=False, pers=pers, external_ips=external_ips
+                                  )
+
+
 if __name__ == '__main__':
-    main_grid_allo(print_runs_only=True)
-    #how_long_per_run()
-    main_grid_allo(test=False)
+    main_grid_allov3(print_runs_only=True)
+    # how_long_per_run()
+    # main_grid_allov3(test=False)
     # test_indvidual()
     # test_ind_mp()
     # test_grid_allo()

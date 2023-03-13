@@ -396,7 +396,7 @@ def _plot_output_data(tdis, output_data, model_nm, figs=None, axs=None, ls=None,
                 if aq_pen is not None:
                     aq_pen = np.atleast_1d(aq_pen)
                     for i, pen in enumerate(aq_pen):
-                        labs, hands = ax.get_legend_handles_labels()
+                        hands, labs = ax.get_legend_handles_labels()
                         if f'adequate pen. from {pen}' not in labs:
                             p = get_adiquate_penetration(f'hds_{nm}', pen)
                             ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
