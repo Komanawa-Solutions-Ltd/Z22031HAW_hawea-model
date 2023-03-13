@@ -33,13 +33,78 @@ def get_historical_full_allo_pumping_data(start_date, end_date, frequency='D', f
     return select_resample(full_allo, start_date, end_date, frequency, func=func)
 
 
-def get_most_upto_date_allocation_info(recalc):  # todo
-
+def get_most_upto_date_allocation_info(include_near_river=False, recalc=False):  # todo
+    """
+    get 2020 annual usage/allocation data
+    :param include_near_river: bool if True include the near river pumping
+    :param recalc:
+    :return:
+    """
     processed_path = processed_model_build_data_dir.joinpath('allo_info.csv')
-    pumping_data = _load_usage_data()
     if processed_path.exists() and not recalc:
-        raise NotImplementedError  # todo
-    raise NotImplementedError
+        final_data = pd.read_csv(processed_path, index_col=0)
+    else:
+        final_data = pd.DataFrame(dtype=float)
+        for pumping_key, name in zip(['gw_allo', 'gw_allo_usage_est'], ['max_allo', 'current_use']):
+            pumping_data = _load_usage_data()
+            pumping_data.loc[:, 'uname'] = pumping_data.loc[:, 'permit_id'] + '_' + pumping_data.loc[:,
+                                                                                    'water_meter_no']
+            well_names = get_well_flowmeter_mapper()
+            well_names.loc[:, 'uname'] = well_names.loc[:, 'permit_id'] + '_' + well_names.loc[:, 'water_meter_no']
+
+            outdata = pd.DataFrame(index=pd.unique(pumping_data.loc[:, 'date']), columns=well_names.index)
+            outdata.index.name = 'date'
+            duplicated = well_names.index[well_names.loc[:, ['permit_id', 'water_meter_no']].duplicated(keep=False)]
+            unique_names = well_names.index[~well_names.loc[:, ['permit_id', 'water_meter_no']].duplicated(keep=False)]
+
+            for n in unique_names:
+                idx = np.in1d(pumping_data.loc[:, 'uname'], well_names.loc[n, 'uname'])
+                temp = pumping_data.loc[idx, ['date', pumping_key]].set_index('date')
+                outdata.loc[temp.index, n] = temp.values[:, 0]
+
+            for uname in pd.unique(well_names.loc[duplicated, 'uname']):
+                use_well_names = well_names.index[np.in1d(well_names.uname, uname)]
+                assert not np.in1d(use_well_names, unique_names).any()
+                temp = pumping_data.loc[pumping_data.uname == uname]
+                temp = temp.groupby('date').sum().loc[:, pumping_key]
+                for n in use_well_names:
+                    outdata.loc[temp.index, n] = temp.values / len(use_well_names)
+
+            assert np.isclose(pumping_data.groupby('date').sum().loc[:, pumping_key], outdata.sum(axis=1)).all()
+            outdata.drop(columns=['w_068', 'w_025'], inplace=True)
+            if name == 'max_allo':
+                final_data.loc[:, name] = outdata.loc[outdata.index.year == 2020].sum()
+            else:
+                # get usage ranges
+                outdata.loc[:, 'year'] = outdata.index.year
+                outdata = outdata.groupby('year').sum()
+                outdata = outdata.drop(index=[2014, 2021])
+                for y in outdata.index:
+                    final_data.loc[:, f'{name}_{y}'] = outdata.loc[y]
+
+        loc_data = get_well_flowmeter_mapper()
+        idx = get_low_cond_array()
+        moraine = get_2d_moraine()
+        lake_array = get_lake_array()
+        for l in range(len(idx)):
+            idx[l] = idx[l] | np.isfinite(lake_array)
+        idx[0] = idx[0] | moraine
+        loc_data = loc_data.loc[:, ['ibound', 'use_x', 'use_y', 'i', 'j', 'k']]
+        loc_data = loc_data.loc[loc_data.ibound == 1]
+        loc_data.drop(['w_068', 'w_025'], inplace=True)
+        assert not idx[loc_data.k, loc_data.i, loc_data.j].any(), 'pumping in lake or low cond cells, or thin layer'
+
+        zones = get_model_zones()
+        for k, v in zones.items():
+            loc_data.loc[:, k] = v[loc_data.i, loc_data.j]
+
+        final_data = pd.merge(final_data, loc_data, right_index=True, left_index=True)
+        final_data.to_csv(processed_path)
+
+    if not include_near_river:
+        final_data = final_data.loc[~final_data.near_river]
+
+    return final_data
 
 
 def get_historical_max_allo_pumping_data(start_date, end_date, frequency='D', recalc=False, func='mean'):
@@ -248,6 +313,8 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    get_most_upto_date_allocation_info(recalc=True)
+    raise NotImplementedError
     get_historical_full_allo_pumping_data(None, None)
     locs = get_pumping_locs()
     get_model_zones(True)

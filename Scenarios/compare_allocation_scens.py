@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from project_base import proj_root, unbacked_dir
 from Scenarios.scenario_outputs import quantile_plots, q_qplots, compare_scenarios
 from Scenarios.model_info_scenarios import scen_tdis
-from Scenarios.allocation_scenarios import zones_to_model, get_pumping_in_zones
+from Scenarios.allocation_scenarios import zones_to_model, get_allocation_zone
 from Scenarios.allo_rch_hillside import get_allo_zone_rch_hillside
 from model_build.supporting_data_analysis.get_pumping_data import get_most_upto_date_allocation_info
 
@@ -107,13 +107,21 @@ def compare_grid_allocation_scens():
 
 
 def compare_current_allo_to_rch_hillside():
+    from model_build.project_model_tools import smt
+    from Scenarios.scen_period import scen_tdis
+    from Scenarios.supporting_data_analysis.pumping_data import get_pump_curve
+    outdir = proj_root.joinpath('Scenarios/allocation_results/allo_zone_rch/plots')
+    outdir.mkdir(exist_ok=True)
     all_rch_hill = get_allo_zone_rch_hillside()
-    # todo get current annual usage (min/mean/max)
-    # todo get max allocation (total)
-    # todo get max allocation (on pump curve)
     allo_data = get_most_upto_date_allocation_info()
+    pump_curve = get_pump_curve(scen_tdis)
+    pump_curve = pump_curve.iloc[1:53].flux.mean()
+    allo_data.loc[:, 'max_allo_pc'] = allo_data.loc[:, 'max_allo'] * pump_curve
 
     for zone, rch_hill in all_rch_hill.items():
+        zone_array = get_allocation_zone(zone)
+        temp_allo = smt.io.select_df_from_idx_array(allo_data, zone_array, d2_only=True)
+
         rch_hill.loc[:, 'total'] = rch_hill[['hill', 'scen_rch']].sum(axis=1)
         names = ['Hill inflow', 'Recharge', 'Total inflow']
         dfnames = ['hill', 'scen_rch', 'total']
@@ -126,6 +134,9 @@ def compare_current_allo_to_rch_hillside():
             else:
                 plot_data.append(temp.values)
                 positions.append(i)
+        names.append('Usage 2015-2020')
+        positions.append(i + 1)
+        plot_data.append([temp_allo[f'current_use_{y}'].sum() for y in range(2015, 2021)])
 
         fig, ax = plt.subplots(figsize=(10, 8))
         ax.violinplot(plot_data, positions=positions)
@@ -134,15 +145,21 @@ def compare_current_allo_to_rch_hillside():
         ax.set_ylabel('m3/year')
         ax.set_xticks(range(len(names)))
         ax.set_xticklabels(names)
-        ax.set_xlim(-0.5, len(names)-0.5)
+        ax.set_xlim(-0.5, len(names) - 0.5)
 
-        # todo usage as hlines
+        # max allo, allo on pumping curve as hlines
+        for k, pretty_k, c, va in zip(['max_allo', 'max_allo_pc'],
+                                      ['Max Allo.', 'Max Allo.\nPump Curve'],
+                                      ['red', 'darkorange'],
+                                      ['top', 'bottom']):
+            total = temp_allo[k].sum()
+            if total > 1:
+                ax.axhline(total, color=c)
+                ax.text(-0.4, total, pretty_k, color=c, va=va,
+                        bbox=dict(facecolor='white', edgecolor=c, pad=10.0))
 
         fig.tight_layout()
-        plt.show() # todo dadb and save
-
-        # todo
-    raise NotImplementedError
+        fig.savefig(outdir.joinpath(f'{zone}.png'))
 
 
 if __name__ == '__main__':
