@@ -663,6 +663,9 @@ def plot_3d_structure_spatial():
 
 
 if __name__ == '__main__':
+    bots = smt.get_bottoms()
+    smt.plot.plt_layer_slices(bots, 'bottom', contour=True, contour_levels=5, label_contours=True, base_map=True)
+    smt.plot.show()
     examine_3d()
     smt.plot.show()
     plot_3d_structure_spatial()

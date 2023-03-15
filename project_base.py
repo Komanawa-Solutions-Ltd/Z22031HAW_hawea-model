@@ -45,4 +45,7 @@ processed_param_dir = proj_root.joinpath('model_parameterisation/processed_data'
 base_scen_dir = proj_root.joinpath('Scenarios/base_data')
 processed_scen_dir = proj_root.joinpath('Scenarios/processed_input_data')
 
+
+butterfield_dir = proj_root.joinpath('Scenarios/wetland_setback_butterfield')
+
 # todo write up a users guide in the README.md
