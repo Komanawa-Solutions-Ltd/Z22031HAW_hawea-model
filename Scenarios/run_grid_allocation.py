@@ -34,7 +34,7 @@ def test_grid_allo():
     run_all_grid_allocation_scens(name='test_grid_run', local_cores=3, pump_rate=runs, rm_remote_files=False)
 
 
-def how_long_per_run():  # todo run once I have droplet setup
+def how_long_per_run():
     """
     individual times:
       * 100.124.148.71: 281.27804684638977s
@@ -68,7 +68,7 @@ def how_long_per_run():  # todo run once I have droplet setup
         script_path=opt_proj_root.joinpath('Scenarios/run_scenario.py'),
         conda_env='hawea',
         num_cores=num_cores,
-        core_weigtings=None,  # todo
+        core_weigtings=None,
         user_names=None,
         short_names=None,
         prepend_bash_commands=[

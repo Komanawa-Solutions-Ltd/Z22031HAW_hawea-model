@@ -61,7 +61,7 @@ def get_scen_pumping_data(pump_name, tdis, recalc=False):
         raise NotImplementedError(f'shouldnt get here unless {pump_name} is not fully implemented')
 
 
-def _get_iso_week_max_allo_pumping_pc(tdis, recalc):  # todo check
+def _get_iso_week_max_allo_pumping_pc(tdis, recalc):
     assert isinstance(tdis, TimeDis)
     save_path = processed_scen_dir.joinpath(f'iso_week_max_allo_pc_{tdis.name}.p')
     if save_path.exists() and not recalc:

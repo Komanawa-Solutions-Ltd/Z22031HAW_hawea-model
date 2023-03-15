@@ -2,40 +2,101 @@
 created matt_dumont 
 on: 15/03/23
 """
+import numpy as np
 import pandas as pd
 
-from Scenarios.wetland_setback_butterfield.scenarios import run_model_extrac_data, get_ssh_dist, run_multiple_models
+from Scenarios.wetland_setback_butterfield.scenarios import run_model_extrac_data, get_ssh_dist, run_multiple_models, \
+    wetland_name, output_suffix
 from Scenarios.wetland_setback_butterfield.model_bcs import get_wetland_loc
 from project_base import unbacked_dir
 from Scenarios.wetland_setback_butterfield.project_model_tools import smt
 
 
-def create_run_runs(max_pumping_rate, terrace_hk, flat_hk, terrace_sy, flat_sy,
-                    external_ips, local_cores,
-                    just_print_number=False, rerun=False):
-    run_name = '_'.join(
-        [str(e) for e in [max_pumping_rate, terrace_hk, flat_hk, terrace_sy, flat_sy]])  # todo scientic notation!
-    run_azimuths = []  # todo
-    run_distances = []  # todo
+def get_run_locs():
+    run_locs = []
+    run_azimuths = np.arange(0, 360, 45)
+    run_distances = [200, 500, ]
     base_locs = []
     for azimuth in run_azimuths:
         wet = get_wetland_loc(azimuth)
         base_locs.append(wet)
     base_locs = pd.concat(base_locs)
-    run_locs = []
     for dist in run_distances:
         locs = smt.io.get_new_points_from_points_azimuth(base_locs.copy(True), distance=dist, delta_azimuth=0)
         run_locs.append(locs)
+
+    run_azimuths = np.arange(0, 360, 20)
+    run_distances = [1000, 1500, 2000, 2500, ]
+    base_locs = []
+    for azimuth in run_azimuths:
+        wet = get_wetland_loc(azimuth)
+        base_locs.append(wet)
+    base_locs = pd.concat(base_locs)
+    for dist in run_distances:
+        locs = smt.io.get_new_points_from_points_azimuth(base_locs.copy(True), distance=dist, delta_azimuth=0)
+        run_locs.append(locs)
+
+    run_azimuths = np.arange(0, 360, 10)
+    run_distances = [3250, 4000, 5000]
+    base_locs = []
+    for azimuth in run_azimuths:
+        wet = get_wetland_loc(azimuth)
+        base_locs.append(wet)
+    base_locs = pd.concat(base_locs)
+    for dist in run_distances:
+        locs = smt.io.get_new_points_from_points_azimuth(base_locs.copy(True), distance=dist, delta_azimuth=0)
+        run_locs.append(locs)
+
     run_locs = pd.concat(run_locs).reset_index()
-    # todo allow a re-run (e.g. do outputs exist)
-    # todo cull runs if they land in no flow or are out of domain
-    # todo cull runs if land in a river cell
+
+    # cull runs if they land in no flow or are out of domain
+    i, j = smt.convert_coords_to_matix(run_locs.new_x, run_locs.new_y, coords_out_domain='coerce')
+    run_locs.loc[:, 'i'] = i
+    run_locs.loc[:, 'j'] = j
+    idx = np.isfinite(i) & (smt.get_no_flow(0)[i, j] == 1)
+    run_locs = run_locs.loc[idx]
     run_locs = run_locs.reset_index()
+    print(len(run_locs))
+    return run_locs
+
+
+def plot_pumps():
+    from Scenarios.wetland_setback_butterfield.model_bcs import get_riv
+    riv = get_riv(500)
+    well = {}
+    well[0] = get_run_locs()
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    for pkg, k, c in zip(['riv', 'well'], ['stage', 'flux'], ['b', 'r']):
+        print(pkg)
+        ax.set_title(pkg)
+        ax.scatter(*smt.convert_matrix_to_coords(eval(pkg)[0]['i'], eval(pkg)[0]['j']), color=c, label=pkg)
+
+    ax.scatter(*smt.convert_matrix_to_coords(*get_wetland_loc(30, return_just_kij=True)[1:]), color='purple',
+               label='wetland')
+    ax.legend()
+    smt.plot.show()
+
+
+def create_run_runs(max_pumping_rate, terrace_hk, flat_hk, terrace_sy, flat_sy, riv_cond,
+                    external_ips, local_cores,
+                    just_print_number=False, rerun=False):
+    run_name = '_'.join(
+        [f'{float(e):.1e}' for e in [max_pumping_rate, terrace_hk, flat_hk, terrace_sy, flat_sy, riv_cond]])
     runs = []
+    previously_completed_runs = unbacked_dir.joinpath(wetland_name).glob(f'**/*{output_suffix}')
+    previously_completed_runs = [e.name.replace(output_suffix, '') for e in previously_completed_runs]
+
+    run_locs = get_run_locs()
     for i in range(len(run_locs)):
         direction = run_locs.loc[i, 'direction']
         dist_from_old = run_locs.loc[i, 'dist_from_old']
         model_name = f'{direction}_{dist_from_old}'
+
+        # allow a re-run (e.g. do outputs exist)
+        if not rerun:
+            if model_name in previously_completed_runs:
+                continue
+
         temp = dict(
             model_name=model_name,
             model_ws=model_name,
@@ -45,6 +106,7 @@ def create_run_runs(max_pumping_rate, terrace_hk, flat_hk, terrace_sy, flat_sy,
             flat_hk=flat_hk,
             terrace_sy=terrace_sy,
             flat_sy=flat_sy,
+            riv_cond=riv_cond,
             rm_files=False,
             keep_list=False
         )
@@ -61,6 +123,7 @@ def test_run():
     terrace_hk = None  # todo
     flat_hk = None  # todo
     terrace_sy = None  # todo
+    riv_cond = None  # todo
     flat_sy = None  # todo
     run_model_extrac_data(
         model_name='test_keep_files',
@@ -71,6 +134,7 @@ def test_run():
         flat_hk=flat_hk,
         terrace_sy=terrace_sy,
         flat_sy=flat_sy,
+        riv_cond=riv_cond,
         rm_files=False,
         keep_list=False
     )
@@ -83,6 +147,7 @@ def test_run():
         flat_hk=flat_hk,
         terrace_sy=terrace_sy,
         flat_sy=flat_sy,
+        riv_cond=riv_cond,
         rm_files=True,
         keep_list=True
     )
@@ -96,6 +161,7 @@ def test_ssh_dist():  # todo run and check weighting
     flat_hk = None  # todo
     terrace_sy = None  # todo
     flat_sy = None  # todo
+    riv_cond = None  # todo
 
     runs = [
         dict(
@@ -107,6 +173,7 @@ def test_ssh_dist():  # todo run and check weighting
             flat_hk=flat_hk,
             terrace_sy=terrace_sy,
             flat_sy=flat_sy,
+            riv_cond=riv_cond,
             rm_files=False,
             keep_list=False
         ),
@@ -126,3 +193,7 @@ def test_ssh_dist():  # todo run and check weighting
     ssh_dist = get_ssh_dist(local_cores=4,
                             external_ips=['100.121.150.68'])  # todo others??? (yes spin up a small droplet)
     ssh_dist.get_core_weightings_from_test_runs(runs, kwargs_relative_to_base_dir=['model_ws'])
+
+
+if __name__ == '__main__':
+    plot_pumps()

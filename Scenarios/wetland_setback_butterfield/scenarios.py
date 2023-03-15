@@ -24,8 +24,8 @@ def get_oc_spd():
     return out
 
 
-output_suffix = 'outputs.csv'
-inputs_suffix = 'inputs.txt'
+output_suffix = '_outputs.csv'
+inputs_suffix = '_inputs.txt'
 
 
 def extract_outputs(model_ws, model_name, well_loc):
@@ -46,22 +46,23 @@ def extract_outputs(model_ws, model_name, well_loc):
     k, i, j = get_wetland_loc(0, return_just_kij=True)
     outdata.loc[:, 'wetland_hds'] = all_hds[:, k, i, j]
 
-    outdata.to_csv(model_ws.joinpath(f'{model_name}_{output_suffix}'))
+    outdata.to_csv(model_ws.joinpath(f'{model_name}{output_suffix}'))
 
 
 def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, terrace_hk, flat_hk,
-                          terrace_sy, flat_sy, rm_files=True, keep_list=False):
+                          terrace_sy, flat_sy, riv_cond, rm_files=True, keep_list=False):
     model_ws = Path(model_ws)
     model_ws.mkdir(exist_ok=True, parents=True)
     # write key input data
     well_spd, well_loc = get_wells(locs, max_pumping_rate)
-    with model_ws.joinpath(f'{model_name}_{inputs_suffix}').open('w') as f:
+    with model_ws.joinpath(f'{model_name}{inputs_suffix}').open('w') as f:
         f.write(f'{model_name = }\n')
         f.write(f'{max_pumping_rate = }\n')
         f.write(f'{terrace_hk = }\n')
         f.write(f'{flat_hk = }\n')
         f.write(f'{terrace_sy = }\n')
         f.write(f'{flat_sy = }\n')
+        f.write(f'{riv_cond = }\n')
         for k, i, j in well_loc.itertuples(False, None):
             f.write(f'well_loc = {k},{i},{j}\n')
     hk = get_hk(terrace_hk, flat_hk)
@@ -80,7 +81,7 @@ def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, terrace_
         strt=smt.get_tops()[0],
         chani=1,
         well_spd=well_spd,
-        riv_spd=get_riv(),
+        riv_spd=get_riv(riv_cond),
         oc_spd=get_oc_spd(),
         rch=get_rch(),
         ghb_spd=None,
@@ -132,7 +133,7 @@ def get_ssh_dist(local_cores, external_ips):
 
     for ip in external_ips:
         if ip not in base_paths:
-            base_paths[ip] = unbacked_dir.joinpath('grid_scenarios')
+            base_paths[ip] = unbacked_dir.joinpath(wetland_name)
         if ip not in num_cores:
             num_cores[ip] = None
         if ip not in core_weigtings:
@@ -142,7 +143,7 @@ def get_ssh_dist(local_cores, external_ips):
     ssh_dist = SshDist(
         base_path=base_paths,
         ips=['100.124.148.71'] + external_ips,
-        script_path=opt_proj_root.joinpath('Scenarios/run_scenario.py'), # todo need to update this
+        script_path=opt_proj_root.joinpath('Scenarios/wetland_setback_butterfield/run_scenario.py'),
         conda_env='hawea',
         num_cores=num_cores,
         core_weigtings=core_weigtings,
