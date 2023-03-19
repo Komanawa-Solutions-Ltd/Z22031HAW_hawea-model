@@ -5,6 +5,7 @@ on: 3/11/22
 import traceback
 from pathlib import Path
 import flopy
+import numpy as np
 import pandas as pd
 from project_base import unbacked_dir, opt_proj_root, opt_model_tools
 from Scenarios.wetland_setback_butterfield.params import get_hk, get_sy
@@ -19,8 +20,7 @@ def get_oc_spd():
     base_list = ['save head', 'save budget']
     out = {}
     for p, nstp in zip(tdis.pers, tdis.nstp):
-        for n in range(nstp):
-            out[(p, n)] = base_list
+        out[(p, nstp - 1)] = base_list
     return out
 
 
@@ -39,7 +39,7 @@ def extract_outputs(model_ws, model_name, well_loc):
 
     # extract actual well puming rate from cbc file!!!!
     with flopy.utils.CellBudgetFile(hdsfile.with_suffix('.cbc')) as cbc:
-        all_pump = cbc.get_data(full3D=True, text='WELLS')
+        all_pump = np.array(cbc.get_data(full3D=True, text='WELLS'))
     for k, i, j in well_loc.itertuples(False, None):
         outdata.loc[:, f'well_pump_{k}_{i}_{j}'] = all_pump[:, k, i, j]
 
@@ -78,12 +78,12 @@ def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, terrace_
         layer_avg=0,
         ss=1e-6,
         sy=sy,
-        strt=smt.get_tops()[0],
+        strt=smt.get_tops()[0],  # todo set to a better start value (quicker solve)
         chani=1,
         well_spd=well_spd,
         riv_spd=get_riv(riv_cond),
         oc_spd=get_oc_spd(),
-        rch=get_rch(),
+        rch={0:get_rch()[0]},  # keynote hard coded in static recharge here to increase run speed.
         ghb_spd=None,
         options='COMPLEX',
         drn_spd=None,

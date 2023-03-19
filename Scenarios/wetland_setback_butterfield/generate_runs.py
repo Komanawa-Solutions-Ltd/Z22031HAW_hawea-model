@@ -4,7 +4,6 @@ on: 15/03/23
 """
 import numpy as np
 import pandas as pd
-
 from Scenarios.wetland_setback_butterfield.scenarios import run_model_extrac_data, get_ssh_dist, run_multiple_models, \
     wetland_name, output_suffix
 from Scenarios.wetland_setback_butterfield.model_bcs import get_wetland_loc
@@ -120,11 +119,11 @@ def create_run_runs(max_pumping_rate, terrace_hk, flat_hk, terrace_sy, flat_sy, 
 
 def test_run():
     locs = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(90), 500, delta_azimuth=0)
-    terrace_hk = None  # todo
-    flat_hk = None  # todo
-    terrace_sy = None  # todo
-    riv_cond = None  # todo
-    flat_sy = None  # todo
+    terrace_hk = 1
+    flat_hk = 1
+    terrace_sy = 1
+    flat_sy = 1
+    riv_cond = 1500
     run_model_extrac_data(
         model_name='test_keep_files',
         model_ws=unbacked_dir.joinpath('test_keep'),
@@ -138,6 +137,9 @@ def test_run():
         rm_files=False,
         keep_list=False
     )
+
+    from Scenarios.wetland_setback_butterfield.process_results import plot_list_failures
+    plot_list_failures(unbacked_dir.joinpath('test_keep', 'test_keep_files.list'), unbacked_dir.joinpath('test_keep'))
     run_model_extrac_data(
         model_name='test_cull_files',
         model_ws=unbacked_dir.joinpath('test_cull'),
@@ -157,11 +159,11 @@ def test_ssh_dist():  # todo run and check weighting
     locs = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(90), 500, delta_azimuth=0)
     locs2 = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(90), 1000, delta_azimuth=0)
 
-    terrace_hk = None  # todo
-    flat_hk = None  # todo
-    terrace_sy = None  # todo
-    flat_sy = None  # todo
-    riv_cond = None  # todo
+    terrace_hk = 1
+    flat_hk = 1
+    terrace_sy = 1
+    flat_sy = 1
+    riv_cond = 1500
 
     runs = [
         dict(
@@ -174,7 +176,7 @@ def test_ssh_dist():  # todo run and check weighting
             terrace_sy=terrace_sy,
             flat_sy=flat_sy,
             riv_cond=riv_cond,
-            rm_files=False,
+            rm_files=True,
             keep_list=False
         ),
         dict(
@@ -186,14 +188,14 @@ def test_ssh_dist():  # todo run and check weighting
             flat_hk=flat_hk,
             terrace_sy=terrace_sy,
             flat_sy=flat_sy,
-            rm_files=False,
+            rm_files=True,
             keep_list=False
         ),
     ]
     ssh_dist = get_ssh_dist(local_cores=4,
-                            external_ips=['100.121.150.68'])  # todo others??? (yes spin up a small droplet)
+                            external_ips=['100.121.150.68', ''])  # todo others??? (yes spin up a small droplet)
     ssh_dist.get_core_weightings_from_test_runs(runs, kwargs_relative_to_base_dir=['model_ws'])
 
 
 if __name__ == '__main__':
-    plot_pumps()
+    test_ssh_dist()

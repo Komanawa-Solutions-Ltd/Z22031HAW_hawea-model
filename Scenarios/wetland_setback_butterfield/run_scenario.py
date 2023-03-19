@@ -3,9 +3,11 @@ created matt_dumont
 on: 16/03/23
 """
 import sys
+
 print(sys.path)
 import warnings
 from pandas.errors import PerformanceWarning
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=PerformanceWarning)
 from pathlib import Path
@@ -14,7 +16,7 @@ import socket
 from Scenarios.wetland_setback_butterfield.scenarios import run_model_mp
 from run_managers.run_multiprocess import run_multiprocess
 
-# todo memory profile!
+# keynote c. 1 gb/core
 
 if __name__ == '__main__':
     pickle_path = Path(sys.argv[1])

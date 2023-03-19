@@ -27,7 +27,7 @@ lry = ebounds.loc['miny']
 base_map_path = base_model_build_data_dir.joinpath('nz-topo50-maps.jpg')
 model_version_name = 'v1'
 
-grid_space = 10
+grid_space = 25
 cols = int((lrx - ulx) // grid_space) + 1
 rows = int((uly - lry) // grid_space) + 1
 
@@ -124,23 +124,27 @@ def simplify_upper_clutha_dem(recalc=False):
     return data
 
 
-def _get_top_array(recalc=False):
+def _get_top_array(retun_idx = False, recalc=False):
     save_path = butterfield_dir.joinpath('processed_input_data', 'model_top.npy')
     if save_path.exists() and not recalc:
         return np.load(save_path)
 
     clutha_dem = simplify_upper_clutha_dem()
     all_dem = simplify_hawea_dem()
-    use_dem = clutha_dem.copy()
-    use_dem[np.isnan(use_dem)] = all_dem[np.isnan(use_dem)]
+    use_dem = all_dem.copy()
+    idx = smt.get_model_zeros()+1
+    #todo seeing if it runs better idx = np.isnan(use_dem) | (np.abs(all_dem-clutha_dem)/all_dem > 0.07)
+    #todo seeing if it runs better use_dem[~idx] = clutha_dem[~idx]
     np.save(save_path, use_dem)
+    if retun_idx:
+        return use_dem, idx
     return use_dem
 
 
 def elv_calc():
     return np.concatenate((
-        _get_top_array(),
-        smt.get_model_zeros(True) + 260  # loosely based on hawea model bottom.
+        _get_top_array()[np.newaxis],
+        smt.get_model_zeros(True) + 255  # loosely based on hawea model bottom.
     ), axis=0)
 
 
@@ -163,4 +167,11 @@ tdis = TimeDis(
     nstp=nstp
 )
 if __name__ == '__main__':
-    _get_top_array(True)
+    top, idx = _get_top_array(True, True)
+    smt.plot.plt_matrix(top, title='top', base_map=True)
+    smt.plot.plt_matrix(idx, title='idx', base_map=True)
+    t = smt.get_elv_db()
+    smt.plot.plt_matrix(t[0]-t[1], vmax=1)
+
+    smt.plot.show()
+    pass
