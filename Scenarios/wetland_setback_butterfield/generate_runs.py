@@ -54,7 +54,7 @@ def get_run_locs():
     i, j = smt.convert_coords_to_matix(run_locs.new_x, run_locs.new_y, coords_out_domain='coerce')
     run_locs.loc[:, 'i'] = i
     run_locs.loc[:, 'j'] = j
-    idx = np.isfinite(i) & (smt.get_no_flow(0)[i, j] == 1)
+    idx = i >= 0 & (smt.get_no_flow(0)[i, j] == 1)
     run_locs = run_locs.loc[idx]
     run_locs = run_locs.reset_index()
     print(len(run_locs))
@@ -83,16 +83,16 @@ def create_run_runs(run_name, max_pumping_rates, terrace_hks, flat_hks, terrace_
                     just_print_number=False, rerun=False):
     runs = []
     run_locs = get_run_locs()
-    for (max_pumping_rate, terrace_hk, flat_hk,
-         terrace_sy, flat_sy, riv_cond) in zip(max_pumping_rates, terrace_hks, flat_hks,
-                                               terrace_sys, flat_sys, riv_conds):
+    for i, (max_pumping_rate, terrace_hk, flat_hk,
+            terrace_sy, flat_sy, riv_cond) in enumerate(zip(max_pumping_rates, terrace_hks, flat_hks,
+                                                            terrace_sys, flat_sys, riv_conds)):
         previously_completed_runs = unbacked_dir.joinpath(wetland_name).glob(f'**/*{output_suffix}')
         previously_completed_runs = [e.name.replace(output_suffix, '') for e in previously_completed_runs]
 
         for i in range(len(run_locs)):
             direction = run_locs.loc[i, 'direction']
             dist_from_old = run_locs.loc[i, 'dist_from_old']
-            model_name = f'{direction}_{dist_from_old}'
+            model_name = f'{direction}_{dist_from_old}_group_{i}'
 
             # allow a re-run (e.g. do outputs exist)
             if not rerun:
@@ -109,7 +109,7 @@ def create_run_runs(run_name, max_pumping_rates, terrace_hks, flat_hks, terrace_
                 terrace_sy=terrace_sy,
                 flat_sy=flat_sy,
                 riv_cond=riv_cond,
-                rm_files=False,
+                rm_files=True,
                 keep_list=False
             )
             runs.append(temp)
@@ -197,7 +197,8 @@ def test_ssh_dist():
     ]
     ssh_dist = get_ssh_dist(local_cores=4,
                             external_ips=['100.121.150.68'])
-    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test4', kwargs_relative_to_base_dir=['model_ws'])
+    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test5', kwargs_relative_to_base_dir=['model_ws'],
+                                                rm_files=False, compile=True)
 
     # added a 4vcpu cpu optimised droplet to test
 
@@ -213,7 +214,7 @@ def test_ssh_dist():
 def tranche_1(just_print_number=True, rerun=False):
     local_cores = 8
     external_ips = ['100.121.150.68']
-    run_name = 'tranche1'
+    run_name = 'tranche1a'
     rates = [500, 1000, 5000]
     hks = [.1, 1, 10]
     syvals = [.1, 1, 10]
@@ -233,7 +234,6 @@ def tranche_1(just_print_number=True, rerun=False):
         flat_sys.append(fsy)
         riv_conds.append(rcond)
 
-
     create_run_runs(run_name,
                     max_pumping_rates=max_pumping_rates,
                     terrace_hks=terrace_hks,
@@ -247,4 +247,6 @@ def tranche_1(just_print_number=True, rerun=False):
 
 
 if __name__ == '__main__':
-    tranche_1(just_print_number=False)
+    import pickle
+    test_ssh_dist()
+    tranche_1(just_print_number=True)

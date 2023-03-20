@@ -115,7 +115,7 @@ def run_model_mp(kwargs):
         run_model_extrac_data(**kwargs)
     except Exception:
         with model_ws.joinpath('log.log').open('w') as f:
-            f.write(traceback.format_exception())
+            f.write(traceback.format_exc())
 
 
 def get_ssh_dist(local_cores, external_ips):
@@ -165,3 +165,5 @@ def run_multiple_models(run_name, runs, local_cores, external_ips=(), rm_remote_
     print(f'running {len(runs)} models')
     ssh_dist.distribute_runs(run_name=run_name, runs=runs, rm_remote_files=rm_remote_files, run=True, compile=True,
                              run_in_series=False, kwargs_relative_to_base_dir=['model_ws'])
+if __name__ == '__main__':
+    pass

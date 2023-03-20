@@ -35,7 +35,7 @@ def get_hk(terrace_hk, flat_hk, recalc=False):
         with tempfile.TemporaryDirectory() as tdir:
             tdir = Path(tdir)
             hawea_smt.io.array_to_raster(tdir.joinpath('temp.tif'), hk)
-            hk_base = smt.io.raster_to_array(tdir.joinpath('temp.tif'), 'mean').astype(int)
+            hk_base = smt.io.raster_to_array(tdir.joinpath('temp.tif'), 'mean')
         np.save(save_path, hk_base)
 
     hk_base[get_terrace_zone()] *= terrace_hk
@@ -55,9 +55,17 @@ def get_sy(terrace_sy, flat_sy, recalc=False):
         with tempfile.TemporaryDirectory() as tdir:
             tdir = Path(tdir)
             hawea_smt.io.array_to_raster(tdir.joinpath('temp.tif'), sy)
-            sy_base = smt.io.raster_to_array(tdir.joinpath('temp.tif'), 'mean').astype(int)
+            sy_base = smt.io.raster_to_array(tdir.joinpath('temp.tif'), 'mean')
         np.save(save_path, sy_base)
 
     sy_base[get_terrace_zone()] *= terrace_sy
     sy_base[~get_terrace_zone()] *= flat_sy
-    return sy_base
+    return sy_base[np.newaxis]
+
+if __name__ == '__main__':
+    sy = get_sy(1, 1, True)
+    hk = get_hk(1,1, True)
+
+    smt.plot.plt_matrix(sy[0], base_map=True, no_flow_layer=0, title='sy')
+    smt.plot.plt_matrix(hk[0], base_map=True, no_flow_layer=0, title='hk')
+    smt.plot.show()
