@@ -110,7 +110,7 @@ def create_run_runs(run_name, max_pumping_rates, terrace_hks, flat_hks, terrace_
                 flat_sy=flat_sy,
                 riv_cond=riv_cond,
                 rm_files=True,
-                keep_list=False
+                keep_list=True
             )
             runs.append(temp)
 
@@ -197,7 +197,7 @@ def test_ssh_dist():
         ),
     ]
     ssh_dist = get_ssh_dist(local_cores=4,
-                            external_ips=['100.121.150.68'])
+                            external_ips=['100.121.150.68', '170.64.161.239'])
     ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test7', kwargs_relative_to_base_dir=['model_ws'],
                                                 rm_files=False, compile=True)
 
@@ -213,9 +213,9 @@ def test_ssh_dist():
 
 
 def tranche_1(just_print_number=True, rerun=False):
-    local_cores = 4
-    external_ips = ['100.121.150.68']
-    run_name = 'tranche1b'
+    local_cores = 8
+    external_ips = ['100.121.150.68', '170.64.161.239']
+    run_name = 'tranche1c'
     rates = [500, 1000, 5000]
     hks = [.1, 1, 10]
     syvals = [.1, 1, 10]

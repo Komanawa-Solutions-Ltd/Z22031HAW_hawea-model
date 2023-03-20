@@ -130,7 +130,7 @@ def get_ssh_dist(local_cores, external_ips):
         '100.121.150.68': None,
     }
 
-    core_weigtings = {'100.124.148.71': 3.0, '100.121.150.68': 1.0}
+    core_weigtings = {'100.124.148.71': 2.5, '100.121.150.68': 1.0}
 
     for ip in external_ips:
         if ip not in base_paths:
@@ -138,7 +138,7 @@ def get_ssh_dist(local_cores, external_ips):
         if ip not in num_cores:
             num_cores[ip] = None
         if ip not in core_weigtings:
-            core_weigtings[ip] = 3.460
+            core_weigtings[ip] = 1.08
 
     branch = 'main'
     ssh_dist = SshDist(
