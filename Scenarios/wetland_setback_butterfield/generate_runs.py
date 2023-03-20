@@ -170,8 +170,8 @@ def test_ssh_dist():
 
     runs = [
         dict(
-            model_name='test_keep_files1',
-            model_ws='test_keep',
+            model_name='test_rm',
+            model_ws='test_rm',
             locs=locs,
             max_pumping_rate=500,
             terrace_hk=terrace_hk,
@@ -180,10 +180,10 @@ def test_ssh_dist():
             flat_sy=flat_sy,
             riv_cond=riv_cond,
             rm_files=True,
-            keep_list=False
+            keep_list=True
         ),
         dict(
-            model_name='test_keep_files1',
+            model_name='test_keep',
             model_ws='test_keep',
             locs=locs2,
             max_pumping_rate=500,
@@ -191,13 +191,14 @@ def test_ssh_dist():
             flat_hk=flat_hk,
             terrace_sy=terrace_sy,
             flat_sy=flat_sy,
-            rm_files=True,
+            riv_cond=riv_cond,
+            rm_files=False,
             keep_list=False
         ),
     ]
     ssh_dist = get_ssh_dist(local_cores=4,
                             external_ips=['100.121.150.68'])
-    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test5', kwargs_relative_to_base_dir=['model_ws'],
+    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test7', kwargs_relative_to_base_dir=['model_ws'],
                                                 rm_files=False, compile=True)
 
     # added a 4vcpu cpu optimised droplet to test
@@ -212,9 +213,9 @@ def test_ssh_dist():
 
 
 def tranche_1(just_print_number=True, rerun=False):
-    local_cores = 8
+    local_cores = 4
     external_ips = ['100.121.150.68']
-    run_name = 'tranche1a'
+    run_name = 'tranche1b'
     rates = [500, 1000, 5000]
     hks = [.1, 1, 10]
     syvals = [.1, 1, 10]
@@ -248,5 +249,4 @@ def tranche_1(just_print_number=True, rerun=False):
 
 if __name__ == '__main__':
     import pickle
-    test_ssh_dist()
-    tranche_1(just_print_number=True)
+    tranche_1(just_print_number=False)

@@ -105,7 +105,8 @@ def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, terrace_
                     file.unlink()
             elif output_suffix in file.name or inputs_suffix in file.name:
                 continue
-            file.unlink()
+            else:
+                file.unlink()
 
 
 def run_model_mp(kwargs):
@@ -129,7 +130,7 @@ def get_ssh_dist(local_cores, external_ips):
         '100.121.150.68': None,
     }
 
-    core_weigtings = {'100.124.148.71': 5.18277, '100.121.150.68': 1.0}
+    core_weigtings = {'100.124.148.71': 3.0, '100.121.150.68': 1.0}
 
     for ip in external_ips:
         if ip not in base_paths:
