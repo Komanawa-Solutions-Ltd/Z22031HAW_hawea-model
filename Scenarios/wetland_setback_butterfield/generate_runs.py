@@ -197,7 +197,7 @@ def test_ssh_dist():
     ]
     ssh_dist = get_ssh_dist(local_cores=4,
                             external_ips=['100.121.150.68'])
-    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test3', kwargs_relative_to_base_dir=['model_ws'])
+    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test4', kwargs_relative_to_base_dir=['model_ws'])
 
     # added a 4vcpu cpu optimised droplet to test
 
@@ -234,7 +234,7 @@ def tranche_1(just_print_number=True, rerun=False):
         riv_conds.append(rcond)
 
 
-    create_run_runs(run_name,  # todo possibly get rid of steady state as part of the dataset (pass starting heads)
+    create_run_runs(run_name,
                     max_pumping_rates=max_pumping_rates,
                     terrace_hks=terrace_hks,
                     flat_hks=flat_hks,
@@ -247,6 +247,4 @@ def tranche_1(just_print_number=True, rerun=False):
 
 
 if __name__ == '__main__':
-    test_ssh_dist()
-    tranche_1()
-    plot_pumps()
+    tranche_1(just_print_number=False)
