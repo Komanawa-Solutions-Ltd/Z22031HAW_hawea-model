@@ -211,8 +211,8 @@ def test_ssh_dist():
 
 
 def tranche_1(just_print_number=True, rerun=False):
-    local_cores = []  # todo
-    external_ips = []  # todo
+    local_cores = 8
+    external_ips = ['100.121.150.68']
     run_name = 'tranche1'
     rates = [500, 1000, 5000]
     hks = [.1, 1, 10]
