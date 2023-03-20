@@ -2,6 +2,8 @@
 created matt_dumont 
 on: 15/03/23
 """
+import itertools
+
 import numpy as np
 import pandas as pd
 from Scenarios.wetland_setback_butterfield.scenarios import run_model_extrac_data, get_ssh_dist, run_multiple_models, \
@@ -13,7 +15,7 @@ from Scenarios.wetland_setback_butterfield.project_model_tools import smt
 
 def get_run_locs():
     run_locs = []
-    run_azimuths = np.arange(0, 360, 45)
+    run_azimuths = np.arange(0, 360, 60)
     run_distances = [200, 500, ]
     base_locs = []
     for azimuth in run_azimuths:
@@ -24,7 +26,7 @@ def get_run_locs():
         locs = smt.io.get_new_points_from_points_azimuth(base_locs.copy(True), distance=dist, delta_azimuth=0)
         run_locs.append(locs)
 
-    run_azimuths = np.arange(0, 360, 20)
+    run_azimuths = np.arange(0, 360, 30)
     run_distances = [1000, 1500, 2000, 2500, ]
     base_locs = []
     for azimuth in run_azimuths:
@@ -35,8 +37,8 @@ def get_run_locs():
         locs = smt.io.get_new_points_from_points_azimuth(base_locs.copy(True), distance=dist, delta_azimuth=0)
         run_locs.append(locs)
 
-    run_azimuths = np.arange(0, 360, 10)
-    run_distances = [3250, 4000, 5000]
+    run_azimuths = np.arange(0, 360, 30)
+    run_distances = [3250, 4000]
     base_locs = []
     for azimuth in run_azimuths:
         wet = get_wetland_loc(azimuth)
@@ -76,40 +78,41 @@ def plot_pumps():
     smt.plot.show()
 
 
-def create_run_runs(max_pumping_rate, terrace_hk, flat_hk, terrace_sy, flat_sy, riv_cond,
+def create_run_runs(run_name, max_pumping_rates, terrace_hks, flat_hks, terrace_sys, flat_sys, riv_conds,
                     external_ips, local_cores,
                     just_print_number=False, rerun=False):
-    run_name = '_'.join(
-        [f'{float(e):.1e}' for e in [max_pumping_rate, terrace_hk, flat_hk, terrace_sy, flat_sy, riv_cond]])
     runs = []
-    previously_completed_runs = unbacked_dir.joinpath(wetland_name).glob(f'**/*{output_suffix}')
-    previously_completed_runs = [e.name.replace(output_suffix, '') for e in previously_completed_runs]
-
     run_locs = get_run_locs()
-    for i in range(len(run_locs)):
-        direction = run_locs.loc[i, 'direction']
-        dist_from_old = run_locs.loc[i, 'dist_from_old']
-        model_name = f'{direction}_{dist_from_old}'
+    for (max_pumping_rate, terrace_hk, flat_hk,
+         terrace_sy, flat_sy, riv_cond) in zip(max_pumping_rates, terrace_hks, flat_hks,
+                                               terrace_sys, flat_sys, riv_conds):
+        previously_completed_runs = unbacked_dir.joinpath(wetland_name).glob(f'**/*{output_suffix}')
+        previously_completed_runs = [e.name.replace(output_suffix, '') for e in previously_completed_runs]
 
-        # allow a re-run (e.g. do outputs exist)
-        if not rerun:
-            if model_name in previously_completed_runs:
-                continue
+        for i in range(len(run_locs)):
+            direction = run_locs.loc[i, 'direction']
+            dist_from_old = run_locs.loc[i, 'dist_from_old']
+            model_name = f'{direction}_{dist_from_old}'
 
-        temp = dict(
-            model_name=model_name,
-            model_ws=model_name,
-            locs=run_locs.loc[[i]],
-            max_pumping_rate=max_pumping_rate,
-            terrace_hk=terrace_hk,
-            flat_hk=flat_hk,
-            terrace_sy=terrace_sy,
-            flat_sy=flat_sy,
-            riv_cond=riv_cond,
-            rm_files=False,
-            keep_list=False
-        )
-        runs.append(temp)
+            # allow a re-run (e.g. do outputs exist)
+            if not rerun:
+                if model_name in previously_completed_runs:
+                    continue
+
+            temp = dict(
+                model_name=model_name,
+                model_ws=model_name,
+                locs=run_locs.loc[[i]],
+                max_pumping_rate=max_pumping_rate,
+                terrace_hk=terrace_hk,
+                flat_hk=flat_hk,
+                terrace_sy=terrace_sy,
+                flat_sy=flat_sy,
+                riv_cond=riv_cond,
+                rm_files=False,
+                keep_list=False
+            )
+            runs.append(temp)
 
     print('number of runs:', len(runs))
     if just_print_number:
@@ -155,7 +158,7 @@ def test_run():
     )
 
 
-def test_ssh_dist():  # todo run and check weighting
+def test_ssh_dist():
     locs = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(90), 500, delta_azimuth=0)
     locs2 = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(90), 1000, delta_azimuth=0)
 
@@ -167,8 +170,8 @@ def test_ssh_dist():  # todo run and check weighting
 
     runs = [
         dict(
-            model_name='test_keep_files',
-            model_ws=unbacked_dir.joinpath('test_keep'),
+            model_name='test_keep_files1',
+            model_ws='test_keep',
             locs=locs,
             max_pumping_rate=500,
             terrace_hk=terrace_hk,
@@ -180,8 +183,8 @@ def test_ssh_dist():  # todo run and check weighting
             keep_list=False
         ),
         dict(
-            model_name='test_keep_files',
-            model_ws=unbacked_dir.joinpath('test_keep'),
+            model_name='test_keep_files1',
+            model_ws='test_keep',
             locs=locs2,
             max_pumping_rate=500,
             terrace_hk=terrace_hk,
@@ -193,9 +196,57 @@ def test_ssh_dist():  # todo run and check weighting
         ),
     ]
     ssh_dist = get_ssh_dist(local_cores=4,
-                            external_ips=['100.121.150.68', ''])  # todo others??? (yes spin up a small droplet)
-    ssh_dist.get_core_weightings_from_test_runs(runs, kwargs_relative_to_base_dir=['model_ws'])
+                            external_ips=['100.121.150.68'])
+    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test3', kwargs_relative_to_base_dir=['model_ws'])
+
+    # added a 4vcpu cpu optimised droplet to test
+
+    # individual times:
+    #   * 100.124.148.71: 221.1062831878662s
+    #   * 100.121.150.68: 1145.9440772533417s
+    #   * 170.64.138.9: 331.1592597961426s
+    #
+    #
+    # weights: {'100.124.148.71': 5.182774820920279, '100.121.150.68': 1.0, '170.64.138.9': 3.460401735282203}
+
+
+def tranche_1(just_print_number=True, rerun=False):
+    local_cores = []  # todo
+    external_ips = []  # todo
+    run_name = 'tranche1'
+    rates = [500, 1000, 5000]
+    hks = [.1, 1, 10]
+    syvals = [.1, 1, 10]
+    riv_vals = [750, 1500, 2500]
+    max_pumping_rates = []
+    terrace_hks = []
+    flat_hks = []
+    terrace_sys = []
+    flat_sys = []
+    riv_conds = []
+
+    for mp, fhk, fsy, rcond in itertools.product(rates, hks, syvals, riv_vals):
+        max_pumping_rates.append(mp)
+        terrace_hks.append(fhk)
+        flat_hks.append(fhk)
+        terrace_sys.append(fsy)
+        flat_sys.append(fsy)
+        riv_conds.append(rcond)
+
+
+    create_run_runs(run_name,  # todo possibly get rid of steady state as part of the dataset (pass starting heads)
+                    max_pumping_rates=max_pumping_rates,
+                    terrace_hks=terrace_hks,
+                    flat_hks=flat_hks,
+                    terrace_sys=terrace_sys,
+                    flat_sys=flat_sys,
+                    riv_conds=riv_conds,
+                    external_ips=external_ips, local_cores=local_cores,
+
+                    just_print_number=just_print_number, rerun=rerun)
 
 
 if __name__ == '__main__':
     test_ssh_dist()
+    tranche_1()
+    plot_pumps()

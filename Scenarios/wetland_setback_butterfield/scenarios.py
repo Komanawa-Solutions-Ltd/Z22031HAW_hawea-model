@@ -83,7 +83,7 @@ def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, terrace_
         well_spd=well_spd,
         riv_spd=get_riv(riv_cond),
         oc_spd=get_oc_spd(),
-        rch={0:get_rch()[0]},  # keynote hard coded in static recharge here to increase run speed.
+        rch={0: get_rch()[0]},  # keynote hard coded in static recharge here to increase run speed.
         ghb_spd=None,
         options='COMPLEX',
         drn_spd=None,
@@ -129,7 +129,7 @@ def get_ssh_dist(local_cores, external_ips):
         '100.121.150.68': None,
     }
 
-    core_weigtings = {'100.124.148.71': 5.774154806025006, '100.121.150.68': 1.0}
+    core_weigtings = {'100.124.148.71': 5.18277, '100.121.150.68': 1.0}
 
     for ip in external_ips:
         if ip not in base_paths:
@@ -137,7 +137,7 @@ def get_ssh_dist(local_cores, external_ips):
         if ip not in num_cores:
             num_cores[ip] = None
         if ip not in core_weigtings:
-            core_weigtings[ip] = 3.1815599663742145
+            core_weigtings[ip] = 3.460
 
     branch = 'main'
     ssh_dist = SshDist(
