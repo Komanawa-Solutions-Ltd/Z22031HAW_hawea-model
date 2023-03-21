@@ -34,14 +34,15 @@ def extract_outputs(model_ws, model_name, well_loc):
     outdata = pd.DataFrame(index=tdis.middle_step_dates)
     with flopy.utils.HeadFile(hdsfile) as hds:
         all_hds = hds.get_alldata()
-    for k, i, j in well_loc.itertuples(False, None):
-        outdata.loc[:, f'well_hds_{k}_{i}_{j}'] = all_hds[:, k, i, j]
+    if well_loc is not None:
+        for k, i, j in well_loc.itertuples(False, None):
+            outdata.loc[:, f'well_hds_{k}_{i}_{j}'] = all_hds[:, k, i, j]
 
-    # extract actual well puming rate from cbc file!!!!
-    with flopy.utils.CellBudgetFile(hdsfile.with_suffix('.cbc')) as cbc:
-        all_pump = np.array(cbc.get_data(full3D=True, text='WELLS'))
-    for k, i, j in well_loc.itertuples(False, None):
-        outdata.loc[:, f'well_pump_{k}_{i}_{j}'] = all_pump[:, k, i, j]
+        # extract actual well puming rate from cbc file!!!!
+        with flopy.utils.CellBudgetFile(hdsfile.with_suffix('.cbc')) as cbc:
+            all_pump = np.array(cbc.get_data(full3D=True, text='WELLS'))
+        for k, i, j in well_loc.itertuples(False, None):
+            outdata.loc[:, f'well_pump_{k}_{i}_{j}'] = all_pump[:, k, i, j]
 
     k, i, j = get_wetland_loc(0, return_just_kij=True)
     outdata.loc[:, 'wetland_hds'] = all_hds[:, k, i, j]
@@ -170,5 +171,7 @@ def run_multiple_models(run_name, runs, local_cores, external_ips=(), rm_remote_
     print(f'running {len(runs)} models')
     ssh_dist.distribute_runs(run_name=run_name, runs=runs, rm_remote_files=rm_remote_files, run=True, compile=True,
                              run_in_series=False, kwargs_relative_to_base_dir=['model_ws'])
+
+
 if __name__ == '__main__':
     pass
