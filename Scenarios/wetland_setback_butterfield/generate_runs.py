@@ -83,7 +83,7 @@ def create_run_runs(run_name, max_pumping_rates, terrace_hks, flat_hks, terrace_
                     just_print_number=False, rerun=False):
     runs = []
     run_locs = get_run_locs()
-    for i, (max_pumping_rate, terrace_hk, flat_hk,
+    for groupnum, (max_pumping_rate, terrace_hk, flat_hk,
             terrace_sy, flat_sy, riv_cond) in enumerate(zip(max_pumping_rates, terrace_hks, flat_hks,
                                                             terrace_sys, flat_sys, riv_conds)):
         previously_completed_runs = unbacked_dir.joinpath(wetland_name).glob(f'**/*{output_suffix}')
@@ -92,7 +92,7 @@ def create_run_runs(run_name, max_pumping_rates, terrace_hks, flat_hks, terrace_
         for i in range(len(run_locs)):
             direction = run_locs.loc[i, 'direction']
             dist_from_old = run_locs.loc[i, 'dist_from_old']
-            model_name = f'{direction}_{dist_from_old}_group_{i}'
+            model_name = f'{direction}_{dist_from_old}_group_{groupnum}'
 
             # allow a re-run (e.g. do outputs exist)
             if not rerun:
