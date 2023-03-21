@@ -54,7 +54,10 @@ def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, terrace_
     model_ws = Path(model_ws)
     model_ws.mkdir(exist_ok=True, parents=True)
     # write key input data
-    well_spd, well_loc = get_wells(locs, max_pumping_rate)
+    if locs is not None:
+        well_spd, well_loc = get_wells(locs, max_pumping_rate)
+    else:
+        well_spd, well_loc = None, None
     with model_ws.joinpath(f'{model_name}{inputs_suffix}').open('w') as f:
         f.write(f'{model_name = }\n')
         f.write(f'{max_pumping_rate = }\n')
@@ -63,8 +66,9 @@ def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, terrace_
         f.write(f'{terrace_sy = }\n')
         f.write(f'{flat_sy = }\n')
         f.write(f'{riv_cond = }\n')
-        for k, i, j in well_loc.itertuples(False, None):
-            f.write(f'well_loc = {k},{i},{j}\n')
+        if well_loc is not None:
+            for k, i, j in well_loc.itertuples(False, None):
+                f.write(f'well_loc = {k},{i},{j}\n')
     hk = get_hk(terrace_hk, flat_hk)
     sy = get_sy(terrace_sy, flat_sy)
 
@@ -78,7 +82,7 @@ def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, terrace_
         layer_avg=0,
         ss=1e-6,
         sy=sy,
-        strt=smt.get_tops()[0],  # todo set to a better start value (quicker solve)
+        strt=smt.get_tops()[0],
         chani=1,
         well_spd=well_spd,
         riv_spd=get_riv(riv_cond),

@@ -84,11 +84,25 @@ def create_run_runs(run_name, max_pumping_rates, terrace_hks, flat_hks, terrace_
     runs = []
     run_locs = get_run_locs()
     for groupnum, (max_pumping_rate, terrace_hk, flat_hk,
-            terrace_sy, flat_sy, riv_cond) in enumerate(zip(max_pumping_rates, terrace_hks, flat_hks,
-                                                            terrace_sys, flat_sys, riv_conds)):
+                   terrace_sy, flat_sy, riv_cond) in enumerate(zip(max_pumping_rates, terrace_hks, flat_hks,
+                                                                   terrace_sys, flat_sys, riv_conds)):
         previously_completed_runs = unbacked_dir.joinpath(wetland_name).glob(f'**/*{output_suffix}')
         previously_completed_runs = [e.name.replace(output_suffix, '') for e in previously_completed_runs]
-
+        base_model_name = f'base_group_{groupnum}'
+        temp = dict(
+            model_name=base_model_name,
+            model_ws=base_model_name,
+            locs=None,
+            max_pumping_rate=0,
+            terrace_hk=terrace_hk,
+            flat_hk=flat_hk,
+            terrace_sy=terrace_sy,
+            flat_sy=flat_sy,
+            riv_cond=riv_cond,
+            rm_files=True,
+            keep_list=True
+        )
+        runs.append(temp)
         for i in range(len(run_locs)):
             direction = run_locs.loc[i, 'direction']
             dist_from_old = run_locs.loc[i, 'dist_from_old']
@@ -214,9 +228,9 @@ def test_ssh_dist():
 
 def tranche_1(just_print_number=True, rerun=False):
     local_cores = 8
-    external_ips = ['100.121.150.68', '170.64.161.239']
-    run_name = 'tranche1c'
-    rates = [500, 1000, 5000]
+    external_ips = []  # '100.121.150.68'
+    run_name = 'tranche1d'
+    rates = [100, 500, 1000, 5000]
     hks = [.1, 1, 10]
     syvals = [.1, 1, 10]
     riv_vals = [750, 1500, 2500]
@@ -249,4 +263,5 @@ def tranche_1(just_print_number=True, rerun=False):
 
 if __name__ == '__main__':
     import pickle
+
     tranche_1(just_print_number=False)
