@@ -4,6 +4,7 @@ on: 13/02/23
 """
 import time
 import pandas as pd
+import traceback
 from model_build.modflow_model import build_model
 from model_build.project_model_tools import smt
 from model_parameterisation.static_params import vka
@@ -41,7 +42,7 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     exe_name = 'mfnwt'
     t = time.time()
     outdir = Path(outdir)
-    outdir.mkdir(exist_ok=True)
+    outdir.mkdir(exist_ok=True, parents=True)
     model_ws = Path(model_ws)
     model_ws.mkdir(exist_ok=True)
     assert isinstance(tdis, TimeDis)
@@ -105,3 +106,11 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
         generate_scenario_outputs(model_ws=model_ws, model_name=model_name, outdir=outdir, tdis=use_tdis,
                                   tickper=tickper, save_hds=save_hds, plot_data=plot_data,
                                   save_list=save_list)
+def run_scenario_mp(kwargs):
+    model_ws = Path(kwargs['model_ws'])
+    model_ws.mkdir(exist_ok=True, parents=True)
+    try:
+        run_scenario(**kwargs)
+    except Exception:
+        with model_ws.joinpath('log.log').open('w') as f:
+            f.write(traceback.format_exc())

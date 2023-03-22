@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from model_build.project_model_tools import smt
-from Scenarios.run_flow_scenario import run_scenario
+from Scenarios.run_flow_scenario import run_scenario, run_scenario_mp
 from Scenarios.boundary_conditions import get_scen_ghb_data, get_scen_well_data, get_scen_str_data, get_scen_rch, \
     get_grid_pump_scen_well_data
 from Scenarios.supporting_data_analysis.pumping_data import get_grid_locs
@@ -349,6 +349,48 @@ def max_allocation():
                  )
 
 
+def mangawera_reduction():
+    num_cores = 7
+    reductions = [0.95, 0.9, 0.85, 0.8, 0.7, 0.6, 0.5]
+    runs = []
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
+    base_wel_data = get_scen_well_data('extended_max_allo_pc', scen_tdis, hill_param, race_param, False)
+    rch = get_scen_rch(scen_tdis, rch_param, dryland=False)
+    lake = get_scen_ghb_data(scen_tdis)
+    str_vals = get_scen_str_data(scen_tdis, riv_params, big_static=False, small_static=False)
+    zone_idx = get_allocation_zone('Mangawera Valley')
+    for r in reductions:
+        model_name = f'mangawera_reduction_{r}'
+        print_myself(model_name)
+        model_ws = base_run_dir.joinpath(model_name)
+
+        # apply reductions to mangawera pumping only
+        from copy import deepcopy
+        wel_data = deepcopy(base_wel_data)
+        for k, v in wel_data.items():
+            idx = zone_idx[v['i'], v['j']] & (v['flux'] < 0)
+            v['flux'][idx] *= r
+
+        temp = dict(model_name=model_name, model_ws=model_ws,
+                    tdis=scen_tdis,
+                    sy_param=sy_param,
+                    kh_param=kh_param,
+                    rch_data=rch,
+                    ghb_spd=lake,
+                    str_spd=str_vals,
+                    well_spd=wel_data,
+                    outdir=base_outdir.joinpath('mangawera_reductions', model_name),
+                    build_run_model=run_modflow, process_results=process_results,
+                    plot_data=False, save_hds=save_hds, save_list=True,
+                    nwt_kwargs=dict(maxiterout=1500, maxitinner=300)
+                    )
+        runs.append(temp)
+    from run_managers.run_multiprocess import run_multiprocess
+    print(len(runs))
+    pool_outputs = run_multiprocess(run_scenario_mp, runs, num_cores=num_cores)
+    print('\n'.join([str(e) for e in pool_outputs]))
+
+
 def max_allocation_on_pump_curve():
     model_name = 'max_allocation_on_pump_curve'
     print_myself(model_name)
@@ -377,11 +419,12 @@ def max_allocation_on_pump_curve():
 plot_data = False
 save_hds = False
 process_results = True
-run_modflow = False
+run_modflow = True
 
 if __name__ == '__main__':
-    full_allocation()
-    max_allocation()
-    max_allocation_on_pump_curve()
+    mangawera_reduction()
+    # full_allocation()
+    # max_allocation()
+    # max_allocation_on_pump_curve()
 
     pass
