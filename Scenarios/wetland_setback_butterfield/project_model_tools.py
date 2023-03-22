@@ -38,7 +38,7 @@ temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,
                                   rotation=0, layer_type=None,
                                   no_flow_calc=None, elv_calculator=None,
-                                  base_map_path=base_map_path, default_figsize=(14, 7), epsg_num=2193)
+                                  base_map_path=base_map_path, default_figsize=(8, 7), epsg_num=2193)
 
 
 def no_flow(recalc=False):
@@ -150,7 +150,7 @@ smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              model_version_name, sdp,
                              rotation=0, layer_type=layer_type,
                              no_flow_calc=no_flow, elv_calculator=elv_calc,
-                             base_map_path=base_map_path, default_figsize=(14, 7), epsg_num=2193)
+                             base_map_path=base_map_path, default_figsize=(8, 7), epsg_num=2193)
 ss_dates = ('2001-07-01', '2002-06-30')
 trans_dates = pd.date_range('2002-07-01', '2003-06-30', freq='W')
 
