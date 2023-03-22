@@ -28,7 +28,7 @@ def plot_allocation_zone(save=False):
     plot_data, mapper = get_allo_zones()
     mapper_keys = list(mapper.keys())
     plot_data[~np.isfinite(plot_data)] = -1
-    colors = {i: c for i, c in zip(mapper_keys, smt.plot.get_colors(mapper_keys))}
+    colors = {i: c for i, c in zip(mapper_keys, smt.plot.get_colors(mapper_keys, 'tab20'))}
     mapper[-1] = 'Out of Domain'
     colors[-1] = 'k'
     fig, ax, handles, labels = smt.plot.plt_discrete_matrix(plot_data, colors=colors, names=mapper, base_map=True,

@@ -172,7 +172,7 @@ def main_grid_allov3(test=False, print_runs_only=False):
                                   )
 
 def main_grid_allo_riv_terrace(test=False, print_runs_only=False):
-    local_cores = 2
+    local_cores = 4
     external_ips = ['170.64.184.50']
 
     max_allo = get_pumping_in_zones().loc[:, 'max_allo_min'].abs()
@@ -195,9 +195,9 @@ def main_grid_allo_riv_terrace(test=False, print_runs_only=False):
 
     if test:
         pers = ([0] + list(range(1173, 2108)))[0:10]
-        rname = 'grid_allo_v5_test2'
+        rname = 'grid_allo_v7_test2'
     else:
-        rname = 'grid_allo_v5'  # note v1 got lost in the learning to do stuff.
+        rname = 'grid_allo_v7'  # note v1 got lost in the learning to do stuff.
         pers = None
 
     run_all_grid_allocation_scens(name=rname, local_cores=local_cores,
