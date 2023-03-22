@@ -140,6 +140,5 @@ def data_checks():
 
 
 if __name__ == '__main__':
-    # todo check
     data_checks()
     pass

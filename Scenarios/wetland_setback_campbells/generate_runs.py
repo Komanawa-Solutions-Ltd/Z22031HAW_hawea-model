@@ -26,7 +26,7 @@ def get_run_locs():
         locs = smt.io.get_new_points_from_points_azimuth(base_locs.copy(True), distance=dist, delta_azimuth=0)
         run_locs.append(locs)
 
-    run_azimuths = np.arange(0, 360, 30)
+    run_azimuths = np.arange(0, 360, 20)
     run_distances = [1000, 1500, 2000, 2500, ]
     base_locs = []
     for azimuth in run_azimuths:
@@ -37,7 +37,7 @@ def get_run_locs():
         locs = smt.io.get_new_points_from_points_azimuth(base_locs.copy(True), distance=dist, delta_azimuth=0)
         run_locs.append(locs)
 
-    run_azimuths = np.arange(0, 360, 30)
+    run_azimuths = np.arange(0, 360, 20)
     run_distances = [3250, 4000]
     base_locs = []
     for azimuth in run_azimuths:
@@ -54,7 +54,7 @@ def get_run_locs():
     i, j = smt.convert_coords_to_matix(run_locs.new_x, run_locs.new_y, coords_out_domain='coerce')
     run_locs.loc[:, 'i'] = i
     run_locs.loc[:, 'j'] = j
-    idx = i >= 0 & (smt.get_no_flow(0)[i, j] == 1)
+    idx = (i >= 0) & (smt.get_no_flow(0)[i, j] == 1)
     run_locs = run_locs.loc[idx]
     run_locs = run_locs.reset_index()
     print(len(run_locs))
@@ -197,8 +197,8 @@ def test_ssh_dist():
         ),
     ]
     ssh_dist = get_ssh_dist(local_cores=4,
-                            external_ips=['100.121.150.68', '170.64.161.239'])
-    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='test7', kwargs_relative_to_base_dir=['model_ws'],
+                            external_ips=['100.121.150.68'])
+    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='camp_test', kwargs_relative_to_base_dir=['model_ws'],
                                                 rm_files=False, compile=True)
 
     # added a 4vcpu cpu optimised droplet to test
@@ -216,9 +216,9 @@ def tranche_1(just_print_number=True, rerun=False):
     local_cores = 8
     external_ips = []  # '100.121.150.68'
     run_name = 'tranche1d'
-    rates = [100, 500, 1000, 5000]
-    hks = [.1, 1, 10]
-    syvals = [.1, 1, 10]
+    rates = [100, 500, 1000, 2000]
+    hks = [0.316, 1, 3.16]
+    syvals = [0.316, 1, 3.16]
     riv_vals = [750, 1500, 2500]
     max_pumping_rates = []
     hk_modifers = []
@@ -243,5 +243,5 @@ def tranche_1(just_print_number=True, rerun=False):
 
 if __name__ == '__main__':
     import pickle
-    # todo check
+    # todo test_ssh_dist()
 

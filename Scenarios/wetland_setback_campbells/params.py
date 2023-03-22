@@ -50,7 +50,6 @@ def get_sy(sy_modifer, recalc=False):
 
 
 if __name__ == '__main__':
-    # todo check
     sy = get_sy(1, True)
     hk = get_hk(1, True)
 

@@ -172,5 +172,4 @@ def run_multiple_models(run_name, runs, local_cores, external_ips=(), rm_remote_
 
 
 if __name__ == '__main__':
-    # todo check
     pass

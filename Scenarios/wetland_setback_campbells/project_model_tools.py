@@ -127,12 +127,12 @@ tdis = TimeDis(
     nstp=nstp
 )
 if __name__ == '__main__':
-    # todo check
     top, idx = _get_top_array(True, True)
-    smt.plot.plt_matrix(top, title='top', base_map=True)
-    smt.plot.plt_matrix(idx, title='idx', base_map=True)
     t = smt.get_elv_db()
-    smt.plot.plt_matrix(t[0] - t[1], vmax=1)
+    smt.plot.plt_matrix(top, title='top', base_map=True, no_flow_layer=0)
+    smt.plot.plt_matrix(idx, title='idx', base_map=True, no_flow_layer=0)
+    smt.plot.plt_matrix(t[1], title='bottom', base_map=True, no_flow_layer=0)
+    smt.plot.plt_matrix(t[0] - t[1], title='thickness', base_map=True, no_flow_layer=0)
 
     smt.plot.show()
     pass
