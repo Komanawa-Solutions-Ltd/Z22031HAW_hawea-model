@@ -171,11 +171,44 @@ def main_grid_allov3(test=False, print_runs_only=False):
                                   pump_rate=runs, rm_remote_files=False, pers=pers, external_ips=external_ips
                                   )
 
+def main_grid_allo_riv_terrace(test=False, print_runs_only=False):
+    local_cores = 2
+    external_ips = ['170.64.184.50']
+
+    max_allo = get_pumping_in_zones().loc[:, 'max_allo_min'].abs()
+    max_allo.loc[max_allo.isna()] = 1
+    max_allo = max_allo.to_dict()
+    base_runs = {
+        # fraction increase from current max allocation
+        'Terrace-River': [0.1, 0.25, 0.5, 1, 1.5, 1.75], # no more runs needed
+    }
+    num_runs = 0
+    for zone, pump_increases in base_runs.items():
+        num_runs += len(pump_increases)
+
+    print(f'number of runs: {num_runs}')
+    if print_runs_only:
+        return
+    runs = {}
+    for zone, pump_increases in base_runs.items():
+        runs[zone] = [max_allo[zone] * pinc for pinc in pump_increases]
+
+    if test:
+        pers = ([0] + list(range(1173, 2108)))[0:10]
+        rname = 'grid_allo_v5_test2'
+    else:
+        rname = 'grid_allo_v5'  # note v1 got lost in the learning to do stuff.
+        pers = None
+
+    run_all_grid_allocation_scens(name=rname, local_cores=local_cores,
+                                  pump_rate=runs, rm_remote_files=False, pers=pers, external_ips=external_ips
+                                  )
+
 
 if __name__ == '__main__':
-    main_grid_allov3(print_runs_only=True)
+    main_grid_allo_riv_terrace(print_runs_only=False)
     # how_long_per_run()
-    main_grid_allov3(test=False)
+    #main_grid_allov3(test=False)
     # test_indvidual()
     # test_ind_mp()
     # test_grid_allo()

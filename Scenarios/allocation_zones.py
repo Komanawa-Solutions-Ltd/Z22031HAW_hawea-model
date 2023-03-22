@@ -48,4 +48,5 @@ def plot_allocation_zone(save=False):
 
 
 if __name__ == '__main__':
-    plot_allocation_zone()
+    get_allo_zones(True)
+    plot_allocation_zone(True)
