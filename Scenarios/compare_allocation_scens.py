@@ -112,15 +112,23 @@ def compare_current_allo_to_rch_hillside():
     from Scenarios.supporting_data_analysis.pumping_data import get_pump_curve
     outdir = proj_root.joinpath('Scenarios/allocation_results/allo_zone_rch/plots')
     outdir.mkdir(exist_ok=True)
-    all_rch_hill = get_allo_zone_rch_hillside()
-    allo_data = get_most_upto_date_allocation_info()
+    all_rch_hill = get_allo_zone_rch_hillside(True)
+    allo_data = get_most_upto_date_allocation_info(recalc=True)
     pump_curve = get_pump_curve(scen_tdis)
     pump_curve = pump_curve.iloc[1:53].flux.mean()
     allo_data.loc[:, 'max_allo_pc'] = allo_data.loc[:, 'max_allo'] * pump_curve
+    allo_data.loc[:, 'max_allo_pc_10'] = allo_data.loc[:, 'max_allo'] * pump_curve * 1.1
 
     for zone, rch_hill in all_rch_hill.items():
         zone_array = get_allocation_zone(zone)
         temp_allo = smt.io.select_df_from_idx_array(allo_data, zone_array, d2_only=True)
+        temp_allo.sum()[['max_allo',
+                         'current_use_2015', 'current_use_2016', 'current_use_2017',
+                         'current_use_2018', 'current_use_2019', 'current_use_2020',
+                         'current_use_2015_max', 'current_use_2016_max', 'current_use_2017_max',
+                         'current_use_2018_max', 'current_use_2019_max', 'current_use_2020_max',
+                         'max_allo_pc',
+                         'max_allo_pc_10']].to_csv(outdir.parent.joinpath(f'allo_zone_pump_{zone}.csv'))
 
         rch_hill.loc[:, 'total'] = rch_hill[['hill', 'scen_rch']].sum(axis=1)
         names = ['Hill inflow', 'Recharge', 'Total inflow']
@@ -161,6 +169,8 @@ def compare_current_allo_to_rch_hillside():
         fig.tight_layout()
         fig.savefig(outdir.joinpath(f'{zone}.png'))
 
+
+# todo compare new mangawera valley takes.
 
 if __name__ == '__main__':
     compare_current_allo_to_rch_hillside()

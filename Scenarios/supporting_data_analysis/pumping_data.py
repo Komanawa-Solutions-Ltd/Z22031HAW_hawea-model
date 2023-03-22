@@ -301,5 +301,5 @@ def data_checks(save=True):
 
 
 if __name__ == '__main__':
-    data_checks()
     plot_pump_curve(True)
+    data_checks()

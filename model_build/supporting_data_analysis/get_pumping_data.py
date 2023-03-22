@@ -77,10 +77,13 @@ def get_most_upto_date_allocation_info(include_near_river=False, recalc=False): 
             else:
                 # get usage ranges
                 outdata.loc[:, 'year'] = outdata.index.year
+                outdata_max = outdata.groupby('year').max()
                 outdata = outdata.groupby('year').sum()
                 outdata = outdata.drop(index=[2014, 2021])
+                outdata_max = outdata_max.drop(index=[2014, 2021])
                 for y in outdata.index:
                     final_data.loc[:, f'{name}_{y}'] = outdata.loc[y]
+                    final_data.loc[:, f'{name}_{y}_max'] = outdata_max.loc[y]
 
         loc_data = get_well_flowmeter_mapper()
         idx = get_low_cond_array()
