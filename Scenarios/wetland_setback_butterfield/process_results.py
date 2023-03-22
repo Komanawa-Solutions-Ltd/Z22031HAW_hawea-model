@@ -10,10 +10,6 @@ from pathlib import Path
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 from scipy.interpolate import griddata
 
-
-# todo!
-
-
 def plot_list_failures(list_file, plot_dir):
     temp = ListSolverInfo(list_file)
     all_overs = temp.get_over(50, 0)

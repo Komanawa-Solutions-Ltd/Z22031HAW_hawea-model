@@ -170,10 +170,44 @@ def compare_current_allo_to_rch_hillside():
         fig.savefig(outdir.joinpath(f'{zone}.png'))
 
 
+def compare_mangawera_valley():
+    use_outdir = outdir.joinpath('mangawera_valley')
+    use_outdir.mkdir(exist_ok=True)
+    use_keys = ['long_current']
+    data_dirs = {k: info_data_dir.joinpath(k) for k in use_keys}
+
+    use_keys2 = ['max_allocation_on_pump_curve']
+    data_dirs2 = {k: allo_data_dir.joinpath(k) for k in use_keys2}
+
+    reductions_dir = proj_root.joinpath('Scenarios/allocation_scenarios/mangawera_reductions')
+    data_dirs3 = {p.name.replace('mangawera_', ''): p for p in reductions_dir.iterdir()}
+
+    use_keys = use_keys + use_keys2 + list(data_dirs3.keys())
+    data_dirs.update(data_dirs2)
+    data_dirs.update(data_dirs3)
+    all_lss = {k: 'solid' for k, l in zip(use_keys, linestyle_tuple)}
+    all_lss['long_current'] = '--'
+    all_lss['max_allocation_on_pump_curve'] = ':'
+
+    quantile_plots(scenarios=data_dirs, senario_ls=all_lss, outdir=use_outdir.joinpath('quantile_plots'),
+                   aq_pen=['long_nat', 'long_current'], single_figs=True)
+    compare_scenarios(outdir=use_outdir.joinpath('comp_plots'),
+                      tdis=scen_tdis,
+                      data_dirs=data_dirs,
+                      model_names=use_keys, lss=all_lss, tickper=100, aq_pen=['long_nat', 'long_current'],
+                      single_figs=True)
+    base_name = 'long_current'
+    base = data_dirs.pop(base_name)
+    all_lss.pop(base_name)
+    q_qplots(base_scen_dir=base, outdir=use_outdir.joinpath('qq_plots'), base_scen_name=base_name,
+             other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
+
+
 # todo compare new mangawera valley takes.
 
 if __name__ == '__main__':
-    compare_current_allo_to_rch_hillside()
+    compare_mangawera_valley()
+    # compare_current_allo_to_rch_hillside()
     # compare_long_current_max_full_allo()
     # compare_grid_allocation_scens()
     pass
