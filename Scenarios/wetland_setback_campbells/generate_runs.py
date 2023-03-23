@@ -206,9 +206,9 @@ def test_ssh_dist():
 
 
 def tranche_1(just_print_number=True, rerun=False):
-    local_cores = 8
-    external_ips = []  # '100.121.150.68'
-    run_name = 'tranche1d'
+    local_cores = 4
+    external_ips = ['100.121.150.68', '170.64.185.117']
+    run_name = 'tranche1'
     rates = [100, 500, 1000, 2000]
     hks = [0.316, 1, 3.16]
     syvals = [0.316, 1, 3.16]
@@ -235,8 +235,5 @@ def tranche_1(just_print_number=True, rerun=False):
 
 
 if __name__ == '__main__':
-    import pickle
-    test_run()
-    # todo test_ssh_dist()
-    tranche_1()
+    tranche_1(just_print_number=False)
 

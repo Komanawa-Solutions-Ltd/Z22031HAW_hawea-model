@@ -46,7 +46,7 @@ def get_strt_hds(recalc=False):
     save_path = campbells_dir.joinpath('processed_input_data', 'constant_hds.npy')
     if save_path.exists() and not recalc:
         with save_path.open('rb') as f:
-            out = pickle.load(f)
+            out = np.load(f)
         return out
 
     with tempfile.TemporaryDirectory() as tdir:
