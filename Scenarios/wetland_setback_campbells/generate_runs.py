@@ -86,8 +86,8 @@ def create_run_runs(run_name, max_pumping_rates, hk_modifers, sy_modifers, riv_c
     run_locs = get_run_locs()
     for groupnum, (max_pumping_rate, hk_modifer,
                    sy_modifer, riv_cond) in enumerate(zip(max_pumping_rates, hk_modifers,
-                                                                   sy_modifers, riv_conds)):
-        previously_completed_runs = unbacked_dir.joinpath(wetland_name).glob(f'**/*{output_suffix}')
+                                                          sy_modifers, riv_conds)):
+        previously_completed_runs = unbacked_dir.joinpath(wetland_name, run_name).glob(f'**/*{output_suffix}')
         previously_completed_runs = [e.name.replace(output_suffix, '') for e in previously_completed_runs]
         base_model_name = f'base_group_{groupnum}'
         temp = dict(
@@ -97,7 +97,7 @@ def create_run_runs(run_name, max_pumping_rates, hk_modifers, sy_modifers, riv_c
             max_pumping_rate=0,
             hk_modifer=hk_modifer,
             sy_modifer=sy_modifer,
-                        riv_cond=riv_cond,
+            riv_cond=riv_cond,
             rm_files=True,
             keep_list=True
         )
@@ -141,15 +141,15 @@ def test_run():
         riv_cond = 1500
         run_model_extrac_data(
             model_name='test_keep_files',
-        model_ws=unbacked_dir.joinpath('test_keep'),
-        locs=locs,
-        max_pumping_rate=500,
-        hk_modifer=hk_modifer,
-        sy_modifer=sy_modifer,
-        riv_cond=riv_cond,
-        rm_files=False,
-        keep_list=False
-    )
+            model_ws=unbacked_dir.joinpath('test_keep'),
+            locs=locs,
+            max_pumping_rate=500,
+            hk_modifer=hk_modifer,
+            sy_modifer=sy_modifer,
+            riv_cond=riv_cond,
+            rm_files=False,
+            keep_list=False
+        )
     except Exception:
         print(traceback.format_exc())
 
@@ -206,9 +206,9 @@ def test_ssh_dist():
 
 
 def tranche_1(just_print_number=True, rerun=False):
-    local_cores = 4
+    local_cores = 8
     external_ips = ['100.121.150.68', '170.64.185.117']
-    run_name = 'tranche1a'
+    run_name = 'tranche1b'
     rates = [100, 500, 1000, 2000]
     hks = [0.316, 1, 3.16]
     syvals = [0.316, 1, 3.16]
@@ -236,4 +236,3 @@ def tranche_1(just_print_number=True, rerun=False):
 
 if __name__ == '__main__':
     tranche_1(just_print_number=False)
-

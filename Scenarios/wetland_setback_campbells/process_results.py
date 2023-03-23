@@ -151,8 +151,8 @@ def plot_outputs(points_dir, outdir):
 
 if __name__ == '__main__':
     # todo check
-    model_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1a')
-    collate_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1a_collated')
+    model_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1b')
+    collate_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1b_collated')
     points_dir = campbells_dir.joinpath('results/points')
     plot_dir = campbells_dir.joinpath('results/plots')
 
