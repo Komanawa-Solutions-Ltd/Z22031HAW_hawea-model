@@ -88,6 +88,8 @@ def build_impact_points(collated_dir, outdir):
         inputs = pd.read_csv(collated_dir.joinpath(f'group_{int(group):03d}_base_inputs.csv'), index_col=0).transpose()
 
         assert (wetland > -666).all().all()
+        if 'base' not in wetland.keys():
+            continue
         wetland = wetland - wetland.base.values[:, np.newaxis]
         wetland = wetland.drop(columns='base')
         outdata_dd.loc[group, wetland.columns] = wetland.min()
@@ -120,7 +122,7 @@ def plot_outputs(points_dir, outdir):
         noflow = outdata_noflow.loc[group, outdata_dd.columns].values.astype(bool)
         dry = outdata_dry.loc[group, outdata_dd.columns].values.astype(bool)
         points = np.array([xys[c] for c in outdata_dd.columns])
-        keep = [not (d or nf) for d, nf in zip(dry, noflow)]
+        keep = np.array([not (d or nf) for d, nf in zip(dry, noflow)])
         invals = drawdown.values
         use_inputs = outdata_inputs.loc[group]
         tcomps = [f'{k}={v}' for k, v in use_inputs.items()]
@@ -129,7 +131,8 @@ def plot_outputs(points_dir, outdir):
 
         ibound = smt.get_no_flow(0)
         grid_xs, grid_ys = smt.get_model_x_y()
-
+        if keep.sum() < 4:
+            continue
         vals = griddata(points=points[keep], values=invals[keep],
                         xi=np.array(list(zip(grid_xs[ibound == 1], grid_ys[ibound == 1]))),
                         method='cubic'
@@ -148,11 +151,11 @@ def plot_outputs(points_dir, outdir):
 
 if __name__ == '__main__':
     # todo check
-    model_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1d')
-    collate_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1d_collated')
+    model_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1a')
+    collate_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1a_collated')
     points_dir = campbells_dir.joinpath('results/points')
     plot_dir = campbells_dir.joinpath('results/plots')
 
-    # collate_results(model_dir, collate_dir)
-    # build_impact_points(collate_dir, points_dir)
+    collate_results(model_dir, collate_dir)
+    build_impact_points(collate_dir, points_dir)
     plot_outputs(points_dir, plot_dir)

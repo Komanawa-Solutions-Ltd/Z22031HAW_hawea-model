@@ -52,6 +52,12 @@ def no_flow(recalc=False):
         tdir = Path(tdir)
         hawea_smt.io.array_to_raster(tdir.joinpath('temp.tif'), ibound)
         outibound = smt.io.raster_to_array(tdir.joinpath('temp.tif'), 'mean').astype(int)
+    temp = outibound == 0
+    outibound[0, :] = -1
+    outibound[:, 0] = -1
+    outibound[:, -1] = -1
+    outibound[temp] = 0
+
     np.save(save_path, outibound)
     return outibound[np.newaxis]
 
@@ -127,6 +133,8 @@ tdis = TimeDis(
     nstp=nstp
 )
 if __name__ == '__main__':
+    nf = no_flow(True)[0]
+    smt.plot.plt_matrix(nf,title='no flow', base_map=True)
     top, idx = _get_top_array(True, True)
     t = smt.get_elv_db()
     smt.plot.plt_matrix(top, title='top', base_map=True, no_flow_layer=0)

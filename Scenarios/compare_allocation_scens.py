@@ -203,11 +203,9 @@ def compare_mangawera_valley():
              other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
 
 
-# todo compare new mangawera valley takes.
-
 if __name__ == '__main__':
-    compare_mangawera_valley()
+    # compare_mangawera_valley()
     # compare_current_allo_to_rch_hillside()
     # compare_long_current_max_full_allo()
-    # compare_grid_allocation_scens()
+    compare_grid_allocation_scens()
     pass
