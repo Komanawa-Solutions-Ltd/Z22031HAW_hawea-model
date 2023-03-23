@@ -11,7 +11,7 @@ from project_base import unbacked_dir, opt_proj_root, opt_model_tools
 from Scenarios.wetland_setback_campbells.params import get_hk, get_sy
 from templates.modflow_model import build_model
 from Scenarios.wetland_setback_campbells.project_model_tools import tdis, smt
-from Scenarios.wetland_setback_campbells.model_bcs import get_riv, get_wells, get_rch, get_wetland_loc
+from Scenarios.wetland_setback_campbells.model_bcs import get_riv, get_wells, get_rch, get_wetland_loc, get_strt_hds
 
 wetland_name = 'campbells'
 
@@ -81,7 +81,7 @@ def run_model_extrac_data(model_name, model_ws, locs, max_pumping_rate, hk_modif
         layer_avg=0,
         ss=1e-6,
         sy=sy,
-        strt=smt.get_tops()[0],
+        strt=get_strt_hds(),
         chani=1,
         well_spd=well_spd,
         riv_spd=get_riv(riv_cond),

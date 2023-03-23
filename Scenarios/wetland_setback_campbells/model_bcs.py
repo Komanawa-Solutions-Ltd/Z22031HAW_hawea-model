@@ -5,6 +5,8 @@ on: 19/07/22
 import pickle
 import tempfile
 from pathlib import Path
+
+import project_base
 from model_build.project_model_tools import smt as hawea_smt
 from project_base import campbells_dir
 from Scenarios.wetland_setback_campbells.project_model_tools import smt, tdis, ss_dates, trans_dates
@@ -38,6 +40,27 @@ def get_wetland_loc(azimuth, return_just_kij=False):
     if return_just_kij:
         return 0, i, j
     return data
+
+
+def get_strt_hds(recalc=False):
+    save_path = campbells_dir.joinpath('processed_input_data', 'constant_hds.npy')
+    if save_path.exists() and not recalc:
+        with save_path.open('rb') as f:
+            out = pickle.load(f)
+        return out
+
+    with tempfile.TemporaryDirectory() as tdir:
+        tdir = Path(tdir)
+        from optimisation.final_opt_models.compress_uncompress_model import uncompress_model
+        uncompress_model(project_base.proj_root.joinpath('optimisation/final_opt_models/3d_v1d'),
+                         tdir.joinpath('opt_model'))
+        with flopy.utils.HeadFile(tdir.joinpath('opt_model', 'final_opt_model.hds')) as hds:
+            ss_hds = hds.get_alldata()[0, 0]
+        hawea_smt.io.array_to_raster(tdir.joinpath('temp.tif'), ss_hds)
+        ss_hds = smt.io.raster_to_array(tdir.joinpath('temp.tif'), 'mean')
+
+    np.save(save_path, ss_hds)
+    return ss_hds
 
 
 def get_wells(locs, max_pumping_rate):
@@ -140,5 +163,8 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    t = get_strt_hds()
+    smt.plot.plt_matrix(t, title='strt', base_map=True, no_flow_layer=0)
+    smt.plot.show()
     data_checks()
     pass

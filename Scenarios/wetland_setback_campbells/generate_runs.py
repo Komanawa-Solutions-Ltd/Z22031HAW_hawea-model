@@ -3,6 +3,7 @@ created matt_dumont
 on: 15/03/23
 """
 import itertools
+import traceback
 
 import numpy as np
 import pandas as pd
@@ -132,13 +133,14 @@ def create_run_runs(run_name, max_pumping_rates, hk_modifers, sy_modifers, riv_c
 
 
 def test_run():
-    locs = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(90), 500, delta_azimuth=0)
+    locs = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(0), 500, delta_azimuth=0)
     hk_modifer = 1
     sy_modifer = 1
 
-    riv_cond = 1500
-    run_model_extrac_data(
-        model_name='test_keep_files',
+    try:
+        riv_cond = 1500
+        run_model_extrac_data(
+            model_name='test_keep_files',
         model_ws=unbacked_dir.joinpath('test_keep'),
         locs=locs,
         max_pumping_rate=500,
@@ -148,25 +150,16 @@ def test_run():
         rm_files=False,
         keep_list=False
     )
+    except Exception:
+        print(traceback.format_exc())
 
     from Scenarios.wetland_setback_campbells.process_results import plot_list_failures
     plot_list_failures(unbacked_dir.joinpath('test_keep', 'test_keep_files.list'), unbacked_dir.joinpath('test_keep'))
-    run_model_extrac_data(
-        model_name='test_cull_files',
-        model_ws=unbacked_dir.joinpath('test_cull'),
-        locs=locs,
-        max_pumping_rate=500,
-        hk_modifer=hk_modifer,
-        sy_modifer=sy_modifer,
-        riv_cond=riv_cond,
-        rm_files=True,
-        keep_list=True
-    )
 
 
 def test_ssh_dist():
-    locs = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(90), 500, delta_azimuth=0)
-    locs2 = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(90), 1000, delta_azimuth=0)
+    locs = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(0), 500, delta_azimuth=0)
+    locs2 = smt.io.get_new_points_from_points_azimuth(get_wetland_loc(0), 1000, delta_azimuth=0)
 
     hk_modifer = 1
     sy_modifer = 1
@@ -198,7 +191,7 @@ def test_ssh_dist():
     ]
     ssh_dist = get_ssh_dist(local_cores=4,
                             external_ips=['100.121.150.68'])
-    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='camp_test', kwargs_relative_to_base_dir=['model_ws'],
+    ssh_dist.get_core_weightings_from_test_runs(runs, run_name='camp_test1', kwargs_relative_to_base_dir=['model_ws'],
                                                 rm_files=False, compile=True)
 
     # added a 4vcpu cpu optimised droplet to test
@@ -243,5 +236,7 @@ def tranche_1(just_print_number=True, rerun=False):
 
 if __name__ == '__main__':
     import pickle
+    test_run()
     # todo test_ssh_dist()
+    tranche_1()
 
