@@ -141,7 +141,7 @@ def plot_outputs(points_dir, outdir):
         plt_array[ibound == 1] = vals
 
         fig, ax = smt.plot.plt_matrix(plt_array, base_map=True, no_flow_layer=0, contour=True,
-                                      contour_levels=[-10, -5, -2, -1, -0.5], label_contours=True,
+                                      contour_levels=[-10, -5, -2, -1, -0.5, -0.2, -0.1], label_contours=True,
                                       title=title)
         ax.scatter(points[dry, 0], points[dry, 1], label='dry pumps (excluded from draw down)')
         ax.legend()
@@ -150,7 +150,6 @@ def plot_outputs(points_dir, outdir):
 
 
 if __name__ == '__main__':
-    # todo check
     model_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1b')
     collate_dir = unbacked_dir.joinpath('/home/matt_dumont/unbacked/hawea/campbells/tranche1b_collated')
     points_dir = campbells_dir.joinpath('results/points')

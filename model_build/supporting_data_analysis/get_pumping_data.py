@@ -33,7 +33,7 @@ def get_historical_full_allo_pumping_data(start_date, end_date, frequency='D', f
     return select_resample(full_allo, start_date, end_date, frequency, func=func)
 
 
-def get_most_upto_date_allocation_info(include_near_river=False, recalc=False):  # todo
+def get_most_upto_date_allocation_info(include_near_river=False, recalc=False):
     """
     get 2020 annual usage/allocation data
     :param include_near_river: bool if True include the near river pumping

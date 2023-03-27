@@ -10,6 +10,7 @@ from pathlib import Path
 from model_tools.util_functions.list_file_utils import ListSolverInfo
 from scipy.interpolate import griddata
 
+
 def plot_list_failures(list_file, plot_dir):
     temp = ListSolverInfo(list_file)
     all_overs = temp.get_over(50, 0)
@@ -138,7 +139,7 @@ def plot_outputs(points_dir, outdir):
         plt_array[ibound == 1] = vals
 
         fig, ax = smt.plot.plt_matrix(plt_array, base_map=True, no_flow_layer=0, contour=True,
-                                      contour_levels=[-10, -5, -2, -1, -0.5], label_contours=True,
+                                      contour_levels=[-10, -5, -2, -1, -0.5, -0.2, -0.1], label_contours=True,
                                       title=title)
         ax.scatter(points[dry, 0], points[dry, 1], label='dry pumps (excluded from draw down)')
         ax.legend()

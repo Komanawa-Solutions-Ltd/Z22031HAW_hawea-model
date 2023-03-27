@@ -84,7 +84,7 @@ def compare_grid_allocation_scens():
         max_num = max([len(str(int(p.name.split("_")[-1]))) for p in grid_runs])
         for p in grid_runs:
             num = int(p.name.split("_")[-1])
-            name = f'{zone} {num:0{max_num}d}'
+            name = f'{zone} MAPC + {num:0{max_num}d} m$^3$/day'
             data_dirs[name] = p
             grid_keys.append(name)
 
@@ -203,9 +203,59 @@ def compare_mangawera_valley():
              other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
 
 
+def example_quantile_figures():
+    zone = 'Hawea Flat'
+    print(zone)
+    # plot comparisons modifing below
+    use_outdir = outdir.joinpath('example_quantile_plots')
+    use_outdir.mkdir(exist_ok=True)
+    use_keys = ['long_current']
+    data_dirs = {k: info_data_dir.joinpath(k) for k in use_keys}
+
+    use_keys2 = ['max_allocation_on_pump_curve']
+    data_dirs2 = {k: allo_data_dir.joinpath(k) for k in use_keys2}
+    use_keys = use_keys + use_keys2
+    data_dirs.update(data_dirs2)
+
+    grid_keys = []
+    # add datadirs for grid runs (where are these)
+    grid_runs = sorted(unbacked_dir.joinpath('grid_scenarios',
+                                             'all_grid_outputs').glob(f'{zone.replace(" ", "_")}*'))
+    max_num = max([len(str(int(p.name.split("_")[-1]))) for p in grid_runs])
+    for p in grid_runs:
+        num = int(p.name.split("_")[-1])
+        name = f'{zone} MAPC + {num:0{max_num}d} m$^3$/day'
+        data_dirs[name] = p
+        grid_keys.append(name)
+
+    all_lss = {k: 'dashed' for k in use_keys}
+    all_lss.update({k: 'solid' for k in grid_keys})
+    use_keys = use_keys + sorted(grid_keys)
+    scens = sorted(list(data_dirs.keys()))
+    cmap = 'tab20b'
+    if len(scens) <= 10:
+        cmap = 'Set1'
+    from model_build.project_model_tools import smt
+    colors = smt.plot.get_colors(scens, cmap)
+    colors = {k: c for c, k in zip(colors, scens)}
+    plot_sets = [
+        ['long_current'],
+        ['long_current', 'max_allocation_on_pump_curve'],
+        ['long_current', 'max_allocation_on_pump_curve', use_keys[-2]],
+
+    ]
+    for i, plot_set in enumerate(plot_sets):
+        use_colors = [colors[k] for k in plot_set]
+        use_data_dirs = {k: data_dirs[k] for k in plot_set}
+        use_lss = {k: all_lss[k] for k in plot_set}
+        quantile_plots(scenarios=use_data_dirs, senario_ls=use_lss, outdir=use_outdir.joinpath(f'set_{i}'),
+                       aq_pen=['long_nat', 'long_current'], single_figs=True, colors=use_colors)
+
+
 if __name__ == '__main__':
-    # compare_mangawera_valley()
-    # compare_current_allo_to_rch_hillside()
-    # compare_long_current_max_full_allo()
+    example_quantile_figures()
+    compare_mangawera_valley()
+    compare_current_allo_to_rch_hillside()
+    compare_long_current_max_full_allo()
     compare_grid_allocation_scens()
     pass

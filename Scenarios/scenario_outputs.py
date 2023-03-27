@@ -350,6 +350,8 @@ def _setup_input_plots():
     figs['lake_rch'] = fig
     figs['lake_rch2'] = fig2
     axs['lake_rch'] = use_plots
+    use_plots[0].axhline(335, ls='dashdot', c='grey', label='Bund elevation')
+    use_plots[0].axhline(338, ls='dashdot', c='grey', label='Operational limit')
     # lake	total_rch	dryland_rch	irr_rch
 
     use_plots = []
@@ -811,6 +813,9 @@ def _setup_qq_plots(indicator_wells, single_figs=False):
             temp_ax = fig.add_subplot(gs[1:, 1])
             loc_axs.append(temp_ax)
 
+        for ax in temp_axs:
+            ax.axvline(5, color='grey', ls=':', label='5th percentile')
+            ax.axvline(10, color='grey', ls=':', label='10th percentile')
         axs[f'hds_{g}'] = temp_axs
 
         # make/ plot locator (color for well, ls for scenario)
@@ -830,7 +835,7 @@ def _setup_qq_plots(indicator_wells, single_figs=False):
 
 
 def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None,
-                   single_figs=False):
+                   single_figs=False, colors=None):
     assert set(scenarios.keys()) == set(senario_ls.keys())
     indicator_wells = get_indicator_well_locs()
     figs, axs, legend_axs = _setup_qq_plots(indicator_wells, single_figs=single_figs)
@@ -852,7 +857,8 @@ def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None,
         cmap = 'tab20b'
         if len(scens) <= 10:
             cmap = 'Set1'
-        colors = smt.plot.get_colors(scens, cmap)
+        if colors is None:
+            colors = smt.plot.get_colors(scens, cmap)
         for g in indicator_wells.group.unique():
             use_axs, leg_ax = axs[f'hds_{g}'], legend_axs[f'hds_{g}']
             temp_wells = indicator_wells.loc[indicator_wells.group == g]
@@ -905,6 +911,7 @@ def quantile_plots(scenarios, senario_ls, outdir, usepers=None, aq_pen=None,
                                 p = get_adiquate_penetration(f'hds_{nm}', pen)
                                 ax.axhline(p, label=f'adequate pen. from {pen}', ls=(0, (3, 10, 1, 10, 1, 10)),
                                            color='k', alpha=0.5)
+
                                 # add text label
                                 if i % 2 == 0:
                                     idx = -1

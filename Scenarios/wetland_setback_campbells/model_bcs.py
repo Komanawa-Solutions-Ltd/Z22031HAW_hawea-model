@@ -21,7 +21,6 @@ import flopy
 import numpy as np
 
 
-# todo do I need any constant heads??? nope, use constant flux for hill if needed
 
 def get_wetland_loc(azimuth, return_just_kij=False):
     x = 1303547.68
