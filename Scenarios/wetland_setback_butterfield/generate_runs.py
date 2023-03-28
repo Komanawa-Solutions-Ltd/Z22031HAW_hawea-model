@@ -228,10 +228,10 @@ def test_ssh_dist():
 
 def tranche_1(just_print_number=True, rerun=False):
     local_cores = 8
-    external_ips = []  # '100.121.150.68'
+    external_ips = ['100.121.150.68', '170.64.182.197']  # '100.121.150.68'
     run_name = 'tranche1d'
     rates = [100, 500, 1000, 5000]
-    hks = [.1, 1, 10]
+    hks = [.1, 1, 10, 1000]
     syvals = [.1, 1, 10]
     riv_vals = [750, 1500, 2500]
     max_pumping_rates = []

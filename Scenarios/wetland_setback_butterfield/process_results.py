@@ -153,6 +153,6 @@ if __name__ == '__main__':
     points_dir = butterfield_dir.joinpath('results/points')
     plot_dir = butterfield_dir.joinpath('results/plots')
 
-    # collate_results(model_dir, collate_dir)
-    # build_impact_points(collate_dir, points_dir)
+    collate_results(model_dir, collate_dir)
+    build_impact_points(collate_dir, points_dir)
     plot_outputs(points_dir, plot_dir)
