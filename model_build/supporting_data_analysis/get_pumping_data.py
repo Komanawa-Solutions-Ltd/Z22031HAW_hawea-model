@@ -149,7 +149,7 @@ def get_historical_max_allo_pumping_data(start_date, end_date, frequency='D', re
     return select_resample(outdata, start_date, end_date, frequency, func=func)
 
 
-def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=False, func='mean'):
+def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=False, func='mean', inc_near_riv=False):
     """
 
     :param start_date: none or date like
@@ -157,7 +157,10 @@ def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=Fals
     :param frequency: pd freq codes
     :return:
     """
-    processed_path = processed_model_build_data_dir.joinpath('historical_pumping.csv')
+    if inc_near_riv:
+        processed_path = processed_model_build_data_dir.joinpath('historical_pumping_include_near_riv.csv')
+    else:
+        processed_path = processed_model_build_data_dir.joinpath('historical_pumping.csv')
     if processed_path.exists() and not recalc:
         data = pd.read_csv(processed_path)
         data.loc[:, 'date'] = pd.to_datetime(data.loc[:, 'date'])
@@ -207,7 +210,7 @@ def get_pump_to_l1(recalc=False):
     return out
 
 
-def get_pumping_locs(return_raw=False):
+def get_pumping_locs(return_raw=False, force_near_river=False):
     data = get_well_flowmeter_mapper()
     idx = get_low_cond_array()
     moraine = get_2d_moraine()
@@ -229,7 +232,7 @@ def get_pumping_locs(return_raw=False):
     data.loc[idx, 'k'] = 1
     if return_raw:
         return data
-    if exclude_near_river_pumping:
+    if exclude_near_river_pumping and not force_near_river:
         data = data.loc[~data.near_river]
     return data
 
@@ -238,7 +241,7 @@ def data_checks():
     import matplotlib.pyplot as plt
     from model_build.project_model_tools import smt
     pumping_y = get_historical_pumping_data(None, None, 'Y')
-    locs = get_pumping_locs()
+    locs = get_pumping_locs(force_near_river=True)
     zones = get_model_zones()
     locs.loc[:, 'near_river'] = zones['near_river'][locs.i, locs.j]
     fig, ax = smt.plot.plt_matrix(smt.get_model_zeros() * np.nan, base_map=True, no_flow_layer=0, color_bar=False)
@@ -312,15 +315,28 @@ def data_checks():
         ax2.plot(temp.index, temp[k], c=c, label=k)
     ax2.legend()
 
+    fig, ax = plt.subplots(nrows=1, sharex=True)
+    z = 'Exclude near river and sandy point'
+    ax2.set_title(z)
+
+    temp = pumping_m.loc[:, locs.index[~locs['near_river'] & ~locs['sandypoint']]]
+    ax.plot(temp.sum(axis=1).index, temp.sum(axis=1).values, label=z)
+    z = 'full domain'
+    temp = pumping_m
+    ax.plot(temp.sum(axis=1).index, temp.sum(axis=1).values, label=z)
+    ax.legend()
+    ax.set_ylabel('Abstraction m$^3$/day')
+    ax.set_xlabel('Time')
+    fig.tight_layout()
     smt.plot.show()
 
 
 if __name__ == '__main__':
+    data_checks()
     get_most_upto_date_allocation_info(recalc=True)
     raise NotImplementedError
     get_historical_full_allo_pumping_data(None, None)
     locs = get_pumping_locs()
     get_model_zones(True)
-    data_checks()
     flow_mapper = get_well_flowmeter_mapper(recalc=True)
     flow = get_historical_pumping_data(None, None, recalc=True)
