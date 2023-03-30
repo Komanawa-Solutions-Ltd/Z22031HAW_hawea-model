@@ -121,6 +121,27 @@ def long_current_state():
                  outdir=base_outdir.joinpath(model_name),
                  build_run_model=run_modflow, process_results=process_results,
                  )
+def no_pumping():
+    print_myself()
+    model_name = 'no_pumping'
+    model_ws = base_run_dir.joinpath(model_name)
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
+
+    rch = get_scen_rch(scen_tdis, rch_param, dryland=False)
+    lake = get_scen_ghb_data(scen_tdis)
+    str_vals = get_scen_str_data(scen_tdis, riv_params, big_static=False, small_static=False)
+    wel_data = get_scen_well_data('no_pump', scen_tdis, hill_param, race_param, False)
+    run_scenario(model_name=model_name, model_ws=model_ws,
+                 tdis=scen_tdis,
+                 sy_param=sy_param,
+                 kh_param=kh_param,
+                 rch_data=rch,
+                 ghb_spd=lake,
+                 str_spd=str_vals,
+                 well_spd=wel_data,
+                 outdir=base_outdir.joinpath(model_name),
+                 build_run_model=run_modflow, process_results=process_results,
+                 )
 
 
 def lake_only_var():
@@ -246,13 +267,14 @@ def hillslope_only_var():
 
 
 process_results = True
-run_modflow = False
+run_modflow = True
 if __name__ == '__main__':
-    rerun = True
-    long_current_state()
-    long_naturalised()
-    opt_on_long_timescale()
+    rerun = False
+    no_pumping()
     if rerun:
+        long_naturalised()
+        opt_on_long_timescale()
+        long_current_state()
         lake_only_var()
         rch_only_var()
         hillslope_only_var()

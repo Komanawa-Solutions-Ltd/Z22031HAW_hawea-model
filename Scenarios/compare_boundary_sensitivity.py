@@ -153,9 +153,30 @@ def compare_bound_sense_single():
     q_qplots(base_scen_dir=base, outdir=use_outdir.joinpath('qq_plots'), base_scen_name='long_current',
              other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
 
+def compare_nat_long_no_pump():
+    use_outdir = outdir.joinpath('nat_long_nopump')
+    use_outdir.mkdir(exist_ok=True)
+    use_keys = ['long_current', 'long_nat', 'no_pumping']
+    all_lss = {k: l[-1] for k, l in zip(use_keys, linestyle_tuple)}
+    all_lss = {k: 'solid' for k, l in zip(use_keys, linestyle_tuple)}
+    data_dirs = {k: data_dir.joinpath(k) for k in use_keys}
+    quantile_plots(scenarios=data_dirs, senario_ls=all_lss, outdir=use_outdir.joinpath('quantile_plots'),
+                   aq_pen=['long_nat', 'long_current'], single_figs=True)
+    compare_scenarios(outdir=use_outdir.joinpath('comp_plots'),
+                      tdis=scen_tdis,
+                      data_dirs=data_dirs,
+                      model_names=use_keys, lss=all_lss, tickper=100, aq_pen=['long_nat', 'long_current'],
+                      single_figs=True)
+    base = data_dirs.pop('long_current')
+    all_lss.pop('long_current')
+    q_qplots(base_scen_dir=base, outdir=use_outdir.joinpath('qq_plots'), base_scen_name='long_current',
+             other_scens=data_dirs, other_scen_ls=all_lss, single_figs=True)
+
+
 
 if __name__ == '__main__':
-    compare_nat_opt_long_single()
-    compare_bound_sense_single()
-    compare_nat_opt_long()
-    compare_bound_sense()
+    compare_nat_long_no_pump()
+    #compare_nat_opt_long_single()
+    #compare_bound_sense_single()
+    #compare_nat_opt_long()
+    #compare_bound_sense()
