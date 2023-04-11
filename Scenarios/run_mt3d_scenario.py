@@ -22,6 +22,37 @@ from optimisation.final_opt_models.compress_uncompress_model import uncompress_m
 from pathlib import Path
 
 
+def save_opt_spd(outdir):
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
+    opt_ghb_spd = get_ghb_data(opt_tdis)[0]
+    opt_rch = get_rch_data(opt_tdis, rch_param)[0]
+    opt_str_spd = get_str_data(opt_tdis, riv_params=riv_params)[0]
+    opt_well_spd = get_well_data(opt_tdis,
+                                 hill_param=hill_param,
+                                 race_param=race_param)[0]
+    np.savez_compressed(outdir.joinpath('opt_spd.npz'), rch=opt_rch)
+    from model_build.get_boundary_condition_data import get_river_loc_data, get_race_locs, get_hillside_catchment_locs, \
+        get_pumping_locs
+    outpath = outdir.joinpath('spd.hdf')
+    pd.DataFrame(opt_ghb_spd).to_hdf(outpath, 'ghb')
+    t = pd.DataFrame(opt_str_spd)
+    t = pd.merge(t, get_river_loc_data(), on=['k', 'i', 'j'])
+    t.to_hdf(outpath, 'str')
+    t = pd.DataFrame(opt_well_spd)
+    all_wells = []
+    temp = get_pumping_locs()
+    temp.loc[:, 'wtype'] = 'pumping'
+    all_wells.append(temp)
+    temp = get_hillside_catchment_locs()
+    temp.loc[:, 'wtype'] = 'hillside'
+    all_wells.append(temp)
+    temp = get_race_locs()
+    temp.loc[:, 'wtype'] = 'race'
+    all_wells.append(temp)
+    t = pd.merge(t, pd.concat(all_wells), on=['k', 'i', 'j'])
+    t.to_hdf(outpath, 'wel')
+
+
 def get_ftl(recalc=False):
     model_name = 'opt_ss'
     base_run_dir = unbacked_dir.joinpath('ftl_creation')
@@ -381,5 +412,7 @@ def create_mt3d(ftl_path, mt3d_name, mt3d_ws, smt, run_model=True, num_species=1
 
 
 if __name__ == '__main__':
+    save_opt_spd(Path(
+        '/home/matt_dumont/PycharmProjects/modflow_tools_haw/modflow_suite_support/test_modflow_suite_support/from_hawea_model'))
     get_ftl(True)
     pass
