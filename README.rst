@@ -6,7 +6,7 @@ Hawea Transient groundwater model (Hawea Model)
 :Status:  Draft
 :KSL project: Z22031HAW_hawea-model
 
-.. figure:: ./support_figures/domain.png
+.. figure:: support_figures/domain.png
    :width: 600
    :align: center
 
