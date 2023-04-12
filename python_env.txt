@@ -8,17 +8,3 @@ pip install ppscore
 pip install tabulate
 pip install fpdf
 pip install pdfkit
-
-# optional to interface with interal KSL data:
-# todo KSL_ENV
-
-# todo save the env and update whenever new packages are added:
-# todo at end of project remake the env and check!
-conda list --explicit > /home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/environment.txt
-conda env export > /home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/environment.yml
-
-# make sure you added these files to the git!
-
-
-########### Typical Packages ###########
-numpy pandas pytables openpyxl matplotlib scipy netcdf4 psutil geopandas flopy

@@ -10,15 +10,14 @@ Hawea Transient groundwater model (Hawea Model)
    :width: 600
    :align: center
 
-    The Hawea model domain.  The inactive portions of the model are coloured grey
 
-
-The Hawea model domain. The model domain is a 3D model of the Hawea
+The Hawea model domain; the inactive portions of the model are coloured grey. The model domain is a 3D model of the Hawea
 aquifer systems including the Mangawera Valley.
 The model domain is bounded by Lake Hawea to the North the Clutha River to
 the South, and the hillslopes to the East and West The model domain is
 17 km by 23.5 km. The model cell spacing is 100 m and the model is on a
-regular North-South grid
+regular North-South grid.
+The model is loosely based on the 2D model of the Hawea aquifer system developed by Wilson et al, (2011)
 
 Index
 =====
@@ -26,13 +25,36 @@ Index
 
 
 
-
-#todo
-
 Modelling methodology and results
 ==============================
+Rather than a traditional model report this repository serves as the detailed documentation of the modelling process.
+`The final report with the interpretation of the modelling process and results is available in the repo <todo>`_. #todo
+The modelling process was broadly undertaken in the following steps; each step has its own readme document detailing
+its methodology and, where applicable, the results of the step.:
 
-#todo
+1.  Model build: build the model structure and boundary conditions
+2.  Model targets: define the model targets and objective function
+3.  Model Parameterisation: define the initial model parameters and parameterisation
+2.  Model calibration: calibrate the model to the available data
+3.  Model Scenarios: run a series of scenarios to better understand the model behaviour and to predict the systems response to changing conditions
+
+Python Environment
+==================
+This model was developed in python on linux (ubuntu 20.04).  The python environment was created using the anaconda package manager.
+The environment was created using the following command: ::
+
+    conda create -c conda-forge --name hawea python numpy pandas pytables openpyxl matplotlib scipy netcdf4 psutil geopandas flopy pysheds scikit-learn py7zr
+    conda activate hawea
+    pip install pyemu
+    pip install ppscore
+    pip install tabulate
+    pip install fpdf
+    pip install pdfkit
+
+In addition to the creation code above. the repo environment was exported in:
+
+-  `environment.yml <environment.yml>`_
+-  `environment.txt <environment.txt>`_
 
 Git repo structure
 ==================
@@ -41,7 +63,7 @@ The full modelling process for the Hawea model was undertaken within
 this Github repo. The only exceptions are several large datasets
 (LIDAR/DEMs) which were simplified (code in repo) and then the
 simplified product was saved in the Github Repo. This means that no
-external datasets are necissary to completely recreate the Hawea model
+external datasets are necessary to completely recreate the Hawea model
 and the full methodology is present in this Repo.
 
 Repo index
@@ -49,16 +71,11 @@ Repo index
 
 #todo
 
-Python Environment
-------------------
-This model was developed in python on linux (ubuntu 20.04).  The python environment was created using the anaconda package manager.
-The environment was created using the following command:
 
 
 
-proprietary packages
+Proprietary packages
 --------------------
-
 For the most part we relied on open source packages to create #todo
 
 Branches and releases
