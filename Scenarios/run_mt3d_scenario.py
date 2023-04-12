@@ -36,17 +36,17 @@ def save_opt_spd(outdir):
     outpath = outdir.joinpath('spd.hdf')
     pd.DataFrame(opt_ghb_spd).to_hdf(outpath, 'ghb')
     t = pd.DataFrame(opt_str_spd)
-    t = pd.merge(t, get_river_loc_data(), on=['k', 'i', 'j'])
+    t = pd.merge(t, get_river_loc_data().reset_index(), on=['k', 'i', 'j'])
     t.to_hdf(outpath, 'str')
     t = pd.DataFrame(opt_well_spd)
     all_wells = []
-    temp = get_pumping_locs()
+    temp = get_pumping_locs().reset_index()
     temp.loc[:, 'wtype'] = 'pumping'
     all_wells.append(temp)
-    temp = get_hillside_catchment_locs()
+    temp = get_hillside_catchment_locs().reset_index()
     temp.loc[:, 'wtype'] = 'hillside'
     all_wells.append(temp)
-    temp = get_race_locs()
+    temp = get_race_locs().reset_index()
     temp.loc[:, 'wtype'] = 'race'
     all_wells.append(temp)
     t = pd.merge(t, pd.concat(all_wells), on=['k', 'i', 'j'])
