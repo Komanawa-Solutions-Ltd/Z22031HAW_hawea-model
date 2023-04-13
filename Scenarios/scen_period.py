@@ -4,7 +4,10 @@ on: 24/11/22
 """
 import datetime
 import pandas as pd
-from model_tools.time_discretization import TimeDis # todo need dummy
+try:
+    from model_tools.time_discretization import TimeDis
+except ModuleNotFoundError:
+    from dummy_packages import TimeDis
 
 # hill: '1976-09-23' to '2021-06-30'
 # rch: '1950-01-01' to '2020-12-27'

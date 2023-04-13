@@ -7,8 +7,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from model_tools.regular_modeltools import ModelTools_RegularGrid # todo need dummy
-from model_tools.time_discretization import TimeDis # todo need dummy
+try:
+    from model_tools.regular_modeltools import ModelTools_RegularGrid
+    from model_tools.time_discretization import TimeDis
+except ModuleNotFoundError:
+    from dummy_packages import ModelTools_RegularGrid, TimeDis
 from project_base import unbacked_dir, base_model_build_data_dir, modelling_dir, campbells_dir
 import geopandas as gpd
 
@@ -134,7 +137,7 @@ tdis = TimeDis(
 )
 if __name__ == '__main__':
     nf = no_flow(True)[0]
-    smt.plot.plt_matrix(nf,title='no flow', base_map=True)
+    smt.plot.plt_matrix(nf, title='no flow', base_map=True)
     top, idx = _get_top_array(True, True)
     t = smt.get_elv_db()
     smt.plot.plt_matrix(top, title='top', base_map=True, no_flow_layer=0)

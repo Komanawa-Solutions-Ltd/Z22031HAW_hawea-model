@@ -7,8 +7,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from model_tools.regular_modeltools import ModelTools_RegularGrid # todo need dummy
-from model_tools.time_discretization import TimeDis # todo need dummy
+try:
+    from model_tools.regular_modeltools import ModelTools_RegularGrid
+    from model_tools.time_discretization import TimeDis
+except ModuleNotFoundError:
+    from dummy_packages import ModelTools_RegularGrid, TimeDis
 from project_base import proj_root, unbacked_dir, base_model_build_data_dir, modelling_dir, butterfield_dir
 import geopandas as gpd
 
@@ -124,7 +127,7 @@ def simplify_upper_clutha_dem(recalc=False):
     return data
 
 
-def _get_top_array(retun_idx = False, recalc=False):
+def _get_top_array(retun_idx=False, recalc=False):
     save_path = butterfield_dir.joinpath('processed_input_data', 'model_top.npy')
     if save_path.exists() and not recalc:
         return np.load(save_path)
@@ -132,7 +135,7 @@ def _get_top_array(retun_idx = False, recalc=False):
     clutha_dem = simplify_upper_clutha_dem()
     all_dem = simplify_hawea_dem()
     use_dem = all_dem.copy()
-    idx = smt.get_model_zeros()+1
+    idx = smt.get_model_zeros() + 1
     np.save(save_path, use_dem)
     if retun_idx:
         return use_dem, idx
@@ -169,7 +172,7 @@ if __name__ == '__main__':
     smt.plot.plt_matrix(top, title='top', base_map=True)
     smt.plot.plt_matrix(idx, title='idx', base_map=True)
     t = smt.get_elv_db()
-    smt.plot.plt_matrix(t[0]-t[1], vmax=1)
+    smt.plot.plt_matrix(t[0] - t[1], vmax=1)
 
     smt.plot.show()
     pass

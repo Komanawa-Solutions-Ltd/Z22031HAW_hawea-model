@@ -261,7 +261,26 @@ or to generate a next generation with the proprietary packages they are encourag
 
 The proprietary packages used in this model are:
 
-#todo (after finish including/supporting/dummy packages)
+- Dummy packages provided:
+    - from model_tools.time_discretization import TimeDis
+        - mange the human time to model time
+    - from model_tools.regular_modeltools import ModelTools_RegularGrid
+        - manage the model structure and real world coordinates to model coordinates
+- No Dummy packages provided
+    - from rushton_model.rushton import Rushton
+        - land surface recharge model
+    - from run_managers.beopest_manager import BeopestManager
+        - Manage Beopest across multiple linux machines
+    - from run_managers.ssh_distributor import SshDist
+        - Distribute a list of model runs across linux machines
+    - from model_tools.util_functions.list_file_utils import ListSolverInfo
+        - extract solver information from the list file
+    - from model_tools.plot_borelogs import plot_borelogs, plot_single_log, make_single_log_handles
+        - plot bore logs
+    - from model_tools.model_plotting import plot_spd, first, last, FakePath
+        - plot model results
+    - from model_tools.plot_optimisation import plot_optimisation_and_extract_info
+        - plot optimisation results
 
 Branches and releases
 =====================

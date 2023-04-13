@@ -10,7 +10,10 @@ from Scenarios.scen_period import scen_tdis
 from project_base import processed_scen_dir, proj_root, unbacked_dir
 import pandas as pd
 import datetime
-from model_tools.time_discretization import TimeDis # todo nee dummy
+try:
+    from model_tools.time_discretization import TimeDis
+except ModuleNotFoundError:
+    from dummy_packages import TimeDis
 import inspect
 import numpy as np
 from Scenarios.low_lake_scenario_data import get_low_lake_params, mod_sin_asym

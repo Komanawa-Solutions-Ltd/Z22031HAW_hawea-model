@@ -7,7 +7,11 @@ from pathlib import Path
 import pandas as pd
 
 from project_base import unbacked_dir, base_model_build_data_dir
-from model_tools.regular_modeltools import ModelTools_RegularGrid # todo nee dummy package
+
+try:
+    from model_tools.regular_modeltools import ModelTools_RegularGrid
+except ModuleNotFoundError:
+    from dummy_packages import ModelTools_RegularGrid
 import flopy
 import numpy as np
 
@@ -62,25 +66,28 @@ def covert_scott_df_to_reg(data: pd.DataFrame):
     idx = (data.i < rows) & (data.i >= 0) & (data.j >= 0) & (data.j < cols)
     return data.loc[idx]
 
+
 def run_scott():
     m = get_full_scott_model()
     m.change_model_ws(base_scott_dir.joinpath('run'))
-    m.exe_name='mfnwt'
+    m.exe_name = 'mfnwt'
     m.write_input()
     m.run_model()
+
 
 def plot_ibound():
     m = get_full_scott_model()
     smt_scott.plot.plt_matrix(convert_scott_array_to_reg_grid(m.bas6.ibound.array[0]), base_map=True)
     smt_scott.plot.show()
 
+
 def get_scott_hds():
     hds = flopy.utils.HeadFile(base_scott_dir.joinpath('run/gv10.hds')).get_alldata()[0]
-    hds[hds==999] = np.nan
+    hds[hds == 999] = np.nan
     hds = convert_scott_array_to_reg_grid(hds[0])
     smt_scott.plot.plt_matrix(hds, base_map=True)
     smt_scott.plot.show()
-    smt_scott.io.array_to_raster(base_scott_dir.joinpath('scott_hds.tif'),hds)
+    smt_scott.io.array_to_raster(base_scott_dir.joinpath('scott_hds.tif'), hds)
 
 
 def plot_hk():
@@ -96,7 +103,7 @@ def plot_hk():
     print(pd.Series(np.log10(t).flatten()).describe())
 
     print('log describe and re-mapped')
-    print(10**pd.Series(np.log10(t).flatten()).describe())
+    print(10 ** pd.Series(np.log10(t).flatten()).describe())
 
 
 def plot_riv_conductances():

@@ -7,7 +7,7 @@ import numpy as np
 import shutil
 from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
-from run_managers.run_multiprocess import run_multiprocess # keynote private repo
+from dummy_packages.run_multiprocess import run_multiprocess
 
 
 def _run_model_mp(kwargs):

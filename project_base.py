@@ -49,4 +49,3 @@ processed_scen_dir = proj_root.joinpath('Scenarios/processed_input_data')
 butterfield_dir = proj_root.joinpath('Scenarios/wetland_setback_butterfield')
 campbells_dir = proj_root.joinpath('Scenarios/wetland_setback_campbells')
 
-# todo write up a users guide in the README.md

@@ -4,7 +4,12 @@ on: 19/07/22
 """
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
-from model_tools.regular_modeltools import ModelTools_RegularGrid # todo need dummy
+
+try:
+    from model_tools.regular_modeltools import ModelTools_RegularGrid
+except ModuleNotFoundError:
+    from dummy_packages import ModelTools_RegularGrid
+
 from project_base import proj_root, modelling_dir, unbacked_dir, base_model_build_data_dir, \
     processed_model_build_data_dir
 import geopandas as gpd
@@ -12,9 +17,6 @@ import numpy as np
 import pandas as pd
 from copy import deepcopy
 
-# todo manage proprietary packages so they don't make the whole thing fall over.
-# todo clone the 'modflow_tools' repo and make a new branch for this model, don't forget to merge
-# when finished
 default_figsize = (8, 10)
 temp_file_dir = unbacked_dir.joinpath('tempfiles')
 temp_file_dir.mkdir(exist_ok=True)

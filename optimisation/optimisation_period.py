@@ -4,7 +4,11 @@ on: 6/09/22
 """
 import datetime
 import pandas as pd
-from model_tools.time_discretization import TimeDis # todo need dummy function
+
+try:
+    from model_tools.time_discretization import TimeDis
+except ModuleNotFoundError:
+    from dummy_packages import TimeDis
 
 start = '2015-07-18'  # Keynote set based on the minimisation of the RSME to the mean values
 end = '2020-06-27'  # Keynote this is the end of the available data

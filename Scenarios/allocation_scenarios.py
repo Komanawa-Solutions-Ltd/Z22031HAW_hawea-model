@@ -385,7 +385,7 @@ def mangawera_reduction():
                     nwt_kwargs=dict(maxiterout=1500, maxitinner=300)
                     )
         runs.append(temp)
-    from run_managers.run_multiprocess import run_multiprocess # keynote private repo
+    from dummy_packages.run_multiprocess import run_multiprocess
     print(len(runs))
     pool_outputs = run_multiprocess(run_scenario_mp, runs, num_cores=num_cores)
     print('\n'.join([str(e) for e in pool_outputs]))

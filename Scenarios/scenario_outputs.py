@@ -13,7 +13,11 @@ from model_build.supporting_data_analysis.hillside_inflows import get_hillside_c
 from model_build.supporting_data_analysis.river_data import get_river_loc_data
 from model_build.project_model_tools import smt, get_low_cond_array
 from pathlib import Path
-from model_tools.time_discretization import TimeDis #todo need dummy
+
+try:
+    from model_tools.time_discretization import TimeDis
+except ModuleNotFoundError:
+    from dummy_packages import TimeDis
 from targets_and_sensitive_sites.model_output import plot_list_failures, modflow_converged, \
     plot_lake_moraine_smoothed_areas
 from copy import deepcopy
