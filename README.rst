@@ -27,7 +27,7 @@ Index
 Modelling methodology and results
 ==============================
 Rather than a traditional model report this repository serves as the detailed documentation of the modelling process.
-`The final report with the interpretation of the modelling process and results is available in the repo <todo>`_. #todo
+`The final report with the interpretation of the modelling process and results is available in the repo <>`_. #todo
 The modelling process was broadly undertaken in the following steps; each step has its own readme document detailing
 its methodology and, where applicable, the results of the step:
 
@@ -87,52 +87,58 @@ The repo has been documented to a reasonable extent, but there is still
 some work that could be done to make the repo more user friendly.
 If you have any questions please contact Matt Dumont (matt@komanawa.com)
 
-
 -  `README.rst <README.rst>`_: This document
 -  `project_base.py <project_base.py>`_: A script to set up the project environment and manage paths
 -  `scott_model <scott_model>`_: A copy of the original 2D model of the Hawea aquifer system developed by Wilson et al, (2011)
-
 -  `model_build <model_build>`_: model build process and datasets
-    -  `modflow_model.py <model_build/modflow_model.py>`_
-    -  `zones.py <model_build/zones.py>`_
-    -  `__pycache__ <model_build/__pycache__>`_
-    -  `get_boundary_condition_data.py <model_build/get_boundary_condition_data.py>`_
-    -  `processed_input_data <model_build/processed_input_data>`_
-    -  `README.rst <model_build/README.rst>`_
-    -  `project_model_tools.py <model_build/project_model_tools.py>`_
-    -  `__init__.py <model_build/__init__.py>`_
-    -  `utils.py <model_build/utils.py>`_
-    -  `supporting_data_analysis <model_build/supporting_data_analysis>`_
-    -  `base_data <model_build/base_data>`_
+    -  `README.rst <model_build/README.rst>`_: a readme file for the model build
+    -  `base_data <model_build/base_data>`_: raw input data for the model build
+    -  `processed_input_data <model_build/processed_input_data>`_: processed data for the model build that was built by the scripts in this folder from the raw data in the base_data folder
+    -  `project_model_tools.py <model_build/project_model_tools.py>`_: a script to define the model tools instance, and the model structure
+    -  `get_boundary_condition_data.py <model_build/get_boundary_condition_data.py>`_: a script to get the boundary condition data
+    -  `supporting_data_analysis <model_build/supporting_data_analysis>`_: scripts to support creating the boundary condition data and structure
+        -  `all_wells.py <model_build/supporting_data_analysis/all_wells.py>`_: a script to get all the well location data
+        -  `base_concept_diagram.py <model_build/supporting_data_analysis/base_concept_diagram.py>`_: a script to build a base concept diagram of the 3d model structure
+        -  `compare_met_era5land.py <model_build/supporting_data_analysis/compare_met_era5land.py>`_: compare precip and PET between the available met station and the ERA5 land data
+        -  `explore_structure.py <model_build/supporting_data_analysis/explore_structure.py>`_:
+        -  `get_era_5_land.py <model_build/supporting_data_analysis/get_era_5_land.py>`_: script to get ERA5-land data
+        -  `get_pumping_data.py <model_build/supporting_data_analysis/get_pumping_data.py>`_: get and process historical pumping data
+        -  `hillside_inflows.py <model_build/supporting_data_analysis/hillside_inflows.py>`_: model and process estimates from the hillside inflows
+        -  `irrigation_race_losses.py <model_build/supporting_data_analysis/irrigation_race_losses.py>`_:  get and process the historical race loss data
+        -  `lake_data.py <model_build/supporting_data_analysis/lake_data.py>`_: get and process the historical lake data
+        -  `map_flowmeter_to_wells.py <model_build/supporting_data_analysis/map_flowmeter_to_wells.py>`_: a process to map the flowmeter data to the most likely well
+        -  `plot_borelogs.py <model_build/supporting_data_analysis/plot_borelogs.py>`_:  a process to plot the borelogs in the model
+        -  `recharge_model.py <model_build/supporting_data_analysis/recharge_model.py>`_: develop and create LSR estimates from met and ERA5-land data
+        -  `river_data.py <model_build/supporting_data_analysis/river_data.py>`_: : a process to get and process the river data
+    -  `modflow_model.py <model_build/modflow_model.py>`_: a script to build a modflow model instance
+    -  `utils.py <model_build/utils.py>`_: a script to define some utility functions
+    -  `zones.py <model_build/zones.py>`_: a script to define indicative model zones
 
 -  `model_parameterisation <model_parameterisation>`_:  model parameterisation and implementation
-    -  `static_params.py <model_parameterisation/static_params.py>`_
-    -  `parameter_map.png <model_parameterisation/parameter_map.png>`_
-    -  `pilot_points.py <model_parameterisation/pilot_points.py>`_
-    -  `__pycache__ <model_parameterisation/__pycache__>`_
-    -  `processed_data <model_parameterisation/processed_data>`_
-    -  `README.rst <model_parameterisation/README.rst>`_
-    -  `inital_parametersiation.py <model_parameterisation/inital_parametersiation.py>`_
-    -  `plot_parameter_names.py <model_parameterisation/plot_parameter_names.py>`_
-    -  `optimised_parameterisation.py <model_parameterisation/optimised_parameterisation.py>`_
-    -  `__init__.py <model_parameterisation/__init__.py>`_
-    -  `base_data <model_parameterisation/base_data>`_
-    -  `optimised_parameter_sets <model_parameterisation/optimised_parameter_sets>`_
-
+    -  `README.rst <model_parameterisation/README.rst>`_: a readme file for the model parameterisation
+    -  `base_data <model_parameterisation/base_data>`_: raw input data for the model parameterisation
+    -  `processed_data <model_parameterisation/processed_data>`_: processed data for the model parameterisation that was built by the scripts in this folder from the raw data in the base_data folder
+    -  `static_params.py <model_parameterisation/static_params.py>`_: a script to define the static model parameters
+    -  `pilot_points.py <model_parameterisation/pilot_points.py>`_: a script to create, define, and interpolate pilot points for kh and sy
+    -  `inital_parametersiation.py <model_parameterisation/inital_parametersiation.py>`_: a script to define the initial model parameters (before optimisation)
+    -  `plot_parameter_names.py <model_parameterisation/plot_parameter_names.py>`_: a script to plot the parameter names generates parameter_map.png
+    -  `optimised_parameterisation.py <model_parameterisation/optimised_parameterisation.py>`_: a script to easily access optimised parameter sets
+    -  `optimised_parameter_sets <model_parameterisation/optimised_parameter_sets>`_: optimised parameter sets
+        - `3d_v1a_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1a_opt.par>`_: optimised parameter set for the 3D model version 1a
+        - `3d_v1b_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1b_opt.par>`_: optimised parameter set for the 3D model version 1b
+        - `3d_v1d_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1d_opt.par>`_: optimised parameter set for the 3D model version 1d
+    -  `parameter_map.png <model_parameterisation/parameter_map.png>`_: a map of the model parameters
 -  `targets_and_sensitive_sites <targets_and_sensitive_sites>`_: Target development and data
-    -  `riv_gain_loss_targets.py <targets_and_sensitive_sites/riv_gain_loss_targets.py>`_
-    -  `__pycache__ <targets_and_sensitive_sites/__pycache__>`_
-    -  `processed_data <targets_and_sensitive_sites/processed_data>`_
-    -  `README.rst <targets_and_sensitive_sites/README.rst>`_
-    -  `model_output.py <targets_and_sensitive_sites/model_output.py>`_
-    -  `head_targets.py <targets_and_sensitive_sites/head_targets.py>`_
-    -  `senstive_sites.py <targets_and_sensitive_sites/senstive_sites.py>`_
-    -  `target_structure_checks.py <targets_and_sensitive_sites/target_structure_checks.py>`_
-    -  `get_indicative_times.py <targets_and_sensitive_sites/get_indicative_times.py>`_
-    -  `__init__.py <targets_and_sensitive_sites/__init__.py>`_
-    -  `get_raw_target_data.py <targets_and_sensitive_sites/get_raw_target_data.py>`_
-    -  `base_data <targets_and_sensitive_sites/base_data>`_
-
+    -  `README.rst <targets_and_sensitive_sites/README.rst>`_ : readme document detailing the methods and data used to develop the targets
+    -  `model_output.py <targets_and_sensitive_sites/model_output.py>`_: script to extract consistent model outputs and plots
+    -  `get_raw_target_data.py <targets_and_sensitive_sites/get_raw_target_data.py>`_:  ingest raw target data
+    -  `get_indicative_times.py <targets_and_sensitive_sites/get_indicative_times.py>`_: get indicative times for the targets that fall outside of the optimisation period
+    -  `head_targets.py <targets_and_sensitive_sites/head_targets.py>`_:  definition of the head targets
+    -  `riv_gain_loss_targets.py <targets_and_sensitive_sites/riv_gain_loss_targets.py>`_:  definition of the river gain and loss targets
+    -  `senstive_sites.py <targets_and_sensitive_sites/senstive_sites.py>`_: identification of sensitive sites
+    -  `target_structure_checks.py <targets_and_sensitive_sites/target_structure_checks.py>`_: checks to ensure that the targets and the model structure were not mutually exclusive
+    -  `base_data <targets_and_sensitive_sites/base_data>`_: base input data for the targets
+    -  `processed_data <targets_and_sensitive_sites/processed_data>`_: processed target data, this was developed from the raw data in the base_data folder
 -  `optimisation <optimisation>`_:  Optimisation code and results
     -  `README.rst <optimisation/README.rst>`_: readme document detailing the optimization process and methodology
     -  Pest optimisation build, run, and post processing scripts
@@ -217,14 +223,45 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `wetland_setback_campbells <Scenarios/wetland_setback_campbells>`_: Wetland setback modelling for Campbells wetland scripts and results
         -  `wetland_setback_butterfield <Scenarios/wetland_setback_butterfield>`_: Wetland setback modelling for Butterfield wetland scripts and results
 -  `support_figures <support_figures>`_: supporting figures for this and other README.rst documents
+-  `dummy_packages <dummy_packages>`_: dummy packages for the proprietary packages used in the model, these packages have some, but not all of functionality of the original packages
 
-
-#todo
 
 Proprietary packages
 --------------------
-For the most part we relied on open source packages to create
-#todo
+For the most part we relied on open source packages to create the hawea model, but we did use some proprietary in
+house packages. These packages are not included in this repository, but we have included dummy packages that
+contain the same structure as the original packages and replicates some of the functionality.
+These dummy packages are located in the `dummy_packages
+
+Additionally, to ensure future use of this model we have included outputs of the data which
+necessitated teh use of the proprietary packages. These outputs are located in the `processed_input_data` folders.
+The functions that use these packages to develop the outputs tend to follow are "recalc" structure, that is: ::
+
+        def get_data(*args, **kwargs, recalc=False):
+            save_path = processed_data_dir.joinpath('data.csv') # path in the processed data folder where the outputs are saved
+            if save_path.exists() and not recalc:
+                # read the data from the saved path and return it
+                # sometimes addtional processing (e.g. other args) is done after loading the data
+                return pd.read_csv(save_path)
+            else:
+                # the process by which the data was generated
+                outdata = None
+                # save the data to the save_path
+                outdata.to_csv(save_path)
+                return outdata
+
+This structure allows the user to run the model without the proprietary packages, but also allows the user to
+see the full methodology used to generate the outputs. This also keeps the links between the data generation and
+the data use (e.g. in a model) explicit.  This prevents the 'black box' problem that can occur when the data is
+generated by a different process and then ingested into the model.
+
+
+Excluding a full model re-build, these proprietary packages should not be needed; however If the user wishes to run the model with the proprietary packages
+or to generate a next generation with the proprietary packages they are encouraged to contact the authors of this model: matt@komanawa.com
+
+The proprietary packages used in this model are:
+
+#todo (after finish including/supporting/dummy packages)
 
 Branches and releases
 =====================
