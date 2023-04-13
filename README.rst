@@ -24,19 +24,18 @@ Index
 .. contents:: Table of Contents
 
 
-
 Modelling methodology and results
 ==============================
 Rather than a traditional model report this repository serves as the detailed documentation of the modelling process.
 `The final report with the interpretation of the modelling process and results is available in the repo <todo>`_. #todo
 The modelling process was broadly undertaken in the following steps; each step has its own readme document detailing
-its methodology and, where applicable, the results of the step.:
+its methodology and, where applicable, the results of the step:
 
-1.  Model build: build the model structure and boundary conditions
-2.  Model targets: define the model targets and objective function
-3.  Model Parameterisation: define the initial model parameters and parameterisation
-2.  Model calibration: calibrate the model to the available data
-3.  Model Scenarios: run a series of scenarios to better understand the model behaviour and to predict the systems response to changing conditions
+1.  `Model build <model_build/README.rst>`_: build the model structure and boundary conditions
+2.  `Model targets <targets_and_sensitive_sites/README.rst>`_: define the model targets and objective function
+3.  `Model Parameterisation <model_parameterisation/README.rst>`_: define the initial model parameters and parameterisation
+2.  `Model Optimisation <optimisation/README.rst>`_: optimize the model to the available data
+3.  `Model Scenarios <Scenarios/README.rst>`_: run a series of scenarios to better understand the model behaviour and to predict the systems response to changing conditions
 
 Python Environment
 ==================
@@ -66,17 +65,166 @@ simplified product was saved in the Github Repo. This means that no
 external datasets are necessary to completely recreate the Hawea model
 and the full methodology is present in this Repo.
 
+Comment keyword standards:
+---------------
+
+We have used a number of multiple keywords (case insensitive) to support identifying important comments within the text. These are:
+
+-  TODO: A comment that identifies a task that needs to be completed
+-  FIXME: A comment that identifies a problem that needs to be fixed
+-  KEYNOTE: A comment that identifies a key assumption or point of interest
+-  OPEN SOURCE IMPROVE: A comment that identifies a potential improvement to existing open source code repos
+
+At this point only KEYNOTE and OPEN SOURCE IMPROVE should remain in the repo, however it is possible that some
+TODOs and FIXMEs will remain accidentally, note that these have been delt with, but accidentally were not removed from the code.
+Many IDEs have a search function that can be used to find these keywords, which we would encourage you to use.
+
 Repo index
 ----------
+Below is a rough guide to the repo structure. Not every file in the repo is described.  Often the best way to find out
+the information a file contains is to look through the appropriate python function and read the docstrings.
+The repo has been documented to a reasonable extent, but there is still
+some work that could be done to make the repo more user friendly.
+If you have any questions please contact Matt Dumont (matt@komanawa.com)
+
+
+-  `README.rst <README.rst>`_: This document
+-  `project_base.py <project_base.py>`_: A script to set up the project environment and manage paths
+-  `scott_model <scott_model>`_: A copy of the original 2D model of the Hawea aquifer system developed by Wilson et al, (2011)
+
+-  `model_build <model_build>`_: model build process and datasets
+    -  `modflow_model.py <model_build/modflow_model.py>`_
+    -  `zones.py <model_build/zones.py>`_
+    -  `__pycache__ <model_build/__pycache__>`_
+    -  `get_boundary_condition_data.py <model_build/get_boundary_condition_data.py>`_
+    -  `processed_input_data <model_build/processed_input_data>`_
+    -  `README.rst <model_build/README.rst>`_
+    -  `project_model_tools.py <model_build/project_model_tools.py>`_
+    -  `__init__.py <model_build/__init__.py>`_
+    -  `utils.py <model_build/utils.py>`_
+    -  `supporting_data_analysis <model_build/supporting_data_analysis>`_
+    -  `base_data <model_build/base_data>`_
+
+-  `model_parameterisation <model_parameterisation>`_:  model parameterisation and implementation
+    -  `static_params.py <model_parameterisation/static_params.py>`_
+    -  `parameter_map.png <model_parameterisation/parameter_map.png>`_
+    -  `pilot_points.py <model_parameterisation/pilot_points.py>`_
+    -  `__pycache__ <model_parameterisation/__pycache__>`_
+    -  `processed_data <model_parameterisation/processed_data>`_
+    -  `README.rst <model_parameterisation/README.rst>`_
+    -  `inital_parametersiation.py <model_parameterisation/inital_parametersiation.py>`_
+    -  `plot_parameter_names.py <model_parameterisation/plot_parameter_names.py>`_
+    -  `optimised_parameterisation.py <model_parameterisation/optimised_parameterisation.py>`_
+    -  `__init__.py <model_parameterisation/__init__.py>`_
+    -  `base_data <model_parameterisation/base_data>`_
+    -  `optimised_parameter_sets <model_parameterisation/optimised_parameter_sets>`_
+
+-  `targets_and_sensitive_sites <targets_and_sensitive_sites>`_: Target development and data
+    -  `riv_gain_loss_targets.py <targets_and_sensitive_sites/riv_gain_loss_targets.py>`_
+    -  `__pycache__ <targets_and_sensitive_sites/__pycache__>`_
+    -  `processed_data <targets_and_sensitive_sites/processed_data>`_
+    -  `README.rst <targets_and_sensitive_sites/README.rst>`_
+    -  `model_output.py <targets_and_sensitive_sites/model_output.py>`_
+    -  `head_targets.py <targets_and_sensitive_sites/head_targets.py>`_
+    -  `senstive_sites.py <targets_and_sensitive_sites/senstive_sites.py>`_
+    -  `target_structure_checks.py <targets_and_sensitive_sites/target_structure_checks.py>`_
+    -  `get_indicative_times.py <targets_and_sensitive_sites/get_indicative_times.py>`_
+    -  `__init__.py <targets_and_sensitive_sites/__init__.py>`_
+    -  `get_raw_target_data.py <targets_and_sensitive_sites/get_raw_target_data.py>`_
+    -  `base_data <targets_and_sensitive_sites/base_data>`_
+
+-  `optimisation <optimisation>`_:  Optimisation code and results
+    -  `README.rst <optimisation/README.rst>`_: readme document detailing the optimization process and methodology
+    -  Pest optimisation build, run, and post processing scripts
+        -  `build_optimisation.py <optimisation/build_optimisation.py>`_: script and functions to build the pest files
+        -  `a_build_run_optimisation_version.py <optimisation/a_build_run_optimisation_version.py>`_: build and run a pest optimisation
+        -  `run_opt_step_models.py <optimisation/run_opt_step_models.py>`_:  run the step models from a pest optimisation
+        -  `manual_optimisations <optimisation/manual_optimisations>`_:  manual optimisations that were run, in the end these never contributed more than some information to the modeller
+        -  `model_utils_for_forward_run.py <optimisation/model_utils_for_forward_run.py>`_: functions to build and run a model from pest parameter files
+        -  `compare_parameterisations.py <optimisation/compare_parameterisations.py>`_: script to compare parameters across multiple parameter files
+        -  `hawea_plot_optimisation.py <optimisation/hawea_plot_optimisation.py>`_: script to plot the optimisation results
+        -  `plot_multiple_high_freq.py <optimisation/plot_multiple_high_freq.py>`_: script to plot multiple high frequency observations for given pest obs files
+    -  Manage optimisation period:
+        -  `determine_opt_start.py <optimisation/determine_opt_start.py>`_: script to determine the start and end of the optimisation period
+        -  `optimisation_period.py <optimisation/optimisation_period.py>`_: script to manage and hold the information about the optimisation period
+    -  Optimisation Results
+        -  `optimisation_results <optimisation/optimisation_results>`_: results for the optimisation holding all of the pest input and output files
+            -  3d_v1a:  optimisation results for the 3d model version 1a
+            -  3d_v1b:  optimisation results for the 3d model version 1b
+            -  3d_v1d:  optimisation results for the 3d model version 1d (final model)
+        -  `final_opt_models <optimisation/final_opt_models>`_:  The final optimised model files
+            -  `3d_v1a <optimisation/final_opt_models/3d_v1a>`_: final optimised model files for the 3d model version 1a
+            -  `3d_v1b <optimisation/final_opt_models/3d_v1b>`_: final optimised model files for the 3d model version 1b
+            -  `3d_v1d <optimisation/final_opt_models/3d_v1d>`_: final optimised model files for the 3d model version 1d (final model)
+            -  `compress_uncompress_model.py <optimisation/final_opt_models/compress_uncompress_model.py>`_:  utilities to compress and uncompress the model files so they could be included in the git repo (50mb limit)
+    -  computational support files
+        -  `compile_pest <optimisation/compile_pest>`_: compile pest for linux
+        -  `pest_run_data <optimisation/pest_run_data>`_: static data needed by pest to run the model
+        -  `git_setup.sh <optimisation/git_setup.sh>`_: script to setup the git repo for the optimisation on a machine
+    - Model overview
+        -  `pre_optimisation_overview.py <optimisation/pre_optimisation_overview.py>`_: make a pre optimisation overview plots
+        -  `make_preopt_slideshow.py <optimisation/make_preopt_slideshow.py>`_: make a pre optimisation slideshow
+        -  `pre_optimisation_plots_png <optimisation/pre_optimisation_plots_png>`_: pre optimisation plots of boundary conditions, targets, parameterization, and other supporting work, many of these figures are referenced in the various readme.rst files
+        -  `make_opt_presentation.py <optimisation/make_opt_presentation.py>`_: make a presentation of the optimisation results for a meeting
+-  `Scenarios <Scenarios>`_: Scenario modelling code and results
+    -  `README.rst <Scenarios/README.rst>`_: document describing the scenario modelling methods and results
+    -   Scenario development and supporting scripts
+        -  `scen_period.py <Scenarios/scen_period.py>`_: script to handle the scenario period
+        -  `boundary_condition_plots <Scenarios/boundary_condition_plots>`_: plots of the scenarios boundary conditions
+        -  `base_data <Scenarios/base_data>`_: base input data for the scenarios
+        -  `processed_input_data <Scenarios/processed_input_data>`_: processed input data for the scenarios, these files were all developed from the base data
+        -  `boundary_conditions.py <Scenarios/boundary_conditions.py>`_:  develop the input boundary conditions for the scenarios
+        -  `supporting_data_analysis <Scenarios/supporting_data_analysis>`_: additional data analysis scripts to support creating boundary conditions
+        -  `scenario_outputs.py <Scenarios/scenario_outputs.py>`_: script to make consistent scenario outputs
+        -  `run_flow_scenario.py <Scenarios/run_flow_scenario.py>`_: script to run a flow scenario
+        -  `run_scenario.py <Scenarios/run_scenario.py>`_: script to run a scenario (in multiprocessing)
+    -  Model information and MT3D indicator modelling
+        -  `run_mt3d_scenario.py <Scenarios/run_mt3d_scenario.py>`_:  Script to support running MT3D
+        -  `mt3d_indicator_scens.py <Scenarios/mt3d_indicator_scens.py>`_: script to run MT3D indicator scenarios
+        -  `compare_boundary_sensitivity.py <Scenarios/compare_boundary_sensitivity.py>`_: compare the results of the boundary condition sensitivity analysis
+        -  `model_info_scenarios.py <Scenarios/model_info_scenarios.py>`_: script to run model information scenarios
+        -  `model_info_scen_results <Scenarios/model_info_scen_results>`_: Model results and plots for model information scenarios
+            -  `0_results <Scenarios/model_info_scen_results/0_results>`_: plots for model information scenarios
+            -  {scenario name}: Model results for model information scenarios: input and output data for the scenario
+        -  `mt3d_indicator_scenarios <Scenarios/mt3d_indicator_scenarios>`_: model results and plots for the MT3D scenarios
+    -  Low Lake Hawea level scenarios
+        -  `low_lake_scenario_data.py <Scenarios/low_lake_scenario_data.py>`_: script to develop typological lake levels and perturbations
+        -  `low_lake_scenarios.py <Scenarios/low_lake_scenarios.py>`_: script to run low lake scenarios
+        -  `compare_low_lake.py <Scenarios/compare_low_lake.py>`_: script to compare low lake scenarios
+        -  `low_lake_scenarios <Scenarios/low_lake_scenarios>`_: Model results and plots for low lake scenarios
+            -  `0_results <Scenarios/low_lake_scenarios/0_results>`_: plots for low lake scenarios
+            -  {scenario name}: Model results for low lake scenarios: input and output data for the lake scenario
+    - Allocation modelling
+        -  `allocation_zones.py <Scenarios/allocation_zones.py>`_: get and plot allocation zones
+        -  `allo_rch_hillside.py <Scenarios/allo_rch_hillside.py>`_: scripts to get and compare the allocation, hillside recharge, and LSR for each zone
+        -  `allocation_scenarios.py <Scenarios/allocation_scenarios.py>`_: script to develop all allocation scenarios and to run the non-gridded allocation scenarios
+        -  `run_grid_allocation.py <Scenarios/run_grid_allocation.py>`_: script to run the gridded allocation scenarios
+        -  `compare_allocation_scens.py <Scenarios/compare_allocation_scens.py>`_: script to compare allocation scenarios
+        -  `allocation_scenarios <Scenarios/allocation_scenarios>`_:  Model results for allocation scenarios
+        -  `allocation_results <Scenarios/allocation_results>`_: Plots of allocation results
+            -  `old_allo_zones.png <Scenarios/allocation_results/old_allo_zones.png>`_: figure of the old allocation zones (wilson et al 2012)
+            -  `new_allo_zones.png <Scenarios/allocation_results/new_allo_zones.png>`_: figure of the new allocation zones
+            -  `Hawea Flat_results <Scenarios/allocation_results/Hawea Flat_results>`_: results for the gridded Hawea Flat allocation scenarios
+            -  `Maungawera Flat_results <Scenarios/allocation_results/Maungawera Flat_results>`_: results for the gridded Maungawera Flat allocation scenarios
+            -  `Terrace-Hill_results <Scenarios/allocation_results/Terrace-Hill_results>`_: results for the gridded Terrace-Hill allocation scenarios
+            -  `nat_current_full <Scenarios/allocation_results/nat_current_full>`_: results for the naturalised, current allocation, and full allocation scenarios
+            -  `Te Awa_results <Scenarios/allocation_results/Te Awa_results>`_: results for the gridded Te Awa allocation scenarios
+            -  `Terrace-River_results <Scenarios/allocation_results/Terrace-River_results>`_: results for the gridded Terrace-River allocation scenarios
+            -  `mangawera_valley <Scenarios/allocation_results/mangawera_valley>`_: results for the Mangawera Valley allocation reduction scenarios
+            -  `allo_zone_rch <Scenarios/allocation_results/allo_zone_rch>`_: results comparing LSR, hillside inflows, and allocation for each zone
+            -  `example_quantile_plots <Scenarios/allocation_results/example_quantile_plots>`_: example quantile plots for the allocation scenarios to support presentations
+    -  Wetland Setback Modelling
+        -  `wetland_setback_campbells <Scenarios/wetland_setback_campbells>`_: Wetland setback modelling for Campbells wetland scripts and results
+        -  `wetland_setback_butterfield <Scenarios/wetland_setback_butterfield>`_: Wetland setback modelling for Butterfield wetland scripts and results
+-  `support_figures <support_figures>`_: supporting figures for this and other README.rst documents
+
 
 #todo
 
-
-
-
 Proprietary packages
 --------------------
-For the most part we relied on open source packages to create #todo
+For the most part we relied on open source packages to create
+#todo
 
 Branches and releases
 =====================
