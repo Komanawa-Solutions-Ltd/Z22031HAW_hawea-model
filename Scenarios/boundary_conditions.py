@@ -345,7 +345,7 @@ def _data_checks(save=False):
     Scenarios.supporting_data_analysis.pumping_data.data_checks
     :return:
     """
-    from model_tools.model_plotting import plot_spd, first, last, FakePath
+    from model_tools.model_plotting import plot_spd, first, last, FakePath  # keynote private repo
     from model_build.project_model_tools import smt
     from Scenarios.scen_period import scen_tdis
     from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
@@ -415,7 +415,6 @@ def _data_checks(save=False):
 
 
 def _check_all_in_domain():
-    from model_tools.model_plotting import plot_spd, first, last, FakePath
     from model_build.project_model_tools import smt
     from Scenarios.scen_period import scen_tdis
     from model_parameterisation.optimised_parameterisation import get_3d_v1d_params

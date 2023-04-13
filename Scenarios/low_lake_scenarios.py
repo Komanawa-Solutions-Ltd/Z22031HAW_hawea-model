@@ -10,7 +10,7 @@ from Scenarios.scen_period import scen_tdis
 from project_base import processed_scen_dir, proj_root, unbacked_dir
 import pandas as pd
 import datetime
-from model_tools.time_discretization import TimeDis
+from model_tools.time_discretization import TimeDis # todo nee dummy
 import inspect
 import numpy as np
 from Scenarios.low_lake_scenario_data import get_low_lake_params, mod_sin_asym
@@ -216,7 +216,7 @@ def run_low_lake_scenario(key, base_run_dir, base_outdir, build_run_model=True, 
             lake[p]['bhead'] = lh
 
     if plot:
-        from model_tools.model_plotting import plot_spd
+        from model_tools.model_plotting import plot_spd # keynote private repo
         from model_build.project_model_tools import smt
         plot_spd(lake, smt=smt, tdis=low_lake_tdis, func=np.nansum, key='bhead', title='lake head', tick_per=1,
                  show=True)

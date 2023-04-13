@@ -369,9 +369,9 @@ def _map_from_irrig_code(irrig_codes, key):
     return out
 
 
-def _map_from_soil_class(soil_classes: np.ndarray, key: str, type=float):
+def _map_from_soil_class(soil_classes: np.ndarray, key: str, d_type=float):
     # data from Jens Rekker soil classes and his analysis.
-    out = np.zeros(soil_classes.shape).astype(type)
+    out = np.zeros(soil_classes.shape).astype(d_type)
     assert np.issubdtype(soil_classes.dtype, np.integer)
     data = {
         'scs_curve': {
@@ -567,7 +567,7 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
 
         return dates, data
 
-    from rushton_model.rushton import Rushton
+    from rushton_model.rushton import Rushton # keynote private repo
     dates, outdata = [], []
 
     # make static datasets

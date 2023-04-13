@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from project_base import unbacked_dir, base_model_build_data_dir
-from model_tools.regular_modeltools import ModelTools_RegularGrid
+from model_tools.regular_modeltools import ModelTools_RegularGrid # todo nee dummy package
 import flopy
 import numpy as np
 

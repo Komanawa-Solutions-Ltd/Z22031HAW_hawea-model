@@ -9,7 +9,7 @@ from pathlib import Path
 import pickle
 import socket
 from optimisation.manual_optimisations.manual_optimisation import _run_model_mp
-from run_managers.run_multiprocess import run_multiprocess
+from run_managers.run_multiprocess import run_multiprocess # keynote private repo
 
 if __name__ == '__main__':
     pickle_path = Path(sys.argv[1])

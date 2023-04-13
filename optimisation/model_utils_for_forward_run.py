@@ -35,14 +35,14 @@ def _get_param_data():
     return param_data
 
 
-def read_param_data(model_ws=None, parameter_file=None, format='model', return_individual=True):
+def read_param_data(model_ws=None, parameter_file=None, format_type='model', return_individual=True):
     if parameter_file is None:
         assert model_ws is not None
         parameter_file = model_ws.joinpath('parameters.dat')
 
-    if format == 'model':
+    if format_type == 'model':
         data = pd.read_csv(parameter_file, sep='\t', index_col=0, header=None).loc[:, 1].to_dict()
-    elif format == 'pest':
+    elif format_type == 'pest':
         data = pd.read_csv(parameter_file, sep='\s+', index_col=0, header=None, skiprows=1).loc[:, 1].to_dict()
     else:
         raise ValueError('bad format for parameter file')

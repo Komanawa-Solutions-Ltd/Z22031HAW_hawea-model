@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     # build pest
     if build_pest:
-        from optimisation.build_optimisation import raw_pest, BeopestManager
+        from optimisation.build_optimisation import raw_pest, BeopestManager # keynote private repo
 
         pdir = unbacked_dir.joinpath(mversion, 'Optimisations')
 

@@ -11,7 +11,7 @@ from model_parameterisation.static_params import vka
 from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points, set_ss_terms
 from Scenarios.scenario_outputs import extract_input_data, generate_scenario_outputs, key_input_data_file_name
 from pathlib import Path
-from model_tools.time_discretization import TimeDis
+from model_tools.time_discretization import TimeDis  # todo need dummy
 
 
 def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_spd, str_spd, well_spd, outdir,

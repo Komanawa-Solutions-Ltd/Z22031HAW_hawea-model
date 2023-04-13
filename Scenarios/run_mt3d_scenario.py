@@ -17,7 +17,7 @@ from project_base import unbacked_dir, proj_root
 from model_build.project_model_tools import smt
 from model_build.supporting_data_analysis import get_river_loc_data, get_race_locs, get_hillside_catchment_locs, \
     get_lake_hawea_loc
-from model_tools.regular_modeltools import ModelTools_RegularGrid
+from model_tools.regular_modeltools import ModelTools_RegularGrid  # todo need dummy
 from optimisation.final_opt_models.compress_uncompress_model import uncompress_model
 from pathlib import Path
 

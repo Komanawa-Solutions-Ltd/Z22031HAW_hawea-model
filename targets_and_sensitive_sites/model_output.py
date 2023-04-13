@@ -21,7 +21,7 @@ from model_build.utils import get_colors, plot_1_to_1
 from model_build.project_model_tools import get_ibound, smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
     get_xsection_points
 from matplotlib.colors import SymLogNorm
-from model_tools.util_functions.list_file_utils import ListSolverInfo
+from model_tools.util_functions.list_file_utils import ListSolverInfo # keynote private repo
 from model_build.supporting_data_analysis import get_lake_heads
 import matplotlib.gridspec as gridspec
 

@@ -4,7 +4,7 @@ on: 24/11/22
 """
 import datetime
 import pandas as pd
-from model_tools.time_discretization import TimeDis
+from model_tools.time_discretization import TimeDis # todo need dummy
 
 # hill: '1976-09-23' to '2021-06-30'
 # rch: '1950-01-01' to '2020-12-27'
@@ -62,13 +62,13 @@ def data_checks():
     ax3.set_title('rch')
     ax3.plot(rch.index, rch)
 
-    all = pd.merge(pd.DataFrame(lake), pd.DataFrame(rch), how='outer', left_index=True, right_index=True)
-    all = pd.merge(all, pd.DataFrame(hill), how='outer', left_index=True, right_index=True)
+    all_d = pd.merge(pd.DataFrame(lake), pd.DataFrame(rch), how='outer', left_index=True, right_index=True)
+    all_d = pd.merge(all_d, pd.DataFrame(hill), how='outer', left_index=True, right_index=True)
     fig, (ax1, ax2) = plt.subplots(ncols=2, sharex=True)
-    ax1.scatter(all.rch, all.hill)
+    ax1.scatter(all_d.rch, all_d.hill)
     ax1.set_ylabel('hill')
     ax1.set_xlabel('rch')
-    ax2.scatter(all.rch, all.lake)
+    ax2.scatter(all_d.rch, all_d.lake)
     ax2.set_ylabel('lake')
     ax2.set_xlabel('rch')
     plt.show()

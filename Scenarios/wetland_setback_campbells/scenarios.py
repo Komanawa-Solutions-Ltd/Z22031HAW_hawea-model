@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from project_base import unbacked_dir, opt_proj_root, opt_model_tools
 from Scenarios.wetland_setback_campbells.params import get_hk, get_sy
-from templates.modflow_model import build_model
+from templates.modflow_model import build_model  # todo likely cna update to local
 from Scenarios.wetland_setback_campbells.project_model_tools import tdis, smt
 from Scenarios.wetland_setback_campbells.model_bcs import get_riv, get_wells, get_rch, get_wetland_loc, get_strt_hds
 
@@ -123,7 +123,7 @@ def run_model_mp(kwargs):
 
 
 def get_ssh_dist(local_cores, external_ips):
-    from run_managers.ssh_distributor import SshDist
+    from run_managers.ssh_distributor import SshDist # keynote private repo
 
     base_paths = {'100.124.148.71': unbacked_dir.joinpath(wetland_name),
                   '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath(wetland_name)}

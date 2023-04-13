@@ -7,8 +7,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from model_tools.regular_modeltools import ModelTools_RegularGrid
-from model_tools.time_discretization import TimeDis
+from model_tools.regular_modeltools import ModelTools_RegularGrid # todo need dummy
+from model_tools.time_discretization import TimeDis # todo need dummy
 from project_base import proj_root, unbacked_dir, base_model_build_data_dir, modelling_dir, butterfield_dir
 import geopandas as gpd
 

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from optimisation.model_utils_for_forward_run import read_param_data, _get_param_data
-from modflow_tools_gen_utils import get_colors
+from model_build.utils import get_colors
 
 
 def compare_parameterisations(*parfiles, outdir=None):
@@ -16,9 +16,9 @@ def compare_parameterisations(*parfiles, outdir=None):
         f = Path(f)
         name = str(f.relative_to(f.parents[3])).replace('Optimisations/', '')
         try:
-            data = read_param_data(parameter_file=f, format='pest', return_individual=False)
+            data = read_param_data(parameter_file=f, format_type='pest', return_individual=False)
         except KeyError:
-            data = read_param_data(parameter_file=f, format='model', return_individual=False)
+            data = read_param_data(parameter_file=f, format_type='model', return_individual=False)
         parameters[name] = data
 
     # make dataframe

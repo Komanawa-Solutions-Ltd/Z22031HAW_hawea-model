@@ -154,7 +154,7 @@ local_cores = 8  # set to a lower number of core if you plan on using the local 
 if param_file is not None:
     start_param = read_param_data(parameter_file=param_file,
                                   return_individual=False,
-                                  format='pest')
+                                  format_type='pest')
     str_sps = '\n'.join([f'* {k}: {v}' for k, v in start_param.items()])
 else:
     start_param = None
@@ -184,7 +184,7 @@ if __name__ == '__main__':
     # build pest
     if build_pest:
         from optimisation.build_optimisation import raw_pest
-        from run_managers.beopest_manager import BeopestManager
+        from run_managers.beopest_manager import BeopestManager # keynote private repo
 
         pdir = unbacked_dir.joinpath(branch, mversion, 'Optimisations')
 

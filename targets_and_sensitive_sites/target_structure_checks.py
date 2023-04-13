@@ -4,7 +4,7 @@ on: 16/11/22
 """
 import matplotlib.pyplot as plt
 import pandas as pd
-from modflow_tools_gen_utils import get_colors
+from model_build.utils import get_colors
 from model_build.project_model_tools import smt
 from targets_and_sensitive_sites.head_targets import get_high_freq_head_targets, get_low_freq_head_targets, \
     get_all_wells, plot_hds_regular_locator

@@ -7,7 +7,7 @@ import numpy as np
 import shutil
 from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
-from run_managers.run_multiprocess import run_multiprocess
+from run_managers.run_multiprocess import run_multiprocess # keynote private repo
 
 
 def _run_model_mp(kwargs):
@@ -22,7 +22,7 @@ def _run_model_mp(kwargs):
 
 
 def run_model(name, model_ws, plot):
-    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws, format='pest')
+    kh_param, sy_param, riv_params, hill_param, race_param, rch_param = read_param_data(model_ws, format_type='pest')
     build_run_model(
         model_name=name, model_ws=model_ws,
         kh_param=kh_param,

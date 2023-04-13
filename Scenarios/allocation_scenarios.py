@@ -244,7 +244,7 @@ def run_all_grid_allocation_scens(name, local_cores: int, pump_rate: dict, rm_re
         assert z in zones_to_model, f'bad rate: zone: {z}, rate:{pr}'
         assert np.issubdtype(np.atleast_1d(pr).dtype, np.number)
 
-    from run_managers.ssh_distributor import SshDist
+    from run_managers.ssh_distributor import SshDist # keynote private repo
 
     base_paths = {'100.124.148.71': unbacked_dir.joinpath('grid_scenarios'),
                   '100.121.150.68': Path('/media/matt_dumont/data/mh_unbacked/hawea').joinpath('grid_scenarios')}
@@ -385,7 +385,7 @@ def mangawera_reduction():
                     nwt_kwargs=dict(maxiterout=1500, maxitinner=300)
                     )
         runs.append(temp)
-    from run_managers.run_multiprocess import run_multiprocess
+    from run_managers.run_multiprocess import run_multiprocess # keynote private repo
     print(len(runs))
     pool_outputs = run_multiprocess(run_scenario_mp, runs, num_cores=num_cores)
     print('\n'.join([str(e) for e in pool_outputs]))

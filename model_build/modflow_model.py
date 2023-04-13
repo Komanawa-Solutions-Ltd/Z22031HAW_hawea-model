@@ -9,8 +9,8 @@ import os
 import pandas as pd
 import numpy as np
 from copy import copy
-from model_tools.regular_modeltools import ModelTools_RegularGrid
-from model_tools.time_discretization import TimeDis
+from model_tools.regular_modeltools import ModelTools_RegularGrid # todo need dummy function
+from model_tools.time_discretization import TimeDis # todo need dummy function
 
 
 def build_model(smt, tdis, exe_name, model_name, model_ws,
@@ -433,7 +433,7 @@ def _create_str_package(m, str_data, noprint):
 
     # Open source improve sort stream by segments, check is in order without issues!!!!
     dummy_seg_data = {p: t for p in str_data.keys()}
-    str = flopy.modflow.ModflowStr(
+    stream = flopy.modflow.ModflowStr(
         m,
         mxacts=max(mxactss),  # Open source improve do a pull request to read this from these data... this is dumb
         nss=max(nsss),  # Open source improve do a pull request to read this from these data... this is dumb

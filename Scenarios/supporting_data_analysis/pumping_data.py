@@ -262,7 +262,7 @@ def get_grid_locs(recalc=False):
 def data_checks(save=True):
     from Scenarios.scen_period import scen_tdis
     from model_build.project_model_tools import smt
-    from model_tools.model_plotting import plot_spd, first, last, FakePath
+    from model_tools.model_plotting import plot_spd, first, last, FakePath # keynote private repo
     from model_build.zones import get_model_zones
     zones = get_model_zones()
     tickper = 50

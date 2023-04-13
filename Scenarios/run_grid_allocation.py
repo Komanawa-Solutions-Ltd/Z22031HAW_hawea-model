@@ -46,7 +46,7 @@ def how_long_per_run():
     external_ips = [
         '170.64.182.254'
     ]
-    from run_managers.ssh_distributor import SshDist
+    from run_managers.ssh_distributor import SshDist # keynote private repo
     branch = 'main'
     local_cores = 4
     base_paths = {'100.124.148.71': unbacked_dir.joinpath('grid_scenarios'),

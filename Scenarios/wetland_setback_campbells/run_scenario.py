@@ -14,7 +14,7 @@ from pathlib import Path
 import pickle
 import socket
 from Scenarios.wetland_setback_campbells.scenarios import run_model_mp
-from run_managers.run_multiprocess import run_multiprocess
+from run_managers.run_multiprocess import run_multiprocess # keynote private repo
 
 # keynote c. 1 gb/core
 

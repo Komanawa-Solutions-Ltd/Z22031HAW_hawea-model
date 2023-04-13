@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from project_base import base_model_build_data_dir, processed_model_build_data_dir
-from model_tools.plot_borelogs import plot_borelogs, plot_single_log, make_single_log_handles
+from model_tools.plot_borelogs import plot_borelogs, plot_single_log, make_single_log_handles # keynote private repo
 from model_build.supporting_data_analysis.all_wells import get_all_wells
 from model_build.project_model_tools import smt, get_2d_moraine, get_lake_array
 

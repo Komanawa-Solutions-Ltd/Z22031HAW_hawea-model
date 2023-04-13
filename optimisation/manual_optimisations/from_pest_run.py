@@ -20,7 +20,7 @@ def kh_test():
     opt_name = 'kh_test_from_opt1'
     base_params = read_param_data(
         parameter_file='/home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.par',
-        format='pest',
+        format_type='pest',
         return_individual=False
 
     )
@@ -47,7 +47,7 @@ def check_moraine():
     opt_name = 'moraine_test'
     base_params = read_param_data(
         parameter_file='/home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.par',
-        format='pest',
+        format_type='pest',
         return_individual=False
 
     )
@@ -72,7 +72,7 @@ def moraine_sy():
     opt_name = 'moraine_sy_test'
     base_params = read_param_data(
         parameter_file='/home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.par',
-        format='pest',
+        format_type='pest',
         return_individual=False
 
     )
@@ -102,7 +102,7 @@ def large_run():
     opt_name = 'large_run'
     base_params = read_param_data(
         parameter_file='/home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.par',
-        format='pest',
+        format_type='pest',
         return_individual=False
 
     )
@@ -138,7 +138,7 @@ def try_shift_hflat():
     opt_name = 'try_shift_hflat'
     base_params = read_param_data(
         parameter_file='/home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/opt.par',
-        format='pest',
+        format_type='pest',
         return_individual=False
 
     )

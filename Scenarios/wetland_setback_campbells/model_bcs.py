@@ -140,7 +140,7 @@ def get_riv(conductance, recalc=False):
 
 
 def data_checks():
-    from model_tools.model_plotting import plot_spd
+    from model_tools.model_plotting import plot_spd # keynote private repo
     rch = get_rch()
     plot_spd(rch, smt, tdis, is_array=True, show=False, func=np.nanmean, title='rch')
     smt.plot.plt_matrix(rch[0], title='rch', no_flow_layer=0, base_map=True)

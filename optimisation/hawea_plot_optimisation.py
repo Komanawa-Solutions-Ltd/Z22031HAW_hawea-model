@@ -13,10 +13,10 @@ from model_build.project_model_tools import smt
 from model_build.utils import get_colors
 from targets_and_sensitive_sites.model_output import process_model_output
 from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
-from model_tools.plot_optimisation import plot_optimisation_and_extract_info
+from model_tools.plot_optimisation import plot_optimisation_and_extract_info # keynote private repo
 from model_parameterisation.inital_parametersiation import *
 from model_parameterisation.pilot_points import interpolate_sy_pilot_points, interpolate_kh_pilot_points
-from model_tools.util_functions.list_file_utils import ListSolverInfo
+from model_tools.util_functions.list_file_utils import ListSolverInfo # keynote private repo
 import py7zr
 from targets_and_sensitive_sites.model_output import plot_hds_regular_locator, base_regular_groupnames
 from optimisation.optimisation_period import tdis
@@ -39,7 +39,7 @@ def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=Fal
 
     kh_param, sy_param, riv_param, hill_param, race_param, rch_param = read_param_data(model_ws,
                                                                                        parameter_file=opt_par_file,
-                                                                                       format='pest')
+                                                                                       format_type='pest')
 
     build_run_model(
         model_name=name, model_ws=model_ws,
@@ -221,8 +221,8 @@ def get_all_list_data(pest_dir, outer, inner):
         if i % 100 == 0:
             print(f'reading and extracting zipped file {i}: {p}')
         temp_listfiles = []
-        with py7zr.SevenZipFile(p, 'r') as zip:
-            temp_listfiles.extend(zip.readall().values())
+        with py7zr.SevenZipFile(p, 'r') as zipf:
+            temp_listfiles.extend(zipf.readall().values())
         for f in temp_listfiles:
             try:
                 temp = ListSolverInfo(f)
@@ -252,8 +252,8 @@ def _just_check_success(pest_dir, base_plot_dir):
         if i % 100 == 0:
             print(f'reading and extracting zipped file {i}: {p}')
         temp_listfiles = []
-        with py7zr.SevenZipFile(p, 'r') as zip:
-            temp_listfiles.extend(zip.readall().values())
+        with py7zr.SevenZipFile(p, 'r') as zipf:
+            temp_listfiles.extend(zipf.readall().values())
         for f in temp_listfiles:
             try:
                 model_converged.append(smt.modelchecks.modflow_converged(f))
