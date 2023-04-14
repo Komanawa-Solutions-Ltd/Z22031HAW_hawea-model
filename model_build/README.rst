@@ -6,6 +6,7 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
    :align: center
 
     test caption
+
     # todo make a good figure with all boundary conditions
 
 
@@ -139,8 +140,7 @@ not consistently decreasing downstream.  To correct this we used a rolling mean 
 river bottom by 2.5 m so that the river bed elevation was always below the river stage.
 
 .. figure:: ../support_figures/river_top_bot.png
-   :width: 600
-   :align: center
+   :scale: 50 %
 
 The stream bed conductance factor was a parameter in the model inversion.  See `the model parameterisation readme for more information <model_parameterisation/README.rst>`_
 The steam flow did not need to be particularly precise as the river would never come close to losing all of its water to the
@@ -158,6 +158,8 @@ at the end of the Hawea River to the stage on the Clutha River 200m downstream o
    :scale: 50 %
 
     test caption
+
+    test legend details see what happens
 
 Lake Hawea
 ----------
