@@ -475,6 +475,25 @@ def get_irrig_avaliblity(shape, plot=False):
     return np.full(shape, data_1d['all'].mean())
 
 
+def plot_irrig_area():
+    fig, ax = plt.subplots(ncols=3, figsize=(14, 8), sharey=True, sharex=True)
+    for i, y in enumerate([2015, 2020, 2021]):
+        temp = get_irrigation_code(y).astype(float)
+        temp[smt.get_no_flow(0)<1] = np.nan
+        temp[temp<0] = np.nan
+        smt.plot.plt_discrete_matrix(temp, ax=ax[i],
+                                     colors={k: v for k, v in zip(irrigated_area_codes.keys(),
+                                                                  smt.plot.get_colors(irrigated_area_codes.keys(),'tab10'))},
+                                     names={k: v.capitalize() for k, v in irrigated_area_codes.items()},
+                                     legend_loc='lower left', alpha=0.5,
+                                     title=f'Mapped {y}',
+                                     base_map=True, no_flow_layer=0)
+    from project_base import proj_root
+    fig.suptitle('Irrigated Area')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'irrigated_area.png'))
+
+
 def get_irrigation_code(y, recalc=False):
     if y < 2020:
         processed_path = processed_model_build_data_dir.joinpath('irrig_code_pre_2020.txt')
@@ -567,7 +586,7 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
 
         return dates, data
 
-    from rushton_model.rushton import Rushton # keynote private repo
+    from rushton_model.rushton import Rushton  # keynote private repo
     dates, outdata = [], []
 
     # make static datasets
@@ -924,6 +943,7 @@ def get_rch(start_date, end_date, frequency='D', limited_irrigation=False, recal
 
 
 if __name__ == '__main__':
+    plot_irrig_area()
     rerun_rch_model = False
     if rerun_rch_model:
         get_era5_land(True, True)

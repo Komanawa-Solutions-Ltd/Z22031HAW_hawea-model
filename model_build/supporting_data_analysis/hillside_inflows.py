@@ -638,6 +638,12 @@ def lindis_correlation_with_malf(return_figs=False):
     ax.set_ylabel('flow L/s')
     ax.set_xlabel('time')
 
+    rsme = pd.DataFrame()
+    for k in predicted_rivers:
+        rsme.loc[k, 'rsme_daily'] = np.sqrt(np.mean((data.loc[:, k] - data.loc[:, f'p_{k}']) ** 2))
+        rsme.loc[k, 'rsme_monthly'] = np.sqrt(np.mean((data.loc[:, k].resample('M').mean()
+                                                       - data.loc[:, f'p_{k}'].resample('M').mean()) ** 2))
+    rsme.to_csv(processed_model_build_data_dir.joinpath('flow_rsme.csv'))
     data = data.resample('M').mean()
     all_data = []
     for k in predicted_rivers:
@@ -702,8 +708,28 @@ def get_hillside_flows(start_date, end_date, frequency='D',
         data = data.drop(columns=['Grandview Creek', 'John Creek'])
     return select_resample(data, start_date, end_date, frequency, func=func)
 
+def plot_hillside_inflows():
+
+    from project_base import proj_root
+    hill_locs = get_hillside_catchment_locs()
+    from model_build.supporting_data_analysis.river_data import get_river_loc_data
+    river_locs = get_river_loc_data()
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    ax.scatter(hill_locs.loc[:, 'mx'], hill_locs.loc[:, 'my'], c='r', label='Hill Inflows (Wel Package)')
+    for n,rname, c in zip(['Grandview Creek', 'John Creek'], ['gview', 'john'], ['b', 'orange']):
+        temp = river_locs.loc[river_locs.rname == rname, :]
+        temp = smt.io.add_mxmy_to_df(temp)
+        ax.scatter(temp.mx, temp.my, c=c, label=f'{n} (STR Package)')
+    ax.legend()
+    ax.set_title('Hillside Inflow Locations')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures','hillside_inflow_locations.png'))
+    pass
 
 if __name__ == '__main__':
-    get_hillside_flows(None, None, recalc=False)
+    lindis_correlation_with_malf()
+    plot_hillside_inflows()
+    t = get_historical_flows(None, None)
+    t = get_hillside_flows(None, None, recalc=False)
     t = get_hillside_catchment_locs(recalc=True, show=True)
     raise NotImplementedError

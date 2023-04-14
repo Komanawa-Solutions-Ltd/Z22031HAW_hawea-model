@@ -407,8 +407,30 @@ def data_checks():
     plt.show()
 
 
+def plot_major_river_locs():
+    outdata = _river_locs()
+    outdata = get_stage_locs(outdata)
+    outdata = get_river_gage_locs(outdata)
+    outdata = smt.io.add_mxmy_to_df(outdata)
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    for r, c in zip(['hawea', 'clutha'], ['r', 'b']):
+        temp = outdata.loc[outdata.rname == r]
+        ax.scatter(temp.mx, temp.my, color=c, label=f'{r.capitalize()} River')
+    for s, c in zip(outdata.stage.unique(), ['r', 'orange', 'k']):
+        if pd.isna(s):
+            continue
+        temp = outdata.loc[outdata.stage == s]
+        ax.scatter(temp.mx, temp.my, color=c, s=200, label=f'{s.replace("_"," ").capitalize()} stage')
+
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'river_locs.png'))
+
+
 if __name__ == '__main__':
+    plot_major_river_locs()
     data_checks()
+
     t = get_river_loc_data(True)
     t = get_river_flow_data(None, None)
     t = get_river_stage_data(None, None, recalc=True)

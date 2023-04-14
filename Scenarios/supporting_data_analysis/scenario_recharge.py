@@ -438,32 +438,46 @@ def data_checks(save=False):
 
     for nm in scens:
         data = eval(nm).mean(axis=0)
-        fig, ax = smt.plot.plt_matrix(data * 365, vmin=vmin, vmax=vmax, title=nm, no_flow_layer=0, base_map=True,
+        fig, ax = smt.plot.plt_matrix(data * 365, vmin=vmin, vmax=vmax, title=f'Mean annual LSR (mm/yr): {nm}',
+                                      no_flow_layer=0, base_map=True,
                                       )
         fig.tight_layout()
         if save:
             fig.savefig(outdir.joinpath(f'spatial_rch_{nm}.png'))
+
+    fig, axs = plt.subplots(ncols=2, figsize=(14, 9), sharex=True, sharey=True)
+    for ax, nm in zip(axs, scens[2:]):
+        data = eval(nm).mean(axis=0)
+        fig, ax = smt.plot.plt_matrix(data * 365, vmin=vmin, vmax=vmax, title=f'{nm}',
+                                      no_flow_layer=0, base_map=True, ax=ax
+                                      )
+    fig.suptitle('Mean annual LSR (mm/yr)')
+    fig.tight_layout()
+    if save:
+        fig.savefig(outdir.joinpath(f'spatial_rch_hist_comp.png'))
     from model_build.utils import get_colors
-    colors = get_colors(scens)
+    colors = get_colors(scens, 'tab10')
 
     # look at mean recharge through time
     # look at mean irrigated recharge through time
     # look at mean dryland recharge throughtime
-    for idx, nm in zip([ibound, irrig_area, ~irrig_area],
+    fig, axs = plt.subplots(nrows=3, figsize=(14, 9), sharex=True, sharey=True)
+    for ax, idx, nm in zip(axs, [ibound, irrig_area, ~irrig_area],
                        ['full_model', 'irrigated_area_2021', 'not_irrigated_area_2021']):
-        fig, ax = plt.subplots(figsize=(14, 9))
         ax.set_title(nm)
         for sc, c in zip(scens, colors):
             x = eval(sc.replace('rch', 'dates'))
-            y = eval(sc)[:, idx & ibound].mean(axis=1)
+            y = eval(sc)[:, idx & ibound].mean(axis=1) * 365
             ax.plot(x, y, c=c, label=sc)
         ax.legend()
-        fig.tight_layout()
-        if save:
-            fig.savefig(outdir.joinpath(f'temporal_rch_{nm}.png'))
+    fig.suptitle('Mean annual recharge (mm/yr)')
+    fig.tight_layout()
+
+    if save:
+        fig.savefig(outdir.joinpath(f'temporal_rch.png'))
 
     smt.plot.show()
 
 
 if __name__ == '__main__':
-    data_checks(save=False)
+    data_checks(save=True)
