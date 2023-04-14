@@ -1,14 +1,16 @@
 Hawea Transient groundwater model (Hawea Model)
-===============================================
+################################################
+
+.. figure:: support_figures/domain.png
+   :width: 600
+   :align: center
+
 :Author:  Matt Dumont
 :Date:  2021-11-02
 :Version:  1.0.0
 :Status:  Draft
 :KSL project: Z22031HAW_hawea-model
-
-.. figure:: support_figures/domain.png
-   :width: 600
-   :align: center
+:Purpose: This document describes the Hawea Model repo
 
 
 The Hawea model domain; the inactive portions of the model are coloured grey. The model domain is a 3D model of the Hawea
@@ -113,7 +115,6 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
     -  `modflow_model.py <model_build/modflow_model.py>`_: a script to build a modflow model instance
     -  `utils.py <model_build/utils.py>`_: a script to define some utility functions
     -  `zones.py <model_build/zones.py>`_: a script to define indicative model zones
-
 -  `model_parameterisation <model_parameterisation>`_:  model parameterisation and implementation
     -  `README.rst <model_parameterisation/README.rst>`_: a readme file for the model parameterisation
     -  `base_data <model_parameterisation/base_data>`_: raw input data for the model parameterisation
@@ -404,7 +405,7 @@ described below (working notes) for completeness.
 9.  Structure_v8
 
     -  From structure_v6a
-    -  todo increase initial conductivity (to 50, 100 and 70 was too
+    -  increase initial conductivity (to 50, 100 and 70 was too
        unstable)
     -  rch multiplier only by irrigated not irrigated bounds of
        multiplier 0.5-1.2
@@ -431,7 +432,7 @@ described below (working notes) for completeness.
     -  NE hillside area (done)
     -  Near clutha river (done)
     -  I think I need some more pilot points
-    -  Near pt 402 on camp hill moraine (move mangawera south?) (todo)
+    -  Near pt 402 on camp hill moraine (move mangawera south?) ()
        and another in the moraine (to interpolate with other river group
     -  To stop dry cells south of camp hill moraine
     -  Significant number in the hillslope area just off the bounds to

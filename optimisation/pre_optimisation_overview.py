@@ -216,6 +216,33 @@ def plot_all_spd(save=False):
         outdir.mkdir(exist_ok=True)
     else:
         outdir = FakePath()
+    # river height and stage data
+    plt_stg_data = get_river_stage_data(None, None).dropna().describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
+    k_cs = ['min', '5%', '25%', '50%', '75%', '95%', 'max', ]
+    colors = get_colors(k_cs, cmap_name='winter')
+    temp_data = get_river_loc_data()
+    temp_data = temp_data.loc[temp_data.rname.isin(['clutha', 'hawea']), :]
+    tops = smt.get_tops()[0]
+    bottoms = smt.get_bottoms()[-1]
+    temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
+    temp_data.loc[:, 'model_bot'] = bottoms[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
+    hawea_clutha_divide = temp_data.loc[temp_data.rname == 'hawea', 'dist'].max()
+    temp_data.loc[temp_data.rname == 'clutha', 'dist'] += hawea_clutha_divide
+    temp_data.sort_values('dist', inplace=True)
+    fig, ax = plt.subplots(figsize=(14, 10))
+    ax.set_title('River Profile')
+    for k, c in zip(k_cs, colors):
+        ax.plot(temp_data.dist, plt_stg_data.loc[ k, temp_data.index].values.transpose() - temp_data.rbot,
+                c=c, label=f'River Stage: {k}')
+    ax.plot(temp_data.dist, temp_data.rbot - temp_data.rbot, c='k', label='River bottom (fixed)')
+    ax.plot(temp_data.dist, temp_data.model_top - temp_data.rbot, c='r', label='Model top')
+    ax.plot(temp_data.dist, temp_data.model_bot - temp_data.rbot, c='r', label='Model bot')
+    ax.axvline(hawea_clutha_divide, ls=':', c='k', label='Hawea-Clutha Divide')
+    ax.set_ylabel('Elevation relative to river bottom (m)')
+    ax.set_xlabel('Distance from top of river')
+    ax.legend()
+    if save:
+        fig.savefig(outdir.joinpath(f'River_profile{extension}'))
     # well boundary conditions
     well_data = get_well_data(tdis, hill_param=get_hillslope_multiplier(True), race_param=get_race_multiplier(True),
                               return_unique_spd=True)
@@ -242,31 +269,6 @@ def plot_all_spd(save=False):
              func=last, key='stage', title='last river cell stage',
              outpath=outdir.joinpath(f'riv_last_cell_time{extension}'))
 
-    # river height and stage data
-    plt_stg_data = get_river_stage_data(None, None).dropna().describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
-    k_cs = ['min', '5%', '25%', '50%', '75%', '95%', 'max', ]
-    colors = get_colors(k_cs, cmap_name='winter')
-    temp_data = get_river_loc_data()
-    tops = smt.get_tops()[0]
-    bottoms = smt.get_bottoms()[-1]
-    temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
-    temp_data.loc[:, 'model_bot'] = bottoms[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
-    hawea_clutha_divide = temp_data.loc[temp_data.rname == 'hawea', 'dist'].max()
-    temp_data.loc[temp_data.rname == 'clutha', 'dist'] += hawea_clutha_divide
-    temp_data.sort_values('dist', inplace=True)
-    fig, ax = plt.subplots(figsize=(14, 10))
-    ax.set_title('River Profile')
-    ax.plot(temp_data.dist, temp_data.rbot, c='y', label='river_bottom_fixed')
-    ax.plot(temp_data.dist, temp_data.model_bot, c='firebrick', label='model_bottom')
-    ax.plot(temp_data.dist, temp_data.model_top, c='r', label='model_top')
-    for k, c in zip(k_cs, colors):
-        ax.plot(temp_data.dist, plt_stg_data.loc[k].values.transpose(), c=c, label=f'River Stage: {k}')
-    ax.axvline(hawea_clutha_divide, ls=':', c='k', label='Hawea-Clutha Divide')
-    ax.set_ylabel('Elevation')
-    ax.set_xlabel('Distance from top of river')
-    ax.legend()
-    if save:
-        fig.savefig(outdir.joinpath(f'River_profile{extension}'))
 
     # monthly stage data
     # look at stage through time at our locations( which are???)
@@ -757,6 +759,7 @@ if __name__ == '__main__':
             raise ValueError('nope')
 
         save_path.mkdir(exist_ok=True, parents=True)
+        plot_all_spd(True)
 
         # checked and finished, but not saved
         make_all_preopt(save)

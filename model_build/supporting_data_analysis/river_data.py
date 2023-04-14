@@ -7,7 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from model_build.utils import select_resample, get_colors
 from model_build.project_model_tools import smt, _river_locs, get_lake_array
-from project_base import base_model_build_data_dir, processed_model_build_data_dir
+from project_base import base_model_build_data_dir, processed_model_build_data_dir, proj_root
 from model_build.supporting_data_analysis.hillside_inflows import get_hillside_flows
 
 default_recalc = False
@@ -323,23 +323,29 @@ def data_checks():
     bottoms = smt.get_bottoms()[0]
     river_locs.loc[:, 'model_top'] = tops[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
     river_locs.loc[:, 'model_bot'] = bottoms[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
-    for r in ['clutha', 'hawea', 'both']:
-        if r == 'both':
+    for r in ['clutha', 'hawea', 'Hawea & Clutha rivers']:
+        if r == 'Hawea & Clutha rivers':
             temp_data = river_locs.loc[np.in1d(river_locs.rname, ['hawea', 'clutha'])].copy(deep=True)
             temp_data.loc[temp_data.rname == 'clutha', 'dist'] += temp_data.loc[
                 temp_data.rname == 'hawea', 'dist'].max()
         else:
             temp_data = river_locs.loc[river_locs.rname == r]
         temp_data.sort_values('dist', inplace=True)
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(10, 8))
         ax.set_title(r)
         ax.plot(temp_data.dist, temp_data.rbot_raw, c='b', label='river_bottom_raw')
         ax.plot(temp_data.dist, temp_data.rbot, c='y', label='river_bottom_fixed')
         ax.plot(temp_data.dist, temp_data.model_bot, c='k', label='model_bottom')
         ax.plot(temp_data.dist, temp_data.model_top, c='r', label='model_top')
-        ax.set_ylabel('elevation')
-        ax.set_xlabel('distance from top of river')
+        if r == 'Hawea & Clutha rivers':
+            ax.axvline(temp_data.loc[temp_data.rname == 'hawea', 'dist'].max(), ls=':', c='k',
+                       label='Hawea-Clutha divide')
+        ax.set_ylabel('Elevation')
+        ax.set_xlabel('Distance from top of river')
         ax.legend()
+        if r == 'Hawea & Clutha rivers':
+            fig.tight_layout()
+            fig.savefig(proj_root.joinpath('support_figures', 'river_top_bot.png'))
     # look at stage through time at our locations( which are???)
     hawea_data = pd.read_csv(base_model_build_data_dir.joinpath('Lake_Hawea.csv'))
     print(hawea_data.describe())
@@ -402,8 +408,8 @@ def data_checks():
 
 
 if __name__ == '__main__':
+    data_checks()
     t = get_river_loc_data(True)
     t = get_river_flow_data(None, None)
     t = get_river_stage_data(None, None, recalc=True)
     _print_flowlengths()
-    data_checks()
