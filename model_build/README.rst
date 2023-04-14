@@ -7,7 +7,7 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
 
 .. class::
 
-*test caption # todo make a good figure with all boundary conditions*
+    *test caption # todo make a good figure with all boundary conditions*
 
 
 :Author:  Matt Dumont
@@ -74,11 +74,11 @@ likely minimal, particularly in comparison with the other outwash dominated aqui
 as a no-flow boundary.
 
 
-.. figure:: ./support_figures/domain.png
+.. figure:: ../support_figures/domain.png
    :width: 600
    :align: center
 
-    # todo make a good figure with all boundary conditions, the aquifers and ID the no flow inclusions
+# todo make a good figure with all boundary conditions, the aquifers and ID the no flow inclusions
 
 
 Model Structure
@@ -145,7 +145,7 @@ river bottom by 2.5 m so that the river bed elevation was always below the river
 
 .. class:: centered
 
-   *river bed elevations*
+    *river bed elevations*
 
 
 The stream bed conductance factor was a parameter in the model inversion.  See `the model parameterisation readme for more information <model_parameterisation/README.rst>`_
