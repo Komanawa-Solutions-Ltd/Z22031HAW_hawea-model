@@ -1,11 +1,12 @@
 Hawea Transient groundwater model (Hawea Model) build methods and results
 ############################################################################
 
-.. figure:: support_figures/domain.png  # todo make a good figure with all boundary conditions
+.. figure:: ./support_figures/domain.png
    :width: 600
    :align: center
 
     test caption
+    # todo make a good figure with all boundary conditions
 
 
 :Author:  Matt Dumont
@@ -72,9 +73,11 @@ likely minimal, particularly in comparison with the other outwash dominated aqui
 as a no-flow boundary.
 
 
-.. figure:: support_figures/domain.png  # todo make a good figure with all boundary conditions, the aquifers and ID the no flow inclusions
+.. figure:: ./support_figures/domain.png
    :width: 600
    :align: center
+
+    # todo make a good figure with all boundary conditions, the aquifers and ID the no flow inclusions
 
 
 Model Structure
@@ -135,7 +138,7 @@ The raw river bed elevation was defined as the minimum LiDAR elevation in each r
 not consistently decreasing downstream.  To correct this we used a rolling mean to define the river bed elevation.  Finally we inset the
 river bottom by 2.5 m so that the river bed elevation was always below the river stage.
 
-.. figure:: support_figures/river_top_bot.png
+.. figure:: ./support_figures/river_top_bot.png
    :width: 600
    :align: center
 
@@ -151,7 +154,7 @@ in all other Hawea River model cells.  The same approach was used for the Clutha
 Hawea river there was an offset. To avoid this offset causing model convergence issues we linearly interpolated the Stage
 at the end of the Hawea River to the stage on the Clutha River 200m downstream of Luggate Confluence.
 
-.. figure:: optimisation/pre_optimisation_plots_png/stress_period_data/River_profile.png
+.. figure:: ./optimisation/pre_optimisation_plots_png/stress_period_data/River_profile.png
    :scale: 50 %
 
     test caption
