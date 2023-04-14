@@ -5,6 +5,8 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
    :width: 600
    :align: center
 
+.. class::
+
 *test caption # todo make a good figure with all boundary conditions*
 
 
@@ -139,6 +141,12 @@ river bottom by 2.5 m so that the river bed elevation was always below the river
 
 .. figure:: ../support_figures/river_top_bot.png
    :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+   *river bed elevations*
+
 
 The stream bed conductance factor was a parameter in the model inversion.  See `the model parameterisation readme for more information <model_parameterisation/README.rst>`_
 The steam flow did not need to be particularly precise as the river would never come close to losing all of its water to the
