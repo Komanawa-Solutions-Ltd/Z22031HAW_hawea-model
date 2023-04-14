@@ -1,7 +1,7 @@
 Hawea Transient groundwater model (Hawea Model) build methods and results
 ############################################################################
 
-.. figure:: ./support_figures/domain.png
+.. figure:: ../support_figures/domain.png
    :width: 600
    :align: center
 
@@ -138,7 +138,7 @@ The raw river bed elevation was defined as the minimum LiDAR elevation in each r
 not consistently decreasing downstream.  To correct this we used a rolling mean to define the river bed elevation.  Finally we inset the
 river bottom by 2.5 m so that the river bed elevation was always below the river stage.
 
-.. figure:: ./support_figures/river_top_bot.png
+.. figure:: ../support_figures/river_top_bot.png
    :width: 600
    :align: center
 
