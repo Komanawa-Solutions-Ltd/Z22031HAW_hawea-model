@@ -154,7 +154,7 @@ in all other Hawea River model cells.  The same approach was used for the Clutha
 Hawea river there was an offset. To avoid this offset causing model convergence issues we linearly interpolated the Stage
 at the end of the Hawea River to the stage on the Clutha River 200m downstream of Luggate Confluence.
 
-.. figure:: ./optimisation/pre_optimisation_plots_png/stress_period_data/River_profile.png
+.. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/River_profile.png
    :scale: 50 %
 
     test caption
