@@ -156,9 +156,9 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `optimisation_period.py <optimisation/optimisation_period.py>`_: script to manage and hold the information about the optimisation period
     -  Optimisation Results
         -  `optimisation_results <optimisation/optimisation_results>`_: results for the optimisation holding all of the pest input and output files
-            -  3d_v1a:  optimisation results for the 3d model version 1a
-            -  3d_v1b:  optimisation results for the 3d model version 1b
-            -  3d_v1d:  optimisation results for the 3d model version 1d (final model)
+            -  `3d_v1a <optimisation/optimisation_results/3d_v1a>`_:  optimisation results for the 3d model version 1a
+            -  `3d_v1b <optimisation/optimisation_results/3d_v1b>`_:  optimisation results for the 3d model version 1b
+            -  `3d_v1d <optimisation/optimisation_results/3d_v1d>`_:  optimisation results for the 3d model version 1d (final model)
         -  `final_opt_models <optimisation/final_opt_models>`_:  The final optimised model files
             -  `3d_v1a <optimisation/final_opt_models/3d_v1a>`_: final optimised model files for the 3d model version 1a
             -  `3d_v1b <optimisation/final_opt_models/3d_v1b>`_: final optimised model files for the 3d model version 1b
