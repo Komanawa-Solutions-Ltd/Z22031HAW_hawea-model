@@ -144,7 +144,6 @@ river bottom by 2.5 m so that the river bed elevation was always below the river
    :align: center
 
 .. class:: centered
-
     *river bed elevations*
 
 
