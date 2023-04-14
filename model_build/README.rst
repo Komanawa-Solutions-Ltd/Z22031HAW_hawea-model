@@ -5,9 +5,7 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
    :width: 600
    :align: center
 
-    test caption
-
-    # todo make a good figure with all boundary conditions
+*test caption # todo make a good figure with all boundary conditions*
 
 
 :Author:  Matt Dumont
