@@ -144,6 +144,7 @@ river bottom by 2.5 m so that the river bed elevation was always below the river
    :align: center
 
 .. class:: centered
+
     *river bed elevations*
 
 
@@ -161,10 +162,12 @@ at the end of the Hawea River to the stage on the Clutha River 200m downstream o
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/River_profile.png
    :scale: 50 %
+   :align: center
 
-    test caption
 
-    test legend details see what happens
+.. class:: centered
+
+    *River stage relative to river bed elevation*
 
 Lake Hawea
 ----------
