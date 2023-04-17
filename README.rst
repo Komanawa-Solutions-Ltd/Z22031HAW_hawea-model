@@ -39,6 +39,11 @@ its methodology and, where applicable, the results of the step:
 4.  `Model Optimisation <optimisation/README.rst>`_: optimize the model to the available data
 5.  `Model Scenarios <Scenarios/README.rst>`_: run a series of scenarios to better understand the model behaviour and to predict the systems response to changing conditions
 
+Modelling Software
+===================
+Most of the model was produced using open source python packages and the Modflow suite. Specifically the model was built
+using Modflow NWT, optimised using PEST, and scenarios were run in MT3DMS-usgs.
+
 Python Environment
 ==================
 This model was developed in python on linux (ubuntu 20.04).  The python environment was created using the anaconda package manager.

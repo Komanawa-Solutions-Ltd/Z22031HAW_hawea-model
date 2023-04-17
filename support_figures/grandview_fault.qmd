@@ -1,0 +1,64 @@
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis version="3.22.4-Białowieża">
+  <identifier>NZAFD_Oct_2022</identifier>
+  <parentidentifier></parentidentifier>
+  <language>ENG</language>
+  <type>dataset</type>
+  <title>NZAFD 1:250k October 2022</title>
+  <abstract>The New Zealand Active Faults Database (NZAFD) is a national database of locations and attributes of onshore active faults (e.g., names, ages and amounts of displacement) and is intended for use at 1:250, 000 scale. Most faults have deformed the ground surface of New Zealand within the last 125,000 years. In the Taupo Rift most have deformed the ground surface within the last 25,000 years. For more information visit https://doi.org/10.21420/R1QN-BM52.
+
+The New Zealand Active Faults Database (NZAFD) is used for a variety of purposes such as geological research, hazard modelling, and infrastructure planning and is an underlying dataset for other nationally significant hazard applications (e.g., the National Seismic Hazard Model). This view of the database is intended to be portrayed and used at a scale of 1:250,000.</abstract>
+  <keywords vocabulary="Search keys">
+    <keyword>active fault</keyword>
+    <keyword>trace</keyword>
+    <keyword>section</keyword>
+    <keyword>displacement</keyword>
+    <keyword>sense</keyword>
+    <keyword>single-event displacement</keyword>
+    <keyword>recurrence interval</keyword>
+    <keyword>last event</keyword>
+    <keyword>fault</keyword>
+    <keyword>earthquake</keyword>
+    <keyword>hazard</keyword>
+    <keyword>NZAFD</keyword>
+    <keyword>AF250</keyword>
+    <keyword>geology</keyword>
+  </keywords>
+  <contact>
+    <name>Regine Morgenstern</name>
+    <organization>GNS Science</organization>
+    <position>Paleoseismology Technician</position>
+    <voice></voice>
+    <fax></fax>
+    <email></email>
+    <role>Point of contact</role>
+  </contact>
+  <links/>
+  <fees></fees>
+  <constraints type="Limitations of use">The NZAFD has been prepared by the Institute of Geological and Nuclear Sciences Limited (GNS Science), a New Zealand Crown Research Institute, as part of GNS Science report SR2014/11- The 1:250,000 Active Faults Database of New Zealand: Database Description and Data Dictionary.
+Terms of Use
+The NZAFD (Database) cannot be used for commercial purposes including, but not limited to, reselling and/or providing technical services based on the Database. You must acknowledge the Institute of Geological and Nuclear Sciences Limited (GNSScience) as the source of the Database in any publication or other public disclosure where you use or rely on the Database. 
+These data havea minimum scale limitation of 1:100,000.
+To credit the use of the Database in publications, we recommend citation of the Active Faults Database paper:
+Langridge, R.M., Ries, W.F., Litchfield, N.J., Villamor, P., Van Dissen, R.J., Barrell, D.J.A., Rattenbury, M.S., Heron, D.W., Haubrock, S., Townsend, D.B., Lee, J.M., Berryman, K.R., Nicol, A., Cox, S.C., Stirling, M.W. (2016). The New Zealand Active Faults Database. New Zealand Journal of Geology and Geophysics 59: 86-96. doi: 10.1080/00288306.2015.1112818.
+Disclaimer
+GNS Science does not warrant or represent that the Database is accurate, complete or fit for any particular purpose. GNS does not accept any responsibility for the use of or reliance on the Database and shall not be liable to any person on any ground for any loss, damage or expense arising from such use or reliance.</constraints>
+  <rights>GNS Science</rights>
+  <encoding></encoding>
+  <crs>
+    <spatialrefsys>
+      <wkt>PROJCRS["NZGD2000 / New Zealand Transverse Mercator 2000",BASEGEOGCRS["NZGD2000",DATUM["New Zealand Geodetic Datum 2000",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4167]],CONVERSION["New Zealand Transverse Mercator 2000",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",173,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",1600000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",10000000,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["northing (N)",north,ORDER[1],LENGTHUNIT["metre",1]],AXIS["easting (E)",east,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["Engineering survey, topographic mapping."],AREA["New Zealand - North Island, South Island, Stewart Island - onshore."],BBOX[-47.33,166.37,-34.1,178.63]],ID["EPSG",2193]]</wkt>
+      <proj4>+proj=tmerc +lat_0=0 +lon_0=173 +k=0.9996 +x_0=1600000 +y_0=10000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+      <srsid>177</srsid>
+      <srid>2193</srid>
+      <authid>EPSG:2193</authid>
+      <description>NZGD2000 / New Zealand Transverse Mercator 2000</description>
+      <projectionacronym>tmerc</projectionacronym>
+      <ellipsoidacronym>EPSG:7019</ellipsoidacronym>
+      <geographicflag>false</geographicflag>
+    </spatialrefsys>
+  </crs>
+  <extent>
+    <spatial minx="166.37241399999999203" miny="-46.5998390000000029" maxx="179.07534799999999109" dimensions="2" minz="0" maxy="-36.84737799999999908" crs="EPSG:2193" maxz="0"/>
+  </extent>
+</qgis>

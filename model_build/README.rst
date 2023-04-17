@@ -10,13 +10,13 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
     *Figure: *
 
 
-.. figure:: ../support_figures/domain.png
+.. figure:: ../support_figures/model_2d_boundary_conditions.png
    :width: 600
    :align: center
 
 .. class::
 
-    *test caption # todo make a good figure with all boundary conditions*
+    *Figure: Overview of model boundary conditions*
 
 
 :Author:  Matt Dumont
@@ -35,7 +35,6 @@ Index
 
 Module Index
 ============
-# todo copy from base readme
 -  `README.rst <README.rst>`_: this document
 -  `base_data <base_data>`_: raw input data for the model build
 -  `processed_input_data <processed_input_data>`_: processed data for the model build that was built by the scripts in this folder from the raw data in the base_data folder
@@ -83,13 +82,13 @@ likely minimal, particularly in comparison with the other outwash dominated aqui
 as a no-flow boundary.
 
 
-.. figure:: ../support_figures/domain.png
+.. figure:: ../support_figures/model_2d_geography.png
    :scale: 50 %
    :align: center
 
 .. class:: centered
 
-    *Figure: Map of the model domain with key features labelled #todo*
+    *Figure: Map of the model domain with key features labelled*
 
 
 Model Time period
@@ -107,14 +106,72 @@ of boundary conditions we defined two time periods for the model:
 Model Structure
 ===============
 
-2d model structure
+The model structure was initially created as a 1 layer model, but during the course of the optimisation
+it became clear that the model could not reproduce the data without additional structure and layering. For more
+information on teh optimisation process see the `optimisation readme <../optimisation/README.rst>`_.
+
+1 layer model structure
 ------------------
 
-# todo top, bottom definitino
+the 1 layer model was largely based on Wilson et al. (2012).  the model top was defined based on a 15m DEM (from NZWaM - Hydro), and the
+model bottom was initially set from the model bottom used in Wilson et al. (2012).  The model bottom and top were then adjusted as follows:
 
-3d model structure
+- All cells with stream package cells with the stream rbot parameter below the model bottom were set as 0.5 m below rbot.
+- A number of cells which routinely caused dry cells (and instability in the model) had the bottom gradient reduced
+- The model top was adjusted so that the tops were always at least 0.5m above the rbot of the stream package cells.
+- there were a number of cells near the clutha river that caused dry cells due to the incised nature of the river.
+  these cells the bottom was set to the bottom of the nearby river cells
+- the model bottom was adjusted to ensure that the model thickness was at least 2m
+
+.. figure:: ../support_figures/model_2d_bottom_fixers.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: location where the gradient of the bottom or the absolute bottom elevations were reduced*
+
+
+.. figure:: ../support_figures/model_2d_top_bot.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Model top and bottom*
+
+
+.. figure:: ../support_figures/model_2d_thickness.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Model thickness*
+
+Bespoke_cross_section.png  # todo
+
+
+multi-layer (3d) model structure
 ------------------
 # todo
+
+The multi-layer model structure was created better represent the complex geology in and around the Southern edge of
+Lake Hawea. There is likely to be other areas of the model domain that have more complex geology; however excluding
+the structure at the Lake Hawea moraine precluded our model from fitting the observed data. For more information on
+the optimisation process see the `optimisation readme <../optimisation/README.rst>`_.
+
+Lake Hawea Moraine Conceptual Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# todo
+
+Implementation of the Lake Hawea Moraine Conceptual Model into the groundwater model
+^^^^^^^^^^^
+
+# todo
+
+
 
 Model boundary conditions
 =========================
@@ -124,45 +181,186 @@ Land surface recharge (LSR)
 
 LSR model
 ^^^
-# todo
+
+We chose to use the `Rushton model <https://doi.org/10.1016/j.jhydrol.2005.06.022>`_ to estimate LSR.
+The Rushton model is simple easy to implement and has been used in a number of other studies.
+In general the Rushton model uses the following methods to estimate soil moisture balance:
+
+1. Calculation of infiltration to the soil zone (In), and near surface soil storage for the end of the current day
+    (SOILSTOR).
+    Note that Infiltration (In) as specified by the Rushton algorithms is not just infiltration
+    (Rainfall-Runoff). It also includes SOILSTOR from the previous day.
+2. Estimation of Actual ET
+    The spreadsheet calculates TAW and RAW from field capacity, wilting point, and rooting depth data.
+    Typical values for field capacity and wilting point are given in Table 19 of Allen et al. (1998).
+    Rooting Depth changes with the season, and is typically 0.5-1m for grass (Table 22 of Allen et al.,1998)
+    A depletion Factor, p, needs to estimated for the calculation of RAW. p is the average fraction of TAW
+    that can be depleted from the root zone before moisture stress (reduction in ET)
+    For NZ conditions p should be around 0.4-0.6, typically 0.5 for grass. See Table 22 of Allen et al.
+    (1998) for more values
+    Fracstor (near surface soil retention) needs to be estimated. Typical values are 0 for a coarse sandy
+    soil, 0.4 for a sandy loam, 0.75 for a clay loam (Rushton, 2006, pg 388)
+3. Calculation of Soil Moisture Deficit and recharge.
+    Note that the Soil Moisture Deficit equation, section (d) of Rushton, is ambiguous. SURFSTOR for
+    this equation should be for the end of the current day, as calculated in section (b).
+    The three steps outlined above partition near surface soil storage between near surface soil storage for
+    the following day, AET, and the soil moisture deficit/reservoir respectively
+
+Groundwater recharge occurs only when the soil moisture deficit is negative, ie there is surplus water in the soil
+moisture reservoir
+
+We also added an irrigation component to the Rushton model as follows:
+
+1. Natural irrigation demand (before irrigation is applied) is calculated to reach the target value (taw * self.irrig_targ)
+if Irrigate (bool parameter):
+   1. define the irrigation index (those cells with soil moisture < trig (taw* irrig_trig) AND which have
+      not been irrigated more recently than the minimum number of days between irrigation (min_irrig_return))
+   2. Calculate used irrigation demand
+      * if date is not in the irrigation days (between irrig start and stop) then use demand = 0
+      * else use demand = max(max_irrigation applied, irrigation demand + irrigation inefficiency)
+   3. irrigate from the scheme (irrig_available)
+   4. where excess demand remains irrigate from storage
+   5. where excess water from the scheme is available add it to storage up to maximum storage
+   6. add irrigation water to use_rain and recalculate the soil moisture balance,
+      note that irrigation will only be allowed to runoff if allow_irrigation_to_runoff = True
+   7. calculate remaining irrigation demand (after irrigation is applied)
+2. next day
+
 
 LSR model inputs -> Precip and PET
 ^^^^
-# todo
-ERA5-land and met station data
+
+We used two sets of inputs for meteorological data to estimate LSR:
+
+- **ERA5-land**: a global reanalysis dataset of meteorological data (1950 - 2020)
+  `access via <https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview>`_
+- **Met station data**: Hawea met station data provided by ORC (2012-2021)
+
+We chose to use these two datasets as the met station data is measured data and is therefore more accurate and covers
+the full optimisation period. For the longer scenario period we relied on the ERA5-land data as it is an available,
+well documented and validated reanalysis that is available for the full scenario period.
+
 
 LSR model inputs -> Irrigated area and efficiency
 ^^^^
-# todo
-support_figures/irrigated_area.png
 
+The Rushton model accounts requires irrigation efficiency and irrigation area to be specified. The irrigation area
+is from `MFE's national irrigated land spatial dataset <https://environment.govt.nz/publications/national-irrigated-land-spatial-dataset-2020-update/>`_. The
 irrigation efficiency, triggers, return frequencies and application rates are all specified
-in `<the recharge modelling script ../model_build/supporting_data_analysis/recharge_model.py>`_
+in `<the recharge modelling script ../model_build/supporting_data_analysis/recharge_model.py>`_ and are largely informed
+from `McIndoe (2002) <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1>`_
+
+.. figure:: ../support_figures/irrigated_area.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: irrigated area and irrigation types*
+
 
 Correcting ERA5-land data
 ^^^^
-# todo
-optimisation/pre_optimisation_plots_png/era5_correction/era5_data_correction.png
+
+Unsurprisingly, the ERA5-Land has biases and unit conversion isues.  We corrected the ERA5-land data by simple multilinear
+regression.  For the PET we used the daily Era5-land PET and the season as the predictor variables and daily met PET.  For the precipitation we
+used the weekly mean ERA5-land precipitation as the predictor variable and the weekly mean met precipitation as the dependent variable.
+The results of the regression are shown in the figure below.
+
+.. figure:: ../optimisation/pre_optimisation_plots_png/era5_correction/era5_data_correction.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Era5-land vs met data and regressions*
 
 Met station based LSR
 ^^^^^
-optimisation/pre_optimisation_plots_png/stress_period_data/rch_time.png
+
+The weekly mean met station based recharge and spatial mean recharge are presented in the figures below.
+
+.. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/rch_time.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Weekly mean met data recharge*
+
+.. figure:: ../Scenarios/boundary_condition_plots/spatial_rch_hist_rch.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: spatial variation of mean met data recharge*
+
 
 Correcting ERA5-land based LSR
 ^^^
-optimisation/pre_optimisation_plots_png/era5_correction/era5_rch_correction.png
-Scenarios/boundary_condition_plots/spatial_rch_hist_comp.png
 
-# todo
+The ERA5-land based recharge was biased relative to the met station based recharge despite the corrections applied to the
+meteorological data.  We corrected the ERA5-land based recharge by two simple multilinear regressions one for irrigated sites
+and another for dryland sites based on the weekly mean LSR.  The regressions and the results are shown in the figures below.
+
+.. figure:: ../optimisation/pre_optimisation_plots_png/era5_correction/era5_rch_correction.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: regressions for ERA5-land and metdata recharge*
+
+
+.. figure:: ../Scenarios/boundary_condition_plots/spatial_rch_hist_comp.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: comparison for the spatially distributed mean recharge, Note that hist_rch is the metdata based recharge and  hist_era5_rch is the same period, but using the ERA5-land data*
+
+While the regressions are not perfect, they do improve the large scale bias between the ERA5-land based recharge and the met station based recharge.
+We use the met station based recharge for the optimisation and the ERA5-land based recharge for the scenarios. While this does introduce some bias in
+our scenarios we analyse the results of the scenarios relative to the optimisation period run with the ERA5-land based recharge, which should
+mitigate the bias.
 
 Generating a Long record of LSR
 ^^^^^^
-# todo dryland, irr_rch, hist_rch, hist_era5
 
-Scenarios/boundary_condition_plots/temporal_rch.png
-Scenarios/boundary_condition_plots/spatial_rch_irr_rch.png
-Scenarios/boundary_condition_plots/spatial_rch_dryland_rch.png
+The advantage of using the ERA5-land data is that it is available for the full scenario period.  We generated several
+long records of LSR for the full scenario period. The records are defined as follows and are show in the figure below.
 
+- **dryland_rch**: recharge calculated from ERA5-land assuming this is no irrigation in the catchment (e.g. no irrigation losses)
+- **irr_rch**: recharge calculated from ERA5-land assuming that irrigation in the catchment maintains the spatial coverage from 2021,
+  but all irrigation is applied via pivot irrigators (e.g. 85% irrigation efficiency)
+- **hist_rch**: recharge calculated from the met station data for the optimisation period (2015-2020)
+- **hist_era5_rch**: recharge calculated from ERA5-land for the optimisation period (2015-2020)
+
+.. figure:: ../Scenarios/boundary_condition_plots/temporal_rch.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: comparison of the temporal recharge*
+
+.. figure:: ../Scenarios/boundary_condition_plots/spatial_rch_irr_rch.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: spatially distributed mean recharge for the irr_rch scenario*
+
+.. figure:: ../Scenarios/boundary_condition_plots/spatial_rch_dryland_rch.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: spatially distributed mean recharge for the dryland_rch scenario*
 
 Groundwater Abstraction (pumping)
 ----------------------------------
@@ -264,7 +462,8 @@ Irrigation Supply Race Losses (race losses)
 -------------------------------------------
 
 There are a number of irrigation supply races across the model domain. Estimates of race water losses are uncertain,
-however the best estimate is from # todo refrence suggesting that approximately 10% of the race flows are lost to groundwater
+however `McIndoe (2002) <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1>`_
+suggests that approximately 10% of the race flows are lost to groundwater
 we have access to records of daily race takes from the Hawea Irrigation Co. from 2012-01-01 to 2021-12-31, which covers
 full optimisation period. For the scenario period we simply used the ISO weekly mean race losses.
 
@@ -317,8 +516,8 @@ the following methodology:
    regression predicted a MALF of zero at a catchment area of 0.14 km^2, which is consistent with the behaviour we would
    likely expect.
 #. we then conducted a multiple linear regression of daily flows of the hillside creeks against the independent
-   variables of Lindis River Flow/CA and the predicted MALF/CA. (see figure below) The Root Mean Squared error for the
-   daily flows at Lagoon Creek and Grandview Creek was #todo m^3/s and #todo m^3/s respectively.
+   variables of Lindis River Flow/CA and the predicted MALF/CA. (see figure below) The Root Mean Squared errors for the
+   daily and monthly flows at Lagoon Creek and Grandview Creek are shown in the table below.
 #. We then used both of these regressions to predict the daily flows of the hillside creeks for the period of
    1976-09-23 to 2021-06-30. Where the prediction was negative we set the flow to zero.
 #. Finally to reduce the impact of very high flows (where overland flow may not be inconsequential) we set any daily
@@ -386,4 +585,6 @@ A number of model zones were generated to more easily visualise the model result
 
 References
 ===========
-# todo try to get rid of this, instead link to the DOI instead
+
+- `McIndoe, I., 2002. Efficient and reasonable use of water for irrigation. <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1.>`_
+- `Rushton, K.R., Eilers, V.H.M., Carter, R.C., 2006. Improved soil moisture balance methodology for recharge estimation. Journal of Hydrology 318, 379-399. <https://doi.org/10.1016/j.jhydrol.2005.06.022>`_

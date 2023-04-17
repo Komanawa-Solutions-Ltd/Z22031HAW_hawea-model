@@ -295,7 +295,7 @@ def _slope_fix_southern(bottoms):
     return bottoms
 
 
-def elv_calc(fix_southern=True):
+def elv_calc(fix_southern=True, one_layer_version=False):
     """
 
     :param fix_southern: should always be True (except in debugging issues)
@@ -362,6 +362,12 @@ def elv_calc(fix_southern=True):
     idx = temp <= rbots
     temp[idx] = rbots[idx] + 0.5  # set model tops to above river bottom.
     top[river.loc[:, 'i'], river.loc[:, 'j']] = temp
+
+    if one_layer_version:
+        import warnings
+        warnings.warn('one layer version')
+        return np.concatenate((top[np.newaxis], bot[np.newaxis]))
+
 
     out = old_to_3d(top, bot)
 
