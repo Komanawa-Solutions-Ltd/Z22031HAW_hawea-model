@@ -189,21 +189,19 @@ approximately 10m of vertical displacement. We developed and fit a very simple n
 at G40/0415 to better understand the relationship between the lake levels and the groundwater levels in this well.
 The model parameterised the groundwater levels as:
 
-.. math::
+$$h_{gw}(t) = /frac{/sum{h_{lake mod}(n)}_{n=t+l}^{t+l+s}}{s}$$
 
-    h_{gw}(t) = /frac{/sum{h_{lake mod}(n)}_{n=t+l}^{t+l+s}}{s}
-
-    h_{lake mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta h
+$$h_{lake mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta h$$
 
 where
-- :math:`h_{gw}` is the groundwater level,
-- :math:`h_{lake}` is the lake level,
-- :math:`t` is the time (day),
-- :math:`l` is the lag parameter (days),
-- :math:`s` is the number of days to smooth the lake levels,
-- :math:`\bar{h_{lake}}` is the mean lake level,
-- :math:`\Delta h` is the vertical step parameter,
-- :math:`a` is the lake level amplitude modifier,
+- `h_{gw}` is the groundwater level,
+- `h_{lake}` is the lake level,
+- `t` is the time (day),
+- `l` is the lag parameter (days),
+- `s` is the number of days to smooth the lake levels,
+- `\bar{h_{lake}}` is the mean lake level,
+- `\Delta h` is the vertical step parameter,
+- `a` is the lake level amplitude modifier,
 
 
 
