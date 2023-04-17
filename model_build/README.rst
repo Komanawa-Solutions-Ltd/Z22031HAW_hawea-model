@@ -195,7 +195,7 @@ $$h_{gw}(t) = \sum_{n=t+l}^{t+l+s}h_{lake mod(n)} / s$$
 $$\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)$$
 
 
-$$h_{lake mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta_{h}$$
+$$h_{lake mod}(t) = ((h_{lake}(t) -  h_{lakeMean}) * a) + h_{lakeMean} + \Delta_{h}$$
 
 
 where:
@@ -205,7 +205,7 @@ where:
 - $t$ is the time (day),
 - $l$ is the lag parameter (days),
 - $s$ is the number of days to smooth the lake levels,
-- $\bar{h_{lake}}$ is the mean lake level,
+- $h_{lakeMean}$ is the mean lake level,
 - $\Delta_{h}$ is the vertical step parameter,
 - $a$ is the lake level amplitude modifier,
 
