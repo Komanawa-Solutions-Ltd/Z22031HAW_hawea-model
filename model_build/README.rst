@@ -191,10 +191,13 @@ The model parameterised the groundwater levels as:
 
 $$h_{gw}(t) = \frac{\sum_{n=t+l}^{t+l+s}{h_{lake mod}(n)}}{s}$$
 
-$$h_{gw}(t) = \sum_{n=t+l}^{t+l+s}{h_{lake mod}(n)} \over {s}$$
+$$h_{gw}(t) = \sum_{n=t+l}^{t+l+s}{h_{lake mod}(n)} \over s$$
+
+$$\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)$$
 
 
 $$h_{lake mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta_{h}$$
+
 
 where:
 
