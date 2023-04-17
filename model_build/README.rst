@@ -149,8 +149,24 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
 
     *Figure: Model thickness*
 
-Bespoke_cross_section.png  # todo
 
+.. figure:: ../optimisation/pre_optimisation_plots_png/cross_sections/Bespoke_cross_section.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Example model cross-section 1*
+
+
+
+.. figure:: ../optimisation/pre_optimisation_plots_png/cross_sections/Cross_section_column_100.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Example model cross-section 2*
 
 multi-layer (3d) model structure
 ------------------
@@ -164,7 +180,45 @@ the optimisation process see the `optimisation readme <../optimisation/README.rs
 Lake Hawea Moraine Conceptual Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-# todo
+In the 1 layer model structure the Lake Hawea moraine was represented as a single layer and it's impact on the groundwater
+system was parameterised as a single parameter -- hydraulic conductivity.  However, in reality the Lake Hawea moraine is a complex
+geological structure. From a groundwater perspective The key observations that precluded the 1 layer model from fitting the data
+were the high frequency measurements at well G40/0415 (roughly at the intersection of Cemetery Road and Gladstone Road.
+These observations showed that the groundwater levels in this well are highly correlated with the lake levels, but with
+approximately 10m of vertical displacement. We developed and fit a very simple numerical model to the groundwater levels
+at G40/0415 to better understand the relationship between the lake levels and the groundwater levels in this well.
+The model parameterised the groundwater levels as:
+
+.. math::
+
+    h_{gw}(t) = /frac{/sum{h_{lake mod}(n)}_{n=t+l}^{t+l+s}}{s}
+
+    h_{lake mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta h
+
+where
+- :math:`h_{gw}` is the groundwater level,
+- :math:`h_{lake}` is the lake level,
+- :math:`t` is the time (day),
+- :math:`l` is the lag parameter (days),
+- :math:`s` is the number of days to smooth the lake levels,
+- :math:`\bar{h_{lake}}` is the mean lake level,
+- :math:`\Delta h` is the vertical step parameter,
+- :math:`a` is the lake level amplitude modifier,
+
+
+
+
+
+# todo simple fit
+support_figures/lake_gw_level.png
+
+support_figures/borelogs.png
+support_figures/concept_diagram_0.png
+support_figures/concept_diagram_1.png
+support_figures/hds_closeup_h_g40_0415_0000.png
+support_figures/hds_closeup_h_g40_0415_0000_MSE.png
+support_figures/hds_closeup_h_g40_0415_0000_shape.png
+support_figures/lake_gw_level.png
 
 Implementation of the Lake Hawea Moraine Conceptual Model into the groundwater model
 ^^^^^^^^^^^

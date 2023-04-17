@@ -1,0 +1,4 @@
+support_figures/hds_closeup_h_g40_0415_0000.png
+support_figures/hds_closeup_h_g40_0415_0000_MSE.png
+support_figures/hds_closeup_h_g40_0415_0000_shape.png
+support_figures/lake_gw_level.png
