@@ -191,17 +191,17 @@ The model parameterised the groundwater levels as:
 
 $$h_{gw}(t) = /frac{/sum{h_{lake mod}(n)}_{n=t+l}^{t+l+s}}{s}$$
 
-$$h_{lake mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta h$$
+$$h_{lake_mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta_{h}$$
 
 where
-- `h_{gw}` is the groundwater level,
-- `h_{lake}` is the lake level,
-- `t` is the time (day),
-- `l` is the lag parameter (days),
-- `s` is the number of days to smooth the lake levels,
-- `\bar{h_{lake}}` is the mean lake level,
-- `\Delta h` is the vertical step parameter,
-- `a` is the lake level amplitude modifier,
+- $h_{gw}$ is the groundwater level,
+- $h_{lake}` is the lake level,
+- $t$ is the time (day),
+- $l$ is the lag parameter (days),
+- $s$ is the number of days to smooth the lake levels,
+- $\bar{h_{lake}}$ is the mean lake level,
+- $\Delta h$ is the vertical step parameter,
+- $a$ is the lake level amplitude modifier,
 
 
 
