@@ -191,7 +191,9 @@ The model parameterised the groundwater levels as:
 
 $$h_{gw}(t) = /frac{/sum{h_{lake mod}(n)}_{n=t+l}^{t+l+s}}{s}$$
 
-$$h_{lake_mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta_{h}$$
+$$h_{gw}(t) = /frac{x}{s}$$
+
+$$h_{lake mod}(t) = ((h_{lake}(t) -  \bar{h_{lake}}) * a) + \bar{h_{lake}} + \Delta_{h}$$
 
 where:
 
