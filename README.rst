@@ -2,7 +2,7 @@ Hawea Transient groundwater model (Hawea Model)
 ################################################
 
 .. figure:: support_figures/domain.png
-   :width: 600
+   :height: 650 px
    :align: center
 
 :Author:  Matt Dumont
@@ -231,6 +231,9 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
 -  `support_figures <support_figures>`_: supporting figures for this and other README.rst documents
 -  `dummy_packages <dummy_packages>`_: dummy packages for the proprietary packages used in the model, these packages have some, but not all of functionality of the original packages
 
+Supporting data index
+--------------------------------
+# todo once done
 
 Proprietary packages
 --------------------
