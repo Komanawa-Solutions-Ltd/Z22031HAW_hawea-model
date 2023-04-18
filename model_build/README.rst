@@ -2,7 +2,7 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
 ############################################################################
 
 .. figure:: ../support_figures/model_2d_boundary_conditions.png
-   :width: 600
+   :scale: 50 %
    :align: center
 
 .. class::
