@@ -1,15 +1,6 @@
 Hawea Transient groundwater model (Hawea Model) build methods and results
 ############################################################################
 
-.. figure:: {}
-   :scale: 50 %
-   :align: center
-
-.. class:: centered
-
-    *Figure: *
-
-
 .. figure:: ../support_figures/model_2d_boundary_conditions.png
    :width: 600
    :align: center
@@ -170,7 +161,6 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
 
 multi-layer (3d) model structure
 ------------------
-# todo
 
 The multi-layer model structure was created better represent the complex geology in and around the Southern edge of
 Lake Hawea. There is likely to be other areas of the model domain that have more complex geology; however excluding
@@ -191,10 +181,6 @@ The model parameterised the groundwater levels as:
 
 $$h_{gw}(t) = \sum_{n=t+l}^{t+l+s}h_{lake mod(n)} / s$$
 
-
-$$\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)$$
-
-
 $$h_{lake mod}(t) = ((h_{lake}(t) -  h_{lakeMean}) * a) + h_{lakeMean} + \Delta_{h}$$
 
 
@@ -211,24 +197,210 @@ where:
 
 
 
+.. figure:: ../support_figures/simple_fit.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: results of the simple fit to Lake Hawea levels*
 
 
-# todo simple fit
-support_figures/lake_gw_level.png
+The simple numerical model provides a good fit to the groundwater levels at G40/0415 with a step change of 12.81 m
+and a 60 dya smoothing period.
 
-support_figures/borelogs.png
-support_figures/concept_diagram_0.png
-support_figures/concept_diagram_1.png
-support_figures/hds_closeup_h_g40_0415_0000.png
-support_figures/hds_closeup_h_g40_0415_0000_MSE.png
-support_figures/hds_closeup_h_g40_0415_0000_shape.png
-support_figures/lake_gw_level.png
+With the 1d model we were unable to fit the water levels at G40/0415. Could either fit the shape of the groundwater levels
+but there was substantial bias in the mean groundwater level (too high) or we could fit the mean groundwater level but the
+shape of the groundwater levels was lost.
+
+
+.. figure:: ..support_figures/hds_closeup_h_g40_0415_0000_shape.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: the results of the 1 layer model which fit the shape of the groundwater levels, but not the mean*
+
+.. figure:: ..support_figures/hds_closeup_h_g40_0415_0000_MSE.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+    *Figure: the results of the 1 layer model which fit the mean of the groundwater levels, but not the shape*
+
+
+We do not have other high frequency observations of groundwater levels near the Lake Hawea moraine. However, we do have
+a number of static water levels that measured shortly after drilling the bore.  These water levels, relative to the Lake level
+at the time of measurement are shown in the figure below.  This figure shows that a constant vertical offset between the
+groundwater levels and the lake levels of approximately 10m.  Some of these boreholes are located in the moraine less
+than 200m from the lake. Many of the water supply wells near the lake (within the mapped moraine) are
+relatively deep (e.g. 50+ m).
+
+.. figure:: ../support_figures/lake_gw_level.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: all groundwater levels relative to the Lake Hawea level on the sampling date (positive values are groundwater levels below the lake)*
+
+
+Several of the bores have recorded bore logs which are shown in the figure below. Driller's logs can be imprecise; however
+the logs demonstrate lower conductivity sediments overlying more conductive sediments at ~ 320 m msl. This elevation is
+also typically where drilling stopped suggesting they finally had found conductive material. Some logs also show
+more conductive sediments overlying the less conductive sediments, but this is spatially variable.
+
+.. figure:: ../support_figures/borelogs.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: bore logs from the Lake Hawea Moraine*
+
+The Quaternary geological history of the Lake Hawea area is made up of a number of glacial advances and retreats described
+below and show in the figure below.
+
+#. After the Q6 Luggate Advance relatively conductive glacial out-wash filled the basin and deposited the sediments of the high
+   terrace
+#. The Q4 Albert Town Advance scoured many of the previous sediments and deposited, relatively impermeable,
+   glacial moraine at the Camp Hill Moraine and the moraine at the northern base of the High terrace.
+#. the subsequent Q3 retreat filled additional, relatively conductive outwash sediments were deposited between The
+   high terrace and Lake Hawea.
+#. The Q2 Hawea Advance scoured the previous sediments (producing Lake Hawea) and deposited a relatively impermeable
+   moraine at the southern edge of Lake Hawea.
+
+.. figure:: ../support_figures/scott_geological_map.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: Quaternary geological history of the Lake Hawea area from Wilson(2012)*
+
+Based on the bore log information, the geological history of the area, and the groundwater levels we propose a conceptual
+model of the Lake Hawea Moraine.  The conceptual model is shown in the figures and described below:
+
+#. During the Q2 Hawea Advance the glacier did not fully scour the previous outwash sediments and the new Lake Hawea
+   moraine was deposited on a thin wedge of Q3+ outwash.
+#. The moraine forms a relatively impermeable barrier to groundwater flow from lake Hawea to the Hawea Flat aquifer
+   system.
+#. During and after the Q2 Lake Hawea Advance the moraine was locally reworked and eroded by some combination of the
+   Hawea river, and Grandview and John Creek, periglacial activity (e.g. local reworking of the moraine by surface water
+   on the top of the Glacier). Regardless, this reworking produced a locally continuous cap of relatively conductive
+   material on top of the moraine.
+#. After the completion of the Lake Hawea dam in the 1950s the Lake Hawea level was raised by approximately 20 m, which
+   allowed Lake Hawea water to seep through the permeable cap of the moraine and into the Hawea Flat aquifer system.
+   this is anecdotally supported by reports of relatively low groundwater levels prior to the completion of the dam.
+#. The permeable cap of the moraine is relatively thin and is almost certainly not continuous across the moraine.
+   This forms a small, possibly perched, aquifer system on top of the previous moraine.  This aquifer system then effectively
+   spills over the moraine into the Hawea Flat aquifer system with localised very steep groundwater gradients.
+#. The Hawea flat aquifer system is a relatively conductive system and has relatively low groundwater gradients.  Locally
+   where the Lake Hawea moraine overlies more conductive material groundwater will flow from this conceptual pour point
+   back towards Lake Hawea, providing the groundwater in the aforementioned groundwater bores (Scott's Beach, G40/0413,
+   G40/0368, G40/0178)
+
+The main significance of this conceptual model is that at some point the groundwater system could become disconnected
+from Lake Hawea.  If this were to happen then groundwater levels could significantly decline in the Hawea Flat aquifer.
+more details on these scenarios are discussed in the `scenarios readme file. <../scenarios/README.rst>`_
+
+.. figure:: ../support_figures/concept_diagram_0.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: conceptual model of the Lake Hawea Moraine (across the moraine)*
+
+
+The location and elevation of the conceptual pour point is fundamentally unknown. If we assume a perched aquifer (rather
+than a local penetration, discussed below) then, based on groundwater levels, and the bore logs, we can estimate
+the bottom elevation of the impermeable moraine to be approximately 320 m msl. The top of the impermeable moraine is
+likely is more difficult to estimate. Based on the behaviour of the water levels in G40/0415, we can suggest
+it is likely below the typical minimum operating level of Lake Hawea (338 m msl). The observed water levels
+in G40/0415 do not become disconnected (e.g. variations in Lake levels which are not seen in the measured bore levels)
+and the rise and fall of the groundwater
+levels is relatively symmetrical. If the lake was disconnected we would expect to see a period of groundwater decline
+with a sudden increase in groundwater levels (as the lake became re-connected to the groundwater system). There is some
+anecdotal evidence that the groundwater levels in the Hawea Flat aquifer system have declined significantly
+when the lake levels reached their historical minimum (327.6 m msl in 1976 & 1977). We could interpret this as evidence
+of a lake disconnect, suggesting that the top of the moraine is likely above 327.6 m msl, but there are not sufficient
+records from this event to be certain.
+
+It is also possible that the moraine is not continuous across the Lake Hawea foreshore, but is instead locally penetrated by
+a paleo-channel of either the Hawea River, John Creek, or Grandview Creek. If this is the case the penetration would
+likely be within the spatial extent of the Grandview Creek and John Creek alluvial fans. The response of the groundwater
+system to a local penetration of the moraine is likely to be dependent on the shape of the paleo-channel. The response
+would likely be non-linear as the transmissivity of the paleo channel would decline rapidly with decreasing water levels
+This scenarios is fundamentally uncertain and very difficult to include in a groundwater model without additional
+information.  Therefore we chose to assume a perched aquifer for the conceptual model that was used in the multi-layer
+model structural design.
+
+.. figure:: ../support_figures/concept_diagram_1.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: indicative conceptual model of the Lake Hawea Moraine (along the moraine) assuming a perched aquifer*
+
+.. figure:: ../support_figures/concept_diagram_2.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: indicative conceptual model of the Lake Hawea Moraine (along the moraine) assuming local penetration of the moraine with a paleo-channel*
 
 Implementation of the Lake Hawea Moraine Conceptual Model into the groundwater model
 ^^^^^^^^^^^
 
-# todo
+We implemented a very simple version of the conceptual model described above assuming a perched aquifer system. We:
 
+#. implemented a 3 layer system.  Layer number follows python indexing (i.e. layer 0 is the top layer)
+#. defined four new zones for the model (see figure below)
+   #. The moraine zone.  layer 0 represents the permeable cap of the moraine, layer 1 represents the impermeable
+      moraine, and layer 2 represents the conductive out-wash left by the Q4+ glaciations of the main
+      Hawea Flat aquifer system.
+   #. The Lake bar: This zone does not occur in layer 0, but in layer 1 and 2 it represents the impermeable material
+      that separates Lake Hawea from the Hawea Flat aquifer system.
+   #. The Lake: This zone occurs in layer 0, 1, 2; is conductive material and contains GHB boundary conditions (see more below)
+   #. The Layer pinch out area: This zone occurs in layer 0, 1, 2 and is used to pinch out the three layer system so that for the
+      rest of the model domain layer 0 is the main aquifer system (e.g. like the 1 layer model) layers 1 and 2 consist of 1 m thick layers
+#. set the top of layer 2 (bottom of the moraine) to be 328 m msl.
+#. set top of layer 1 (top of the moraine) to be 335 m msl. note in some of the branches of this repo we used
+   different "bund_top" elevations.  the layer 1 elevation is always specified in
+   `model_build.project_model_tools.bund_top object <model_build/project_model_tools.py>`_
+
+Several cross sections are presented below; additional crossections and spatial figures about the
+multi layer model structure are available in `the support figures folder <../support_figures/3d_xsect>`_.
+
+
+.. figure:: ../support_figures/3d_spatial.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: 3D spatial view of the multi-layer model structure zones*
+
+.. figure:: ../support_figures/3d_xsect/cross_section_02.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: 3D cross section view 2 of the multi-layer model*
+
+.. figure:: ../support_figures/3d_xsect/cross_section_06.png
+    :scale: 50 %
+    :align: center
+
+.. class:: centered
+
+        *Figure: 3D cross section view 6 of the multi-layer model*
 
 
 Model boundary conditions
@@ -423,6 +595,7 @@ long records of LSR for the full scenario period. The records are defined as fol
 Groundwater Abstraction (pumping)
 ----------------------------------
 # todo
+# todo what layer do these occur in???
 
 Near river bores
 ^^^^^
@@ -643,6 +816,7 @@ A number of model zones were generated to more easily visualise the model result
 
 References
 ===========
+# todo wilson 2012
 
 - `McIndoe, I., 2002. Efficient and reasonable use of water for irrigation. <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1.>`_
 - `Rushton, K.R., Eilers, V.H.M., Carter, R.C., 2006. Improved soil moisture balance methodology for recharge estimation. Journal of Hydrology 318, 379-399. <https://doi.org/10.1016/j.jhydrol.2005.06.022>`_

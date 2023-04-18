@@ -553,7 +553,7 @@ def get_low_cond_array():
     return data
 
 
-def examine_3d(num_plots=10, show=True):
+def examine_3d(num_plots=10, show=True, save=False):
     rt_figs = []
     rt_names = []
     elv_calc()
@@ -639,8 +639,15 @@ def examine_3d(num_plots=10, show=True):
     thick = smt.get_thickness()
     thick[thick > 10] = np.nan
     smt.plot.plt_layer_slices(thick, base_map=True, contour_levels=1, contour=True, title='thick')
+    if save:
+        outdir = proj_root.joinpath('support_figures','3d_xsect')
+        outdir.mkdir( exist_ok=True)
+        for name, fig in zip(rt_names, rt_figs):
+            fig.savefig(outdir.joinpath(f'{name}.png'))
+
     if show:
         smt.plot.show()
+
     return rt_names, rt_figs
 
 
@@ -661,22 +668,25 @@ def plot_3d_structure_spatial():
     plt_layer[moraine] = 3
     plt_layer[pinch] = 4
     plt_layer[lake_bar] = 2
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=(10, 6))
     smt.plot.plt_discrete_matrix(plt_layer, names=mapper, base_map=True, no_flow_layer=0, cmap='tab10', alpha=0.6,
-                                 ax=ax, legend_loc='lower right')
+                                 ax=ax, legend_loc='lower right', title='3D structure zones')
     ax.set_ylim(5.051e6, smt.get_xlim_ylim(False)[-1])
     ax.set_xlim(1.3e6, 1.31e6)
     fig.tight_layout()
+    plt.show()
+    fig.savefig(proj_root.joinpath('support_figures', '3d_spatial.png'))
     return fig, ax
 
 
 if __name__ == '__main__':
+    examine_3d(save=True)
+    plot_3d_structure_spatial()
     bots = smt.get_bottoms()
     smt.plot.plt_layer_slices(bots, 'bottom', contour=True, contour_levels=5, label_contours=True, base_map=True)
     smt.plot.show()
     examine_3d()
     smt.plot.show()
-    plot_3d_structure_spatial()
     t = get_xsection_points()
     temp = get_low_cond_array()
     smt.plot.plt_layer_slices(temp, base_map=True)

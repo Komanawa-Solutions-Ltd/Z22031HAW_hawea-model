@@ -28,12 +28,14 @@ def get_lake_hawea_loc(recalc=default_recalc):
 def lake_checks():
     import matplotlib.pyplot as plt
     hawea_data = _read_lake_level()
+    hawea_data.plot()
     hawea_data.loc[:, 'month'] = hawea_data.index.month
     monthly = hawea_data.groupby('month').describe(percentiles=[.05, .25, .5, .75, .95])
     fig, ax = plt.subplots()
     monthly.lake_stage.loc[:, ['min', '5%', '25%', '50%', '75%', '95%', 'max']].plot(ax=ax)
     ax.set_title('lake level')
 
+    smt.plot.show()
     smt.plot.plt_matrix(smt.io.df_to_array(get_lake_hawea_loc(), 'i'), base_map=True, no_flow_layer=0,
                         title='lake locs')
     smt.plot.show()
@@ -68,6 +70,6 @@ def get_lake_heads(start_date, end_date, frequency='D'):
 
 
 if __name__ == '__main__':
+    lake_checks()
     get_lake_hawea_loc(True)
     t = get_lake_heads(None, None)
-    lake_checks()
