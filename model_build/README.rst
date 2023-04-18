@@ -214,7 +214,7 @@ but there was substantial bias in the mean groundwater level (too high) or we co
 shape of the groundwater levels was lost.
 
 
-.. figure:: ..support_figures/hds_closeup_h_g40_0415_0000_shape.png
+.. figure:: ../support_figures/hds_closeup_h_g40_0415_0000_shape.png
    :scale: 50 %
    :align: center
 
@@ -222,7 +222,7 @@ shape of the groundwater levels was lost.
 
     *Figure: the results of the 1 layer model which fit the shape of the groundwater levels, but not the mean*
 
-.. figure:: ..support_figures/hds_closeup_h_g40_0415_0000_MSE.png
+.. figure:: ../support_figures/hds_closeup_h_g40_0415_0000_MSE.png
     :scale: 50 %
     :align: center
 
@@ -412,7 +412,7 @@ Land surface recharge (LSR)
 ---------------------------
 
 LSR model
-^^^
+^^^^^^^^^^^
 
 We chose to use the `Rushton model <https://doi.org/10.1016/j.jhydrol.2005.06.022>`_ to estimate LSR.
 The Rushton model is simple easy to implement and has been used in a number of other studies.
@@ -445,6 +445,7 @@ We also added an irrigation component to the Rushton model as follows:
 
 1. Natural irrigation demand (before irrigation is applied) is calculated to reach the target value (taw * self.irrig_targ)
 if Irrigate (bool parameter):
+
    1. define the irrigation index (those cells with soil moisture < trig (taw* irrig_trig) AND which have
       not been irrigated more recently than the minimum number of days between irrigation (min_irrig_return))
    2. Calculate used irrigation demand
@@ -456,6 +457,7 @@ if Irrigate (bool parameter):
    6. add irrigation water to use_rain and recalculate the soil moisture balance,
       note that irrigation will only be allowed to runoff if allow_irrigation_to_runoff = True
    7. calculate remaining irrigation demand (after irrigation is applied)
+
 2. next day
 
 
@@ -465,7 +467,7 @@ LSR model inputs -> Precip and PET
 We used two sets of inputs for meteorological data to estimate LSR:
 
 - **ERA5-land**: a global reanalysis dataset of meteorological data (1950 - 2020)
-  `access via <https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview>`_
+  `accessed here <https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview>`_
 - **Met station data**: Hawea met station data provided by ORC (2012-2021)
 
 We chose to use these two datasets as the met station data is measured data and is therefore more accurate and covers
@@ -474,12 +476,12 @@ well documented and validated reanalysis that is available for the full scenario
 
 
 LSR model inputs -> Irrigated area and efficiency
-^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Rushton model accounts requires irrigation efficiency and irrigation area to be specified. The irrigation area
 is from `MFE's national irrigated land spatial dataset <https://environment.govt.nz/publications/national-irrigated-land-spatial-dataset-2020-update/>`_. The
 irrigation efficiency, triggers, return frequencies and application rates are all specified
-in `<the recharge modelling script ../model_build/supporting_data_analysis/recharge_model.py>`_ and are largely informed
+in `the recharge modelling script <../model_build/supporting_data_analysis/recharge_model.py>`_ and are largely informed
 from `McIndoe (2002) <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1>`_
 
 .. figure:: ../support_figures/irrigated_area.png
@@ -492,7 +494,7 @@ from `McIndoe (2002) <https://researcharchive.lincoln.ac.nz/bitstream/handle/101
 
 
 Correcting ERA5-land data
-^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Unsurprisingly, the ERA5-Land has biases and unit conversion isues.  We corrected the ERA5-land data by simple multilinear
 regression.  For the PET we used the daily Era5-land PET and the season as the predictor variables and daily met PET.  For the precipitation we
@@ -530,7 +532,7 @@ The weekly mean met station based recharge and spatial mean recharge are present
 
 
 Correcting ERA5-land based LSR
-^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ERA5-land based recharge was biased relative to the met station based recharge despite the corrections applied to the
 meteorological data.  We corrected the ERA5-land based recharge by two simple multilinear regressions one for irrigated sites
