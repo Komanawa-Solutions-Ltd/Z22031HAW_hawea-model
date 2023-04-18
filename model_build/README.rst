@@ -198,7 +198,7 @@ where:
 
 
 .. figure:: ../support_figures/simple_fit.png
-   :scale: 25 %
+   :height: 750 px
    :align: center
 
 .. class:: centered
@@ -239,7 +239,7 @@ than 200m from the lake. Many of the water supply wells near the lake (within th
 relatively deep (e.g. 50+ m).
 
 .. figure:: ../support_figures/lake_gw_level.png
-    :scale: 25 %
+    :height: 750 px
     :align: center
 
 .. class:: centered
@@ -273,7 +273,7 @@ below and show in the figure below.
    moraine at the southern edge of Lake Hawea.
 
 .. figure:: ../support_figures/scott_geological_map.png
-    :scale: 25 %
+    :height: 750 px
     :align: center
 
 .. class:: centered
