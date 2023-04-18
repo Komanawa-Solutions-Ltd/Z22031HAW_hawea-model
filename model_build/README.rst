@@ -2,7 +2,7 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
 ############################################################################
 
 .. figure:: ../support_figures/model_2d_boundary_conditions.png
-   :width: 600
+   :height: 500 px
    :align: center
 
 .. class::
@@ -198,7 +198,7 @@ where:
 
 
 .. figure:: ../support_figures/simple_fit.png
-   :scale: 50 %
+   :scale: 25 %
    :align: center
 
 .. class:: centered
@@ -239,7 +239,7 @@ than 200m from the lake. Many of the water supply wells near the lake (within th
 relatively deep (e.g. 50+ m).
 
 .. figure:: ../support_figures/lake_gw_level.png
-    :scale: 50 %
+    :scale: 25 %
     :align: center
 
 .. class:: centered
@@ -273,7 +273,7 @@ below and show in the figure below.
    moraine at the southern edge of Lake Hawea.
 
 .. figure:: ../support_figures/scott_geological_map.png
-    :scale: 50 %
+    :scale: 25 %
     :align: center
 
 .. class:: centered
