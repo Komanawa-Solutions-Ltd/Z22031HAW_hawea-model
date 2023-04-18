@@ -183,9 +183,42 @@ def well_locations():
     fig.savefig(proj_root.joinpath('support_figures', 'model_2d_well_locations.png'))
     plt.show()
 
+def large_hill_inflows():
+    from model_build.supporting_data_analysis import get_river_flow_data
+
+    rflows = get_river_flow_data('2015-01-01', None,frequency='W')
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+    for nm, pn, c in zip(['gview', 'john'], ['Grandview Creek', 'John Creek'], ['r', 'b']):
+        ax.plot(rflows[nm].index, rflows[nm].values, color=c, label=pn)
+    ax.legend()
+    ax.set_title('Large Hillside Inflows')
+    ax.set_ylabel('Flow (m$^3$/d)')
+    ax.set_xlabel('Date')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_2d_large_hill_inflows.png'))
+    plt.show()
+
+def near_river():
+    from model_build.supporting_data_analysis.get_pumping_data import get_pumping_locs
+    all_locs = get_pumping_locs(force_near_river=True)
+    all_locs = smt.io.add_mxmy_to_df(all_locs)
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    for t in [True, False]:
+        ax.scatter(all_locs[all_locs.near_river == t].mx, all_locs[all_locs.near_river == t].my,
+                     color='r' if t else 'b', label='Near River' if t else 'Not Near River')
+    ax.legend(loc='lower left')
+    ax.set_title('Groundwater Abstraction Well Locations')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_2d_well_locations_near_river.png'))
+    plt.show()
+
+
 if __name__ == '__main__':
     # model_2d_structure_plots()
     # boundary_condition_figure()
     #geography()
-    well_locations()
+    # well_locations()
+    #large_hill_inflows()
+    near_river()
     pass

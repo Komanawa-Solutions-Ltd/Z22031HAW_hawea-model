@@ -642,6 +642,14 @@ the figures below.
 Near river bores
 ^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../support_figures/model_2d_well_locations_near_river.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Groundwater abstraction locations including the abstraction near the Hawea and Clutha Rivers*
+
 The bulk of the "groundwater" abstraction in the model domain comes from two locations adjacent to the Hawea and
 Clutha Rivers. These abstraction bores occur in river proximal gravels which likely have a significantly higher
 hydraulic conductivity than the rest of the aquifer system. We initially attempted to include these bores in the model,
@@ -651,7 +659,6 @@ as surface water abstraction (E.g. via a gallery) and removed these abstraction 
 the river proximal abstraction data to adjust our river gain and loss targets and therefore conserve the water budget.
 
 
-# todo figure near river bore locations
 
 .. figure:: ../support_figures/near_river_abstraction.png
    :scale: 50 %
@@ -865,7 +872,15 @@ to 2 m below the model top. The stream bottoms were then adjusted so that they w
 the conductance factor was parameterised. The stream flow at the top of the stream was set using the inflow estimates
 described above and the stream stage was set at the smoothed model top (i.e. 2 m above the stream bottom).
 
-# todo water budget temporal plot
+
+.. figure:: ../support_figures/model_2d_large_hill_inflows.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Large hillside inflows rates*
+
 
 Smaller Hillside inflows (other hillside inflows) implementation
 ^^^^
