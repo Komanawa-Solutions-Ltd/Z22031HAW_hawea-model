@@ -2,7 +2,7 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
 ############################################################################
 
 .. figure:: ../support_figures/model_2d_boundary_conditions.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class::
@@ -74,7 +74,7 @@ as a no-flow boundary.
 
 
 .. figure:: ../support_figures/model_2d_geography.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -115,7 +115,7 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
 - the model bottom was adjusted to ensure that the model thickness was at least 2m
 
 .. figure:: ../support_figures/model_2d_bottom_fixers.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -124,7 +124,7 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
 
 
 .. figure:: ../support_figures/model_2d_top_bot.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -133,7 +133,7 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
 
 
 .. figure:: ../support_figures/model_2d_thickness.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -142,7 +142,7 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
 
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/cross_sections/Bespoke_cross_section.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -152,7 +152,7 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
 
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/cross_sections/Cross_section_column_100.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -198,7 +198,7 @@ where:
 
 
 .. figure:: ../support_figures/simple_fit.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -215,7 +215,7 @@ shape of the groundwater levels was lost.
 
 
 .. figure:: ../support_figures/hds_closeup_h_g40_0415_0000_shape.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -223,7 +223,7 @@ shape of the groundwater levels was lost.
     *Figure: the results of the 1 layer model which fit the shape of the groundwater levels, but not the mean*
 
 .. figure:: ../support_figures/hds_closeup_h_g40_0415_0000_MSE.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -239,7 +239,7 @@ than 200m from the lake. Many of the water supply wells near the lake (within th
 relatively deep (e.g. 50+ m).
 
 .. figure:: ../support_figures/lake_gw_level.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -253,7 +253,7 @@ also typically where drilling stopped suggesting they finally had found conducti
 more conductive sediments overlying the less conductive sediments, but this is spatially variable.
 
 .. figure:: ../support_figures/borelogs.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -273,7 +273,7 @@ below and show in the figure below.
    moraine at the southern edge of Lake Hawea.
 
 .. figure:: ../support_figures/scott_geological_map.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -307,7 +307,7 @@ from Lake Hawea.  If this were to happen then groundwater levels could significa
 more details on these scenarios are discussed in the `scenarios readme file. <../scenarios/README.rst>`_
 
 .. figure:: ../support_figures/concept_diagram_0.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -339,7 +339,7 @@ information.  Therefore we chose to assume a perched aquifer for the conceptual 
 model structural design.
 
 .. figure:: ../support_figures/concept_diagram_1.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -347,7 +347,7 @@ model structural design.
         *Figure: indicative conceptual model of the Lake Hawea Moraine (along the moraine) assuming a perched aquifer*
 
 .. figure:: ../support_figures/concept_diagram_2.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -381,7 +381,7 @@ multi layer model structure are available in `the support figures folder <../sup
 
 
 .. figure:: ../support_figures/3d_spatial.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -389,7 +389,7 @@ multi layer model structure are available in `the support figures folder <../sup
         *Figure: 3D spatial view of the multi-layer model structure zones*
 
 .. figure:: ../support_figures/3d_xsect/cross_section_02.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -397,7 +397,7 @@ multi layer model structure are available in `the support figures folder <../sup
         *Figure: 3D cross section view 2 of the multi-layer model*
 
 .. figure:: ../support_figures/3d_xsect/cross_section_06.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -485,7 +485,7 @@ in `the recharge modelling script <../model_build/supporting_data_analysis/recha
 from `McIndoe (2002) <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1>`_
 
 .. figure:: ../support_figures/irrigated_area.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -502,7 +502,7 @@ used the weekly mean ERA5-land precipitation as the predictor variable and the w
 The results of the regression are shown in the figure below.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/era5_correction/era5_data_correction.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -515,7 +515,7 @@ Met station based LSR
 The weekly mean met station based recharge and spatial mean recharge are presented in the figures below.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/rch_time.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -523,7 +523,7 @@ The weekly mean met station based recharge and spatial mean recharge are present
     *Figure: Weekly mean met data recharge*
 
 .. figure:: ../Scenarios/boundary_condition_plots/spatial_rch_hist_rch.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -539,7 +539,7 @@ meteorological data.  We corrected the ERA5-land based recharge by two simple mu
 and another for dryland sites based on the weekly mean LSR.  The regressions and the results are shown in the figures below.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/era5_correction/era5_rch_correction.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -548,7 +548,7 @@ and another for dryland sites based on the weekly mean LSR.  The regressions and
 
 
 .. figure:: ../Scenarios/boundary_condition_plots/spatial_rch_hist_comp.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -573,7 +573,7 @@ long records of LSR for the full scenario period. The records are defined as fol
 - **hist_era5_rch**: recharge calculated from ERA5-land for the optimisation period (2015-2020)
 
 .. figure:: ../Scenarios/boundary_condition_plots/temporal_rch.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -581,7 +581,7 @@ long records of LSR for the full scenario period. The records are defined as fol
     *Figure: comparison of the temporal recharge*
 
 .. figure:: ../Scenarios/boundary_condition_plots/spatial_rch_irr_rch.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -589,7 +589,7 @@ long records of LSR for the full scenario period. The records are defined as fol
         *Figure: spatially distributed mean recharge for the irr_rch scenario*
 
 .. figure:: ../Scenarios/boundary_condition_plots/spatial_rch_dryland_rch.png
-    :height: 550 px
+    :height: 650 px
     :align: center
 
 .. class:: centered
@@ -600,7 +600,7 @@ Groundwater Abstraction (pumping)
 ----------------------------------
 
 .. figure:: ../support_figures/model_2d_well_locations.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -630,7 +630,7 @@ The abstraction points included within the model and the temporal variation in g
 the figures below.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/well_pump_time.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -643,7 +643,7 @@ Near river bores
 ^^^^^^^^^^^^^^^^^^^
 
 .. figure:: ../support_figures/model_2d_well_locations_near_river.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -661,7 +661,7 @@ the river proximal abstraction data to adjust our river gain and loss targets an
 
 
 .. figure:: ../support_figures/near_river_abstraction.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -672,7 +672,7 @@ Major Rivers (Hawea river and Clutha River)
 -------------------------------------------
 
 .. figure:: ../support_figures/river_locs.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -694,7 +694,7 @@ not consistently decreasing downstream.  To correct this we used a rolling mean 
 river bottom by 2.5 m so that the river bed elevation was always below the river stage.
 
 .. figure:: ../support_figures/river_top_bot.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -716,7 +716,7 @@ at the end of the Hawea River to the stage on the Clutha River 200m downstream o
 this way do not cover the full scenario period.  Therefore we used the ISO-weekly mean river stage for the scenario period.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/River_profile.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 
@@ -740,7 +740,7 @@ was the cell's hydraulic properties (e.g. hydraulic conductivity). The lake head
 measured at the dam.  The historical lake stage covered both the full optimisation period and the full scenario period.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/lake_time.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -748,7 +748,7 @@ measured at the dam.  The historical lake stage covered both the full optimisati
     *Figure: Lake levels for the optimisation period*
 
 .. figure:: ../Scenarios/boundary_condition_plots/lake_spd_variable.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -760,7 +760,7 @@ Irrigation Supply Race Losses (race losses)
 -------------------------------------------
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/boundary_condition_locations/Race_Losses.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -780,7 +780,7 @@ Well boundary conditions were placed in every model cell that intersected the ra
 
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/well_race_time.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -791,7 +791,7 @@ Well boundary conditions were placed in every model cell that intersected the ra
 Hillside stream inflows (hillside inflows)
 ------------------------------------------
 .. figure:: ../support_figures/hillside_inflow_locations.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -848,7 +848,7 @@ Lagoon      0.024               0.014
 
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/hillslope_inflow_correction/malf_fit.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -856,7 +856,7 @@ Lagoon      0.024               0.014
     *Figure: The relationship used to predict the catchment area normalised MALFs*
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/hillslope_inflow_correction/flow_fitting.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -874,7 +874,7 @@ described above and the stream stage was set at the smoothed model top (i.e. 2 m
 
 
 .. figure:: ../support_figures/model_2d_large_hill_inflows.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -889,7 +889,7 @@ a series of 9 well boundary conditions were placed, centered on model cells that
 The flux was set to the daily hillside inflow estimate divided by 9 and spread evenly across the 9 well boundary conditions.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/well_hill_time.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
@@ -902,7 +902,7 @@ Model Zones
 A number of model zones were generated to more easily visualise the model results. The generated zones are shown below.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/zones.png
-   :height: 550 px
+   :height: 650 px
    :align: center
 
 .. class:: centered
