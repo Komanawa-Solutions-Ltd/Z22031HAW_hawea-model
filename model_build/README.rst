@@ -598,12 +598,68 @@ long records of LSR for the full scenario period. The records are defined as fol
 
 Groundwater Abstraction (pumping)
 ----------------------------------
-# todo
-# todo what layer do these occur in???
+
+.. figure:: ../support_figures/model_2d_well_locations.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Groundwater abstraction locations*
+
+Groundwater abstraction was defined from the ORC usage data.  The water use data was provided by the ORC and further
+interpreted in `Kitteridge (2022) <model_build/base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_.
+Good metering data is available from 2015 to 2020. The linkage between water metering data and the water abstraction point
+is complex with multiple abstraction points using 1 meter and multiple meters service 1 abstraction point.
+Where possible we matched the abstraction to the metering data, and where this was not possible we simply used the
+location data associated with the meter for the groundwater abstraction points.
+
+The layering of the model is sufficiently simple that we made simple assumptions to define the layer for the abstraction
+points. In general all abstraction points were assumed to be in the top layer with the following exceptions:
+
+- The abstraction points within the moraine and the layer pinch out zone (see multi-layer (3d) model structure above)
+  were assumed to be in layer 2 (recalling that layers follow python indexing standards and layer 0 is the top layer).
+  This prevented any abstraction to be misplaced into low conductivity units or in cells that may become dry (i.e. while
+  layer 1 and 2 are being pinched out).
+- A number of abstraction bores in and around the Hawea Flat township were placed in layer 1 (the middle layer) as
+  the top model cell would become dry during some periods.  This is likely due to model structural error (there are no
+  reports of these bores routinely going dry) and is a limitation of the model. By placing the bores in layer 1 we
+  ensure that the abstraction occurs and is consistent with the model water balance.
+
+The abstraction points included within the model and the temporal variation in groundwater abstraction are shown in
+the figures below.
+
+.. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/well_pump_time.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Total model groundwater abstraction (m/day)*
+
+
 
 Near river bores
-^^^^^
-# todo
+^^^^^^^^^^^^^^^^^^^
+
+The bulk of the "groundwater" abstraction in the model domain comes from two locations adjacent to the Hawea and
+Clutha Rivers. These abstraction bores occur in river proximal gravels which likely have a significantly higher
+hydraulic conductivity than the rest of the aquifer system. We initially attempted to include these bores in the model,
+but our model structure was not sufficiently resolved to include this river proximal aquifer. The very high localised
+abstraction caused dry cells and significant model instability. We therefore considered these river proximal wells
+as surface water abstraction (E.g. via a gallery) and removed these abstraction points from the model. We did use
+the river proximal abstraction data to adjust our river gain and loss targets and therefore conserve the water budget.
+
+
+# todo figure near river bore locations
+
+.. figure:: ../support_figures/near_river_abstraction.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Comparisons of abstraction including and excluding the near river bores*
 
 Major Rivers (Hawea river and Clutha River)
 -------------------------------------------
@@ -696,6 +752,14 @@ measured at the dam.  The historical lake stage covered both the full optimisati
 Irrigation Supply Race Losses (race losses)
 -------------------------------------------
 
+.. figure:: ../optimisation/pre_optimisation_plots_png/boundary_condition_locations/Race_Losses.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Race boundary condition locations*
+
 There are a number of irrigation supply races across the model domain. Estimates of race water losses are uncertain,
 however `McIndoe (2002) <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1>`_
 suggests that approximately 10% of the race flows are lost to groundwater
@@ -705,6 +769,8 @@ full optimisation period. For the scenario period we simply used the ISO weekly 
 Race losses were implemented as well boundary conditions using the `Wel package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/wel.html>`_.
 Well boundary conditions were placed in every model cell that intersected the race shapefiles and the flux was specified as
 10% of the daily race flows spread evenly across every 'race' boundary condition.
+
+
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/well_race_time.png
    :scale: 50 %
@@ -799,11 +865,21 @@ to 2 m below the model top. The stream bottoms were then adjusted so that they w
 the conductance factor was parameterised. The stream flow at the top of the stream was set using the inflow estimates
 described above and the stream stage was set at the smoothed model top (i.e. 2 m above the stream bottom).
 
+# todo water budget temporal plot
+
 Smaller Hillside inflows (other hillside inflows) implementation
 ^^^^
 All of the smaller inflows were implemented using the `Well package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/wel.html>`_.
 a series of 9 well boundary conditions were placed, centered on model cells that intersected the hillside inflow shapefiles.
 The flux was set to the daily hillside inflow estimate divided by 9 and spread evenly across the 9 well boundary conditions.
+
+.. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/well_hill_time.png
+   :scale: 50 %
+   :align: center
+
+.. class:: centered
+
+    *Figure: Total inflow for the smaller hillside catchments (m/day)*
 
 Model Zones
 ===========
@@ -821,6 +897,6 @@ A number of model zones were generated to more easily visualise the model result
 References
 ===========
 
-- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <>`_ # todo include this in the repo and copy to other readmes
+- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_
 - `McIndoe, I., 2002. Efficient and reasonable use of water for irrigation. <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1.>`_
 - `Rushton, K.R., Eilers, V.H.M., Carter, R.C., 2006. Improved soil moisture balance methodology for recharge estimation. Journal of Hydrology 318, 379-399. <https://doi.org/10.1016/j.jhydrol.2005.06.022>`_

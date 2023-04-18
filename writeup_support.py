@@ -169,9 +169,23 @@ def geography():
     fig.savefig(proj_root.joinpath('support_figures', 'model_2d_geography.png'))
     plt.show()
 
+def well_locations():
+    from model_build.supporting_data_analysis import get_pumping_locs
+    locs = get_pumping_locs()
+    locs = smt.io.add_mxmy_to_df(locs)
+    fig,ax =smt.plot.plt_basemap(no_flow_layer=0)
+    for l,c in zip(range(3), ['r', 'b', 'm']):
+        temp = locs[locs.k == l]
+        ax.scatter(temp.mx, temp.my, color=c, label='Abstraction in Layer {}'.format(l))
+    ax.legend(loc='lower left')
+    ax.set_title('Groundwater Abstraction Well Locations')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_2d_well_locations.png'))
+    plt.show()
 
 if __name__ == '__main__':
     # model_2d_structure_plots()
     # boundary_condition_figure()
-    geography()
+    #geography()
+    well_locations()
     pass
