@@ -361,6 +361,7 @@ We implemented a very simple version of the conceptual model described above ass
 
 #. implemented a 3 layer system.  Layer number follows python indexing (i.e. layer 0 is the top layer)
 #. defined four new zones for the model (see figure below)
+
    #. The moraine zone.  layer 0 represents the permeable cap of the moraine, layer 1 represents the impermeable
       moraine, and layer 2 represents the conductive out-wash left by the Q4+ glaciations of the main
       Hawea Flat aquifer system.
@@ -369,6 +370,7 @@ We implemented a very simple version of the conceptual model described above ass
    #. The Lake: This zone occurs in layer 0, 1, 2; is conductive material and contains GHB boundary conditions (see more below)
    #. The Layer pinch out area: This zone occurs in layer 0, 1, 2 and is used to pinch out the three layer system so that for the
       rest of the model domain layer 0 is the main aquifer system (e.g. like the 1 layer model) layers 1 and 2 consist of 1 m thick layers
+
 #. set the top of layer 2 (bottom of the moraine) to be 328 m msl.
 #. set top of layer 1 (top of the moraine) to be 335 m msl. note in some of the branches of this repo we used
    different "bund_top" elevations.  the layer 1 elevation is always specified in
