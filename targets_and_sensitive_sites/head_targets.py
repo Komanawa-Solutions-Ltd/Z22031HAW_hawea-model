@@ -158,36 +158,38 @@ def plot_head_targets(how='all'):
 
 
     elif how == 'incl':
+        print('plotting head targets included in the model')
         fig, ax = smt.plot.plt_matrix(smt.get_model_zeros() * np.nan, color_bar=False,
                                       base_map=True, no_flow_layer=0)
 
         all_wells = get_all_wells()
         single_targets = get_single_head_targets()
         all_wells = all_wells.loc[all_wells.ibound > 0]
-        qcs = all_wells.loc[:, 'quality_code'].unique()
-        colors = get_colors(qcs)
-        for qc, c in zip(qcs, colors):
-            temp = single_targets.loc[single_targets.quality_code == qc]
-            ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'Single targets qc: {qc}', marker='d', alpha=alpha)
-
-        # add scott piezo locs
-        piezo = get_2011_piezo_survey(recalc=True)
-        ax.scatter(piezo.nztmx, piezo.nztmy, color='orange', marker='s', alpha=alpha, label='Piezo 2011')
+        qcs = list(reversed(sorted(all_wells.loc[:, 'quality_code'].unique())))
 
         marker_size = 120
-        # add ngmp wells
-        t = get_low_freq_head_targets(None, None)
-        wells = all_wells.loc[t.keys()]
-        ax.scatter(wells.nztmx, wells.nztmy, color='r', marker='p', label='Moderate freq', s=marker_size)
-
         # add high frequency
         t = get_high_freq_head_targets(None, None)
         wells = all_wells.loc[t.keys()]
-        ax.scatter(wells.nztmx, wells.nztmy, color='magenta', marker='*', label='High freq', s=marker_size)
+        ax.scatter(wells.nztmx, wells.nztmy, color='magenta', marker='*', label='High freq head targets', s=marker_size)
 
-        print('plotting head targets included in the model')
-        ax.legend(loc='lower left')
+        # add ngmp wells
+        t = get_low_freq_head_targets(None, None)
+        wells = all_wells.loc[t.keys()]
+        ax.scatter(wells.nztmx, wells.nztmy, color='r', marker='p', label='Moderate freq head targets ', s=marker_size)
+
+        # add scott piezo locs
+        piezo = get_2011_piezo_survey(recalc=True)
+        ax.scatter(piezo.nztmx, piezo.nztmy, color='orange', marker='s', alpha=alpha, label='Piezo 2011 head targets')
+
+
+        colors = get_colors(qcs)
+        for qc, c in zip(qcs, colors):
+            temp = single_targets.loc[single_targets.quality_code == qc]
+            ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'Single head targets qc: {qc}', marker='d', alpha=alpha)
+
         ax.set_title('Head targets included in the model')
+        ax.legend(loc='lower left')
 
     else:
         raise NotImplementedError

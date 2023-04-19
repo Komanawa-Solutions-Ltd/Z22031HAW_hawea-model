@@ -143,10 +143,9 @@ def geography():
     ax.legend(handles, labels, loc='lower left')
     # todo clutha/hawea river
 
-
     labels = [
-       "Camp Hill",
-       "Cameron Hill",
+        "Camp Hill",
+        "Cameron Hill",
         "Grandview Ridge",
         "John Stream",
         "Grandview Creek",
@@ -162,19 +161,20 @@ def geography():
         (1308166.6, 5046628.5),
     ]
     for label, (x, y) in zip(labels, xsys):
-        ax.annotate(label, xy=(x, y), xytext=(x, y-1500), fontsize=10, color='k', ha='center', va='center',
+        ax.annotate(label, xy=(x, y), xytext=(x, y - 1500), fontsize=10, color='k', ha='center', va='center',
                     bbox=dict(boxstyle='round', fc='w', ec='k', alpha=0.5),
                     arrowprops=dict(facecolor='white', shrink=0.05, width=2, headwidth=10, headlength=10))
     fig.tight_layout()
     fig.savefig(proj_root.joinpath('support_figures', 'model_2d_geography.png'))
     plt.show()
 
+
 def well_locations():
     from model_build.supporting_data_analysis import get_pumping_locs
     locs = get_pumping_locs()
     locs = smt.io.add_mxmy_to_df(locs)
-    fig,ax =smt.plot.plt_basemap(no_flow_layer=0)
-    for l,c in zip(range(3), ['r', 'b', 'm']):
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    for l, c in zip(range(3), ['r', 'b', 'm']):
         temp = locs[locs.k == l]
         ax.scatter(temp.mx, temp.my, color=c, label='Abstraction in Layer {}'.format(l))
     ax.legend(loc='lower left')
@@ -183,10 +183,11 @@ def well_locations():
     fig.savefig(proj_root.joinpath('support_figures', 'model_2d_well_locations.png'))
     plt.show()
 
+
 def large_hill_inflows():
     from model_build.supporting_data_analysis import get_river_flow_data
 
-    rflows = get_river_flow_data('2015-01-01', None,frequency='W')
+    rflows = get_river_flow_data('2015-01-01', None, frequency='W')
 
     fig, ax = plt.subplots(figsize=(8, 4))
     for nm, pn, c in zip(['gview', 'john'], ['Grandview Creek', 'John Creek'], ['r', 'b']):
@@ -199,6 +200,7 @@ def large_hill_inflows():
     fig.savefig(proj_root.joinpath('support_figures', 'model_2d_large_hill_inflows.png'))
     plt.show()
 
+
 def near_river():
     from model_build.supporting_data_analysis.get_pumping_data import get_pumping_locs
     all_locs = get_pumping_locs(force_near_river=True)
@@ -206,7 +208,7 @@ def near_river():
     fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
     for t in [True, False]:
         ax.scatter(all_locs[all_locs.near_river == t].mx, all_locs[all_locs.near_river == t].my,
-                     color='r' if t else 'b', label='Near River' if t else 'Not Near River')
+                   color='r' if t else 'b', label='Near River' if t else 'Not Near River')
     ax.legend(loc='lower left')
     ax.set_title('Groundwater Abstraction Well Locations')
     fig.tight_layout()
@@ -214,11 +216,39 @@ def near_river():
     plt.show()
 
 
+def plot_all_targets():
+    from optimisation.pre_optimisation_overview import plot_head_targets, get_riv_target_locs, get_hawea_gain_loss_targets
+    rt = get_hawea_gain_loss_targets()
+    # river targets
+    riv_loc = get_riv_target_locs()
+    use_riv_targets = smt.get_model_zeros() * np.nan
+    base_names = {e: f'Hawea River Target: {int(e)}' for e in riv_loc.keys()}
+    for k, v in riv_loc.items():
+        use_riv_targets[v] = k
+
+    zone_colors = {k: c for c, k in zip(smt.plot.get_colors(riv_loc.keys()), riv_loc.keys())}
+
+    fig, ax = plot_head_targets(how='incl')
+    handles, labels = ax.get_legend_handles_labels()
+
+    fig, ax, handles1, labels1 = smt.plot.plt_discrete_matrix(use_riv_targets, ax=ax, colors=zone_colors,
+                                                            names=base_names,
+                                                            return_handles_labels=True)
+    handles.extend(handles1)
+    labels.extend(labels1)
+    ax.set_title('All model targets')
+    ax.legend(labels=labels, handles=handles, loc='lower left')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_targets.png'))
+    plt.show()
+
+
 if __name__ == '__main__':
     # model_2d_structure_plots()
     # boundary_condition_figure()
-    #geography()
+    # geography()
     # well_locations()
-    #large_hill_inflows()
-    near_river()
+    # large_hill_inflows()
+    # near_river()
+    plot_all_targets()
     pass
