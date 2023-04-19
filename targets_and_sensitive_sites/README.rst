@@ -78,7 +78,7 @@ categories for these targets:
 
 - 0: no date data for the depth to water field -- Not included in the model
 - 1: no elevation data present (read from DEM) -- Only included in the model in the Sandy Point and Maungawera Valley,
-     where there is a relative dearth of other information.
+  where there is a relative dearth of other information.
 - 2: no depth data for the well -- No wells matched this category
 - 3: as good as it gets -- included in all parts of the model
 
@@ -119,7 +119,7 @@ within the optimisation period we would be left with only the "regular" high and
 7 spatial targets across the model domain and no targets in the Maungawera valley. Therefore we needed to apply the
 targets out of the optimisation period to the most appropriate time within the optimisation period. This is done by:
 
-#. calculating the last 12 months normalised average recharge and hillslope inflow for each month in the
+#. Calculating the last 12 months normalised average recharge and hillslope inflow for each month in the
    scenario period (1980-07-18 to 2020-12-01).  Any targets outside of this period were excluded from the model.
    the choice to use the last 12 months was based off of the annual cycle, and confirmed by calculating the predictive
    power of multiple different time periods (e.g. 6 months, etc.). The annual data provided the best predictive power.
