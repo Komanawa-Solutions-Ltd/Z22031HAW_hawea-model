@@ -217,7 +217,8 @@ def near_river():
 
 
 def plot_all_targets():
-    from optimisation.pre_optimisation_overview import plot_head_targets, get_riv_target_locs, get_hawea_gain_loss_targets
+    from optimisation.pre_optimisation_overview import plot_head_targets, get_riv_target_locs, \
+        get_hawea_gain_loss_targets
     rt = get_hawea_gain_loss_targets()
     # river targets
     riv_loc = get_riv_target_locs()
@@ -232,8 +233,8 @@ def plot_all_targets():
     handles, labels = ax.get_legend_handles_labels()
 
     fig, ax, handles1, labels1 = smt.plot.plt_discrete_matrix(use_riv_targets, ax=ax, colors=zone_colors,
-                                                            names=base_names,
-                                                            return_handles_labels=True)
+                                                              names=base_names,
+                                                              return_handles_labels=True)
     handles.extend(handles1)
     labels.extend(labels1)
     ax.set_title('All model targets')
@@ -243,6 +244,53 @@ def plot_all_targets():
     plt.show()
 
 
+def wetlands():
+    from targets_and_sensitive_sites.senstive_sites import get_wetlands
+    wet = get_wetlands()
+    outdata = smt.get_model_zeros() * np.nan
+    for k, v in wet.items():
+        outdata[v] = k
+    fig, ax  = smt.plot.plt_discrete_matrix(outdata,
+                                 names={k: f'Wetland {n}' for k, n in
+                                        zip(wet.keys(), ['Butterfield Wetland', 'Campbells Reserve Pond Margins'])},
+                                 colors={k: c for k, c in zip(wet.keys(), smt.plot.get_colors(wet.keys()))},
+                                 title='Wetlands', base_map=True, no_flow_layer=0, alpha=1, legend_loc='lower left',
+                                 )
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_wetlands.png'))
+    plt.show()
+    pass
+
+import pandas as pd
+def plot_regular():
+    from targets_and_sensitive_sites.head_targets import base_regular_groupnames, plot_hds_regular_locator
+    hds_groups = ['h_piezo', 'h_single_3', 'h_single_1', 'regular']
+    hds_colors = smt.plot.get_colors(hds_groups)
+    reg_colormap = 'tab10'
+    from project_base import proj_root
+    f = proj_root.joinpath('optimisation/optimisation_results/3d_v1d/observations.dat')
+    hds_obs = pd.read_csv(f, sep='\t')
+    hds_obs.rename(columns={e: e.lower() for e in hds_obs.keys()}, inplace=True)
+    mapper = {'h_piezo': 'h_piezo',
+              'h_single_3': 'h_single_3',
+              'h_single_1': 'h_single_1'}
+    mapper.update({k: 'regular' for k in base_regular_groupnames})
+    hds_obs.loc[:, 'group'] = hds_obs.loc[:, 'group'].replace(mapper)
+    hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
+    regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
+    fig, ax =plt.subplots(figsize=smt.default_figsize)
+
+    regular_wells = sorted(regular_hds.well_name.unique())
+    regular_colors = smt.plot.get_colors(regular_wells, reg_colormap)
+    colors_dict = {k: regular_colors[i] for i, k in enumerate(regular_wells)}
+    plot_hds_regular_locator(ax, colors_dict, truncate_to_active=True, label=True)
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_regular_targets.png'))
+    plt.show()
+
+
+
+
 if __name__ == '__main__':
     # model_2d_structure_plots()
     # boundary_condition_figure()
@@ -250,5 +298,7 @@ if __name__ == '__main__':
     # well_locations()
     # large_hill_inflows()
     # near_river()
-    plot_all_targets()
+    # plot_all_targets()
+    # wetlands()
+    # plot_regular()
     pass

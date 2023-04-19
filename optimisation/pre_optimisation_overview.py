@@ -752,7 +752,6 @@ if __name__ == '__main__':
     fig, ax = plot_head_targets('incl')
     fig.tight_layout()
     fig.savefig(proj_root.joinpath('optimisation/pre_optimisation_plots_png/targets/spatial_head_targets.png'))
-
     base = proj_root.joinpath('optimisation')
     save = True
     for extension in ['.png']:

@@ -94,6 +94,10 @@ of boundary conditions we defined two time periods for the model:
     - the period where we have reasonable data available across boundary conditions, but minimal observations (targets)
     - details on defining the scenario period are in the `scenario readme <../Scenarios/README.rst>`_
 
+Model Starting heads
+====================
+# todo
+
 Model Structure
 ===============
 

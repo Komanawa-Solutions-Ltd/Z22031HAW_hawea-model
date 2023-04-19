@@ -5,6 +5,8 @@ on: 15/08/22
 import pickle
 import time
 import warnings
+
+import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
 import numpy as np
@@ -167,6 +169,21 @@ def plot_head_targets(how='all'):
         all_wells = all_wells.loc[all_wells.ibound > 0]
         qcs = list(reversed(sorted(all_wells.loc[:, 'quality_code'].unique())))
 
+
+
+        colors = get_colors(qcs)
+        for qc, c in zip(qcs, colors):
+            temp = single_targets.loc[single_targets.quality_code == qc]
+            ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'Single head targets qc: {qc}', marker='d', alpha=alpha)
+
+        # add scott piezo locs
+        piezo = get_2011_piezo_survey(recalc=True)
+        ax.scatter(piezo.nztmx, piezo.nztmy, color='orange', marker='s', alpha=alpha, label='Piezo 2011 head targets')
+
+
+        ax.set_title('Head targets included in the model')
+        ax.legend(loc='lower left')
+
         marker_size = 120
         # add high frequency
         t = get_high_freq_head_targets(None, None)
@@ -177,19 +194,6 @@ def plot_head_targets(how='all'):
         t = get_low_freq_head_targets(None, None)
         wells = all_wells.loc[t.keys()]
         ax.scatter(wells.nztmx, wells.nztmy, color='r', marker='p', label='Moderate freq head targets ', s=marker_size)
-
-        # add scott piezo locs
-        piezo = get_2011_piezo_survey(recalc=True)
-        ax.scatter(piezo.nztmx, piezo.nztmy, color='orange', marker='s', alpha=alpha, label='Piezo 2011 head targets')
-
-
-        colors = get_colors(qcs)
-        for qc, c in zip(qcs, colors):
-            temp = single_targets.loc[single_targets.quality_code == qc]
-            ax.scatter(temp.nztmx, temp.nztmy, color=c, label=f'Single head targets qc: {qc}', marker='d', alpha=alpha)
-
-        ax.set_title('Head targets included in the model')
-        ax.legend(loc='lower left')
 
     else:
         raise NotImplementedError
@@ -316,14 +320,27 @@ def get_all_hds_targets(tdis, recalc=False):
     return all_head_targets
 
 
-def plot_hds_regular_locator(ax, colors_dict, truncate_to_active=True):
+def plot_hds_regular_locator(ax, colors_dict, truncate_to_active=True, label=False):
     all_wells = get_all_wells()
     smt.plot.plt_basemap(ax=ax, no_flow_layer=0)
+    mapper = {
+        'g40_0041': 'h_hf_riv: ',
+        'g40_0416': 'h_hf_riv: ',
 
+        'g40_0366':'h_hf: ',
+        'g40_0367':'h_hf: ',
+        'g40_0415':'h_hf: ',
+
+        'g40_0120': 'h_lf: ',
+        'g40_0129': 'h_lf: ',
+    }
     for k, c in colors_dict.items():
         k = k.replace('h_', '')
         x, y = all_wells.loc[k, ['nztmx', 'nztmy']]
-        ax.scatter(x, y, color=c, label=k, s=80)
+        xtra = ''
+        if label:
+            xtra = mapper[k]
+        ax.scatter(x, y, color=c, label=xtra+k, s=80)
     if truncate_to_active:
         xs, ys = smt.get_model_x_y()
         ibound = smt.get_no_flow(0)
@@ -383,7 +400,7 @@ def get_annual_mean_head_targets(hds_df):
 
 if __name__ == '__main__':
     from optimisation.optimisation_period import tdis
-
+    t = get_high_freq_head_targets(None, None)
     get_all_hds_targets(tdis, recalc=True)
     raise NotImplementedError
     print('piezo')
