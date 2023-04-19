@@ -131,7 +131,7 @@ targets out of the optimisation period to the most appropriate time within the o
 #. Targets which were temporally shifted in this way were assigned to all stress periods in the month.
 
 The following figures show the results of this process. Figures of each target month
-`are available here <optimisation/pre_optimisation_plots_png/indicative_target_times>`_
+`are available here <../optimisation/pre_optimisation_plots_png/indicative_target_times>`_
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/indicative_target_times/all_targ_shifts.png
    :height: 650 px
@@ -184,7 +184,7 @@ Model Objective Function and target weighting
 
 The objective function is at a high level simply the weighted sum of squared errors between the modelled values and
 target. The weighting strategy is often adjusted during the course of the model optimisation (for more info
-on the final weighting scheme see the `optimisation readme <optimisation/README.rst>`_; however the inital strategy
+on the final weighting scheme see the `optimisation readme <../optimisation/README.rst>`_; however the inital strategy
 for the weighting of the targets is described below.
 
 #. We developed a hierarchy of target groups as follows:
@@ -212,7 +212,7 @@ for the weighting of the targets is described below.
    within the group.
 #. the groups were then manually weighted with a multiplier to adjust the relative impact of each group in accordance
    with the hierarchy described above.  This weight factor was adjusted during the course of the optimisation. For more
-   info on the final weighting scheme see the `optimisation readme <optimisation/README.rst>`_.
+   info on the final weighting scheme see the `optimisation readme <../optimisation/README.rst>`_.
 
 Note that when a target occurred in a dry model cell the modelled value was set to the head value in the cell in the layer
 below, or if that cell was also dry, the head value in the cell below that. This was done to ensure that the modelled
@@ -235,4 +235,4 @@ were not included within the model as boundary conditions, but they are indexed 
 References
 ===========
 
-- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_
+- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <../scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_

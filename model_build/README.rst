@@ -88,15 +88,32 @@ This model is a transient groundwater model with the first period defined as a s
 of boundary conditions we defined two time periods for the model:
 
 - **Optimisation period**: 2015-07-18 to 2020-06-27:
-    - the period where we have the most data available across boundary conditions, observations (targets)
-    - details on defining the optimisation period are in the `optimisation readme <../optimisation/README.rst>`_
+    - the period where we have the most data available across boundary conditions, observations (targets).
+    - details on defining the optimisation period are in the `optimisation readme <../optimisation/README.rst>`_.
+    - weekly Modflow stress periods were used.
 - **Scenario Period**: 1980-07-18 to 2020-12-01
     - the period where we have reasonable data available across boundary conditions, but minimal observations (targets)
-    - details on defining the scenario period are in the `scenario readme <../Scenarios/README.rst>`_
+    - details on defining the scenario period are in the `scenario readme <../Scenarios/README.rst>`_.
+    - weekly Modflow stress periods were used.
 
 Model Starting heads
 ====================
-# todo
+
+The challenge of defining starting heads for a transient groundwater model is that any choice of starting heads can
+then impact the subsequent model results.  For this model we chose to use the top of cell as the starting heads and
+then run a steady state model period. To identify the best month to traniton between the steady state model and the
+transient model we calculate the difference between the monthly and weekly high frequency data
+(`see target readme for more details <../targets_and_sensitive_sites/README.rst>`_). and the mean of the full dataset.
+The results are shown in the figure below, but there were obvious local minimums in the RMSE at 200 and 365 days from
+January 1 or approximately start of January and mid July. We chose a start date of 2015-07-18 as this will minimize the
+variability in heads associated with the irrigation season.
+
+.. figure:: ../optimisation/pre_optimisation_plots_png/determine_opt_period/monthy_weekly_delta_to_mean_all.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: RMSE between monthly and weekly high frequency data and the mean of the full dataset*
 
 Model Structure
 ===============
@@ -378,7 +395,7 @@ We implemented a very simple version of the conceptual model described above ass
 #. set the top of layer 2 (bottom of the moraine) to be 328 m msl.
 #. set top of layer 1 (top of the moraine) to be 335 m msl. note in some of the branches of this repo we used
    different "bund_top" elevations.  the layer 1 elevation is always specified in
-   `model_build.project_model_tools.bund_top object <model_build/project_model_tools.py>`_
+   `model_build.project_model_tools.bund_top object <../model_build/project_model_tools.py>`_
 
 Several cross sections are presented below; additional crossections and spatial figures about the
 multi layer model structure are available in `the support figures folder <../support_figures/3d_xsect>`_.
@@ -612,7 +629,7 @@ Groundwater Abstraction (pumping)
     *Figure: Groundwater abstraction locations*
 
 Groundwater abstraction was defined from the ORC usage data.  The water use data was provided by the ORC and further
-interpreted in `Kitteridge (2022) <model_build/base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_.
+interpreted in `Kitteridge (2022) <../model_build/base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_.
 Good metering data is available from 2015 to 2020. The linkage between water metering data and the water abstraction point
 is complex with multiple abstraction points using 1 meter and multiple meters service 1 abstraction point.
 Where possible we matched the abstraction to the metering data, and where this was not possible we simply used the
@@ -706,7 +723,7 @@ river bottom by 2.5 m so that the river bed elevation was always below the river
     *river bed elevations*
 
 
-The stream bed conductance factor was a parameter in the model inversion.  See `the model parameterisation readme for more information <model_parameterisation/README.rst>`_
+The stream bed conductance factor was a parameter in the model inversion.  See `the model parameterisation readme for more information <../model_parameterisation/README.rst>`_
 The steam flow did not need to be particularly precise as the river would never come close to losing all of its water to the
 aquifer system.  Therefore we set the Hawea river flow to the the historical flow measured at Camp Hill.  The Clutha river
 flow was arbitrarily set to 10 * the Hawea river flow.  We prescribed the river stage for both the Hawea and Clutha rivers
@@ -916,6 +933,6 @@ A number of model zones were generated to more easily visualise the model result
 References
 ===========
 
-- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_
+- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <../`scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_
 - `McIndoe, I., 2002. Efficient and reasonable use of water for irrigation. <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1.>`_
 - `Rushton, K.R., Eilers, V.H.M., Carter, R.C., 2006. Improved soil moisture balance methodology for recharge estimation. Journal of Hydrology 318, 379-399. <https://doi.org/10.1016/j.jhydrol.2005.06.022>`_
