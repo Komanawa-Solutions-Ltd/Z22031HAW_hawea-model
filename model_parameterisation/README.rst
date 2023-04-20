@@ -39,7 +39,7 @@ Module Index
 -  `parameter_map.png <../model_parameterisation/parameter_map.png>`_: a map of the model parameters
 
 
-static parameters
+Static parameters
 =================
 There are four static parameters in the model they are:
 
@@ -55,7 +55,7 @@ There are four static parameters in the model they are:
 | lake_conduct   | lake conductance                  | 1e10  | Set high so that lake hydraulic conductivity is the only parameter bounding the lake-groundwater interaction |
 +----------------+-----------------------------------+-------+--------------------------------------------------------------------------------------------------------------+
 
-spatial parameters
+Spatial parameters
 ==================
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/parameterisation/kh_sy_params.png
@@ -125,7 +125,7 @@ preformed on log (base 10) transformed values.  An example of the RBF interpolat
    Figure: Example of the RBF interpolation of the spatial parameters.  The interpolated values are shown for the
    bottom layer of the model.
 
-other parameters
+Other parameters
 ================
 A number of other parameters were included in the model.  These parameters are listed in the table below.
 Recall layering follows python indexing format layer 0 = top layer.
@@ -170,7 +170,7 @@ Recall layering follows python indexing format layer 0 = top layer.
 | Specific Storage           | Upw     | sy_ss_rest   |   0.0001  | 0.000001  | 0.001 | area of pilot points  |
 +----------------------------+---------+--------------+-----------+-----------+-------+-----------------------+
 | Conductivity               | Upw     | kh_lake      |   300     | 0.001     | 1000  | lake zone all layers  |
-+----------------------------+---------+--------------+-----------+-----------+-------|-----------------------+
++----------------------------+---------+--------------+-----------+-----------+-------+-----------------------+
 
 
 We set the initial parameters and ranges for the multipliers (hill_se, hill_main, hill_mang, rch_all, race_all) to
@@ -186,7 +186,7 @@ value for sy_sy_mor_l1 was set an order of magnitude lower.  kh_mor_l1 (the mora
 the typical values for glacial till.
 
 
-.. figure:: ../support_figures/model_hillside_params.png
+..figure:: ../support_figures/model_hillside_params.png
    :height: 650 px
    :align: center
 
