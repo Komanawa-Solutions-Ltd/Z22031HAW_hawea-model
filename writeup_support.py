@@ -250,18 +250,23 @@ def wetlands():
     outdata = smt.get_model_zeros() * np.nan
     for k, v in wet.items():
         outdata[v] = k
-    fig, ax  = smt.plot.plt_discrete_matrix(outdata,
-                                 names={k: f'Wetland {n}' for k, n in
-                                        zip(wet.keys(), ['Butterfield Wetland', 'Campbells Reserve Pond Margins'])},
-                                 colors={k: c for k, c in zip(wet.keys(), smt.plot.get_colors(wet.keys()))},
-                                 title='Wetlands', base_map=True, no_flow_layer=0, alpha=1, legend_loc='lower left',
-                                 )
+    fig, ax = smt.plot.plt_discrete_matrix(outdata,
+                                           names={k: f'Wetland {n}' for k, n in
+                                                  zip(wet.keys(),
+                                                      ['Butterfield Wetland', 'Campbells Reserve Pond Margins'])},
+                                           colors={k: c for k, c in zip(wet.keys(), smt.plot.get_colors(wet.keys()))},
+                                           title='Wetlands', base_map=True, no_flow_layer=0, alpha=1,
+                                           legend_loc='lower left',
+                                           )
     fig.tight_layout()
     fig.savefig(proj_root.joinpath('support_figures', 'model_wetlands.png'))
     plt.show()
     pass
 
+
 import pandas as pd
+
+
 def plot_regular():
     from targets_and_sensitive_sites.head_targets import base_regular_groupnames, plot_hds_regular_locator
     hds_groups = ['h_piezo', 'h_single_3', 'h_single_1', 'regular']
@@ -278,7 +283,7 @@ def plot_regular():
     hds_obs.loc[:, 'group'] = hds_obs.loc[:, 'group'].replace(mapper)
     hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
     regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
-    fig, ax =plt.subplots(figsize=smt.default_figsize)
+    fig, ax = plt.subplots(figsize=smt.default_figsize)
 
     regular_wells = sorted(regular_hds.well_name.unique())
     regular_colors = smt.plot.get_colors(regular_wells, reg_colormap)
@@ -289,6 +294,21 @@ def plot_regular():
     plt.show()
 
 
+def hill_params():
+    from model_build.get_boundary_condition_data import get_hillside_catchment_locs
+    hill = get_hillside_catchment_locs()
+    hill = smt.io.add_mxmy_to_df(hill)
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+    params = list(hill.param.unique())
+    colors = smt.plot.get_colors(params)
+    for p, c in zip(params, colors):
+        ax.scatter(hill.loc[hill.param == p, 'mx'], hill.loc[hill.param == p, 'my'], color=c, label=f'hill_{p}')
+    ax.legend()
+    ax.set_title('Hillside catchment locations by parameter')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_hillside_params.png'))
+    plt.show()
+    pass
 
 
 if __name__ == '__main__':
@@ -301,4 +321,5 @@ if __name__ == '__main__':
     # plot_all_targets()
     # wetlands()
     # plot_regular()
+    hill_params()
     pass

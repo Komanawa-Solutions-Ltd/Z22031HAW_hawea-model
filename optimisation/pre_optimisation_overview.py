@@ -116,6 +116,8 @@ def plot_parameterisation(save=False):
     randoms = np.random.choice(options, len(kh_data))
     for k, r in zip(kh_data.keys(), randoms):
         kh_data[k] = r
+    for k in ['mor_l1', 'mor_l0', 'lake']:
+        kh_data[k] = np.nan
 
     kh, df = interpolate_kh_pilot_points(kh_data, return_df=True)
     smt.plot.plt_matrix(kh[0], base_map=True, no_flow_layer=0, title=f'real kh', ax=axs1[0], vmin=0,
@@ -232,7 +234,7 @@ def plot_all_spd(save=False):
     fig, ax = plt.subplots(figsize=(14, 10))
     ax.set_title('River Profile')
     for k, c in zip(k_cs, colors):
-        ax.plot(temp_data.dist, plt_stg_data.loc[ k, temp_data.index].values.transpose() - temp_data.rbot,
+        ax.plot(temp_data.dist, plt_stg_data.loc[k, temp_data.index].values.transpose() - temp_data.rbot,
                 c=c, label=f'River Stage: {k}')
     ax.plot(temp_data.dist, temp_data.rbot - temp_data.rbot, c='k', label='River bottom (fixed)')
     ax.plot(temp_data.dist, temp_data.model_top - temp_data.rbot, c='r', label='Model top')
@@ -268,7 +270,6 @@ def plot_all_spd(save=False):
     plot_spd(get_str_data(tdis, get_initial_riv_conductance(True)), smt, tdis,
              func=last, key='stage', title='last river cell stage',
              outpath=outdir.joinpath(f'riv_last_cell_time{extension}'))
-
 
     # monthly stage data
     # look at stage through time at our locations( which are???)
@@ -753,6 +754,10 @@ if __name__ == '__main__':
     fig.tight_layout()
     fig.savefig(proj_root.joinpath('optimisation/pre_optimisation_plots_png/targets/spatial_head_targets.png'))
     base = proj_root.joinpath('optimisation')
+    extension = '.png'
+    save_path = base.joinpath('pre_optimisation_plots_png')
+    plot_parameterisation(True)
+
     save = True
     for extension in ['.png']:
         if extension == '.png':

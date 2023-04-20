@@ -21,6 +21,20 @@ Index
 .. contents:: Table of Contents
 
 
+Module Index
+============
+-  `README.rst <../targets_and_sensitive_sites/README.rst>`_ : readme document detailing the methods and data used to develop the targets
+-  `model_output.py <../targets_and_sensitive_sites/model_output.py>`_: script to extract consistent model outputs and plots
+-  `get_raw_target_data.py <../targets_and_sensitive_sites/get_raw_target_data.py>`_:  ingest raw target data
+-  `get_indicative_times.py <../targets_and_sensitive_sites/get_indicative_times.py>`_: get indicative times for the targets that fall outside of the optimisation period
+-  `head_targets.py <../targets_and_sensitive_sites/head_targets.py>`_:  definition of the head targets
+-  `riv_gain_loss_targets.py <../targets_and_sensitive_sites/riv_gain_loss_targets.py>`_:  definition of the river gain and loss targets
+-  `senstive_sites.py <../targets_and_sensitive_sites/senstive_sites.py>`_: identification of sensitive sites
+-  `target_structure_checks.py <../targets_and_sensitive_sites/target_structure_checks.py>`_: checks to ensure that the targets and the model structure were not mutually exclusive
+-  `base_data <../targets_and_sensitive_sites/base_data>`_: base input data for the targets
+-  `processed_data <../targets_and_sensitive_sites/processed_data>`_: processed target data, this was developed from the raw data in the base_data folder
+
+
 Groundwater head targets
 ========================
 .. figure:: ../optimisation/pre_optimisation_plots_png/targets/spatial_head_targets.png

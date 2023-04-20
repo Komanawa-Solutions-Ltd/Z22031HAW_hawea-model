@@ -113,12 +113,13 @@ def interpolate_kh_pilot_points(kh_data, method='rbf', return_df=False, kernal='
     # undo the log
     kh = 10 ** kh
     pilot_locs.loc[:, 'value'] = 10 ** (pilot_locs.loc[:, 'value'])
-    # set lake values
-    lake_array = get_lake_array()
-    kh[np.isfinite(lake_array)] = kh_data['lake']
 
     kh[~(ibound == 1)] = 0
     assert np.isfinite(kh).all()
+    # set lake values
+    lake_array = get_lake_array()
+
+    kh[np.isfinite(lake_array)] = kh_data['lake']
     kh = np.repeat(kh[np.newaxis], smt.layers, axis=0)
 
     kh[get_low_cond_array()] = kh_data['mor_l1']
