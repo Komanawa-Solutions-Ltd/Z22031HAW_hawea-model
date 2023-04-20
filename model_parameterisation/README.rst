@@ -48,7 +48,7 @@ There are four static parameters in the model they are:
 +================+===================================+=======+==============================================================================================================+
 | lake_ss        | specific storage in the lake zone | 1e-10 | Minimal storage in the lake zone                                                                             |
 +----------------+-----------------------------------+-------+                                                                                                              |
-| lake_sy        | specific yield in the lake zone   | 1e-10 |                                                                            |
+| lake_sy        | specific yield in the lake zone   | 1e-10 |                                                                                                              |
 +----------------+-----------------------------------+-------+--------------------------------------------------------------------------------------------------------------+
 | vka            | vertical conductivity             | 1     | Set to 1 as we are not modelling vertical gradients (no z data for targets)                                  |
 +----------------+-----------------------------------+-------+--------------------------------------------------------------------------------------------------------------+
@@ -57,7 +57,8 @@ There are four static parameters in the model they are:
 
 spatial parameters
 ==================
-.. figure:: ../model_parameterisation/parameterisation/kh_sy_params.png
+
+.. figure:: ../optimisation/pre_optimisation_plots_png/parameterisation/kh_sy_params.png
    :height: 650 px
    :align: center
 
@@ -171,6 +172,7 @@ Recall layering follows python indexing format layer 0 = top layer.
 | Conductivity               | Upw     | kh_lake      |   300     | 0.001     | 1000  | lake zone all layers  |
 +----------------------------+---------+--------------+-----------+-----------+-------|-----------------------+
 
+
 We set the initial parameters and ranges for the multipliers (hill_se, hill_main, hill_mang, rch_all, race_all) to
 allow a 20% change around the predicted in the inflow values.  The initial values for the Hawea and Clutha River conductance
 (riv_h1, riv_h2, riv_h3, riv_c1) were roughly pulled from the model developed in Wilson et al. (2012).
@@ -192,7 +194,7 @@ the typical values for glacial till.
 
    Figure: Spatial location of the hillside inflow multiplier parameters.
 
-..figure:: ../optimisation/pre_optimisation_plots_png/parameterisation/river_conductance.png
+..figure: ../optimisation/pre_optimisation_plots_png/parameterisation/river_conductance.png
    :height: 650 px
    :align: center
 
@@ -203,4 +205,4 @@ the typical values for glacial till.
 References
 ===========
 
-- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_
+- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <../scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_

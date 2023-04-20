@@ -933,6 +933,6 @@ A number of model zones were generated to more easily visualise the model result
 References
 ===========
 
-- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <../`scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_
+- `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resouce Science Unit of Otago Regional Council, June 2012, Dunedin. <../scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_
 - `McIndoe, I., 2002. Efficient and reasonable use of water for irrigation. <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1.>`_
 - `Rushton, K.R., Eilers, V.H.M., Carter, R.C., 2006. Improved soil moisture balance methodology for recharge estimation. Journal of Hydrology 318, 379-399. <https://doi.org/10.1016/j.jhydrol.2005.06.022>`_
