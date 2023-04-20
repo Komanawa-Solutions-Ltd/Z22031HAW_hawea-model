@@ -186,7 +186,7 @@ value for sy_sy_mor_l1 was set an order of magnitude lower.  kh_mor_l1 (the mora
 the typical values for glacial till.
 
 
-..figure:: ../support_figures/model_hillside_params.png
+.. figure:: ../support_figures/model_hillside_params.png
    :height: 650 px
    :align: center
 
@@ -194,7 +194,7 @@ the typical values for glacial till.
 
    Figure: Spatial location of the hillside inflow multiplier parameters.
 
-..figure: ../optimisation/pre_optimisation_plots_png/parameterisation/river_conductance.png
+.. figure:: ../optimisation/pre_optimisation_plots_png/parameterisation/river_conductance.png
    :height: 650 px
    :align: center
 
