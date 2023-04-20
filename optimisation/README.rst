@@ -116,89 +116,85 @@ Standard optimisation outputs
 For each optimisation version we produced a number of standard outputs that are consistent cross each optimisation
 results.  We detail them here so that individuals can have easy access to the key outputs.
 
-The output structure is as follows:
+The output structure is as follows (links to the files are provided to 3d_v1d which is the final optimised model):
 
 -  Base_Optimisation_plots:
-    -  final_opt_model: plots of the final optimised model including the parameterisation, model heads, and the model
+    -  `final_opt_model <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model>`_: plots of the final optimised model including the parameterisation, model heads, and the model
        fits to the observations
-            -  cross_sections
-            -  spatial_hds
-            -  spatial_riv
-            -  str_flow
-            -  3d_hds.png: plot of heads in the 3d zone
-            -  Max_heads_(Hawea_aquifer).png: minimum heads across
-            -  Min_heads_(Hawea_aquifer).png
-            -  Range_of_Heads_(Hawea_aquifer).png
-            -  SS_budget.png
-            -  Steady_state_heads_(Hawea_aquifer).png
-            -  all_riv_targets_mes_mod.png
-            -  all_riv_targets_residual.png
-            -  all_river_fluxes_hill.png
-            -  all_river_fluxes_large.png
-            -  dry_cells_l0.png
-            -  dry_cells_l1.png
-            -  dry_cells_l2.png
-            -  flooded_cells_l0.png
-            -  flooded_cells_l1.png
-            -  flooded_cells_l2.png
-            -  hds_all_mod_v_meas.png
-            -  hds_all_residual_time.png
-            -  hds_closeup_h_g40_0041.png
-            -  hds_closeup_h_g40_0120.png
-            -  hds_closeup_h_g40_0129.png
-            -  hds_closeup_h_g40_0366.png
-            -  hds_closeup_h_g40_0367.png
-            -  hds_closeup_h_g40_0415.png
-            -  hds_closeup_h_g40_0416.png
-            -  hds_h_piezo_mod_v_meas.png
-            -  hds_h_piezo_residual_time.png
-            -  hds_h_single_1_mod_v_meas.png
-            -  hds_h_single_1_residual_time.png
-            -  hds_h_single_3_mod_v_meas.png
-            -  hds_h_single_3_residual_time.png
-            -  hds_normal_year_all.png
-            -  hds_normal_year_mod_v_meas.png
-            -  hds_regular_mod_v_meas.png
-            -  hds_regular_residual_time.png
-            -  hds_regyear_h_g40_0041.png
-            -  hds_regyear_h_g40_0366.png
-            -  hds_regyear_h_g40_0367.png
-            -  hds_regyear_h_g40_0415.png
-            -  hds_regyear_h_g40_0416.png
-            -  more_than_100_outers.png
-            -  more_than_300_outers.png
-            -  more_than_500_outers.png
-            -  more_than_50_outers.png
-            -  more_than_800_outers.png
+            -  `cross_sections <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/cross_sections>`_: plots of heads in model cross sections
+            -  `spatial_hds <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_hds>`_: spatial plots of head target residuals
+            -  `spatial_riv <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_riv>`_: spatial plots of the river gain and losses
+            -  `str_flow <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/str_flow>`_: plots of the stream flow in the river boundary conditions
+            -  `Max_heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Max_heads_(Hawea_aquifer).png>`_: minimum heads across the model time steps.
+            -  `Min_heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Min_heads_(Hawea_aquifer).png>`_: maximum heads across the model time steps.
+            -  `Range_of_Heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Range_of_Heads_(Hawea_aquifer).png>`_: range of heads across the model time steps.
+            -  `Steady_state_heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Steady_state_heads_(Hawea_aquifer).png>`_: plot of the steady state heads (in layer 0 for most of the model, but layer 2 for the moraine areas)
+            -  `3d_hds.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/3d_hds.png>`_: plot of heads in the 3d zone
+            -  `SS_budget.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/SS_budget.png>`_: plot of the steady state water budget.
+            -  `all_riv_targets_mes_mod.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/all_riv_targets_mes_mod.png>`_: plot of the measured vs modelled river targets
+            -  `all_riv_targets_residual.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/all_riv_targets_residual.png>`_: plot of the river target residuals
+            -  `all_river_fluxes_hill.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/all_river_fluxes_hill.png>`_:  total river fluxes for each conductance parameter zone for John and Grandview Creek
+            -  `all_river_fluxes_large.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/all_river_fluxes_large.png>`_: total river fluxes for each conductance parameter zone for the Hawea and Clutha rivers
+            -  `dry_cells_l0.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/dry_cells_l0.png>`_: number of time steps with dry cells for layer 0
+            -  `dry_cells_l1.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/dry_cells_l1.png>`_: number of time steps with dry cells for layer 1
+            -  `dry_cells_l2.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/dry_cells_l2.png>`_: number of time steps with dry cells for layer 2
+            -  `flooded_cells_l0.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/flooded_cells_l0.png>`_: number of time steps with flooded cells for layer 0
+            -  `flooded_cells_l1.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/flooded_cells_l1.png>`_: number of time steps with flooded cells for layer 1
+            -  `flooded_cells_l2.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/flooded_cells_l2.png>`_: number of time steps with flooded cells for layer 2
+            -  `hds_all_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_all_mod_v_meas.png>`_: plot of the measured vs modelled heads
+            -  `hds_all_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_all_residual_time.png>`_: plot of the head target residuals
+            -  `hds_closeup_h_g40_0041.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_closeup_h_g40_0041.png>`_: plot of measured and modelled heads for well G40/0041
+            -  `hds_closeup_h_g40_0120.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_closeup_h_g40_0120.png>`_: plot of measured and modelled heads for well G40/0120
+            -  `hds_closeup_h_g40_0129.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_closeup_h_g40_0129.png>`_: plot of measured and modelled heads for well G40/0129
+            -  `hds_closeup_h_g40_0366.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_closeup_h_g40_0366.png>`_: plot of measured and modelled heads for well G40/0366
+            -  `hds_closeup_h_g40_0367.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_closeup_h_g40_0367.png>`_: plot of measured and modelled heads for well G40/0367
+            -  `hds_closeup_h_g40_0415.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_closeup_h_g40_0415.png>`_: plot of measured and modelled heads for well G40/0415
+            -  `hds_closeup_h_g40_0416.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_closeup_h_g40_0416.png>`_: plot of measured and modelled heads for well G40/0416
+            -  `hds_h_piezo_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_piezo_mod_v_meas.png>`_: plot of measured and modelled heads for the piezo survey
+            -  `hds_h_piezo_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_piezo_residual_time.png>`_: plot of the piezo survey head residuals
+            -  `hds_h_single_1_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_single_1_mod_v_meas.png>`_: plot of measured and modelled heads for the single head targets Q1
+            -  `hds_h_single_1_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_single_1_residual_time.png>`_: plot of the single head targets Q1 residuals
+            -  `hds_h_single_3_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_single_3_mod_v_meas.png>`_: plot of measured and modelled heads for the single head targets Q3
+            -  `hds_h_single_3_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_single_3_residual_time.png>`_: plot of the single head targets Q3 residuals
+            -  `hds_normal_year_all.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_normal_year_all.png>`_: plot of the measured and modelled heads for the normal water year (ISO week mean)
+            -  `hds_normal_year_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_normal_year_mod_v_meas.png>`_: plot of the measured and modelled heads for the normal water year (ISO week mean)
+            -  `hds_regular_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regular_mod_v_meas.png>`_: plot of the measured and modelled heads for the regular observations (e.g. high frequency)
+            -  `hds_regular_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regular_residual_time.png>`_: plot of the regular observation head residuals
+            -  `hds_regyear_h_g40_0041.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regyear_h_g40_0041.png>`_: plot of the regular water year heads (ISO weekly mean) for well, G40/0041
+            -  `hds_regyear_h_g40_0366.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regyear_h_g40_0366.png>`_: plot of the regular water year heads (ISO weekly mean) for well, G40/0366
+            -  `hds_regyear_h_g40_0367.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regyear_h_g40_0367.png>`_: plot of the regular water year heads (ISO weekly mean) for well, G40/0367
+            -  `hds_regyear_h_g40_0415.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regyear_h_g40_0415.png>`_: plot of the regular water year heads (ISO weekly mean) for well, G40/0415
+            -  `hds_regyear_h_g40_0416.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regyear_h_g40_0416.png>`_: plot of the regular water year heads (ISO weekly mean) for well, G40/0416
+            -  `more_than_50_outers.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/more_than_50_outers.png>`_: areas in the model that required more than outer 50 iterations to converge
+            -  `more_than_100_outers.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/more_than_100_outers.png>`_: areas in the model that required more than outer 100 iterations to converge
+            -  `more_than_300_outers.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/more_than_300_outers.png>`_: areas in the model that required more than outer 300 iterations to converge
+            -  `more_than_500_outers.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/more_than_500_outers.png>`_: areas in the model that required more than outer 500 iterations to converge
+            -  `more_than_800_outers.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/more_than_800_outers.png>`_: areas in the model that required more than outer 800 iterations to converge
+    -  `obs_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/obs_plots>`_: plots of the model
+       objective function and target residuals through the optimisation process (e.g. at each optimisation step)).
+    -  `regular_hds_closeup <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/regular_hds_closeup>`_:
+       plots of changes in the fit to the regular observations ((e.g. high frequency) through each optimisation step).
+    -  `param_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_plots>`_: plots of parameter values through the optimisation process (e.g. at each optimisation step).
+    -  `param_fail_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_fail_plots>`_: plots of parameter values that failed to converge vs those that did not.
+    -  `param_sen_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_sen_plots>`_: plots of parameter sensitivity through the optimisation process (e.g. at each optimisation step).
+    -  `parameters_norm_to_bounds.txt <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/parameters_norm_to_bounds.txt>`_: a text file of the parameter values of the final model normalised to the parameter bounds.
+    -  `parameters_norm_to_bounds_close.txt <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/parameters_norm_to_bounds_close.txt>`_: as above, but only those that are close to their bounds.
+    -  `parameter_norm_sy_kh.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/parameter_norm_sy_kh.png>`_: ignore, bug in plot
+    -  `jacobian_filled_0_of_1.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/jacobian_filled_0_of_1.png>`_: plots of whether or not the Jacobian was filled (red values had model failure)
+    -  `hk_values.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/hk_values.png>`_: plot of the final hk parameter values at the pilot points.
+    -  `kh_array.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/kh_array.png>`_: plot of the interpolated final kh parameter values.
+    -  `sy_values.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/sy_values.png>`_: plot of the final sy parameter values at the pilot points.
+    -  `sy_array.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/sy_array.png>`_: plot of the interpolated final sy parameter values.
 
-
-
-    -  regular_hds_closeup: plots of changes in the fit to the regular observations (e.g. high frequency) through
-       the optimisation process (e.g. at each optimisation step).
-    -  obs_plots: plots of the model objective function and target residuals through the optimisation process (e.g. at
-       each optimisation step).
-    -  param_plots: plots of parameter values through the optimisation process (e.g. at each optimisation step).
-    -  param_fail_plots: plots of parameter values that failed to converge vs those that did not.
-    -  param_sen_plots: plots of parameter sensitivity through the optimisation process (e.g. at each optimisation step).
-    -  parameters_norm_to_bounds.txt: a text file of the parameter values of the final model normalised to the parameter bounds.
-    -  parameters_norm_to_bounds_close.txt: as above, but only those that are close to their bounds.
-    -  parameter_norm_sy_kh.png: ignore, bug in plot
-    -  jacobian_filled_0_of_1.png: plots of whether or not the Jacobian was filled (red values had model failure)
-    -  hk_values.png: plot of the final hk parameter values at the pilot points.
-    -  kh_array.png: plot of the interpolated final kh parameter values.
-    -  sy_values.png: plot of the final sy parameter values at the pilot points.
-    -  sy_array.png: plot of the interpolated final sy parameter values.
-
+1 layer model (2D) optimisation results
+=======================================
 # todo
-1 layer model (2D) optimisation
-===============================
-# todo
-Terrace only model (2D) optimisation
-====================================
+Terrace only model (2D) optimisation results
+============================================
 # todo
 
-3 layer model (3D) optimisation
-===============================
+3 layer model (3D) optimisation results
+=======================================
 # todo
 3D_v1a
 -------
@@ -221,10 +217,10 @@ Model limitations
 
 Recommended additional data
 ==========================
+# todo
 
 Optimisation working Notes
 ==========================
-
 These working notes are largely verbatim except that the active branches are elevated above the abandoned branches.
 the number indicates the order in which the branches were developed.
 
