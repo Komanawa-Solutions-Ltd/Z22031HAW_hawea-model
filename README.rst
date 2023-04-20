@@ -36,7 +36,7 @@ its methodology and, where applicable, the results of the step:
 1.  `Model build <model_build/README.rst>`_: build the model structure and boundary conditions
 2.  `Model targets <targets_and_sensitive_sites/README.rst>`_: define the model targets and objective function
 3.  `Model Parameterisation <model_parameterisation/README.rst>`_: define the initial model parameters and parameterisation
-4.  `Model Optimisation <optimisation/README.rst>`_: optimize the model to the available data
+4.  `Model Optimisation and limitations <optimisation/README.rst>`_: optimize the model to the available data
 5.  `Model Scenarios <Scenarios/README.rst>`_: run a series of scenarios to better understand the model behaviour and to predict the systems response to changing conditions
 
 Modelling Software
