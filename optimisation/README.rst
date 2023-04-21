@@ -95,20 +95,29 @@ undertaken using another in house class called SshDist. The main optimisation sc
 The build of the PEST runfile was undertaken in `build_optimisation.py <../optimisation/build_optimisation.py>`_.
 which has a number of component functions:
 - `raw_pest <../optimisation/build_optimisation.py#L251>`_:
-   - Overarching function to build the pest runfile (calls the following functions).
-   - Also handles the singular value decomposition (SVD) parameters.
+  - Overarching function to build the pest runfile (calls the following functions).
+  - Also handles the singular value decomposition (SVD) parameters.
 - `make_template_and_infiles <../optimisation/build_optimisation.py#L37>`_:
-   - make the template and in infiles for pest to interact with the model parameter inputs.
+  - make the template and in infiles for pest to interact with the model parameter inputs.
 - `make_ins_and_output_files <../optimisation/build_optimisation.py#L50>`_:
-   - make an example output files (model outputs) and the PEST instruction files to read the model output data (targets).
+  - make an example output files (model outputs) and the PEST instruction files to read the model output data (targets).
 - `set_control_data <../optimisation/build_optimisation.py#L69>`_:
-   - set the control data for the PEST runfile.
+  - set the control data for the PEST runfile.
 - `set_parameter_data_groups <../optimisation/build_optimisation.py#L145>`_:
-   - set parameter data groups, limits, transformations, and derivative handling.
+  - set parameter data groups, limits, transformations, and derivative handling.
 - `set_obs_data <../optimisation/build_optimisation.py#L190>`_:
-   - set the observation data, weights, and GROUP WEIGHTINGS.
+  - set the observation data, weights, and GROUP WEIGHTINGS.
 
-# todo modes for PEST (key control and svd data)
+While the full specification for our PEST optimisation are available in the code the following relevant key parameters
+are listed below:
+
+- Kh and river conductance parameters were varied on a log transform (`partrans`)
+- All other parameters were varied with no transform (`partrans`)
+- PEST was run in estimation mode (`pestmode = 'estimation'`)
+- PEST allowed model failures in lamda calculation (`lamforgive = 'lamforgive'`)
+- PEST allowed model failures in derivative calculation (`derforgive = 'derforgive'`)
+- PEST was run with singular value decomposition (`svdmode = 1`)
+- The eigenvalue threshold for svd was set to  5e-7 (`svd_dataeigthresh = 5e-7`)
 
 Standard optimisation outputs
 =============================
@@ -188,24 +197,127 @@ The output structure is as follows (links to the files are provided to 3d_v1d wh
 
 1 layer model (2D) optimisation results
 =======================================
-# todo
+With the 1d model we were able to fit many of the targets within the model, but despite numerous (we ran
+17 unique optimisations) parameterisations, observation weighting schemes, and change to the model structure
+we were unable to replicate the water levels at G40/0415.
+The model could either fit the shape of the groundwater levels but there was substantial bias in the mean groundwater
+level (too high) or we could fit the mean groundwater level but the shape of the groundwater levels was lost.
+
+
+.. figure:: ../support_figures/hds_closeup_h_g40_0415_0000_shape.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: the results of the 1 layer model which fit the shape of the groundwater levels, but not the mean*
+
+.. figure:: ../support_figures/hds_closeup_h_g40_0415_0000_MSE.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+    *Figure: the results of the 1 layer model which fit the mean of the groundwater levels, but not the shape*
+
+
+We do not have other high frequency observations of groundwater levels near the Lake Hawea moraine. However, we do have
+a number of static water levels that measured shortly after drilling the bore.  These water levels, relative to the Lake level
+at the time of measurement are shown in the figure below.  This figure shows that a constant vertical offset between the
+groundwater levels and the lake levels of approximately 10m.  Some of these boreholes are located in the moraine less
+than 200m from the lake. Many of the water supply wells near the lake (within the mapped moraine) are
+relatively deep (e.g. 50+ m).
+
+.. figure:: ../support_figures/lake_gw_level.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: all groundwater levels relative to the Lake Hawea level on the sampling date (positive values are groundwater levels below the lake)*
+
+Because we could not reproduce the groundwater levels at G40/0415, we deemed that the we could reject the hypothesis that
+a 1 layer model could reproduce the groundwater levels the Hawea system with confidence. This is an essential outcome
+from the Hawea groundwater model as the complex three dimensional structure has a key implications for the
+management of the groundwater system; the groundwater system is likely to be either disconnected or have other non-linear
+responses to Lake Hawea level if the Lake falls below a threshold value.
+
 Terrace only model (2D) optimisation results
-============================================
+==============================================
 # todo
 
 3 layer model (3D) optimisation results
 =======================================
-# todo
-3D_v1a
--------
-# todo
-3D_v1b
--------
-# todo
+
+We produced 3 final 3 layer models, the differences (relative to the final model 3D_v1d) are listed below.
+
++----------------------+-------------------------------------------+
+| Model  | "bund_top"* | NGMP wells included in objective function |
++======================+===========================================+
+| 3d_v1a | 335m msl    | yes                                       |
++----------------------+-------------------------------------------+
+| 3d_v1b | 333m msl    | yes                                       |
++----------------------+-------------------------------------------+
+| 3d_v1d | 335m msl    | no                                        |
++----------------------+-------------------------------------------+
+
+*the "bund_top" is the elevation of the top of the low conductivity layer in the moraine zone, which is also the
+threshold value for the non-linear response of the groundwater system to the lake level.
+
+Final observation weightings:
+-----------------------------
+
++------------------+---------------------+
+| Parameter group  | Weighting           |
++==================+=====================+
+| 'rwh_hf'         | 0                   |
++------------------+---------------------+
+| 'rwh_hf_riv'     | 0                   |
++------------------+---------------------+
+| 'h_hf'           | 150                 |
++------------------+---------------------+
+| 'h_hf_riv'       | 50                  |
++------------------+---------------------+
+| 'h_lf'           | {0, 10}             |
+|                  | {v1d, (v1a, v1b)}   |
++------------------+---------------------+
+| 'riv'            | 1e-3                |
++------------------+---------------------+
+| 'h_piezo'        | 10                  |
++------------------+---------------------+
+| 'h_single_1'     | 5                   |
++------------------+---------------------+
+| 'h_single_3'     | 5                   |
++------------------+---------------------+
 
 3D_v1d (final model)
 ---------------------
 # todo
+
+3D_v1a
+-------
+# todo
+
+3D_v1b
+-------
+# todo
+
+Comparison of 3d_v1a, 3d_v1b, and 3d_v1d
+----------------------------------------
+# todo discuss a,b,d results.
+
+
+The key outcome of the similar results from the 3d_v1a and 3d_v1b models is that the current observations do not constrain
+the threshold value, below which the groundwater levels exhibits a non-linear response to the lake level. We discuss
+plausible ranges for the threshold value in the
+`Lake Hawea Moraine Conceptual Model section of the model build readme <../model_build/README.rst#lake-hawea-moraine-conceptual-model>`_,
+but we are not able to further constrain this range.  More discussions of the impacts of this threshold are discussed
+in the `scenarios readme file. <../scenarios/README.rst>`_.  Note that we did attempt to model the threshold value as
+337 m msl, but this optimisation did not converge. However, we did not spend a significant amount of resources trying
+to get this optimisation to converge, so we do not believe that the lack of convergence here indicates that the threshold
+value cannot be as high as 337 m msl.
+
+
 
 Access to final optimised parameter sets and models
 ===================================================

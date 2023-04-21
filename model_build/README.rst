@@ -325,7 +325,7 @@ model of the Lake Hawea Moraine.  The conceptual model is shown in the figures a
 
 The main significance of this conceptual model is that at some point the groundwater system could become disconnected
 from Lake Hawea.  If this were to happen then groundwater levels could significantly decline in the Hawea Flat aquifer.
-more details on these scenarios are discussed in the `scenarios readme file. <../scenarios/README.rst>`_
+more details on these scenarios are discussed in the `scenarios readme file. <../scenarios/README.rst>`_.
 
 .. figure:: ../support_figures/concept_diagram_0.png
     :height: 650 px
