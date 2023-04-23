@@ -211,9 +211,9 @@ def _plot_all_riv_obs(all_riv_obs, plot_dir, riv_keys, riv_colors, out_obs):
         ax.plot(all_riv_obs.index, all_riv_obs.loc[:, k], color=c, marker='.', label=k)
         temp = out_obs.loc[(out_obs.name.str.contains(k)) & (out_obs.group == 'riv')]
         if not temp.empty:
-            ax.scatter(temp.nper, temp.measured, color=c, label=f'{k.capitalize()} target',
-                       marker="X")
-        ax.axhline(0, ls=':', color='k')
+            ax.scatter(temp.nper, temp.measured, color='k', label=f'{k.capitalize()} target',
+                       marker="X", s=100)
+        ax.axhline(0, ls=':', color='k', label='zero')
         ax.set_yscale('symlog')
         ax.legend()
     fig.supxlabel('Period')
@@ -860,7 +860,7 @@ if __name__ == '__main__':
     t = time.time()
     test = True
     if test:
-        plot_paths = [Path('/home/matt_dumont/unbacked/hawea/3d_v1/init_3d_v1/base_model/opt_model.hds')]
+        plot_paths = [Path('/home/matt_dumont/unbacked/hawea/Final_opt_model/final_opt_model.hds')]
         save_param = True
     else:
         plot_paths = Path('/home/matt_dumont/unbacked/hawea/previous_optimisations').glob('**/*.hds')

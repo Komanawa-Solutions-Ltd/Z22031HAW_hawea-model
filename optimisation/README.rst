@@ -292,20 +292,189 @@ Final observation weightings:
 
 3D_v1d (final model)
 ---------------------
-# todo
+The model 3d_v1d is the final model that we used for all of the scenarios.  This model did and excellent job reproducing
+the groundwater levels in our high frequency monitoring points across all of the historical data. The figures for these high frequency
+observation and a discussion of the results are provided in the `Comparison of 3d_v1a, 3d_v1b, and 3d_v1d` section below.
+The full set of optimisation plots for this model are available in the `3d_v1d optimisation results plots folder <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots>`_.
+
+.. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/dry_cells_l0.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: the number of model stress periods with dry cells in the final model*
+
+There are a number of areas in the model with consistent dry cells. There are a number dry cells directly south of the moraine.
+These are not a concern and are instead simply and artefact of the complex 3D structure in the area. Many more of these persistent dry cells
+are relatively isolated and occur in areas of steep topographical gradients (e.g. near the Clutha River,
+Camp Hill Moraine, or just adjacent to the Grandview Ridge). These cells are likely caused by structural error
+in either topographical data and are of little concern.
+
+More concerning are the dry cells in and around the Hawea Flat township.  These dry cells are likely caused by the relative thinning
+of the model in this area, local abstraction and parameter structural errors, and/or a missing structure in the model. It is quite possible
+that there is a lower conductivity layer to the west of the Hawea Flat township from the Q4 Albert Town Advance. There was not enough
+information to justify adding this structure to the model, but it may warrant further investigation.
+
+.. figure:: ../support_figures/hawea_flat_structure.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: the possible indicative location (yellow dashed line) for a moraine structure to the east of the Hawea Flat township*
+
+
+Finally the model does a very poor job of reproducing the groundwater levels in the area to the east of the inferred Grandview Fault.
+There is very limited information in this area (3 single observations) most of which are near boundary conditions
+(e.g. Grandview Creek), so it is difficult to draw any conclusions about the cause of the poor model performance in
+this area.  Instead we have to accept that the model is not suitable in this area and the model results should not be used.
+
+.. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_hds/spatial_hds_residual_all.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+    *Figure: the groundwater levels residuals plotted spatially for the full model domain.  Note that where a target has multiple temporal observations the min, mean and max residuals are shown.  The color bar units are m*
+
+In general the model does a good job of replicating the groundwater levels across the model domain.  There are some areas
+where the model over or under predicts the groundwater levels. As discussed above the areas to the East of the inferred Grandview Fault
+are significant under estimates and the model does not preform well in this area. There are multiple targets in and around the Hawea flat
+township which are underestimated by the model, but given the close proximity of the high frequency observations at bore
+G40/0367, we believe that these misfits are most likely due to either poor data quality of the targets or problems arising from applying the
+historical measured water levels to time period within the optimisation period. The latter is the most likely as there is a
+significant amount of abstraction in and around the Hawea Flat Township that may not have been present when the historical
+water levels were measured.
+
+The two figures below show the modelled groundwater-surface water interaction for the Hawea and Clutha Rivers.
+While there are some target misfits, the model does a very good job of reproducing the expected interaction between the
+groundwater and surface water systems.  The misfits occur in areas which both lose and gain water across the model period.
+The model does a good job reproducing the expected behaviour (gain/loss), but under estimates the total losses relative
+to the measured data. As discussed in the `model target readme <../targets_and_sensitive_sites/README.rst>` There is significant
+uncertainty in the measured gauging therefore we feel that the model is performing well in this area. In addition the
+model does an excellent job of reproducing the expert judgment of the surface water and groundwater interaction.  The Hawea
+is gaining below the dam to approximately Camp Hill, loses a significant amount of water between Camp Hill and sharp
+westward bend.
+
+.. figure:: ../support_figures/all_river_fluxes_large.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: the river fluxes for the final model at each of the parameter zones*
+
+.. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_riv/riv_mean.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: the mean river fluxes spatially for the final model*
+
+The figure below shows the steady state groundwater heads around the moraine zone in all three layers.
+We don't have any targets to inform this data, but it does produce a key prediction that could be tested in the future.
+The model predicts that the groundwater levels are significantly higher in the Northeastern edge of the moraine and that
+this is the area which ultimately controls flow between the lake and the groundwater system. This is not inconsistent
+with either the perched aquifer conceptual model or the local penetration conceptual model (see the Lake Hawea Moraine
+Conceptual Model section of `the model build readme <../model_build/README.rst>`_.
+
+
+.. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/3d_hds.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: the steady state groundwater heads around the moraine zone in all three layers*
 
 3D_v1a
 -------
-# todo
+We will not independently discuss the results for 3d_v1a here, but the full set of optimisation
+plots for this model are available in the `3d_v1a optimisation results plots folder <../optimisation/optimisation_results/3d_v1a/Base_Optimisation_plots>`_.
+A discussion of the differences between the three models is provided below.
 
 3D_v1b
 -------
-# todo
+We will not independently discuss the results for 3d_v1a here, but the full set of optimisation
+plots for this model are available in the `3d_v1b optimisation results plots folder <../optimisation/optimisation_results/3d_v1b/Base_Optimisation_plots>`_.
+A discussion of the differences between the three models is provided below.
 
 Comparison of 3d_v1a, 3d_v1b, and 3d_v1d
 ----------------------------------------
-# todo discuss a,b,d results.
 
+The figures below show the results for all three of the 3D models for the high frequency groundwater levels.
+
+Fit to higher frequency groundwater levels at G40/0415
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. figure:: ../optimisation/optimisation_results/hds_closeup_h_g40_0415_0000.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0415*
+
+
+Fit to higher frequency groundwater levels at G40/0416
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. figure:: ../optimisation/optimisation_results/hds_closeup_h_g40_0416_0000.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0416*
+
+
+Fit to higher frequency groundwater levels at G40/0041
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. figure:: ../optimisation/optimisation_results/hds_closeup_h_g40_0041_0000.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0041*
+
+Fit to higher frequency groundwater levels at G40/0129
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. figure:: ../optimisation/optimisation_results/hds_closeup_h_g40_0129_0000.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0129*
+
+Fit to higher frequency groundwater levels at G40/0120
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: ../optimisation/optimisation_results/hds_closeup_h_g40_0120_0000.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0120*
+
+Fit to higher frequency groundwater levels at G40/0367
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. figure:: ../optimisation/optimisation_results/hds_closeup_h_g40_0367_0000.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0367*
+
+Fit to higher frequency groundwater levels at G40/0366
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. figure:: ../optimisation/optimisation_results/hds_closeup_h_g40_0366_0000.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0366*
+
+
+Discussion and implications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# todo discuss a,b,d  regular results.
 
 The key outcome of the similar results from the 3d_v1a and 3d_v1b models is that the current observations do not constrain
 the threshold value, below which the groundwater levels exhibits a non-linear response to the lake level. We discuss
@@ -321,15 +490,55 @@ value cannot be as high as 337 m msl.
 
 Access to final optimised parameter sets and models
 ===================================================
-# todo
+
+The final optimised parameter sets for the 3d_v1a, 3d_v1b, and 3d_v1d models are available in this repository in the
+`optimised_parameter_sets <../model_parameterisation/optimised_parameter_sets>`_ directory and are accessible
+via python by the `model_parameterisation.optimised_parameterisation.get_3d_v1{a|b|d}_params method <../model_parameterisation/optimised_parameterisation.py>`_.
+The final models are available in the `final_opt_models <../optimisation/final_opt_models>`_ directory.  Due to the
+limit on filesizes that Github implments the final models have been compressed and some files have been split into
+multiple parts with the 7zip library.  To uncompress these models you must use the b`optimisation.final_opt_models.compress_uncompress_model.uncompress_model <../optimisation/final_opt_models/compress_uncompress_model.py#L59>`_
+function.
+
+To uncompress the 3d_v1d model to your downloads folder can use the following code:
+```
+    from optimisation.final_opt_models.compress_uncompress_model import
+    from project_base import proj_root
+    from pathlib
+    # proj_root is the path to the root of the repo
+    # path to the model in the repo, you can substitute an absolute path
+    compressed_path = proj_root.joinpath('optimisation/final_opt_models/3d_v1d')
+    # path to save the uncompressed model to (currently set to 3d_v1d in your downloads folder)
+    out_path = Path.home().joinpath('Downloads', '3d_v1d')
+    uncompress_model(compressed_path, out_path)
+```
 
 Model limitations
 =================
 # todo
+- lack of piezo survey during the optimisation period.
+- limited data for hill fed streams
+- non unique parameterization
+- non unique model structure
+- area to the east of grandview fault
+- te awa zone
+- mangaweara flat zone
+
 
 Recommended additional data
 ==========================
+
+Over the course of out
+
 # todo
+- high frequency bore near the north east corner of the lake
+- high frequency bore near the exit of the Mangawera Valley
+- high frequency bore near the Hawea domain
+- detailed investigation of moraine threshold value
+- investigation of structure to West of hawea flat township
+- concurant gauging to multiple hillfed streams
+- new piezo survey or two.
+
+
 
 Optimisation working Notes
 ==========================

@@ -164,10 +164,8 @@ def example():
 
 
 if __name__ == '__main__':
-    # compress_model('/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/Final_opt_model',
-    #                '/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/optimisation/final_opt_models/3d_v1d')
-    # compress_model('/home/matt_dumont/unbacked/hawea/3d_v1b/init_3d_v1b/Optimisations/Final_opt_model',
-    #                '/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/optimisation/final_opt_models/3d_v1b')
-    # compress_model('/home/matt_dumont/unbacked/hawea/3d_v1a/init2_3d_v1a/Optimisations/Final_opt_model',
-    #               '/home/matt_dumont/PycharmProjects/Z22031HAW_hawea-model/optimisation/final_opt_models/3d_v1a')
-    example_npz()
+    # todo modify or follow format to uncompress the 3d_v1d model
+    from project_base import proj_root
+    compressed_path = proj_root.joinpath('optimisation/final_opt_models/3d_v1d') # path to the model in the repo
+    out_path = None # todo fill with the path to write the uncompresssed model to
+    uncompress_model(compressed_path, out_path)
