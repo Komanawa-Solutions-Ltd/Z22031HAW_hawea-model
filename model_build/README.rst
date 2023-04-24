@@ -1,7 +1,7 @@
 Hawea Transient groundwater model (Hawea Model) build methods and results
 ############################################################################
 
-.. figure:: ../support_figures/model_2d_boundary_conditions.png
+.. figure:: ../support_figures/model_2d_boundary_conditions.png #todo figure not coming up in preview - none of the figures in this readme work in the preview
    :height: 650 px
    :align: center
 
@@ -33,8 +33,8 @@ Module Index
 -  `get_boundary_condition_data.py <get_boundary_condition_data.py>`_: a script to get the boundary condition data
 -  `supporting_data_analysis <supporting_data_analysis>`_: scripts to support creating the boundary condition data and structure
     -  `all_wells.py <supporting_data_analysis/all_wells.py>`_: a script to get all the well location data
-    -  `base_concept_diagram.py <supporting_data_analysis/base_concept_diagram.py>`_: a script to build a base concept diagram of the 3d model structure
-    -  `compare_met_era5land.py <supporting_data_analysis/compare_met_era5land.py>`_: compare precip and PET between the available met station and the ERA5 land data
+    -  `base_concept_diagram.py <supporting_data_analysis/base_concept_diagram.py>`_: a script to build a base concept diagram of the 3D model structure
+    -  `compare_met_era5land.py <supporting_data_analysis/compare_met_era5land.py>`_: compare precipitation and PET between the available met station and the ERA5-land data
     -  `explore_structure.py <supporting_data_analysis/explore_structure.py>`_:
     -  `get_era_5_land.py <supporting_data_analysis/get_era_5_land.py>`_: script to get ERA5-land data
     -  `get_pumping_data.py <supporting_data_analysis/get_pumping_data.py>`_: get and process historical pumping data
@@ -45,7 +45,7 @@ Module Index
     -  `plot_borelogs.py <supporting_data_analysis/plot_borelogs.py>`_:  a process to plot the borelogs in the model
     -  `recharge_model.py <supporting_data_analysis/recharge_model.py>`_: develop and create LSR estimates from met and ERA5-land data
     -  `river_data.py <supporting_data_analysis/river_data.py>`_: : a process to get and process the river data
--  `modflow_model.py <modflow_model.py>`_: a script to build a modflow model instance
+-  `modflow_model.py <modflow_model.py>`_: a script to build a MODFLOW model instance
 -  `utils.py <utils.py>`_: a script to define some utility functions
 -  `zones.py <zones.py>`_: a script to define indicative model zones
 
@@ -54,22 +54,22 @@ Model boundaries
 
 The model domain (see figure below) was initially defined to include the following aquifers:
 
-- **The main Hawea flat aquifer** stretching from Lake Hawea in the North to the base of the High terrace in the South. This aquifer is bounded by the Hawea river on the West and the Grandview Ridge on the East
-- **The High terrace aquifer** stretching from the base of the High terrace in the North to Clutha River in the South This aquifer is also bounded by the Hawea river on the West and the Grandview Ridge on the East
-- **Aquifers near the Hawea river** including Te Awa, Maungawera Flat, and river adjacent aquifers to the south of Maungawera flat and east of the High terrace.
-- **The Maungawera Valley aquifer** including the Maungawera valley aquifer from the approximate Hawea River/ Lake Wanaka flow divide in the Northwest to the Maungawera Flat Aquifer
-- **The Sandy Point Aquifer** which is to the East of the Clutha river to the South of the High terrace aquifer.  This aquifer is also bounded by the Grandview Ridge on the East
+- **The main Hawea flat aquifer** stretching from Lake Hawea in the North to the base of the High Terrace in the South. This aquifer is bounded by the Hawea River on the West and the Grandview Ridge on the East
+- **The High Terrace aquifer** stretching from the base of the High Terrace in the North to Clutha River in the South. This aquifer is also bounded by the Hawea River on the West and the Grandview Ridge on the East
+- **Aquifers near the Hawea river** including Te Awa, Maungawera Flat, and river adjacent aquifers to the south of Maungawera flat and East of the High terrace.
+- **The Maungawera Valley aquifer** including the Maungawera Valley aquifer from the approximate Hawea River/ Lake Wanaka flow divide in the Northwest to the Maungawera Flat aquifer
+- **The Sandy Point Aquifer** which is to the East of the Clutha River to the South of the High Terrace aquifer.  This aquifer is also bounded by the Grandview Ridge on the East
 
-During the model build the steep topography of the Sandy Point Aquifer caused model convergence issues.
-The Sandy Point has minimal data available (one historical groundwater measurement) Therefore we resolved the convergence
-issue by removing the Sandy Point Aquifer from the model domain. We still produced estimates of Land surface recharge (LSR) and
+During the model build the steep topography of the Sandy Point aquifer caused model convergence issues.
+The Sandy Point has minimal data available (only one historical groundwater measurement). Therefore we resolved the convergence
+issue by removing the Sandy Point aquifer from the model domain. We still produced estimates of land surface recharge (LSR) and
 Hillside inflows to this aquifer, which were used to inform groundwater allocation decisions.
 
-The boundaries of the model domain were all defined by no-flow boundary conditions. In addition at the Lake Hawea Dam,
+The boundaries of the model domain were all defined by no-flow boundary conditions. In addition, at the Lake Hawea Dam,
 Camp Hill, and Cameron Hill bedrock is exposed. Therefore these outcrops were also defined as no-flow boundaries.
 Finally, the Camp Hill Medial Moraine, located between Te Awa and the Maungawera Flat aquifers, is comprised of poorly sorted
 and unworked moraine sediments. While there are a few domestic supply bores in this area, the groundwater system is
-likely minimal, particularly in comparison with the other outwash dominated aquifers.  We therefore chose to defined this area
+likely minimal, particularly in comparison with the other outwash dominated aquifers.  We therefore chose to define this area
 as a no-flow boundary.
 
 
@@ -90,18 +90,18 @@ of boundary conditions we defined two time periods for the model:
 - **Optimisation period**: 2015-07-18 to 2020-06-27:
     - the period where we have the most data available across boundary conditions, observations (targets).
     - details on defining the optimisation period are in the `optimisation readme <../optimisation/README.rst>`_.
-    - weekly Modflow stress periods were used.
+    - weekly MODFLOW stress periods were used.
 - **Scenario Period**: 1980-07-18 to 2020-12-01
     - the period where we have reasonable data available across boundary conditions, but minimal observations (targets)
     - details on defining the scenario period are in the `scenario readme <../Scenarios/README.rst>`_.
-    - weekly Modflow stress periods were used.
+    - weekly MODFLOW stress periods were used.
 
 Model Starting heads
 ====================
 
 The challenge of defining starting heads for a transient groundwater model is that any choice of starting heads can
 then impact the subsequent model results.  For this model we chose to use the top of cell as the starting heads and
-then run a steady state model period. To identify the best month to traniton between the steady state model and the
+then run a steady state model period. To identify the best month to transition between the steady state model and the
 transient model we calculate the difference between the monthly and weekly high frequency data
 (`see target readme for more details <../targets_and_sensitive_sites/README.rst>`_). and the mean of the full dataset.
 The results are shown in the figure below, but there were obvious local minimums in the RMSE at 200 and 365 days from
@@ -120,20 +120,20 @@ Model Structure
 
 The model structure was initially created as a 1 layer model, but during the course of the optimisation
 it became clear that the model could not reproduce the data without additional structure and layering. For more
-information on teh optimisation process see the `optimisation readme <../optimisation/README.rst>`_.
+information on the optimisation process see the `optimisation readme <../optimisation/README.rst>`_.
 
 1 layer model structure
 ------------------
 
-the 1 layer model was largely based on Wilson et al. (2012).  the model top was defined based on a 15m DEM (from NZWaM - Hydro), and the
+The 1 layer model was largely based on Wilson et al. (2012).  The model top was defined based on a 15 m DEM (from NZWaM - Hydro), and the
 model bottom was initially set from the model bottom used in Wilson et al. (2012).  The model bottom and top were then adjusted as follows:
 
 - All cells with stream package cells with the stream rbot parameter below the model bottom were set as 0.5 m below rbot.
 - A number of cells which routinely caused dry cells (and instability in the model) had the bottom gradient reduced
-- The model top was adjusted so that the tops were always at least 0.5m above the rbot of the stream package cells.
-- there were a number of cells near the clutha river that caused dry cells due to the incised nature of the river.
-  these cells the bottom was set to the bottom of the nearby river cells
-- the model bottom was adjusted to ensure that the model thickness was at least 2m
+- The model top was adjusted so that the tops were always at least 0.5 m above the rbot of the stream package cells.
+- There were a number of cells near the Clutha River that caused dry cells due to the incised nature of the river.
+  For these cells the bottom was set to the bottom of the nearby river cells
+- The model bottom was adjusted to ensure that the model thickness was at least 2 m
 
 .. figure:: ../support_figures/model_2d_bottom_fixers.png
    :height: 650 px
@@ -183,20 +183,20 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
 multi-layer (3d) model structure
 ------------------
 
-The multi-layer model structure was created better represent the complex geology in and around the Southern edge of
-Lake Hawea. There is likely to be other areas of the model domain that have more complex geology; however excluding
+The multi-layer model structure that was created better represents the complex geology in and around the Southern edge of
+Lake Hawea. There is likely to be other areas of the model domain that have more complex geology; however, excluding
 the structure at the Lake Hawea moraine precluded our model from fitting the observed data. For more information on
 the optimisation process see the `optimisation readme <../optimisation/README.rst>`_.
 
 Lake Hawea Moraine Conceptual Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the 1 layer model structure the Lake Hawea moraine was represented as a single layer and it's impact on the groundwater
+In the 1 layer model structure the Lake Hawea moraine was represented as a single layer and its impact on the groundwater
 system was parameterised as a single parameter -- hydraulic conductivity.  However, in reality the Lake Hawea moraine is a complex
-geological structure. From a groundwater perspective The key observations that precluded the 1 layer model from fitting the data
-were the high frequency measurements at well G40/0415 (roughly at the intersection of Cemetery Road and Gladstone Road.
+geological structure. From a groundwater perspective the key observations that precluded the 1 layer model from fitting the data
+were the high frequency measurements at well G40/0415 (roughly at the intersection of Cemetery Road and Gladstone Road).
 These observations showed that the groundwater levels in this well are highly correlated with the lake levels, but with
-approximately 10m of vertical displacement. We developed and fit a very simple numerical model to the groundwater levels
+approximately 10 m of vertical displacement. We developed and fitted a very simple numerical model to the groundwater levels
 at G40/0415 to better understand the relationship between the lake levels and the groundwater levels in this well.
 The model parameterised the groundwater levels as:
 
@@ -228,9 +228,9 @@ where:
 
 
 The simple numerical model provides a good fit to the groundwater levels at G40/0415 with a step change of 12.81 m
-and a 60 dya smoothing period.
+and a 60 day smoothing period.
 
-With the 1d model we were unable to fit the water levels at G40/0415. Could either fit the shape of the groundwater levels
+With the 1D model we were unable to fit the water levels at G40/0415. We could either fit the shape of the groundwater levels
 but there was substantial bias in the mean groundwater level (too high) or we could fit the mean groundwater level but the
 shape of the groundwater levels was lost.
 
@@ -253,10 +253,10 @@ shape of the groundwater levels was lost.
 
 
 We do not have other high frequency observations of groundwater levels near the Lake Hawea moraine. However, we do have
-a number of static water levels that measured shortly after drilling the bore.  These water levels, relative to the Lake level
-at the time of measurement are shown in the figure below.  This figure shows that a constant vertical offset between the
-groundwater levels and the lake levels of approximately 10m.  Some of these boreholes are located in the moraine less
-than 200m from the lake. Many of the water supply wells near the lake (within the mapped moraine) are
+a number of static water levels that were measured shortly after drilling the bore.  These water levels, relative to the lake level
+at the time of measurement are shown in the figure below.  This figure shows a constant vertical offset between the
+groundwater levels and the lake levels of approximately 10 m.  Some of these boreholes are located in the moraine less
+than 200 m from the lake. Many of the water supply wells near the lake (within the mapped moraine) are
 relatively deep (e.g. 50+ m).
 
 .. figure:: ../support_figures/lake_gw_level.png
@@ -268,9 +268,9 @@ relatively deep (e.g. 50+ m).
         *Figure: all groundwater levels relative to the Lake Hawea level on the sampling date (positive values are groundwater levels below the lake)*
 
 
-Several of the bores have recorded bore logs which are shown in the figure below. Driller's logs can be imprecise; however
+Several of the bores have recorded bore logs which are shown in the figure below. Drillers logs can be imprecise; however,
 the logs demonstrate lower conductivity sediments overlying more conductive sediments at ~ 320 m msl. This elevation is
-also typically where drilling stopped suggesting they finally had found conductive material. Some logs also show
+also typically where drilling stopped, suggesting they had finally found conductive material. Some logs also show
 more conductive sediments overlying the less conductive sediments, but this is spatially variable.
 
 .. figure:: ../support_figures/borelogs.png
@@ -286,10 +286,10 @@ below and show in the figure below.
 
 #. After the Q6 Luggate Advance relatively conductive glacial out-wash filled the basin and deposited the sediments of the high
    terrace
-#. The Q4 Albert Town Advance scoured many of the previous sediments and deposited, relatively impermeable,
-   glacial moraine at the Camp Hill Moraine and the moraine at the northern base of the High terrace.
-#. the subsequent Q3 retreat filled additional, relatively conductive outwash sediments were deposited between The
-   high terrace and Lake Hawea.
+#. The Q4 Albert Town Advance scoured many of the previous sediments and deposited relatively impermeable,
+   glacial moraine at the Camp Hill Moraine and the moraine at the northern base of the High Terrace.
+#. The subsequent Q3 retreat meant relatively conductive outwash sediments were deposited between the
+   High Terrace and Lake Hawea.
 #. The Q2 Hawea Advance scoured the previous sediments (producing Lake Hawea) and deposited a relatively impermeable
    moraine at the southern edge of Lake Hawea.
 
@@ -301,31 +301,31 @@ below and show in the figure below.
 
         *Figure: Quaternary geological history of the Lake Hawea area from Wilson(2012)*
 
-Based on the bore log information, the geological history of the area, and the groundwater levels we propose a conceptual
+Based on the borelog information, the geological history of the area, and the groundwater levels we propose a conceptual
 model of the Lake Hawea Moraine.  The conceptual model is shown in the figures and described below:
 
 #. During the Q2 Hawea Advance the glacier did not fully scour the previous outwash sediments and the new Lake Hawea
    moraine was deposited on a thin wedge of Q3+ outwash.
-#. The moraine forms a relatively impermeable barrier to groundwater flow from lake Hawea to the Hawea Flat aquifer
+#. The moraine forms a relatively impermeable barrier to groundwater flow from Lake Hawea to the Hawea Flat aquifer
    system.
 #. During and after the Q2 Lake Hawea Advance the moraine was locally reworked and eroded by some combination of the
-   Hawea river, and Grandview and John Creek, periglacial activity (e.g. local reworking of the moraine by surface water
-   on the top of the Glacier). Regardless, this reworking produced a locally continuous cap of relatively conductive
+   Hawea river, Grandview and John Creek periglacial activity (e.g. local reworking of the moraine by surface water
+   on the top of the glacier). Regardless, this reworking produced a locally continuous cap of relatively conductive
    material on top of the moraine.
 #. After the completion of the Lake Hawea dam in the 1950s the Lake Hawea level was raised by approximately 20 m, which
    allowed Lake Hawea water to seep through the permeable cap of the moraine and into the Hawea Flat aquifer system.
-   this is anecdotally supported by reports of relatively low groundwater levels prior to the completion of the dam.
+   This is anecdotally supported by reports of relatively low groundwater levels prior to the completion of the dam.
 #. The permeable cap of the moraine is relatively thin and is almost certainly not continuous across the moraine.
    This forms a small, possibly perched, aquifer system on top of the previous moraine.  This aquifer system then effectively
-   spills over the moraine into the Hawea Flat aquifer system with localised very steep groundwater gradients.
-#. The Hawea flat aquifer system is a relatively conductive system and has relatively low groundwater gradients.  Locally
-   where the Lake Hawea moraine overlies more conductive material groundwater will flow from this conceptual pour point
+   spills over the moraine into the Hawea Flat aquifer system with very steep localised groundwater gradients.
+#. The Hawea Flat aquifer system is a relatively conductive system and has relatively low groundwater gradients.  Locally,
+   where the Lake Hawea moraine overlies more conductive material, groundwater will flow from this conceptual pour point
    back towards Lake Hawea, providing the groundwater in the aforementioned groundwater bores (Scott's Beach, G40/0413,
    G40/0368, G40/0178)
 
 The main significance of this conceptual model is that at some point the groundwater system could become disconnected
 from Lake Hawea.  If this were to happen then groundwater levels could significantly decline in the Hawea Flat aquifer.
-more details on these scenarios are discussed in the `scenarios readme file. <../scenarios/README.rst>`_.
+More details on these scenarios are discussed in the `scenarios readme file. <../scenarios/README.rst>`_.
 
 .. figure:: ../support_figures/concept_diagram_0.png
     :height: 650 px
@@ -343,7 +343,7 @@ likely is more difficult to estimate. Based on the behaviour of the water levels
 it is likely below the typical minimum operating level of Lake Hawea (338 m msl). The observed water levels
 in G40/0415 do not become disconnected (e.g. variations in Lake levels which are not seen in the measured bore levels)
 and the rise and fall of the groundwater
-levels is relatively symmetrical. If the lake was disconnected we would expect to see a period of groundwater decline
+levels are relatively symmetrical. If the lake was disconnected we would expect to see a period of groundwater decline
 with a sudden increase in groundwater levels (as the lake became re-connected to the groundwater system). There is some
 anecdotal evidence that the groundwater levels in the Hawea Flat aquifer system have declined significantly
 when the lake levels reached their historical minimum (327.6 m msl in 1976 & 1977). We could interpret this as evidence
@@ -355,8 +355,8 @@ a paleo-channel of either the Hawea River, John Creek, or Grandview Creek. If th
 likely be within the spatial extent of the Grandview Creek and John Creek alluvial fans. The response of the groundwater
 system to a local penetration of the moraine is likely to be dependent on the shape of the paleo-channel. The response
 would likely be non-linear as the transmissivity of the paleo channel would decline rapidly with decreasing water levels
-This scenarios is fundamentally uncertain and very difficult to include in a groundwater model without additional
-information.  Therefore we chose to assume a perched aquifer for the conceptual model that was used in the multi-layer
+This scenario is fundamentally uncertain and very difficult to include in a groundwater model without additional
+information.  Therefore we chose to assume a perched aquifer for the conceptual model used in the multi-layer
 model structural design.
 
 .. figure:: ../support_figures/concept_diagram_1.png
@@ -378,19 +378,19 @@ model structural design.
 Implementation of the Lake Hawea Moraine Conceptual Model into the groundwater model
 ^^^^^^^^^^^
 
-We implemented a very simple version of the conceptual model described above assuming a perched aquifer system. We:
+We implemented a very simple version of the conceptual model described above, assuming a perched aquifer system. We:
 
-#. implemented a 3 layer system.  Layer number follows python indexing (i.e. layer 0 is the top layer)
+#. implemented a 3 layer system.  Layer number follows Python indexing (i.e. layer 0 is the top layer)
 #. defined four new zones for the model (see figure below)
 
-   #. The moraine zone.  layer 0 represents the permeable cap of the moraine, layer 1 represents the impermeable
+   #. The moraine zone:  Layer 0 represents the permeable cap of the moraine, layer 1 represents the impermeable
       moraine, and layer 2 represents the conductive out-wash left by the Q4+ glaciations of the main
       Hawea Flat aquifer system.
    #. The Lake bar: This zone does not occur in layer 0, but in layer 1 and 2 it represents the impermeable material
       that separates Lake Hawea from the Hawea Flat aquifer system.
-   #. The Lake: This zone occurs in layer 0, 1, 2; is conductive material and contains GHB boundary conditions (see more below)
+   #. The Lake: This zone occurs in layer 0, 1, 2; it is conductive material and contains GHB boundary conditions (see more below)
    #. The Layer pinch out area: This zone occurs in layer 0, 1, 2 and is used to pinch out the three layer system so that for the
-      rest of the model domain layer 0 is the main aquifer system (e.g. like the 1 layer model) layers 1 and 2 consist of 1 m thick layers
+      rest of the model domain, layer 0 is the main aquifer system (e.g. like the 1 layer model) layers 1 and 2 consist of 1 m thick layers
 
 #. set the top of layer 2 (bottom of the moraine) to be 328 m msl.
 #. set top of layer 1 (top of the moraine) to be 335 m msl. note in some of the branches of this repo we used
@@ -436,7 +436,7 @@ LSR model
 ^^^^^^^^^^^
 
 We chose to use the `Rushton model <https://doi.org/10.1016/j.jhydrol.2005.06.022>`_ to estimate LSR.
-The Rushton model is simple easy to implement and has been used in a number of other studies.
+The Rushton model is simple, easy to implement, and has been used in a number of other studies.
 In general the Rushton model uses the following methods to estimate soil moisture balance:
 
 1. Calculation of infiltration to the soil zone (In), and near surface soil storage for the end of the current day
@@ -447,7 +447,7 @@ In general the Rushton model uses the following methods to estimate soil moistur
     The spreadsheet calculates TAW and RAW from field capacity, wilting point, and rooting depth data.
     Typical values for field capacity and wilting point are given in Table 19 of Allen et al. (1998).
     Rooting Depth changes with the season, and is typically 0.5-1m for grass (Table 22 of Allen et al.,1998)
-    A depletion Factor, p, needs to estimated for the calculation of RAW. p is the average fraction of TAW
+    A depletion Factor, p, needs to be estimated for the calculation of RAW. p is the average fraction of TAW
     that can be depleted from the root zone before moisture stress (reduction in ET)
     For NZ conditions p should be around 0.4-0.6, typically 0.5 for grass. See Table 22 of Allen et al.
     (1998) for more values
@@ -459,8 +459,8 @@ In general the Rushton model uses the following methods to estimate soil moistur
     The three steps outlined above partition near surface soil storage between near surface soil storage for
     the following day, AET, and the soil moisture deficit/reservoir respectively
 
-Groundwater recharge occurs only when the soil moisture deficit is negative, ie there is surplus water in the soil
-moisture reservoir
+Groundwater recharge occurs only when the soil moisture deficit is negative, i.e. there is surplus water in the soil
+moisture reservoir.
 
 We also added an irrigation component to the Rushton model as follows:
 
@@ -469,13 +469,13 @@ if Irrigate (bool parameter):
 
    1. define the irrigation index (those cells with soil moisture < trig (taw* irrig_trig) AND which have
       not been irrigated more recently than the minimum number of days between irrigation (min_irrig_return))
-   2. Calculate used irrigation demand
+   2. calculate used irrigation demand
       * if date is not in the irrigation days (between irrig start and stop) then use demand = 0
       * else use demand = max(max_irrigation applied, irrigation demand + irrigation inefficiency)
    3. irrigate from the scheme (irrig_available)
    4. where excess demand remains irrigate from storage
    5. where excess water from the scheme is available add it to storage up to maximum storage
-   6. add irrigation water to use_rain and recalculate the soil moisture balance,
+   6. add irrigation water to use_rain and recalculate the soil moisture balance
       note that irrigation will only be allowed to runoff if allow_irrigation_to_runoff = True
    7. calculate remaining irrigation demand (after irrigation is applied)
 
@@ -517,8 +517,8 @@ from `McIndoe (2002) <https://researcharchive.lincoln.ac.nz/bitstream/handle/101
 Correcting ERA5-land data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Unsurprisingly, the ERA5-Land has biases and unit conversion isues.  We corrected the ERA5-land data by simple multilinear
-regression.  For the PET we used the daily Era5-land PET and the season as the predictor variables and daily met PET.  For the precipitation we
+Unsurprisingly, the ERA5-Land has biases and unit conversion issues.  We corrected the ERA5-land data by simple multi-linear
+regression.  For the PET we used the daily ERA5-land PET and the season as the predictor variables and daily met PET.  For the precipitation we
 used the weekly mean ERA5-land precipitation as the predictor variable and the weekly mean met precipitation as the dependent variable.
 The results of the regression are shown in the figure below.
 
@@ -638,8 +638,8 @@ location data associated with the meter for the groundwater abstraction points.
 The layering of the model is sufficiently simple that we made simple assumptions to define the layer for the abstraction
 points. In general all abstraction points were assumed to be in the top layer with the following exceptions:
 
-- The abstraction points within the moraine and the layer pinch out zone (see multi-layer (3d) model structure above)
-  were assumed to be in layer 2 (recalling that layers follow python indexing standards and layer 0 is the top layer).
+- The abstraction points within the moraine and the layer pinch out zone (see multi-layer (3D) model structure above)
+  were assumed to be in layer 2 (recalling that layers follow Python indexing standards and layer 0 is the top layer).
   This prevented any abstraction to be misplaced into low conductivity units or in cells that may become dry (i.e. while
   layer 1 and 2 are being pinched out).
 - A number of abstraction bores in and around the Hawea Flat township were placed in layer 1 (the middle layer) as
@@ -676,7 +676,7 @@ Clutha Rivers. These abstraction bores occur in river proximal gravels which lik
 hydraulic conductivity than the rest of the aquifer system. We initially attempted to include these bores in the model,
 but our model structure was not sufficiently resolved to include this river proximal aquifer. The very high localised
 abstraction caused dry cells and significant model instability. We therefore considered these river proximal wells
-as surface water abstraction (E.g. via a gallery) and removed these abstraction points from the model. We did use
+as surface water abstraction (e.g. via a gallery) and removed these abstraction points from the model. We did use
 the river proximal abstraction data to adjust our river gain and loss targets and therefore conserve the water budget.
 
 
@@ -702,17 +702,17 @@ Major Rivers (Hawea river and Clutha River)
 
 The Hawea and Clutha rivers were included in the model using `the stream boundary condition package. <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/str.html>`_.
 The stream boundary condition package models both stream flow and surface-ground water interactions. While the
-Package allows for modelling of stream stage, for this model we specified the stream stage. The package requires the following inputs:
+package allows for modelling of stream stage, for this model we specified the stream stage. The package requires the following inputs:
 
-- Stream location and river bed elevation
+- Stream location and riverbed elevation
 - Stream stage
 - Stream flow (at the top segment of each stream)
 - `The stream bed conductance factor <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/frequently_asked_questions.html?anchor=conductance>`_
 
-We defined the stream location with a carefully drawn line along the river bed informed by a LiDAR dataset provided by Otago Regional Council.
-The raw river bed elevation was defined as the minimum LiDAR elevation in each river model cell.  This left a river profile that was
+We defined the stream location with a carefully drawn line along the riverbed informed by a LiDAR dataset provided by Otago Regional Council.
+The raw riverbed elevation was defined as the minimum LiDAR elevation in each river model cell.  This left a river profile that was
 not consistently decreasing downstream.  To correct this we used a rolling mean to define the river bed elevation.  Finally we inset the
-river bottom by 2.5 m so that the river bed elevation was always below the river stage.
+river bottom by 2.5 m so that the riverbed elevation was always below the river stage.
 
 .. figure:: ../support_figures/river_top_bot.png
    :height: 650 px
@@ -723,17 +723,17 @@ river bottom by 2.5 m so that the river bed elevation was always below the river
     *river bed elevations*
 
 
-The stream bed conductance factor was a parameter in the model inversion.  See `the model parameterisation readme for more information <../model_parameterisation/README.rst>`_
+The streambed conductance factor was a parameter in the model inversion.  See `the model parameterisation readme for more information <../model_parameterisation/README.rst>`_
 The steam flow did not need to be particularly precise as the river would never come close to losing all of its water to the
-aquifer system.  Therefore we set the Hawea river flow to the the historical flow measured at Camp Hill.  The Clutha river
-flow was arbitrarily set to 10 * the Hawea river flow.  We prescribed the river stage for both the Hawea and Clutha rivers
+aquifer system.  Therefore we set the Hawea River flow to the historical flow measured at Camp Hill.  The Clutha River
+flow was arbitrarily set to 10 * the Hawea River flow.  We prescribed the river stage for both the Hawea and Clutha rivers
 by interpolating historical river stage data at Camp Hill (Hawea River) and at a point on the Clutha River 200 m
-downstream of Luggate Confluence. The Clutha stage data did not cover the full optimisation period; therefore we used the
-ISO-weekly mean river stage for the missing data. The Hawea river stage data was temporally complete. To interpolate the
-river stage spatially we simply applied the stage measured at Camphill relative to the river bed elevation to the river bed elevation
-in all other Hawea River model cells.  The same approach was used for the Clutha river; however where the Clutha river joined the
-Hawea river there was an offset. To avoid this offset causing model convergence issues we linearly interpolated the Stage
-at the end of the Hawea River to the stage on the Clutha River 200m downstream of Luggate Confluence.  The river stages generated
+downstream of Luggate Confluence. The Clutha stage data did not cover the full optimisation period; therefore, we used the
+ISO-weekly mean river stage for the missing data. The Hawea River stage data was temporally complete. To interpolate the
+river stage spatially we simply applied the stage measured at Camphill relative to the riverbed elevation to the riverbed elevation
+in all other Hawea River model cells.  The same approach was used for the Clutha River; however where the Clutha River joined the
+Hawea River there was an offset. To avoid this offset causing model convergence issues we linearly interpolated the stage
+at the end of the Hawea River to the stage on the Clutha River 200 m downstream of Luggate Confluence.  The river stages generated
 this way do not cover the full scenario period.  Therefore we used the ISO-weekly mean river stage for the scenario period.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/River_profile.png
@@ -743,21 +743,21 @@ this way do not cover the full scenario period.  Therefore we used the ISO-weekl
 
 .. class:: centered
 
-    *Figure: river stage relative to river bed elevation*
+    *Figure: river stage relative to riverbed elevation*
 
 Lake Hawea
 ----------
 
 Lake Hawea was modelled with the `General Head Boundary Package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/ghb.html>`_,
-which allows for time varient heads to be set.  The package requires the following inputs:
+which allows for time variant heads to be set.  The package requires the following inputs:
 
 - Location
 - Head
 - Conductance
 
-For this model the Lake locations were defined as all layers where the model cells that intersected the lake polygon.
-The lake conductance as set to a very high value (1e10) so that the only parameter defining the lake - model interaction
-was the cell's hydraulic properties (e.g. hydraulic conductivity). The lake head was set base on the historical lake stage
+For this model the lake locations were defined as all layers where the model cells that intersected the lake polygon.
+The lake conductance was set to a very high value (1e10) so that the only parameter defining the lake - model interaction
+was the cell's hydraulic properties (e.g. hydraulic conductivity). The lake head was set based on the historical lake stage
 measured at the dam.  The historical lake stage covered both the full optimisation period and the full scenario period.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/lake_time.png
@@ -790,11 +790,11 @@ Irrigation Supply Race Losses (race losses)
 
 There are a number of irrigation supply races across the model domain. Estimates of race water losses are uncertain,
 however `McIndoe (2002) <https://researcharchive.lincoln.ac.nz/bitstream/handle/10182/5122/Use_of_water.pdf?sequence=1>`_
-suggests that approximately 10% of the race flows are lost to groundwater
-we have access to records of daily race takes from the Hawea Irrigation Co. from 2012-01-01 to 2021-12-31, which covers
-full optimisation period. For the scenario period we simply used the ISO weekly mean race losses.
+suggests that approximately 10% of the race flows are lost to groundwater.
+We have access to records of daily race takes from the Hawea Irrigation Co. from 2012-01-01 to 2021-12-31, which covers
+the full optimisation period. For the scenario period we simply used the ISO weekly mean race losses.
 
-Race losses were implemented as well boundary conditions using the `Wel package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/wel.html>`_.
+Race losses were implemented as well boundary conditions using the # todo is it supposed to be Wel or well? `Wel package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/wel.html>`_.
 Well boundary conditions were placed in every model cell that intersected the race shapefiles and the flux was specified as
 10% of the daily race flows spread evenly across every 'race' boundary condition.
 
@@ -826,13 +826,13 @@ There is has been rather minimal gauging data for the various hillside creeks th
 likely that these creeks contribute significantly to the groundwater budget. Recorders were put into Grandview and
 Lagoon Creek during the winter of 2017, so we have a daily data flow record for the period 2017-08-21 to 2021-02-09.
 This period is insufficient for even the optimisation period, let alone the scenario period. In addition there are another
-19 hillside creeks that have not been gauged. We choose to estimate the hillside inflows based on the long term record of
-nearby Lindis River. The Lindis River is a much larger that drains the mountains to the east of Lake Hawea. While the
+19 hillside creeks that have not been gauged. We chose to estimate the hillside inflows based on the long term record of
+nearby Lindis River. The Lindis River is a much larger river that drains the mountains to the east of Lake Hawea. While the
 Lindis River catchment is much larger than the hillside inflows, it drains areas with similar geography and climate and has
-a historical high frequency gauging record at Lindis Peak starting in 1976-09-23. To estimate the hillside inflows used
+a historical high frequency gauging record at Lindis Peak starting in 1976-09-23. To estimate the hillside inflows we used
 the following methodology:
 
-#. We estimated the catchment area (CA) for each of the Hillside catchments that flow into the model domain
+#. We estimated the catchment area (CA) for each of the hillside catchments that flow into the model domain
    using `pysheds <http://mattbartos.com/pysheds/>`_
 #. We manually estimated the Lindis River Catchment above the Lindis Peak recorder (by drawing a shapefile).
    Note we did not use pysheds here as the lower gradient topography in the Lindis River created complications
@@ -844,20 +844,20 @@ the following methodology:
 #. We then conducted a logarithmic regression of the MALF/CA against catchment area (see figure below).  Note that our
    regression predicted a MALF of zero at a catchment area of 0.14 km^2, which is consistent with the behaviour we would
    likely expect.
-#. we then conducted a multiple linear regression of daily flows of the hillside creeks against the independent
+#. We then conducted a multiple linear regression of daily flows of the hillside creeks against the independent
    variables of Lindis River Flow/CA and the predicted MALF/CA. (see figure below) The Root Mean Squared errors for the
    daily and monthly flows at Lagoon Creek and Grandview Creek are shown in the table below.
 #. We then used both of these regressions to predict the daily flows of the hillside creeks for the period of
    1976-09-23 to 2021-06-30. Where the prediction was negative we set the flow to zero.
-#. Finally to reduce the impact of very high flows (where overland flow may not be inconsequential) we set any daily
+#. Finally, to reduce the impact of very high flows (where overland flow may not be inconsequential) we set any daily
    flows greater than the 98th percentile of the daily flows to the 98th percentile.
 
-This methodology certainly has its limitations, regression scores are not as high as we would like, but given the minimal
+This methodology certainly has its limitations. Regression scores are not as high as we would like, but given the minimal
 data this was one of the very few options available. Other options could be based on rainfall-runoff modelling, but this
 would be very complex, and would introduce additional biases associated with the meteorological data and other modelling
 parameters. The root mean squared error of the daily flows at Lagoon Creek and Grandview Creek are presented in the table
 below. Note that the monthly mean flows are much better predicted than the daily flows. Given these
-RSME values we would consider our predictions to be good enough for the modelling process.  In addition
+RSME values we would consider our predictions to be good enough for the modelling process.  In addition,
 we added a parameterised multiplier to the hillside inflows during our model inversion.
 
 ==========  ==================  ==================
@@ -886,11 +886,11 @@ Lagoon      0.024               0.014
 
 Large Hillside Inflows (Grandview and John Creek) implementation
 ^^^^^^^^^
-Both John creek and Grandview Creek can have significant flows, flow directly into Lake Hawea, and sometimes do not
+Both John Creek and Grandview Creek can have significant flows, flow directly into Lake Hawea, and sometimes do not
 lose all of their water to groundwater. Therefore we implemented these using `the stream boundary condition package. <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/str.html>`_.
 This allowed the model to partition the groundwater losses across the length of the stream.  The stream bottom was set
 to 2 m below the model top. The stream bottoms were then adjusted so that they were continuously decreasing downstream.
-the conductance factor was parameterised. The stream flow at the top of the stream was set using the inflow estimates
+The conductance factor was parameterised. The stream flow at the top of the stream was set using the inflow estimates
 described above and the stream stage was set at the smoothed model top (i.e. 2 m above the stream bottom).
 
 
@@ -906,7 +906,7 @@ described above and the stream stage was set at the smoothed model top (i.e. 2 m
 Smaller Hillside inflows (other hillside inflows) implementation
 ^^^^
 All of the smaller inflows were implemented using the `Well package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/wel.html>`_.
-a series of 9 well boundary conditions were placed, centered on model cells that intersected the hillside inflow shapefiles.
+A series of 9 well boundary conditions were placed, centered on model cells that intersected the hillside inflow shapefiles.
 The flux was set to the daily hillside inflow estimate divided by 9 and spread evenly across the 9 well boundary conditions.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/stress_period_data/well_hill_time.png

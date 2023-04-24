@@ -106,7 +106,7 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
     -  `supporting_data_analysis <model_build/supporting_data_analysis>`_: scripts to support creating the boundary condition data and structure
         -  `all_wells.py <model_build/supporting_data_analysis/all_wells.py>`_: a script to get all the well location data
         -  `base_concept_diagram.py <model_build/supporting_data_analysis/base_concept_diagram.py>`_: a script to build a base concept diagram of the 3D model structure
-        -  `compare_met_era5land.py <model_build/supporting_data_analysis/compare_met_era5land.py>`_: compare precipitation and PET between the available meteorological station and the ERA5-land data
+        -  `compare_met_era5land.py <model_build/supporting_data_analysis/compare_met_era5land.py>`_: compare precipitation and PET between the available met station and the ERA5-land data
         -  `explore_structure.py <model_build/supporting_data_analysis/explore_structure.py>`_:
         -  `get_era_5_land.py <model_build/supporting_data_analysis/get_era_5_land.py>`_: script to get ERA5-land data
         -  `get_pumping_data.py <model_build/supporting_data_analysis/get_pumping_data.py>`_: get and process historical pumping data
@@ -115,7 +115,7 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `lake_data.py <model_build/supporting_data_analysis/lake_data.py>`_: get and process the historical lake data
         -  `map_flowmeter_to_wells.py <model_build/supporting_data_analysis/map_flowmeter_to_wells.py>`_: a process to map the flowmeter data to the most likely well
         -  `plot_borelogs.py <model_build/supporting_data_analysis/plot_borelogs.py>`_:  a process to plot the borelogs in the model
-        -  `recharge_model.py <model_build/supporting_data_analysis/recharge_model.py>`_: develop and create LSR estimates from meteorological and ERA5-land data
+        -  `recharge_model.py <model_build/supporting_data_analysis/recharge_model.py>`_: develop and create LSR estimates from met and ERA5-land data
         -  `river_data.py <model_build/supporting_data_analysis/river_data.py>`_: : a process to get and process the river data
     -  `modflow_model.py <model_build/modflow_model.py>`_: a script to build a MODFLOW model instance
     -  `utils.py <model_build/utils.py>`_: a script to define some utility functions
