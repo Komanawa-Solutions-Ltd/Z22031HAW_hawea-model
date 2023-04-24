@@ -13,13 +13,13 @@ Hawea Transient groundwater model (Hawea Model)
 :Purpose: This document describes the Hawea Model repo
 
 
-The Hawea model domain; the inactive portions of the model are coloured grey. The model domain is a 3D model of the Hawea
-aquifer systems including the Mangawera Valley.
-The model domain is bounded by Lake Hawea to the North the Clutha River to
-the South, and the hillslopes to the East and West The model domain is
+The Hawea model domain; the inactive portions of the model are coloured dark grey. The model domain is a 3D model of the Hawea
+aquifer systems including the Maungawera Valley.
+The model domain is bounded by Lake Hawea to the North, the Clutha River to
+the South, and the hillslopes to the East and West. The model domain is
 17 km by 23.5 km. The model cell spacing is 100 m and the model is on a
 regular North-South grid.
-The model is loosely based on the 2D model of the Hawea aquifer system developed by Wilson et al, (2011)
+The model is loosely based on the 2D model of the Hawea aquifer system developed by Wilson et al, (2011).
 
 Index
 =====
@@ -36,17 +36,17 @@ its methodology and, where applicable, the results of the step:
 1.  `Model build <model_build/README.rst>`_: build the model structure and boundary conditions
 2.  `Model targets <targets_and_sensitive_sites/README.rst>`_: define the model targets and objective function
 3.  `Model Parameterisation <model_parameterisation/README.rst>`_: define the initial model parameters and parameterisation
-4.  `Model Optimisation and limitations <optimisation/README.rst>`_: optimize the model to the available data
+4.  `Model Optimisation and limitations <optimisation/README.rst>`_: optimise the model to the available data
 5.  `Model Scenarios <Scenarios/README.rst>`_: run a series of scenarios to better understand the model behaviour and to predict the systems response to changing conditions
 
 Modelling Software
 ===================
-Most of the model was produced using open source python packages and the Modflow suite. Specifically the model was built
-using Modflow NWT, optimised using PEST, and scenarios were run in MT3DMS-usgs.
+Most of the model was produced using open source Python packages and the MODFLOW suite. Specifically the model was built
+using MODFLOW NWT, optimised using PEST, and scenarios were run in MT3DMS-usgs.
 
 Python Environment
 ==================
-This model was developed in python on linux (ubuntu 20.04).  The python environment was created using the anaconda package manager.
+This model was developed in Python on linux (ubuntu 20.04).  The Python environment was created using the Anaconda package manager.
 The environment was created using the following command: ::
 
     conda create -c conda-forge --name hawea python numpy pandas pytables openpyxl matplotlib scipy netcdf4 psutil geopandas flopy pysheds scikit-learn py7zr
@@ -57,25 +57,25 @@ The environment was created using the following command: ::
     pip install fpdf
     pip install pdfkit
 
-In addition to the creation code above. the repo environment was exported in:
+In addition to the creation code above, the repo environment was exported in:
 
 -  `environment.yml <environment.yml>`_
 -  `environment.txt <environment.txt>`_
 
-Git repo structure
+Github repo structure
 ==================
 
 The full modelling process for the Hawea model was undertaken within
 this Github repo. The only exceptions are several large datasets
 (LIDAR/DEMs) which were simplified (code in repo) and then the
-simplified product was saved in the Github Repo. This means that no
+simplified product was saved in the Github repo. This means that no
 external datasets are necessary to completely recreate the Hawea model
-and the full methodology is present in this Repo.
+and the full methodology is present in this repo.
 
 Comment keyword standards:
 ---------------
 
-We have used a number of multiple keywords (case insensitive) to support identifying important comments within the text. These are:
+We have used a number of keywords (case insensitive) to support identifying important comments within the text. These are:
 
 -  TODO: A comment that identifies a task that needs to be completed
 -  FIXME: A comment that identifies a problem that needs to be fixed
@@ -83,13 +83,13 @@ We have used a number of multiple keywords (case insensitive) to support identif
 -  OPEN SOURCE IMPROVE: A comment that identifies a potential improvement to existing open source code repos
 
 At this point only KEYNOTE and OPEN SOURCE IMPROVE should remain in the repo, however it is possible that some
-TODOs and FIXMEs will remain accidentally, note that these have been delt with, but accidentally were not removed from the code.
-Many IDEs have a search function that can be used to find these keywords, which we would encourage you to use.
+TODOs and FIXMEs will remain accidentally. Note that these have been dealt with, but were accidentally not removed from the code.
+Many IDEs have a search function that can be used to find these keywords, which we encourage you to use.
 
 Repo index
 ----------
 Below is a rough guide to the repo structure. Not every file in the repo is described.  Often the best way to find out
-the information a file contains is to look through the appropriate python function and read the docstrings.
+what information a file contains is to look through the appropriate Python function and read the docstrings.
 The repo has been documented to a reasonable extent, but there is still
 some work that could be done to make the repo more user friendly.
 If you have any questions please contact Matt Dumont (matt@komanawa.com)
@@ -105,8 +105,8 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
     -  `get_boundary_condition_data.py <model_build/get_boundary_condition_data.py>`_: a script to get the boundary condition data
     -  `supporting_data_analysis <model_build/supporting_data_analysis>`_: scripts to support creating the boundary condition data and structure
         -  `all_wells.py <model_build/supporting_data_analysis/all_wells.py>`_: a script to get all the well location data
-        -  `base_concept_diagram.py <model_build/supporting_data_analysis/base_concept_diagram.py>`_: a script to build a base concept diagram of the 3d model structure
-        -  `compare_met_era5land.py <model_build/supporting_data_analysis/compare_met_era5land.py>`_: compare precip and PET between the available met station and the ERA5 land data
+        -  `base_concept_diagram.py <model_build/supporting_data_analysis/base_concept_diagram.py>`_: a script to build a base concept diagram of the 3D model structure
+        -  `compare_met_era5land.py <model_build/supporting_data_analysis/compare_met_era5land.py>`_: compare precipitation and PET between the available meteorological station and the ERA5-land data
         -  `explore_structure.py <model_build/supporting_data_analysis/explore_structure.py>`_:
         -  `get_era_5_land.py <model_build/supporting_data_analysis/get_era_5_land.py>`_: script to get ERA5-land data
         -  `get_pumping_data.py <model_build/supporting_data_analysis/get_pumping_data.py>`_: get and process historical pumping data
@@ -115,9 +115,9 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `lake_data.py <model_build/supporting_data_analysis/lake_data.py>`_: get and process the historical lake data
         -  `map_flowmeter_to_wells.py <model_build/supporting_data_analysis/map_flowmeter_to_wells.py>`_: a process to map the flowmeter data to the most likely well
         -  `plot_borelogs.py <model_build/supporting_data_analysis/plot_borelogs.py>`_:  a process to plot the borelogs in the model
-        -  `recharge_model.py <model_build/supporting_data_analysis/recharge_model.py>`_: develop and create LSR estimates from met and ERA5-land data
+        -  `recharge_model.py <model_build/supporting_data_analysis/recharge_model.py>`_: develop and create LSR estimates from meteorological and ERA5-land data
         -  `river_data.py <model_build/supporting_data_analysis/river_data.py>`_: : a process to get and process the river data
-    -  `modflow_model.py <model_build/modflow_model.py>`_: a script to build a modflow model instance
+    -  `modflow_model.py <model_build/modflow_model.py>`_: a script to build a MODFLOW model instance
     -  `utils.py <model_build/utils.py>`_: a script to define some utility functions
     -  `zones.py <model_build/zones.py>`_: a script to define indicative model zones
 -  `model_parameterisation <model_parameterisation>`_:  model parameterisation and implementation
@@ -132,9 +132,9 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
     -  `optimised_parameter_sets <model_parameterisation/optimised_parameter_sets>`_: optimised parameter sets
         - `3d_v1a_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1a_opt.par>`_: optimised parameter set for the 3D model version 1a
         - `3d_v1b_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1b_opt.par>`_: optimised parameter set for the 3D model version 1b
-        - `3d_v1d_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1d_opt.par>`_: optimised parameter set for the 3D model version 1d
+        - `3d_v1d_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1d_opt.par>`_: optimised parameter set for the 3D model version 1d #todo just checking if this should be d or c?
     -  `parameter_map.png <model_parameterisation/parameter_map.png>`_: a map of the model parameters
--  `targets_and_sensitive_sites <targets_and_sensitive_sites>`_: Target development and data
+-  `targets_and_sensitive_sites <targets_and_sensitive_sites>`_: target development and data
     -  `README.rst <targets_and_sensitive_sites/README.rst>`_ : readme document detailing the methods and data used to develop the targets
     -  `model_output.py <targets_and_sensitive_sites/model_output.py>`_: script to extract consistent model outputs and plots
     -  `get_raw_target_data.py <targets_and_sensitive_sites/get_raw_target_data.py>`_:  ingest raw target data
@@ -145,40 +145,40 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
     -  `target_structure_checks.py <targets_and_sensitive_sites/target_structure_checks.py>`_: checks to ensure that the targets and the model structure were not mutually exclusive
     -  `base_data <targets_and_sensitive_sites/base_data>`_: base input data for the targets
     -  `processed_data <targets_and_sensitive_sites/processed_data>`_: processed target data, this was developed from the raw data in the base_data folder
--  `optimisation <optimisation>`_:  Optimisation code and results
-    -  `README.rst <optimisation/README.rst>`_: readme document detailing the optimization process and methodology
-    -  Pest optimisation build, run, and post processing scripts
-        -  `build_optimisation.py <optimisation/build_optimisation.py>`_: script and functions to build the pest files
-        -  `a_build_run_optimisation_version.py <optimisation/a_build_run_optimisation_version.py>`_: build and run a pest optimisation
-        -  `run_opt_step_models.py <optimisation/run_opt_step_models.py>`_:  run the step models from a pest optimisation
+-  `optimisation <optimisation>`_:  optimisation code and results
+    -  `README.rst <optimisation/README.rst>`_: readme document detailing the optimisation process and methodology
+    -  PEST optimisation build, run, and post processing scripts
+        -  `build_optimisation.py <optimisation/build_optimisation.py>`_: script and functions to build the PEST files
+        -  `a_build_run_optimisation_version.py <optimisation/a_build_run_optimisation_version.py>`_: build and run a PEST optimisation
+        -  `run_opt_step_models.py <optimisation/run_opt_step_models.py>`_:  run the step models from a PEST optimisation
         -  `manual_optimisations <optimisation/manual_optimisations>`_:  manual optimisations that were run, in the end these never contributed more than some information to the modeller
-        -  `model_utils_for_forward_run.py <optimisation/model_utils_for_forward_run.py>`_: functions to build and run a model from pest parameter files
+        -  `model_utils_for_forward_run.py <optimisation/model_utils_for_forward_run.py>`_: functions to build and run a model from PEST parameter files
         -  `compare_parameterisations.py <optimisation/compare_parameterisations.py>`_: script to compare parameters across multiple parameter files
         -  `hawea_plot_optimisation.py <optimisation/hawea_plot_optimisation.py>`_: script to plot the optimisation results
-        -  `plot_multiple_high_freq.py <optimisation/plot_multiple_high_freq.py>`_: script to plot multiple high frequency observations for given pest obs files
+        -  `plot_multiple_high_freq.py <optimisation/plot_multiple_high_freq.py>`_: script to plot multiple high frequency observations for given PEST obs files
     -  Manage optimisation period:
         -  `determine_opt_start.py <optimisation/determine_opt_start.py>`_: script to determine the start and end of the optimisation period
         -  `optimisation_period.py <optimisation/optimisation_period.py>`_: script to manage and hold the information about the optimisation period
     -  Optimisation Results
         -  `optimisation_results <optimisation/optimisation_results>`_: results for the optimisation holding all of the pest input and output files
-            -  `3d_v1a <optimisation/optimisation_results/3d_v1a>`_:  optimisation results for the 3d model version 1a
-            -  `3d_v1b <optimisation/optimisation_results/3d_v1b>`_:  optimisation results for the 3d model version 1b
-            -  `3d_v1d <optimisation/optimisation_results/3d_v1d>`_:  optimisation results for the 3d model version 1d (final model)
-        -  `final_opt_models <optimisation/final_opt_models>`_:  The final optimised model files
-            -  `3d_v1a <optimisation/final_opt_models/3d_v1a>`_: final optimised model files for the 3d model version 1a
-            -  `3d_v1b <optimisation/final_opt_models/3d_v1b>`_: final optimised model files for the 3d model version 1b
-            -  `3d_v1d <optimisation/final_opt_models/3d_v1d>`_: final optimised model files for the 3d model version 1d (final model)
-            -  `compress_uncompress_model.py <optimisation/final_opt_models/compress_uncompress_model.py>`_:  utilities to compress and uncompress the model files so they could be included in the git repo (50mb limit)
-    -  computational support files
-        -  `compile_pest <optimisation/compile_pest>`_: compile pest for linux
-        -  `pest_run_data <optimisation/pest_run_data>`_: static data needed by pest to run the model
-        -  `git_setup.sh <optimisation/git_setup.sh>`_: script to setup the git repo for the optimisation on a machine
+            -  `3d_v1a <optimisation/optimisation_results/3d_v1a>`_:  optimisation results for the 3D model version 1a
+            -  `3d_v1b <optimisation/optimisation_results/3d_v1b>`_:  optimisation results for the 3D model version 1b
+            -  `3d_v1d <optimisation/optimisation_results/3d_v1d>`_:  optimisation results for the 3D model version 1d (final model) #todo same as above, just checking this is meant to be d and not c
+        -  `final_opt_models <optimisation/final_opt_models>`_:  the final optimised model files
+            -  `3d_v1a <optimisation/final_opt_models/3d_v1a>`_: final optimised model files for the 3D model version 1a
+            -  `3d_v1b <optimisation/final_opt_models/3d_v1b>`_: final optimised model files for the 3D model version 1b
+            -  `3d_v1d <optimisation/final_opt_models/3d_v1d>`_: final optimised model files for the 3D model version 1d (final model)
+            -  `compress_uncompress_model.py <optimisation/final_opt_models/compress_uncompress_model.py>`_:  utilities to compress and uncompress the model files so they could be included in the Git repo (50mb limit)
+    -  Computational support files
+        -  `compile_pest <optimisation/compile_pest>`_: compile PEST for linux
+        -  `pest_run_data <optimisation/pest_run_data>`_: static data needed by PEST to run the model
+        -  `git_setup.sh <optimisation/git_setup.sh>`_: script to setup the Git repo for the optimisation on a machine
     - Model overview
-        -  `pre_optimisation_overview.py <optimisation/pre_optimisation_overview.py>`_: make a pre optimisation overview plots
+        -  `pre_optimisation_overview.py <optimisation/pre_optimisation_overview.py>`_: make pre optimisation overview plots
         -  `make_preopt_slideshow.py <optimisation/make_preopt_slideshow.py>`_: make a pre optimisation slideshow
-        -  `pre_optimisation_plots_png <optimisation/pre_optimisation_plots_png>`_: pre optimisation plots of boundary conditions, targets, parameterization, and other supporting work, many of these figures are referenced in the various readme.rst files
+        -  `pre_optimisation_plots_png <optimisation/pre_optimisation_plots_png>`_: pre optimisation plots of boundary conditions, targets, parameterisation, and other supporting work, many of these figures are referenced in the various readme.rst files
         -  `make_opt_presentation.py <optimisation/make_opt_presentation.py>`_: make a presentation of the optimisation results for a meeting
--  `Scenarios <Scenarios>`_: Scenario modelling code and results
+-  `Scenarios <Scenarios>`_: scenario modelling code and results
     -  `README.rst <Scenarios/README.rst>`_: document describing the scenario modelling methods and results
     -   Scenario development and supporting scripts
         -  `scen_period.py <Scenarios/scen_period.py>`_: script to handle the scenario period
@@ -191,11 +191,11 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `run_flow_scenario.py <Scenarios/run_flow_scenario.py>`_: script to run a flow scenario
         -  `run_scenario.py <Scenarios/run_scenario.py>`_: script to run a scenario (in multiprocessing)
     -  Model information and MT3D indicator modelling
-        -  `run_mt3d_scenario.py <Scenarios/run_mt3d_scenario.py>`_:  Script to support running MT3D
+        -  `run_mt3d_scenario.py <Scenarios/run_mt3d_scenario.py>`_:  script to support running MT3D
         -  `mt3d_indicator_scens.py <Scenarios/mt3d_indicator_scens.py>`_: script to run MT3D indicator scenarios
         -  `compare_boundary_sensitivity.py <Scenarios/compare_boundary_sensitivity.py>`_: compare the results of the boundary condition sensitivity analysis
         -  `model_info_scenarios.py <Scenarios/model_info_scenarios.py>`_: script to run model information scenarios
-        -  `model_info_scen_results <Scenarios/model_info_scen_results>`_: Model results and plots for model information scenarios
+        -  `model_info_scen_results <Scenarios/model_info_scen_results>`_: model results and plots for model information scenarios
             -  `0_results <Scenarios/model_info_scen_results/0_results>`_: plots for model information scenarios
             -  {scenario name}: Model results for model information scenarios: input and output data for the scenario
         -  `mt3d_indicator_scenarios <Scenarios/mt3d_indicator_scenarios>`_: model results and plots for the MT3D scenarios
@@ -203,7 +203,7 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `low_lake_scenario_data.py <Scenarios/low_lake_scenario_data.py>`_: script to develop typological lake levels and perturbations
         -  `low_lake_scenarios.py <Scenarios/low_lake_scenarios.py>`_: script to run low lake scenarios
         -  `compare_low_lake.py <Scenarios/compare_low_lake.py>`_: script to compare low lake scenarios
-        -  `low_lake_scenarios <Scenarios/low_lake_scenarios>`_: Model results and plots for low lake scenarios
+        -  `low_lake_scenarios <Scenarios/low_lake_scenarios>`_: model results and plots for low lake scenarios
             -  `0_results <Scenarios/low_lake_scenarios/0_results>`_: plots for low lake scenarios
             -  {scenario name}: Model results for low lake scenarios: input and output data for the lake scenario
     - Allocation modelling
@@ -212,9 +212,9 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `allocation_scenarios.py <Scenarios/allocation_scenarios.py>`_: script to develop all allocation scenarios and to run the non-gridded allocation scenarios
         -  `run_grid_allocation.py <Scenarios/run_grid_allocation.py>`_: script to run the gridded allocation scenarios
         -  `compare_allocation_scens.py <Scenarios/compare_allocation_scens.py>`_: script to compare allocation scenarios
-        -  `allocation_scenarios <Scenarios/allocation_scenarios>`_:  Model results for allocation scenarios
-        -  `allocation_results <Scenarios/allocation_results>`_: Plots of allocation results
-            -  `old_allo_zones.png <Scenarios/allocation_results/old_allo_zones.png>`_: figure of the old allocation zones (wilson et al 2012)
+        -  `allocation_scenarios <Scenarios/allocation_scenarios>`_:  model results for allocation scenarios
+        -  `allocation_results <Scenarios/allocation_results>`_: plots of allocation results
+            -  `old_allo_zones.png <Scenarios/allocation_results/old_allo_zones.png>`_: figure of the old allocation zones (Wilson et al., 2012)
             -  `new_allo_zones.png <Scenarios/allocation_results/new_allo_zones.png>`_: figure of the new allocation zones
             -  `Hawea Flat_results <Scenarios/allocation_results/Hawea Flat_results>`_: results for the gridded Hawea Flat allocation scenarios
             -  `Maungawera Flat_results <Scenarios/allocation_results/Maungawera Flat_results>`_: results for the gridded Maungawera Flat allocation scenarios
@@ -222,12 +222,12 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
             -  `nat_current_full <Scenarios/allocation_results/nat_current_full>`_: results for the naturalised, current allocation, and full allocation scenarios
             -  `Te Awa_results <Scenarios/allocation_results/Te Awa_results>`_: results for the gridded Te Awa allocation scenarios
             -  `Terrace-River_results <Scenarios/allocation_results/Terrace-River_results>`_: results for the gridded Terrace-River allocation scenarios
-            -  `mangawera_valley <Scenarios/allocation_results/mangawera_valley>`_: results for the Mangawera Valley allocation reduction scenarios
+            -  `mangawera_valley <Scenarios/allocation_results/mangawera_valley>`_: results for the Maungawera Valley allocation reduction scenarios
             -  `allo_zone_rch <Scenarios/allocation_results/allo_zone_rch>`_: results comparing LSR, hillside inflows, and allocation for each zone
             -  `example_quantile_plots <Scenarios/allocation_results/example_quantile_plots>`_: example quantile plots for the allocation scenarios to support presentations
     -  Wetland Setback Modelling
-        -  `wetland_setback_campbells <Scenarios/wetland_setback_campbells>`_: Wetland setback modelling for Campbells wetland scripts and results
-        -  `wetland_setback_butterfield <Scenarios/wetland_setback_butterfield>`_: Wetland setback modelling for Butterfield wetland scripts and results
+        -  `wetland_setback_campbells <Scenarios/wetland_setback_campbells>`_: wetland setback modelling for Campbells wetland scripts and results
+        -  `wetland_setback_butterfield <Scenarios/wetland_setback_butterfield>`_: wetland setback modelling for Butterfield wetland scripts and results
 -  `support_figures <support_figures>`_: supporting figures for this and other README.rst documents
 -  `dummy_packages <dummy_packages>`_: dummy packages for the proprietary packages used in the model, these packages have some, but not all of functionality of the original packages
 
@@ -237,20 +237,20 @@ Supporting data index
 
 Proprietary packages
 --------------------
-For the most part we relied on open source packages to create the hawea model, but we did use some proprietary in
+For the most part we relied on open source packages to create the Hawea model, but we did use some proprietary in
 house packages. These packages are not included in this repository, but we have included dummy packages that
 contain the same structure as the original packages and replicates some of the functionality.
-These dummy packages are located in the `dummy_packages
+These dummy packages are located in the `dummy_packages #todo finish sentence?
 
 Additionally, to ensure future use of this model we have included outputs of the data which
-necessitated teh use of the proprietary packages. These outputs are located in the `processed_input_data` folders.
+necessitated the use of the proprietary packages. These outputs are located in the `processed_input_data` folders.
 The functions that use these packages to develop the outputs tend to follow are "recalc" structure, that is: ::
 
         def get_data(*args, **kwargs, recalc=False):
             save_path = processed_data_dir.joinpath('data.csv') # path in the processed data folder where the outputs are saved
             if save_path.exists() and not recalc:
                 # read the data from the saved path and return it
-                # sometimes addtional processing (e.g. other args) is done after loading the data
+                # sometimes additional processing (e.g. other args) is done after loading the data
                 return pd.read_csv(save_path)
             else:
                 # the process by which the data was generated
@@ -265,8 +265,8 @@ the data use (e.g. in a model) explicit.  This prevents the 'black box' problem 
 generated by a different process and then ingested into the model.
 
 
-Excluding a full model re-build, these proprietary packages should not be needed; however If the user wishes to run the model with the proprietary packages
-or to generate a next generation with the proprietary packages they are encouraged to contact the authors of this model: matt@komanawa.com
+Excluding a full model re-build, these proprietary packages should not be needed; however, if the user wishes to run the model with the proprietary packages
+or to generate a next generation with the proprietary packages they are encouraged to contact the author of this model: matt@komanawa.com
 
 The proprietary packages used in this model are:
 
@@ -297,7 +297,7 @@ Branches and releases
 The process of the model optimisation required multiple structural
 changes to the model as well as changes to the objective function to
 attain a satisfactory history match. These different structures and
-changes were all set up as unique branches within the Repo. For more
+changes were all set up as unique branches within the repo. For more
 information on branches see `github’s explanation of
 branches <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches>`__.
 At the end of the calibration process there were 24 unique branches,
@@ -314,7 +314,7 @@ Main (3d_v1d)
 ~~~~~~~~~~~~~
 
 -  The ‘final’ optimised model.
--  Contains 3d structure around the Lake Hawea Moraine
+-  Contains 3D structure around the Lake Hawea Moraine
 -  Best fits for the high frequency targets.
 -  Bund elevation set to 335 msl
 -  NGMP well head observations removed from objective function as there
@@ -334,18 +334,18 @@ Main (3d_v1d)
 3d_v1b
 ~~~~~~
 
--  Identical to “3d_v1a” except that the Bund elevation was set to 333
+-  Identical to “3d_v1a” except that the bund elevation was set to 333
    MSL.
 -  history matching results were similar to “3d_v1a” suggesting that the
    bund elevation is largely non-unique
--  retained to demonstrate the non-uniqueness of the 3d structure
+-  retained to demonstrate the non-uniqueness of the 3D structure
 
 terrace_only
 ~~~~~~~~~~~~
 
--  This model structure only includes the high terrace (south of Hawea
-   Flat) to the clutha river
--  this optimisation was undertaken to see if the high terrace could be
+-  This model structure only includes the High Terrace (south of Hawea
+   Flat) to the Clutha river
+-  this optimisation was undertaken to see if the High Terrace could be
    history matched (within the accepted parameter ranges) in isolation
    from the rest of the Hawea aquifer system.
 -  History matching was not achieved.
@@ -356,7 +356,7 @@ previous branches (releases)
 There are many previous branches that were issued as pre releases and
 then deleted (effectively archived). There should be no reason for other
 users to delve into these previous branches as they ended up with
-unsatisfactory history matching; however they are available and briefly
+unsatisfactory history matching; however, they are available and briefly
 described below (working notes) for completeness.
 
 1.  Main (before 2/11/22) The main build branch. First structural
@@ -364,7 +364,7 @@ described below (working notes) for completeness.
 
 2.  Structure v2, Changes:
 
-    -  Increase parameterization via pilot points to Mangawera
+    -  Increase parameterisation via pilot points to Maungawera
     -  Add recharge multiplier pilot points across model (NI)
     -  Remove sandy point from model
     -  abandoned but retained
@@ -424,7 +424,7 @@ described below (working notes) for completeness.
     -  Implement grandview and john creek (+Hawea and Clutha) as str
        package
     -  Lake stage vs g40_0415
-    -  Looks fine, honestly the fact that them model isn’t’ matching it
+    -  Looks fine, honestly the fact that them model isn’t matching it
        suggests some sort of structural error. Reworked transport in
        grandview stream?/ water through grandview stream??? Likely the
        problem google maps shows water in grandview to the lake (and in
@@ -440,19 +440,19 @@ described below (working notes) for completeness.
     -  NE hillside area (done)
     -  Near clutha river (done)
     -  I think I need some more pilot points
-    -  Near pt 402 on camp hill moraine (move mangawera south?) ()
+    -  Near pt 402 on camp hill moraine (move Maungawera south?) ()
        and another in the moraine (to interpolate with other river group
     -  To stop dry cells south of camp hill moraine
     -  Significant number in the hillslope area just off the bounds to
        allow conductivity to fall there if needed for stability. And to
        manage the change in geologic setting near hillslope
     -  Adjust some locations based on the new pilot point locations
-    -  New rivergroup south of mangawera valley entrance to allow for
+    -  New rivergroup south of Maungawera valley entrance to allow for
        the difference between the two settings
     -  Additional point in the middle of the terrace to manage near
        hillside environment.
     -  Try lowering hillside conductance → set to 100 vs 1000 for
-       hawea/clutha, which means much of the peak flow does does not
+       Hawea/Clutha, which means much of the peak flow does does not
        make it into the model.
 
 12. Structure_v11
@@ -462,12 +462,12 @@ described below (working notes) for completeness.
     -  Lower sy, and lower sy bounds
     -  Change weights (lower low frequency targets)
     -  Bit of a hail mary before the weekend
-    -  retired (even though I’m happy with the parameterization. If I
+    -  retired (even though I’m happy with the parameterisation. If I
        want to change back to vll parameters do it from v12
 
 13. Structure_v12
 
-    -  Increase kh/sy parameterization in the near lake environment
+    -  Increase kh/sy parameterisation in the near lake environment
 
 14. p_lake
 
@@ -480,7 +480,7 @@ described below (working notes) for completeness.
 15. lake_bar
 
     -  Add a 1 cell thick barrier for kh
-    -  Remove additional v12 parameterization
+    -  Remove additional v12 parameterisation
 
 16. cond_int
 
@@ -489,7 +489,7 @@ described below (working notes) for completeness.
 
 17. 3d_v1
 
-    -  Address the 3d moraine issues in structure
+    -  Address the 3D moraine issues in structure
     -  3 layers the bottom two pinch out against the bottom of the
        model.
     -  well management
