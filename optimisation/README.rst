@@ -1,18 +1,13 @@
 Hawea Transient groundwater model (Hawea Model) build optimisation and results
 ############################################################################
 
-.. figure:: ../support_figures/model_2d_boundary_conditions.png # todo replace 
+.. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/obs_plots/phi_plot.png
    :height: 650 px
    :align: center
 
 .. class::
 
-    *Figure: Overview of model boundary conditions*
-
-# todo mash up of these:
-optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/obs_plots/residual_h_hf.png
-optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/obs_plots/phi_plot.png
-optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/regular_hds_closeup/hds_closeup_h_g40_0415.png
+    *Figure: Model objective function over the optimisation*
 
 :Author:  Matt Dumont
 :Date:  2021-11-02
@@ -118,6 +113,10 @@ are listed below:
 - PEST allowed model failures in derivative calculation (`derforgive = 'derforgive'`)
 - PEST was run with singular value decomposition (`svdmode = 1`)
 - The eigenvalue threshold for svd was set to  5e-7 (`svd_dataeigthresh = 5e-7`)
+
+Defining the Optimisation Period
+================================
+#todo
 
 Standard optimisation outputs
 =============================
@@ -244,7 +243,15 @@ responses to Lake Hawea level if the Lake falls below a threshold value.
 
 Terrace only model (2D) optimisation results
 ==============================================
-# todo
+# todo - add some text here
+
+.. figure:: ../support_figures/model_terrace_only_compare.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: Comparison of the terrace only model and the 3d_v1a model at the south end of the High terrace*
 
 3 layer model (3D) optimisation results
 =======================================
@@ -514,15 +521,33 @@ To uncompress the 3d_v1d model to your downloads folder can use the following co
 
 Model limitations
 =================
-# todo
-- lack of piezo survey during the optimisation period.
-- limited data for hill fed streams
-- non unique parameterization
-- non unique model structure
-- area to the east of grandview fault
-- te awa zone
-- mangaweara flat zone
+There are a number of limitations to this model and the model optimisation. The main limitations are:
 
+- **A non-unique model structure**: Because the complex structure in the Moraine zone is not well constrained by the data
+  we have assumed a model structures. It is likely that some of the parameters in the model are compensating for this
+  model structural error, which may have flow on effects, particularly for scenarios that are well outside the model optimisation
+  conditions.
+- **A non-unique parameterisation**: the PEST optimisation process is a poorly posed problem (that is there is not enough observations
+  to calculate a unique solution to the model parameters). This means that there are multiple solutions to the model parameters
+  that represent a good fit to the observations. This model has not undergone a parameter uncertainty process so we cannot
+  predict the likely range or implications of the parameter uncertainty. In addition the uncertainty of the model parameters
+  is compounded by the uncertainty in the model structure. There are likely many other model structure/parameter sets
+  that would fit the observations as well as this model.
+- **Area to the east of grandview fault**: The model has persistent dry cells to the east of the inferred location of the Grandview fault.
+  This is likely due a combination of model structural and parameterisation errors. The results from this area should
+  not be used and there is currently insufficient data to produce a trustworthy model in this area.
+- **Limited data for hillside streams**: The hillside streams are a major source of water to the Hawea aquifer systems,
+  but we only have observations from two gauging sites for a limited period of time. We estimated the inflows from a
+  a correlation with the Lindis River; however both of the gauged streams are of similar size so the correlation may not
+  hold for the smaller hillside streams.
+- **Piezometric survey date**: the only piezometric survey conducted for the Hawea aquifer system was conducted in Sept
+  of 2011. This survey was conducted outside our optimisation period (we did not have adequate abstraction information
+  to conduct the model optimisation during 2011). A significant portion of the model domain therefore does not have any
+  observations taken during the optimisation period, which adds another source of uncertainty to these areas of the model.
+- **Parameterisation near Butterfield Reserve**: Butterfield Reserve is a sensitive wetland in an old oxbow of the Hawea
+  River. The final parameterisation in this area is for a very low hydraulic conductivity which likely underestimates
+  the degree of connectivity between Butterfield Reserve and the Hawea River. Model results here should be used with
+  caution.
 
 Recommended additional data
 ==========================

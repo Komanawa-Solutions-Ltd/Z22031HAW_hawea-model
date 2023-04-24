@@ -311,6 +311,68 @@ def hill_params():
     pass
 
 
+def terrace_only_plot():
+    from targets_and_sensitive_sites.head_targets import base_regular_groupnames, plot_hds_regular_locator
+    from model_build.supporting_data_analysis import get_lake_heads
+    from matplotlib import gridspec
+    from optimisation.optimisation_period import tdis
+    n = 'g40_0366'
+    nc = 'red'
+    lss = ['dashed', 'solid']
+    names = ['terrace_only', '3d_v1d']
+    from project_base import proj_root
+    f = '/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/Final_opt_model/observations.dat'
+    hds_obs = pd.read_csv(f, sep='\t')
+    hds_obs.rename(columns={e: e.lower() for e in hds_obs.keys()}, inplace=True)
+    hds_obs.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs.loc[:, 'name']]
+    hds_obs.loc[:, 'modelled_3d_v1d'] = hds_obs.loc[:, 'modelled']
+
+    f = '/home/matt_dumont/unbacked/hawea/terrace_only/init_terrace_only/Optimisations/Final_opt_model/observations.dat'
+    hds_obs2 = pd.read_csv(f, sep='\t')
+    hds_obs2.rename(columns={e: e.lower() for e in hds_obs.keys()}, inplace=True)
+    hds_obs2.loc[:, 'well_name'] = [f'{"_".join(e.split("_")[:-1])}' for e in hds_obs2.loc[:, 'name']]
+
+    hds_obs2.set_index('name', inplace=True)
+    hds_obs.set_index('name', inplace=True)
+    hds_obs.loc[:, 'modelled_terrace_only'] = hds_obs2.loc[:, 'modelled']
+
+    mapper = {'h_piezo': 'h_piezo',
+              'h_single_3': 'h_single_3',
+              'h_single_1': 'h_single_1'}
+    mapper.update({k: 'regular' for k in base_regular_groupnames})
+    hds_obs.loc[:, 'group'] = hds_obs.loc[:, 'group'].replace(mapper)
+    hds_obs.loc[:, 'date'] = tdis.get_date(hds_obs.loc[:, 'nper'])
+    regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
+    regular_hds.loc[:, 'modelled_3d_v1d'] = regular_hds.loc[:, 'modelled']
+
+
+    fig = plt.figure(figsize=(14, 9))
+    gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1), height_ratios=(3, 1))
+    ax = fig.add_subplot(gs[0, 0])
+    ax_lake = fig.add_subplot(gs[1, 0])
+    ax_loc = fig.add_subplot(gs[0, 1])
+    temp2 = regular_hds.loc[regular_hds.well_name == f'h_{n}'].sort_values('date')
+    ax.scatter(temp2.date, temp2.measured, color=nc, label=f'{n.capitalize()} measured')
+    for ls, nn in zip(lss, names):
+        ax.plot(temp2.date, temp2[f'modelled_{nn}'], color=nc, label=f'{n.capitalize()} {nn} modelled',
+                ls=ls)
+    plot_hds_regular_locator(ax_loc, {n: nc})
+    lake = get_lake_heads(temp2.date.min(), temp2.date.max())
+    ax_lake.plot(lake.index, lake, label='lake heads')
+    ax_lake.set_ylabel('lake heads (m)')
+    ax_lake.set_xlim(ax.get_xlim())
+    ax.set_xticks([])
+    ax.set_xticklabels([])
+    ax.set_xlabel('')
+    ax.set_title(f'{n.capitalize()} hds')
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Weekly mean Head (m)')
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_terrace_only_compare.png'))
+    plt.show()
+
+
 if __name__ == '__main__':
     # model_2d_structure_plots()
     # boundary_condition_figure()
@@ -321,5 +383,6 @@ if __name__ == '__main__':
     # plot_all_targets()
     # wetlands()
     # plot_regular()
-    hill_params()
+    # hill_params()
+    terrace_only_plot()
     pass

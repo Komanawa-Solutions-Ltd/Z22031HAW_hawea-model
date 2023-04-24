@@ -105,8 +105,8 @@ then run a steady state model period. To identify the best month to traniton bet
 transient model we calculate the difference between the monthly and weekly high frequency data
 (`see target readme for more details <../targets_and_sensitive_sites/README.rst>`_). and the mean of the full dataset.
 The results are shown in the figure below, but there were obvious local minimums in the RMSE at 200 and 365 days from
-January 1 or approximately start of January and mid July. We chose a start date of 2015-07-18 as this will minimize the
-variability in heads associated with the irrigation season.
+January 1 or approximately start of January and mid July. We chose a start date of in mid July (2015-07-18)
+as this will minimize the variability in heads associated with the irrigation season.
 
 .. figure:: ../optimisation/pre_optimisation_plots_png/determine_opt_period/monthy_weekly_delta_to_mean_all.png
     :height: 650 px
