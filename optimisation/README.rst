@@ -24,35 +24,35 @@ Index
 
 Module Index
 ============
--  `README.rst <../optimisation/README.rst>`_: readme document detailing the optimization process and methodology
--  Pest optimisation build, run, and post processing scripts
-    -  `build_optimisation.py <../optimisation/build_optimisation.py>`_: script and functions to build the pest files
-    -  `a_build_run_optimisation_version.py <../optimisation/a_build_run_optimisation_version.py>`_: build and run a pest optimisation
-    -  `run_opt_step_models.py <../optimisation/run_opt_step_models.py>`_:  run the step models from a pest optimisation
+-  `README.rst <../optimisation/README.rst>`_: readme document detailing the optimisation process and methodology
+-  PEST optimisation build, run, and post processing scripts
+    -  `build_optimisation.py <../optimisation/build_optimisation.py>`_: script and functions to build the PEST files
+    -  `a_build_run_optimisation_version.py <../optimisation/a_build_run_optimisation_version.py>`_: build and run a PEST optimisation
+    -  `run_opt_step_models.py <../optimisation/run_opt_step_models.py>`_:  run the step models from a PEST optimisation
     -  `manual_optimisations <../optimisation/manual_optimisations>`_:  manual optimisations that were run, in the end these never contributed more than some information to the modeller
-    -  `model_utils_for_forward_run.py <../optimisation/model_utils_for_forward_run.py>`_: functions to build and run a model from pest parameter files
+    -  `model_utils_for_forward_run.py <../optimisation/model_utils_for_forward_run.py>`_: functions to build and run a model from PEST parameter files
     -  `compare_parameterisations.py <../optimisation/compare_parameterisations.py>`_: script to compare parameters across multiple parameter files
     -  `hawea_plot_optimisation.py <../optimisation/hawea_plot_optimisation.py>`_: script to plot the optimisation results
-    -  `plot_multiple_high_freq.py <../optimisation/plot_multiple_high_freq.py>`_: script to plot multiple high frequency observations for given pest obs files
+    -  `plot_multiple_high_freq.py <../optimisation/plot_multiple_high_freq.py>`_: script to plot multiple high frequency observations for given PEST obs files
 -  Manage optimisation period:
     -  `determine_opt_start.py <../optimisation/determine_opt_start.py>`_: script to determine the start and end of the optimisation period
     -  `optimisation_period.py <../optimisation/optimisation_period.py>`_: script to manage and hold the information about the optimisation period
 -  Optimisation Results
-    -  `optimisation_results <../optimisation/optimisation_results>`_: results for the optimisation holding all of the pest input and output files
-        -  `3d_v1a <../optimisation/optimisation_results/3d_v1a>`_:  optimisation results for the 3d model version 1a
-        -  `3d_v1b <../optimisation/optimisation_results/3d_v1b>`_:  optimisation results for the 3d model version 1b
-        -  `3d_v1d <../optimisation/optimisation_results/3d_v1d>`_:  optimisation results for the 3d model version 1d (final model)
+    -  `optimisation_results <../optimisation/optimisation_results>`_: results for the optimisation holding all of the PEST input and output files
+        -  `3d_v1a <../optimisation/optimisation_results/3d_v1a>`_:  optimisation results for the 3D model version 1a
+        -  `3d_v1b <../optimisation/optimisation_results/3d_v1b>`_:  optimisation results for the 3D model version 1b
+        -  `3d_v1d <../optimisation/optimisation_results/3d_v1d>`_:  optimisation results for the 3D model version 1d (final model)
     -  `final_opt_models <../optimisation/final_opt_models>`_:  The final optimised model files
-        -  `3d_v1a <../optimisation/final_opt_models/3d_v1a>`_: final optimised model files for the 3d model version 1a
-        -  `3d_v1b <../optimisation/final_opt_models/3d_v1b>`_: final optimised model files for the 3d model version 1b
-        -  `3d_v1d <../optimisation/final_opt_models/3d_v1d>`_: final optimised model files for the 3d model version 1d (final model)
-        -  `compress_uncompress_model.py <../optimisation/final_opt_models/compress_uncompress_model.py>`_:  utilities to compress and uncompress the model files so they could be included in the git repo (50mb limit)
--  computational support files
-    -  `compile_pest <../optimisation/compile_pest>`_: compile pest for linux
-    -  `pest_run_data <../optimisation/pest_run_data>`_: static data needed by pest to run the model
-    -  `git_setup.sh <../optimisation/git_setup.sh>`_: script to setup the git repo for the optimisation on a machine
+        -  `3d_v1a <../optimisation/final_opt_models/3d_v1a>`_: final optimised model files for the 3D model version 1a
+        -  `3d_v1b <../optimisation/final_opt_models/3d_v1b>`_: final optimised model files for the 3D model version 1b
+        -  `3d_v1d <../optimisation/final_opt_models/3d_v1d>`_: final optimised model files for the 3D model version 1d (final model)
+        -  `compress_uncompress_model.py <../optimisation/final_opt_models/compress_uncompress_model.py>`_:  utilities to compress and uncompress the model files so they could be included in the Git repo (50mb limit)
+-  Computational support files
+    -  `compile_pest <../optimisation/compile_pest>`_: compile PEST for linux
+    -  `pest_run_data <../optimisation/pest_run_data>`_: static data needed by PEST to run the model
+    -  `git_setup.sh <../optimisation/git_setup.sh>`_: script to setup the Git repo for the optimisation on a machine
 - Model overview
-    -  `pre_optimisation_overview.py <../optimisation/pre_optimisation_overview.py>`_: make a pre optimisation overview plots
+    -  `pre_optimisation_overview.py <../optimisation/pre_optimisation_overview.py>`_: make pre optimisation overview plots
     -  `make_preopt_slideshow.py <../optimisation/make_preopt_slideshow.py>`_: make a pre optimisation slideshow
     -  `pre_optimisation_plots_png <../optimisation/pre_optimisation_plots_png>`_: pre optimisation plots of boundary conditions, targets, parameterization, and other supporting work, many of these figures are referenced in the various readme.rst files
     -  `make_opt_presentation.py <../optimisation/make_opt_presentation.py>`_: make a presentation of the optimisation results for a meeting
@@ -63,26 +63,26 @@ Optimisation overview
 
 The optimisation process involved changing group weightings, parameter bounds, and the model structure. This chaotic
 process is typical in model optimisation and is typically very difficult to follow for anyone other than the primary
-modeller.  to try and make this process more transparent and to provide a record of the process, we created a new git
-branch for each optimisation version.  This allowed us to track the changes to the model, reproduce and archive all of
-the key input data with any changes.  To reduce the size of the github repo we deleted all of the abandoned branches,
-but we produced a github release for each abandoned branch so that the data could be recovered if needed.
+modeller.  To try and make this process more transparent and to provide a record of the process, we created a new Git
+branch for each optimisation version.  This allowed us to track the changes to the model and reproduce and archive all of
+the key input data with any changes.  To reduce the size of the Github repo we deleted all of the abandoned branches,
+but we produced a Github release for each abandoned branch so that the data could be recovered if needed.
 
 Broadly speaking there were 3 main stages to the optimisation process:
 
-#. A 1 layer model (2d)
-#. Specific sub model (2d) to test whether or not the terrace observations could be fit by
+#. A 1 layer model (2D)
+#. Specific sub model (2D) to test whether or not the terrace observations could be fit by
    disconnecting the terrace from the main model
-#. A 3 layer model (3d)
+#. A 3 layer model (3D)
 
 Optimisation setup / PEST structure
 ===================================
 The model was optimised via `PEST <http://www.pesthomepage.org/>`_ which is a model calibration and optimisation package.
-the interface to the model was handled via `flopy <https://flopy.readthedocs.io/en/3.3.2/introduction.html>`_
-which is a python package for working with MODFLOW models and `pyemu <https://pyemu.readthedocs.io/en/develop/pyemu.html>`_
-which is a python package for working with PEST models. The pest iterations were run in parallel on a cluster
+The interface to the model was handled via `flopy <https://flopy.readthedocs.io/en/3.3.2/introduction.html>`_
+which is a Python package for working with MODFLOW models and `pyemu <https://pyemu.readthedocs.io/en/develop/pyemu.html>`_
+which is a Python package for working with PEST models. The PEST iterations were run in parallel on a cluster
 of linux machines using `Beopest <https://www.prinmath.com/pest/>`_ which is a subpackage of PEST. Beopest was managed
-via an in house class called BeopestManager.  In addition some manual optimisation were undertaken in the course of
+via an in house class called BeopestManager.  In addition some manual optimisation was undertaken in the course of
 the optimisation process to better understand the limits of specific model structures.  These manual optimisations were
 undertaken using another in house class called SshDist. The main optimisation script was
 `a_build_run_optimisation_version.py <../optimisation/a_build_run_optimisation_version.py>`_
@@ -90,20 +90,20 @@ undertaken using another in house class called SshDist. The main optimisation sc
 The build of the PEST runfile was undertaken in `build_optimisation.py <../optimisation/build_optimisation.py>`_.
 which has a number of component functions:
 - `raw_pest <../optimisation/build_optimisation.py#L251>`_:
-  - Overarching function to build the pest runfile (calls the following functions).
+  - Overarching function to build the PEST runfile (calls the following functions).
   - Also handles the singular value decomposition (SVD) parameters.
 - `make_template_and_infiles <../optimisation/build_optimisation.py#L37>`_:
-  - make the template and in infiles for pest to interact with the model parameter inputs.
+  - Make the template and infiles for PEST to interact with the model parameter inputs.
 - `make_ins_and_output_files <../optimisation/build_optimisation.py#L50>`_:
-  - make an example output files (model outputs) and the PEST instruction files to read the model output data (targets).
+  - Make an example output files (model outputs) and the PEST instruction files to read the model output data (targets).
 - `set_control_data <../optimisation/build_optimisation.py#L69>`_:
-  - set the control data for the PEST runfile.
+  - Set the control data for the PEST runfile.
 - `set_parameter_data_groups <../optimisation/build_optimisation.py#L145>`_:
-  - set parameter data groups, limits, transformations, and derivative handling.
+  - Set parameter data groups, limits, transformations, and derivative handling.
 - `set_obs_data <../optimisation/build_optimisation.py#L190>`_:
-  - set the observation data, weights, and GROUP WEIGHTINGS.
+  - Set the observation data, weights, and GROUP WEIGHTINGS.#todo does this need to be capitalised?
 
-While the full specification for our PEST optimisation are available in the code the following relevant key parameters
+While the full specification for our PEST optimisation is available in the code the following relevant key parameters
 are listed below:
 
 - Kh and river conductance parameters were varied on a log transform (`partrans`)
@@ -121,8 +121,8 @@ Defining the Optimisation Period
 Standard optimisation outputs
 =============================
 
-For each optimisation version we produced a number of standard outputs that are consistent cross each optimisation
-results.  We detail them here so that individuals can have easy access to the key outputs.
+For each optimisation version we produced a number of standard outputs that are consistent across each optimisation
+result.  We detail them here so that individuals can have easy access to the key outputs.
 
 The output structure is as follows (links to the files are provided to 3d_v1d which is the final optimised model):
 
@@ -133,12 +133,12 @@ The output structure is as follows (links to the files are provided to 3d_v1d wh
             -  `spatial_hds <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_hds>`_: spatial plots of head target residuals
             -  `spatial_riv <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_riv>`_: spatial plots of the river gain and losses
             -  `str_flow <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/str_flow>`_: plots of the stream flow in the river boundary conditions
-            -  `Max_heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Max_heads_(Hawea_aquifer).png>`_: minimum heads across the model time steps.
-            -  `Min_heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Min_heads_(Hawea_aquifer).png>`_: maximum heads across the model time steps.
-            -  `Range_of_Heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Range_of_Heads_(Hawea_aquifer).png>`_: range of heads across the model time steps.
+            -  `Max_heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Max_heads_(Hawea_aquifer).png>`_: minimum heads across the model time steps
+            -  `Min_heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Min_heads_(Hawea_aquifer).png>`_: maximum heads across the model time steps
+            -  `Range_of_Heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Range_of_Heads_(Hawea_aquifer).png>`_: range of heads across the model time steps
             -  `Steady_state_heads_(Hawea_aquifer).png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/Steady_state_heads_(Hawea_aquifer).png>`_: plot of the steady state heads (in layer 0 for most of the model, but layer 2 for the moraine areas)
-            -  `3d_hds.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/3d_hds.png>`_: plot of heads in the 3d zone
-            -  `SS_budget.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/SS_budget.png>`_: plot of the steady state water budget.
+            -  `3d_hds.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/3d_hds.png>`_: plot of heads in the 3D zone
+            -  `SS_budget.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/SS_budget.png>`_: plot of the steady state water budget
             -  `all_riv_targets_mes_mod.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/all_riv_targets_mes_mod.png>`_: plot of the measured vs modelled river targets
             -  `all_riv_targets_residual.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/all_riv_targets_residual.png>`_: plot of the river target residuals
             -  `all_river_fluxes_hill.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/all_river_fluxes_hill.png>`_:  total river fluxes for each conductance parameter zone for John and Grandview Creek
@@ -165,7 +165,7 @@ The output structure is as follows (links to the files are provided to 3d_v1d wh
             -  `hds_h_single_3_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_single_3_mod_v_meas.png>`_: plot of measured and modelled heads for the single head targets Q3
             -  `hds_h_single_3_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_single_3_residual_time.png>`_: plot of the single head targets Q3 residuals
             -  `hds_normal_year_all.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_normal_year_all.png>`_: plot of the measured and modelled heads for the normal water year (ISO week mean)
-            -  `hds_normal_year_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_normal_year_mod_v_meas.png>`_: plot of the measured and modelled heads for the normal water year (ISO week mean)
+            -  `hds_normal_year_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_normal_year_mod_v_meas.png>`_: plot of the measured and modelled heads for the normal water year (ISO week mean) #todo what is the difference between this and the above fig?
             -  `hds_regular_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regular_mod_v_meas.png>`_: plot of the measured and modelled heads for the regular observations (e.g. high frequency)
             -  `hds_regular_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regular_residual_time.png>`_: plot of the regular observation head residuals
             -  `hds_regyear_h_g40_0041.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regyear_h_g40_0041.png>`_: plot of the regular water year heads (ISO weekly mean) for well, G40/0041
@@ -179,24 +179,24 @@ The output structure is as follows (links to the files are provided to 3d_v1d wh
             -  `more_than_500_outers.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/more_than_500_outers.png>`_: areas in the model that required more than outer 500 iterations to converge
             -  `more_than_800_outers.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/more_than_800_outers.png>`_: areas in the model that required more than outer 800 iterations to converge
     -  `obs_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/obs_plots>`_: plots of the model
-       objective function and target residuals through the optimisation process (e.g. at each optimisation step)).
+       objective function and target residuals through the optimisation process (e.g. at each optimisation step))
     -  `regular_hds_closeup <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/regular_hds_closeup>`_:
-       plots of changes in the fit to the regular observations ((e.g. high frequency) through each optimisation step).
-    -  `param_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_plots>`_: plots of parameter values through the optimisation process (e.g. at each optimisation step).
-    -  `param_fail_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_fail_plots>`_: plots of parameter values that failed to converge vs those that did not.
-    -  `param_sen_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_sen_plots>`_: plots of parameter sensitivity through the optimisation process (e.g. at each optimisation step).
-    -  `parameters_norm_to_bounds.txt <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/parameters_norm_to_bounds.txt>`_: a text file of the parameter values of the final model normalised to the parameter bounds.
-    -  `parameters_norm_to_bounds_close.txt <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/parameters_norm_to_bounds_close.txt>`_: as above, but only those that are close to their bounds.
+       plots of changes in the fit to the regular observations ((e.g. high frequency) through each optimisation step)
+    -  `param_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_plots>`_: plots of parameter values through the optimisation process (e.g. at each optimisation step)
+    -  `param_fail_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_fail_plots>`_: plots of parameter values that failed to converge vs those that did not
+    -  `param_sen_plots <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/param_sen_plots>`_: plots of parameter sensitivity through the optimisation process (e.g. at each optimisation step)
+    -  `parameters_norm_to_bounds.txt <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/parameters_norm_to_bounds.txt>`_: a text file of the parameter values of the final model normalised to the parameter bounds
+    -  `parameters_norm_to_bounds_close.txt <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/parameters_norm_to_bounds_close.txt>`_: as above, but only those that are close to their bounds
     -  `parameter_norm_sy_kh.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/parameter_norm_sy_kh.png>`_: ignore, bug in plot
     -  `jacobian_filled_0_of_1.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/jacobian_filled_0_of_1.png>`_: plots of whether or not the Jacobian was filled (red values had model failure)
-    -  `hk_values.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/hk_values.png>`_: plot of the final hk parameter values at the pilot points.
-    -  `kh_array.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/kh_array.png>`_: plot of the interpolated final kh parameter values.
-    -  `sy_values.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/sy_values.png>`_: plot of the final sy parameter values at the pilot points.
-    -  `sy_array.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/sy_array.png>`_: plot of the interpolated final sy parameter values.
+    -  `hk_values.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/hk_values.png>`_: plot of the final hk parameter values at the pilot points
+    -  `kh_array.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/kh_array.png>`_: plot of the interpolated final kh parameter values
+    -  `sy_values.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/sy_values.png>`_: plot of the final sy parameter values at the pilot points
+    -  `sy_array.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/sy_array.png>`_: plot of the interpolated final sy parameter values
 
 1 layer model (2D) optimisation results
 =======================================
-With the 1d model we were able to fit many of the targets within the model, but despite numerous (we ran
+With the 1D model we were able to fit many of the targets within the model, but despite numerous (we ran
 17 unique optimisations) parameterisations, observation weighting schemes, and change to the model structure
 we were unable to replicate the water levels at G40/0415.
 The model could either fit the shape of the groundwater levels but there was substantial bias in the mean groundwater
@@ -221,10 +221,10 @@ level (too high) or we could fit the mean groundwater level but the shape of the
 
 
 We do not have other high frequency observations of groundwater levels near the Lake Hawea moraine. However, we do have
-a number of static water levels that measured shortly after drilling the bore.  These water levels, relative to the Lake level
+a number of static water levels that were measured shortly after drilling the bore.  These water levels, relative to the lake level
 at the time of measurement are shown in the figure below.  This figure shows that a constant vertical offset between the
-groundwater levels and the lake levels of approximately 10m.  Some of these boreholes are located in the moraine less
-than 200m from the lake. Many of the water supply wells near the lake (within the mapped moraine) are
+groundwater levels and the lake levels of approximately 10 m.  Some of these boreholes are located in the moraine less
+than 200 m from the lake. Many of the water supply wells near the lake (within the mapped moraine) are
 relatively deep (e.g. 50+ m).
 
 .. figure:: ../support_figures/lake_gw_level.png
@@ -239,7 +239,7 @@ Because we could not reproduce the groundwater levels at G40/0415, we deemed tha
 a 1 layer model could reproduce the groundwater levels the Hawea system with confidence. This is an essential outcome
 from the Hawea groundwater model as the complex three dimensional structure has a key implications for the
 management of the groundwater system; the groundwater system is likely to be either disconnected or have other non-linear
-responses to Lake Hawea level if the Lake falls below a threshold value.
+responses to Lake Hawea level if the lake falls below a threshold value.
 
 Terrace only model (2D) optimisation results
 ==============================================
@@ -251,12 +251,12 @@ Terrace only model (2D) optimisation results
 
 .. class:: centered
 
-    *Figure: Comparison of the terrace only model and the 3d_v1a model at the south end of the High terrace*
+    *Figure: Comparison of the terrace only model and the 3d_v1a model at the south end of the High Terrace*
 
 3 layer model (3D) optimisation results
 =======================================
 
-We produced 3 final 3 layer models, the differences (relative to the final model 3D_v1d) are listed below.
+We produced 3 final 3 layer models. The differences (relative to the final model 3D_v1d) are listed below.
 
 +----------------------+-------------------------------------------+
 | Model  | "bund_top"* | NGMP wells included in objective function |
@@ -299,7 +299,7 @@ Final observation weightings:
 
 3D_v1d (final model)
 ---------------------
-The model 3d_v1d is the final model that we used for all of the scenarios.  This model did and excellent job reproducing
+The model 3d_v1d is the final model that we used for all of the scenarios.  This model did an excellent job reproducing
 the groundwater levels in our high frequency monitoring points across all of the historical data. The figures for these high frequency
 observation and a discussion of the results are provided in the `Comparison of 3d_v1a, 3d_v1b, and 3d_v1d` section below.
 The full set of optimisation plots for this model are available in the `3d_v1d optimisation results plots folder <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots>`_.
@@ -313,10 +313,10 @@ The full set of optimisation plots for this model are available in the `3d_v1d o
         *Figure: the number of model stress periods with dry cells in the final model*
 
 There are a number of areas in the model with consistent dry cells. There are a number dry cells directly south of the moraine.
-These are not a concern and are instead simply and artefact of the complex 3D structure in the area. Many more of these persistent dry cells
+These are not a concern and are instead simply an artefact of the complex 3D structure in the area. Many more of these persistent dry cells
 are relatively isolated and occur in areas of steep topographical gradients (e.g. near the Clutha River,
 Camp Hill Moraine, or just adjacent to the Grandview Ridge). These cells are likely caused by structural error
-in either topographical data and are of little concern.
+in topographical data and are of little concern.
 
 More concerning are the dry cells in and around the Hawea Flat township.  These dry cells are likely caused by the relative thinning
 of the model in this area, local abstraction and parameter structural errors, and/or a missing structure in the model. It is quite possible
@@ -328,13 +328,13 @@ information to justify adding this structure to the model, but it may warrant fu
     :align: center
 
 .. class:: centered
-        *Figure: the possible indicative location (yellow dashed line) for a moraine structure to the east of the Hawea Flat township*
+        *Figure: the possible indicative location (yellow dashed line) of a moraine structure to the east of the Hawea Flat township*
 
 
 Finally the model does a very poor job of reproducing the groundwater levels in the area to the east of the inferred Grandview Fault.
 There is very limited information in this area (3 single observations) most of which are near boundary conditions
 (e.g. Grandview Creek), so it is difficult to draw any conclusions about the cause of the poor model performance in
-this area.  Instead we have to accept that the model is not suitable in this area and the model results should not be used.
+this area.  Instead, we have to accept that the model is not suitable in this area and the model results should not be used.
 
 .. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_hds/spatial_hds_residual_all.png
     :height: 650 px
@@ -345,22 +345,22 @@ this area.  Instead we have to accept that the model is not suitable in this are
     *Figure: the groundwater levels residuals plotted spatially for the full model domain.  Note that where a target has multiple temporal observations the min, mean and max residuals are shown.  The color bar units are m*
 
 In general the model does a good job of replicating the groundwater levels across the model domain.  There are some areas
-where the model over or under predicts the groundwater levels. As discussed above the areas to the East of the inferred Grandview Fault
+where the model over or under predicts the groundwater levels. As discussed above the areas to the east of the inferred Grandview Fault
 are significant under estimates and the model does not preform well in this area. There are multiple targets in and around the Hawea flat
 township which are underestimated by the model, but given the close proximity of the high frequency observations at bore
 G40/0367, we believe that these misfits are most likely due to either poor data quality of the targets or problems arising from applying the
-historical measured water levels to time period within the optimisation period. The latter is the most likely as there is a
+historical measured water levels to the time period within the optimisation period. The latter is the most likely as there is a
 significant amount of abstraction in and around the Hawea Flat Township that may not have been present when the historical
 water levels were measured.
 
 The two figures below show the modelled groundwater-surface water interaction for the Hawea and Clutha Rivers.
 While there are some target misfits, the model does a very good job of reproducing the expected interaction between the
 groundwater and surface water systems.  The misfits occur in areas which both lose and gain water across the model period.
-The model does a good job reproducing the expected behaviour (gain/loss), but under estimates the total losses relative
-to the measured data. As discussed in the `model target readme <../targets_and_sensitive_sites/README.rst>` There is significant
-uncertainty in the measured gauging therefore we feel that the model is performing well in this area. In addition the
+The model does a good job reproducing the expected behaviour (gain/loss), but underestimates the total losses relative
+to the measured data. As discussed in the `model target readme <../targets_and_sensitive_sites/README.rst>` there is significant
+uncertainty in the measured gauging, therefore, we feel that the model is performing well in this area. In addition, the
 model does an excellent job of reproducing the expert judgment of the surface water and groundwater interaction.  The Hawea
-is gaining below the dam to approximately Camp Hill, loses a significant amount of water between Camp Hill and sharp
+is gaining below the dam to approximately Camp Hill, and then loses a significant amount of water between Camp Hill and sharp
 westward bend.
 
 .. figure:: ../support_figures/all_river_fluxes_large.png
@@ -381,10 +381,10 @@ westward bend.
 
 The figure below shows the steady state groundwater heads around the moraine zone in all three layers.
 We don't have any targets to inform this data, but it does produce a key prediction that could be tested in the future.
-The model predicts that the groundwater levels are significantly higher in the Northeastern edge of the moraine and that
+The model predicts that the groundwater levels are significantly higher in the northeastern edge of the moraine and that
 this is the area which ultimately controls flow between the lake and the groundwater system. This is not inconsistent
 with either the perched aquifer conceptual model or the local penetration conceptual model (see the Lake Hawea Moraine
-Conceptual Model section of `the model build readme <../model_build/README.rst>`_.
+Conceptual Model section of `the model build readme <../model_build/README.rst>`_. )
 
 
 .. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/3d_hds.png
@@ -500,10 +500,10 @@ Access to final optimised parameter sets and models
 
 The final optimised parameter sets for the 3d_v1a, 3d_v1b, and 3d_v1d models are available in this repository in the
 `optimised_parameter_sets <../model_parameterisation/optimised_parameter_sets>`_ directory and are accessible
-via python by the `model_parameterisation.optimised_parameterisation.get_3d_v1{a|b|d}_params method <../model_parameterisation/optimised_parameterisation.py>`_.
+via Python by the `model_parameterisation.optimised_parameterisation.get_3d_v1{a|b|d}_params method <../model_parameterisation/optimised_parameterisation.py>`_.
 The final models are available in the `final_opt_models <../optimisation/final_opt_models>`_ directory.  Due to the
-limit on filesizes that Github implments the final models have been compressed and some files have been split into
-multiple parts with the 7zip library.  To uncompress these models you must use the b`optimisation.final_opt_models.compress_uncompress_model.uncompress_model <../optimisation/final_opt_models/compress_uncompress_model.py#L59>`_
+limit on file sizes that Github implements, the final models have been compressed and some files have been split into
+multiple parts with the 7zip library.  To uncompress these models you must use the `optimisation.final_opt_models.compress_uncompress_model.uncompress_model <../optimisation/final_opt_models/compress_uncompress_model.py#L59>`_
 function.
 
 To uncompress the 3d_v1d model to your downloads folder can use the following code:
@@ -523,14 +523,14 @@ Model limitations
 =================
 There are a number of limitations to this model and the model optimisation. The main limitations are:
 
-- **A non-unique model structure**: Because the complex structure in the Moraine zone is not well constrained by the data
-  we have assumed a model structures. It is likely that some of the parameters in the model are compensating for this
+- **A non-unique model structure**: Because the complex structure in the moraine zone is not well constrained by the data
+  we have assumed a model structures #todo this sentence needs finishing. It is likely that some of the parameters in the model are compensating for this
   model structural error, which may have flow on effects, particularly for scenarios that are well outside the model optimisation
   conditions.
 - **A non-unique parameterisation**: the PEST optimisation process is a poorly posed problem (that is there is not enough observations
   to calculate a unique solution to the model parameters). This means that there are multiple solutions to the model parameters
   that represent a good fit to the observations. This model has not undergone a parameter uncertainty process so we cannot
-  predict the likely range or implications of the parameter uncertainty. In addition the uncertainty of the model parameters
+  predict the likely range or implications of the parameter uncertainty. In addition, the uncertainty of the model parameters
   is compounded by the uncertainty in the model structure. There are likely many other model structure/parameter sets
   that would fit the observations as well as this model.
 - **Area to the east of grandview fault**: The model has persistent dry cells to the east of the inferred location of the Grandview fault.
@@ -538,7 +538,7 @@ There are a number of limitations to this model and the model optimisation. The 
   not be used and there is currently insufficient data to produce a trustworthy model in this area.
 - **Limited data for hillside streams**: The hillside streams are a major source of water to the Hawea aquifer systems,
   but we only have observations from two gauging sites for a limited period of time. We estimated the inflows from a
-  a correlation with the Lindis River; however both of the gauged streams are of similar size so the correlation may not
+  a correlation with the Lindis River; however, both of the gauged streams are of similar size so the correlation may not
   hold for the smaller hillside streams.
 - **Piezometric survey date**: the only piezometric survey conducted for the Hawea aquifer system was conducted in Sept
   of 2011. This survey was conducted outside our optimisation period (we did not have adequate abstraction information
@@ -556,19 +556,19 @@ Over the course of out
 
 # todo
 - high frequency bore near the north east corner of the lake
-- high frequency bore near the exit of the Mangawera Valley
+- high frequency bore near the exit of the Maungawera Valley
 - high frequency bore near the Hawea domain
 - detailed investigation of moraine threshold value
-- investigation of structure to West of hawea flat township
+- investigation of structure to west of Hawea flat township
 - concurant gauging to multiple hillfed streams
 - new piezo survey or two.
 
 
 
-Optimisation working Notes
+Optimisation working notes
 ==========================
 These working notes are largely verbatim except that the active branches are elevated above the abandoned branches.
-the number indicates the order in which the branches were developed.
+The number indicates the order in which the branches were developed.
 
 
 Active Branches (optimisation versions)
@@ -577,14 +577,14 @@ Active Branches (optimisation versions)
 25. Main (3d_v1d)
 ~~~~~~~~~~~~~
 
--  The ‘final’ optimised model.
--  Contains 3d structure around the Lake Hawea Moraine
--  Best fits for the high frequency targets.
+-  The ‘final’ optimised model
+-  Contains 3D structure around the Lake Hawea Moraine
+-  Best fits for the high frequency targets
 -  Bund elevation set to 335 msl
 -  NGMP well head observations removed from objective function as there
    is significant tension between these records and the high frequency
    observations. The NGMP wells are pumped irrigation bores and the
-   primary purpose for sampling was water quality monitoring.
+   primary purpose for sampling was water quality monitoring
 
 20. 3d_v1a
 ~~~~~~
@@ -598,21 +598,21 @@ Active Branches (optimisation versions)
 21. 3d_v1b
 ~~~~~~
 
--  Identical to “3d_v1a” except that the Bund elevation was set to 333
+-  Identical to “3d_v1a” except that the bund elevation was set to 333
    MSL.
 -  history matching results were similar to “3d_v1a” suggesting that the
    bund elevation is largely non-unique
--  retained to demonstrate the non-uniqueness of the 3d structure
+-  retained to demonstrate the non-uniqueness of the 3D structure
 
 14. terrace_only
 ~~~~~~~~~~~~
 
--  This model structure only includes the high terrace (south of Hawea
-   Flat) to the clutha river
--  this optimisation was undertaken to see if the high terrace could be
+-  This model structure only includes the High Terrace (south of Hawea
+   Flat) to the Clutha River
+-  this optimisation was undertaken to see if the High Terrace could be
    history matched (within the accepted parameter ranges) in isolation
    from the rest of the Hawea aquifer system.
--  History matching was not achieved.
+-  History matching was not achieved
 
 Abandoned branches (releases, optimisation versions)
 ----------------------------------------------------
@@ -628,7 +628,7 @@ described below (working notes) for completeness.
 
 #.  Structure v2, Changes:
 
-    -  Increase parameterization via pilot points to Mangawera
+    -  Increase parameterization via pilot points to Maungawera
     -  Add recharge multiplier pilot points across model (NI)
     -  Remove sandy point from model
     -  abandoned but retained
@@ -659,7 +659,7 @@ described below (working notes) for completeness.
 #.  Structure_v6
 
     -  From structure 5
-    -  Add a 1m confined layer below the bottom of layer 1 (may improve
+    -  Add a 1 m confined layer below the bottom of layer 1 (may improve
        stability)
 
 #.  Structure_v6a
@@ -669,8 +669,8 @@ described below (working notes) for completeness.
 #.  Structure_v7 (built but not run)
 
     -  From structure 5
-    -  Reduce thickness to reasonable pumped thickness and then Maximum
-       30m sat thickness
+    -  Reduce thickness to reasonable pumped thickness and then maximum
+       30 m sat thickness
     -  Set ss = sy
     -  run as a confined model
 
@@ -688,7 +688,7 @@ described below (working notes) for completeness.
     -  Implement grandview and john creek (+Hawea and Clutha) as str
        package
     -  Lake stage vs g40_0415
-    -  Looks fine, honestly the fact that them model isn’t’ matching it
+    -  Looks fine, honestly the fact that them model isn’t matching it
        suggests some sort of structural error. Reworked transport in
        grandview stream?/ water through grandview stream??? Likely the
        problem google maps shows water in grandview to the lake (and in
@@ -704,19 +704,19 @@ described below (working notes) for completeness.
     -  NE hillside area (done)
     -  Near clutha river (done)
     -  I think I need some more pilot points
-    -  Near pt 402 on camp hill moraine (move mangawera south?) ()
+    -  Near pt 402 on camp hill moraine (move Maungawera south?) ()
        and another in the moraine (to interpolate with other river group
     -  To stop dry cells south of camp hill moraine
     -  Significant number in the hillslope area just off the bounds to
        allow conductivity to fall there if needed for stability. And to
        manage the change in geologic setting near hillslope
     -  Adjust some locations based on the new pilot point locations
-    -  New rivergroup south of mangawera valley entrance to allow for
+    -  New rivergroup south of Maungawera valley entrance to allow for
        the difference between the two settings
     -  Additional point in the middle of the terrace to manage near
        hillside environment.
     -  Try lowering hillside conductance → set to 100 vs 1000 for
-       hawea/clutha, which means much of the peak flow does does not
+       Hawea/Clutha, which means much of the peak flow does does not
        make it into the model.
 
 #. Structure_v11
@@ -726,12 +726,12 @@ described below (working notes) for completeness.
     -  Lower sy, and lower sy bounds
     -  Change weights (lower low frequency targets)
     -  Bit of a hail mary before the weekend
-    -  retired (even though I’m happy with the parameterization. If I
+    -  retired (even though I’m happy with the parameterisation. If I
        want to change back to vll parameters do it from v12
 
 #. Structure_v12
 
-    -  Increase kh/sy parameterization in the near lake environment
+    -  Increase kh/sy parameterisation in the near lake environment
 
 #. terrace only
 
@@ -743,7 +743,7 @@ described below (working notes) for completeness.
        lake heads (e.g. lake hds = lake hds + mod
     -  A test to see if the lake levels problems are sorted everything
        else works great?
-    -  Note the parameter is offset by 100m as pyemu has bugs!
+    -  Note the parameter is offset by 100 m as pyemu has bugs!
 
 #. lake_bar
 
@@ -757,7 +757,7 @@ described below (working notes) for completeness.
 
 #. 3d_v1
 
-    -  Address the 3d moraine issues in structure
+    -  Address the 3D moraine issues in structure
     -  3 layers the bottom two pinch out against the bottom of the
        model.
     -  well management
@@ -794,7 +794,7 @@ described below (working notes) for completeness.
 
 #. 3d_v4
 
-    -  As 3d_v1a, but top of bund is set to 340m MSL instead of 335
+    -  As 3d_v1a, but top of bund is set to 340 m MSL instead of 335
     -  Difficult to get model to converge
     -  abandoned
 
