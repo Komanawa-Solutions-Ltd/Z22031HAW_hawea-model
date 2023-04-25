@@ -345,7 +345,6 @@ def terrace_only_plot():
     regular_hds = hds_obs.loc[hds_obs.loc[:, 'group'] == 'regular']
     regular_hds.loc[:, 'modelled_3d_v1d'] = regular_hds.loc[:, 'modelled']
 
-
     fig = plt.figure(figsize=(14, 9))
     gs = gridspec.GridSpec(2, 2, width_ratios=(2, 1), height_ratios=(3, 1))
     ax = fig.add_subplot(gs[0, 0])
@@ -373,6 +372,25 @@ def terrace_only_plot():
     plt.show()
 
 
+def additional_monitoring():
+    import geopandas as gpd
+    from project_base import proj_root
+    shp_path = proj_root.joinpath('support_figures/additional monitoring.shp')
+    data = gpd.read_file(shp_path)
+    data.set_index('id', inplace=True)
+    mapper = data['name'].to_dict()
+    colors = smt.plot.get_colors(mapper.keys(), rt_dict=True)
+    plt_array = smt.io.shape_file_to_model_array(shp_path,
+                                                 'id', alltouched=True)
+    fig, ax = smt.plot.plt_discrete_matrix(plt_array, colors=colors, names=mapper, legend_loc='lower left',
+                                           title='Additional monitoring wells (locations are indicative only)',
+                                           base_map=True, no_flow_layer=0, alpha=0.75, figsize=(10, 6.5))
+    ax.set_ylim(5.046e6, smt.get_xlim_ylim(False)[-1])
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'additional_monitoring_wells.png'))
+    plt.show()
+
+
 if __name__ == '__main__':
     # model_2d_structure_plots()
     # boundary_condition_figure()
@@ -384,5 +402,6 @@ if __name__ == '__main__':
     # wetlands()
     # plot_regular()
     # hill_params()
-    terrace_only_plot()
+    # terrace_only_plot()
+    additional_monitoring()
     pass

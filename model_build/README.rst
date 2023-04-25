@@ -89,11 +89,11 @@ of boundary conditions we defined two time periods for the model:
 
 - **Optimisation period**: 2015-07-18 to 2020-06-27:
     - the period where we have the most data available across boundary conditions, observations (targets).
-    - details on defining the optimisation period are in the `optimisation readme <../optimisation/README.rst>`_.
+    - we defined the start year of the optimisation period to 2015 as this was the first year that we had
+      reliable groundwater abstraction data were available.
     - weekly MODFLOW stress periods were used.
 - **Scenario Period**: 1980-07-18 to 2020-12-01
     - the period where we have reasonable data available across boundary conditions, but minimal observations (targets)
-    - details on defining the scenario period are in the `scenario readme <../Scenarios/README.rst>`_.
     - weekly MODFLOW stress periods were used.
 
 Model Starting heads

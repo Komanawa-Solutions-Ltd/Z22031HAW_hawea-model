@@ -101,7 +101,7 @@ which has a number of component functions:
 - `set_parameter_data_groups <../optimisation/build_optimisation.py#L145>`_:
   - Set parameter data groups, limits, transformations, and derivative handling.
 - `set_obs_data <../optimisation/build_optimisation.py#L190>`_:
-  - Set the observation data, weights, and GROUP WEIGHTINGS.#todo does this need to be capitalised?
+  - Set the observation data, weights, and group weightings.
 
 While the full specification for our PEST optimisation is available in the code the following relevant key parameters
 are listed below:
@@ -113,10 +113,6 @@ are listed below:
 - PEST allowed model failures in derivative calculation (`derforgive = 'derforgive'`)
 - PEST was run with singular value decomposition (`svdmode = 1`)
 - The eigenvalue threshold for svd was set to  5e-7 (`svd_dataeigthresh = 5e-7`)
-
-Defining the Optimisation Period
-================================
-#todo
 
 Standard optimisation outputs
 =============================
@@ -165,7 +161,7 @@ The output structure is as follows (links to the files are provided to 3d_v1d wh
             -  `hds_h_single_3_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_single_3_mod_v_meas.png>`_: plot of measured and modelled heads for the single head targets Q3
             -  `hds_h_single_3_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_h_single_3_residual_time.png>`_: plot of the single head targets Q3 residuals
             -  `hds_normal_year_all.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_normal_year_all.png>`_: plot of the measured and modelled heads for the normal water year (ISO week mean)
-            -  `hds_normal_year_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_normal_year_mod_v_meas.png>`_: plot of the measured and modelled heads for the normal water year (ISO week mean) #todo what is the difference between this and the above fig?
+            -  `hds_normal_year_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_normal_year_mod_v_meas.png>`_: plot of the measured vs modelled heads for the normal water year (ISO week mean)
             -  `hds_regular_mod_v_meas.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regular_mod_v_meas.png>`_: plot of the measured and modelled heads for the regular observations (e.g. high frequency)
             -  `hds_regular_residual_time.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regular_residual_time.png>`_: plot of the regular observation head residuals
             -  `hds_regyear_h_g40_0041.png <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/hds_regyear_h_g40_0041.png>`_: plot of the regular water year heads (ISO weekly mean) for well, G40/0041
@@ -243,7 +239,12 @@ responses to Lake Hawea level if the lake falls below a threshold value.
 
 Terrace only model (2D) optimisation results
 ==============================================
-# todo - add some text here
+
+The terrace only model had 1 target to fit, G40/0366.  The model was unable to fit this target.  The heads are higher than
+the measured data, and theape of the curve does not match the observed data. The full model was able to fit this target
+significantly better.  From these data we can reject the hypothesis that the terrace only model can reproduce the observed
+groundwater levels in G40/0366. This suggests that there is indeed some connection between the High Terrace aquifer and
+the Hawea Flat aquifer.
 
 .. figure:: ../support_figures/model_terrace_only_compare.png
    :height: 650 px
@@ -448,7 +449,7 @@ Fit to higher frequency groundwater levels at G40/0129
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0129*
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0129 (NGMP bore)*
 
 Fit to higher frequency groundwater levels at G40/0120
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -458,7 +459,7 @@ Fit to higher frequency groundwater levels at G40/0120
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0120*
+        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0120 (NGMP bore)*
 
 Fit to higher frequency groundwater levels at G40/0367
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -478,22 +479,26 @@ Fit to higher frequency groundwater levels at G40/0366
 .. class:: centered
         *Figure: the groundwater levels for the 3d_v1a model at bore G40/0366*
 
-
 Discussion and implications
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# todo discuss a,b,d  regular results.
 
-The key outcome of the similar results from the 3d_v1a and 3d_v1b models is that the current observations do not constrain
-the threshold value, below which the groundwater levels exhibits a non-linear response to the lake level. We discuss
-plausible ranges for the threshold value in the
+Model versions 3D_v1a, 3D_v1b, and 3D_v1d all do an adequate job or replicating the high frequency groundwater level
+observations. 3D_v1d does a slightly better job of replicating the high frequency groundwater levels than 3D_v1a and
+3D_v1b, but it does this at the expense of the moderate frequency groundwater observations (i.e. the NGMP wells
+G40/0129 & G40/0120). This prioritisation was intentional as the NGMP bores are designed to monitor contaminants rather
+than static water levels.  These bores are often pumped irrigation bores and structural error in the pumping is likely
+to impact the observation fits.  Therefore we suggest that the 3D_v1d model is the best model for predicting the
+likely impacts of alternative management conditions.
+
+Model versions 3D_v1a and 3D_v1b produce very similar results.  The key outcome of the similar results from the 3d_v1a
+and 3d_v1b models is that the current observations do not constrain the threshold value, below which the groundwater
+levels exhibits a non-linear response to the lake level. We discuss plausible ranges for the threshold value in the
 `Lake Hawea Moraine Conceptual Model section of the model build readme <../model_build/README.rst#lake-hawea-moraine-conceptual-model>`_,
 but we are not able to further constrain this range.  More discussions of the impacts of this threshold are discussed
 in the `scenarios readme file. <../scenarios/README.rst>`_.  Note that we did attempt to model the threshold value as
 337 m msl, but this optimisation did not converge. However, we did not spend a significant amount of resources trying
 to get this optimisation to converge, so we do not believe that the lack of convergence here indicates that the threshold
 value cannot be as high as 337 m msl.
-
-
 
 Access to final optimised parameter sets and models
 ===================================================
@@ -524,9 +529,9 @@ Model limitations
 There are a number of limitations to this model and the model optimisation. The main limitations are:
 
 - **A non-unique model structure**: Because the complex structure in the moraine zone is not well constrained by the data
-  we have assumed a model structures #todo this sentence needs finishing. It is likely that some of the parameters in the model are compensating for this
-  model structural error, which may have flow on effects, particularly for scenarios that are well outside the model optimisation
-  conditions.
+  we have assumed a very simple model structure that almost certainly introduces structural error.
+  It is likely that some of the parameters in the model are compensating for this model structural error, which may have
+  flow on effects, particularly for scenarios that are well outside the model optimisation conditions.
 - **A non-unique parameterisation**: the PEST optimisation process is a poorly posed problem (that is there is not enough observations
   to calculate a unique solution to the model parameters). This means that there are multiple solutions to the model parameters
   that represent a good fit to the observations. This model has not undergone a parameter uncertainty process so we cannot
@@ -554,18 +559,54 @@ Recommended additional data
 
 Over the course of our optimisation process we identified a number of additional data sources that would be useful.
 We have listed them here, with a discussion of why the information would be useful, but we have not included any feasibility
-assessments or costings to acquire these data sources.
+assessments or costings to acquire these data sources. We recognise that some of these data sources may not be feasible
+but we have included them here so that decision makers can consider their relative value.  We have not ranked these
+additional data sources in any way as any prioritisation is an intersection of priories (which we cannot address)
+and scientific merit.
 
-# todo
-- high frequency bore near the north east corner of the lake
-- high frequency bore near the exit of the Maungawera Valley
-- high frequency bore near the Hawea domain
-- detailed investigation of moraine threshold value
-- investigation of structure to west of Hawea flat township
-- concurant gauging to multiple hillfed streams
-- new piezo survey or two.
+- **A high frequency groundwater record near the Northeast Corner of the Hawea Flat aquifer:** One of the key model
+  predictions for the complex moraine structure is that groundwater levels (impacted by the lake) should be elevated in
+  and around the Grandview/John Creek alluvial fans. Testing this prediction would require a high frequency groundwater
+  level record in this area of at least a couple of years in length. The exact location of such a bore would need more
+  detailed consideration.
+- **A high frequency groundwater record near the exit of the Maungawera Valley:**  The Maungawera Valley is has a relative paucity of data
+  which makes predictions regarding the sustainable use of groundwater uncertain. A high frequency monitoring bore near
+  the exit of the valley (e.g. up valley of the Maungawera Valley Road and Lake Hawea Albert Town Road intersection) would
+  act as an integrater for the up valley groundwater system and would provide significantly more information about the
+  local groundwater system. The exact location of such a bore would need more detailed consideration.
+- **A high frequency bore near the Hawea domain and/or Butterfield Road**: Water from Lake Hawea can flow either toward
+  Hawea Flat township or it can flow back towards the Hawea River.  Understanding the piezometic surface in the aforementioned
+  area would help constrain that flow. The exact location of such a bore would need more detailed consideration.
+- **A detailed investigation of moraine structure**: As mentioned multiple times within this repository, the moraine
+  structure is not well constrained by the data. A detailed investigation of the moraine structure would help constrain
+  the model structure and reduce the uncertainty in the model predictions. The method of investigation would need
+  significant consideration and would likely require a combination of geophysical and drilling investigations.
+- **An investigation of structure to West of Hawea flat Township**: As discussed above, glacial geomorphology suggests that
+  there could be a low permeability structure to the west of Hawea Flat township associated with a potential lateral
+  moraine of the Albert Town advance. Further investigation of this possible structure would help constrain our understanding
+  of the groundwater system in this area.
+- **multiple concurrent gauging of multiple hillside streams:**  As described in the `model build readme <../model_build/README.rst`_
+  the hillside streams are a major source of water to the Hawea aquifer system. However, we only have observations from
+  two gauging sites for a limited period of time. We estimated the inflows from a a correlation with the Lindis River;
+  however, both of the gauged streams are of similar size so the correlation may not hold for the smaller hillside streams.
+  Multiple concurrent gaugings (at high and low flows) of multiple hillside streams (both large and small catchment areas
+  would help constrain the predictions of inflows from the hillside streams.
+- **Additional Piezometric surveys:** At present the only piezometric survey that was completed in the Hawea region was
+  conducted in Sept of 2011. This survey was conducted we had adequate abstraction information.
+  A significant portion of the model domain therefore does not any more recent observations. One or more additional
+  piezometric surveys (e.g. at high and low water levels) would help constrain the model predictions in these areas.
+- **Model parameter / structural uncertainty analysis**: In the absense of additional data collection more information
+  about the uncertainty of the model predictions could be obtained by conducting a parameter / structural uncertainty
+  analysis. Given the significant structural uncertainty in the Moraine zone we would recommend calibrating and conducting
+  parameter uncertainty analysis on many different model structures. This would be a significant undertaking, but could
+  easily build on the work and data analysis from this project and contained within this Repo.
 
+.. figure:: ../support_figures/additional_monitoring_wells.png
+    :height: 650 px
+    :align: center
 
+.. class:: centered
+        *Figure: Areas for possible additional high frequency monitoring bores*
 
 Optimisation working notes
 ==========================
