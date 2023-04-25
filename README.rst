@@ -132,7 +132,7 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
     -  `optimised_parameter_sets <model_parameterisation/optimised_parameter_sets>`_: optimised parameter sets
         - `3d_v1a_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1a_opt.par>`_: optimised parameter set for the 3D model version 1a
         - `3d_v1b_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1b_opt.par>`_: optimised parameter set for the 3D model version 1b
-        - `3d_v1d_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1d_opt.par>`_: optimised parameter set for the 3D model version 1d #todo just checking if this should be d or c?
+        - `3d_v1d_opt.par <model_parameterisation/optimised_parameter_sets/3d_v1d_opt.par>`_: optimised parameter set for the 3D model version 1d
     -  `parameter_map.png <model_parameterisation/parameter_map.png>`_: a map of the model parameters
 -  `targets_and_sensitive_sites <targets_and_sensitive_sites>`_: target development and data
     -  `README.rst <targets_and_sensitive_sites/README.rst>`_ : readme document detailing the methods and data used to develop the targets
@@ -163,7 +163,7 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `optimisation_results <optimisation/optimisation_results>`_: results for the optimisation holding all of the pest input and output files
             -  `3d_v1a <optimisation/optimisation_results/3d_v1a>`_:  optimisation results for the 3D model version 1a
             -  `3d_v1b <optimisation/optimisation_results/3d_v1b>`_:  optimisation results for the 3D model version 1b
-            -  `3d_v1d <optimisation/optimisation_results/3d_v1d>`_:  optimisation results for the 3D model version 1d (final model) #todo same as above, just checking this is meant to be d and not c
+            -  `3d_v1d <optimisation/optimisation_results/3d_v1d>`_:  optimisation results for the 3D model version 1d (final model)
         -  `final_opt_models <optimisation/final_opt_models>`_:  the final optimised model files
             -  `3d_v1a <optimisation/final_opt_models/3d_v1a>`_: final optimised model files for the 3D model version 1a
             -  `3d_v1b <optimisation/final_opt_models/3d_v1b>`_: final optimised model files for the 3D model version 1b
@@ -240,7 +240,8 @@ Proprietary packages
 For the most part we relied on open source packages to create the Hawea model, but we did use some proprietary in
 house packages. These packages are not included in this repository, but we have included dummy packages that
 contain the same structure as the original packages and replicates some of the functionality.
-These dummy packages are located in the `dummy_packages #todo finish sentence?
+These dummy packages are located in the `dummy_packages folder <dummy_packages>`_ in the model repo and the python
+scripts have all been adjusted to load the dummy package version if the original version is not available.
 
 Additionally, to ensure future use of this model we have included outputs of the data which
 necessitated the use of the proprietary packages. These outputs are located in the `processed_input_data` folders.

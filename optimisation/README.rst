@@ -552,7 +552,9 @@ There are a number of limitations to this model and the model optimisation. The 
 Recommended additional data
 ==========================
 
-Over the course of out
+Over the course of our optimisation process we identified a number of additional data sources that would be useful.
+We have listed them here, with a discussion of why the information would be useful, but we have not included any feasibility
+assessments or costings to acquire these data sources.
 
 # todo
 - high frequency bore near the north east corner of the lake

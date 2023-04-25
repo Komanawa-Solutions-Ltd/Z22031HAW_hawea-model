@@ -112,7 +112,7 @@ span six orders of magnitude.
 Interpolating spatial parameters
 ----------------------------------
 
-We interpolated the pilot points to continuous values using Radial basis function (RBF) interpolation with a multiquadric #todo should this be multiquadratic?
+We interpolated the pilot points to continuous values using Radial basis function (RBF) interpolation with a multiquadric
 kernel.  The RBF interpolation was performed using the `scipy.interpolate.Rbf` function.  The RBF interpolation was
 preformed on log (base 10) transformed values.  An example of the RBF interpolation is shown below.
 
@@ -176,7 +176,7 @@ Recall layering follows Python indexing format e.g. layer 0 = top layer.
 We set the initial parameters and ranges for the multipliers (hill_se, hill_main, hill_mang, rch_all, race_all) to
 allow a 20% change around the predicted in the inflow values.  The initial values for the Hawea and Clutha River conductance
 (riv_h1, riv_h2, riv_h3, riv_c1) were roughly pulled from the model developed in Wilson et al. (2012).
-The initial values for the smaller river conductance (riv_gview, riv_john) were set as an order of magnitude #todo not sure this sentence makes sentence? order of magnitude above?
+The initial values for the smaller river conductance (riv_gview, riv_john) were set as an order of magnitude lower
 than the Hawea and Clutha River conductance. The ranges for the river conductance are somewhat arbitrary but act to allow
 the model to explore a range of values.  The initial and ranges of kh_lake, and kh_mor_l0 were set to the values used
 for the main pilot points. The specific storage values (sy_ss_rest, sy_ss_mor_l0, sy_ss_mor_l1) were set to typical

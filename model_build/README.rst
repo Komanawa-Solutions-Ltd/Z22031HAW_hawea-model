@@ -1,7 +1,7 @@
 Hawea Transient groundwater model (Hawea Model) build methods and results
 ############################################################################
 
-.. figure:: ../support_figures/model_2d_boundary_conditions.png #todo figure not coming up in preview - none of the figures in this readme work in the preview
+.. figure:: ../support_figures/model_2d_boundary_conditions.png
    :height: 650 px
    :align: center
 
@@ -794,7 +794,7 @@ suggests that approximately 10% of the race flows are lost to groundwater.
 We have access to records of daily race takes from the Hawea Irrigation Co. from 2012-01-01 to 2021-12-31, which covers
 the full optimisation period. For the scenario period we simply used the ISO weekly mean race losses.
 
-Race losses were implemented as well boundary conditions using the # todo is it supposed to be Wel or well? `Wel package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/wel.html>`_.
+Race losses were implemented as well boundary conditions using the `Wel package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/wel.html>`_.
 Well boundary conditions were placed in every model cell that intersected the race shapefiles and the flux was specified as
 10% of the daily race flows spread evenly across every 'race' boundary condition.
 
