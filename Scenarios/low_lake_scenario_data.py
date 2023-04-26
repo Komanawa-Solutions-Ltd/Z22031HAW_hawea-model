@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from Scenarios.boundary_conditions import get_scen_ghb_data, get_lake_heads
 from scipy import optimize
-from project_base import processed_scen_dir
+from project_base import processed_scen_dir, proj_root
 
 
 def lake_sin(x, a, b, d):
@@ -98,6 +98,7 @@ def get_lake_sin_params(recalc=False, plot=False):
         ax.legend()
         ax.set_ylabel('lake head (m)')
         ax.set_xlabel('time')
+        fig.tight_layout()
         plt.show()
     np.save(save_path, params)
     return params
@@ -122,11 +123,19 @@ def get_low_lake_params(recalc=False, plot=False):
     if plot:
         print(f'params: {params}')
         fig, ax = plt.subplots(figsize=(10, 8))
+        from matplotlib.pyplot import Line2D
         ax.plot(data.index, data.lake_stage.values, label='observed')
         ax.plot(data.index, f(data.index, *params), color='k', ls=':', label='modelled')
-        ax.legend()
+        handles, labels = ax.get_legend_handles_labels()
+        for n, v in zip(['a', 'b', 'd'], params):
+            labels.append(f'{n}: {v:.2f}')
+            handles.append(Line2D([0], [0], color='w'))
+        ax.legend(handles=handles, labels=labels)
         ax.set_ylabel('lake head (m)')
         ax.set_xlabel('time')
+        ax.set_title('Fit for typological lake variations')
+        fig.tight_layout()
+        fig.savefig(proj_root.joinpath('Scenarios/boundary_condition_plots', 'low_lake_fit.png'))
         plt.show()
     np.save(save_path, params)
     return params
@@ -170,7 +179,9 @@ def explore_options():
     ax.legend()
     ax.set_ylabel('lake head (m)')
     ax.set_xlabel('time')
-
+    ax.set_title('Example Lake Level Perturbations')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('Scenarios/boundary_condition_plots', 'low_lake_perturbations.png'))
     plt.show()
 
 

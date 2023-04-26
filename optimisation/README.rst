@@ -5,7 +5,7 @@ Hawea Transient groundwater model (Hawea Model) build optimisation and results
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Model objective function over the optimisation*
 

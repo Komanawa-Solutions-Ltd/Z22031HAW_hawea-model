@@ -1,3 +1,4 @@
+
 Hawea Transient groundwater model (Hawea Model) scenarios methods and results
 ############################################################################
 
@@ -5,7 +6,7 @@ Hawea Transient groundwater model (Hawea Model) scenarios methods and results
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Overview of model boundary conditions* # todo new figure
 
@@ -125,47 +126,143 @@ described in the `model build readme <../model_build/README.RST>`_.
 
 Groundwater abstraction
 -----------------------
+
 Development of the pumping curve
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
 
-Scenarios/boundary_condition_plots/pumping/grid_pumping_curve.png
+In order to apply additional levels of groundwater abstraction in a sensible way that is constant with the annual usage
+patterns we developed a typological pumping curve. This was developed by analysing the ISO weekly mean pumping data.
+the ISO weekly data still has some variation so we then applied a centered moving window mean of 9 weeks to smooth the
+data. The data was then transformed via min/max normalisation to a range of 0-1. For increased abstraction scenarios we
+could then apply a maximum daily take rate to the pumping curve to get the daily abstraction. For reference the integral
+of the pumping curve is c. 135 suggesting that on average the annual usage is 135 times the mean annual maximum daily take.
 
+.. figure:: Scenarios/boundary_condition_plots/pumping/grid_pumping_curve.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: typological pumping curve
 
 extended_pump
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+We produced the extended_pump time series to apply the current level of abstraction to the full scenario period. This
+was done by simply repeating the ISO weekly mean historical pumping data to all weeks of the scenario period.
 
 extended_full_allo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+The extended_full_allo pumping record is maximum daily allocation applied to the min/max
+normalised historical pumping record (2015-2020). this likely represents an underestimate of the full allocation scenario
+as most users do not regularly take their maximum daily usage every year.
+
 
 extended_max_allo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+The extended_max_allo pumping record is maximum daily allocation applied to every day of the year. This is almost
+certainly not attainable for 2 reasons.  1) no water users are likely to use their allocation every day of the year
+(e.g. irrigators do not irrigate in winter) and 2) many consents have maximum annual allocations as well as maximum
+daily allocations; however analysis of these data were not included in the usage analysis preformed by
+`Kitteridge (2022) <../model_build/base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_.
 
 extended_max_allo_pc
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+The extended_max_allo_pc pumping record is maximum daily allocation applied to the typological pumping curve. This is
+likely the most realistic scenario of the level of abstraction that could be achieved with the current consented
+activities.
 
 Additional abstraction (grid_pump)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
-Scenarios/boundary_condition_plots/pumping/grid_pumping_locs/Hawea Flat_grid_pumps.png
+One of our goals was to explore the impacts of additional water allocation. Introducing new allocation is challenging
+because the spatial location of these abstractions are unknowable. To address this we developed a 500 m grid of
+abstraction points for each of the allocation zones. To assess the impact of additional abstraction we then applied
+an additional maximum daily take to the typological pumping curve and then evenly distributed this abstraction across
+the grid points within the allocation zone.  This approach will underestimate the local impacts of abstraction, but it
+should represent the impacts to the allocation zone as a whole.  We anticipate that other approaches
+(e.g. well interference and/or stream depletion assessments) would be used to limit the local impacts of any additional
+consented abstraction.
+
+.. figure:: ../Scenarios/boundary_condition_plots/pumping/grid_pumping_locs/Hawea Flat_grid_pumps.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: grid of abstraction points for the Hawea Flat allocation zone
 
 Reduced abstraction (reduced allocation scenarios)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+Where we needed to assess the impacts of reduced abstraction (either from the current usage or one of the aforementioned
+pumping records), we simply applied a percentage reduction to each Wel boundary condition.
 
 Plots of the abstractions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Scenarios/boundary_condition_plots/pumping
-Scenarios/boundary_condition_plots/pumping_use_allo_difs
+
+It is beyond the scope of this document to provide and interpret all of the plots of the boundary conditions. However,
+these plots are all avalbile in the following directories:
+
+- `Scenarios/boundary_condition_plots/pumping <../Scenarios/boundary_condition_plots/pumping>`_: full record of the pumping records.
+- `Scenarios/boundary_condition_plots/pumping_use_allo_difs <../Scenarios/boundary_condition_plots/pumping_use_allo_difs>`_: comparisons of the different pumping records.
 
 
 Lake Hawea Levels for low lake scenarios
 ----------------------------------------
 # todo
+In order to assess the impacts of heretofore unseen lake levels we developed a typological annual lake level variation.
+this was done my creating the best fit between the ISO weekly mean lake levels to a modified sin wave function:
+
+.. math::
+    l = a * sin((t - d) / 52 * 2\pi) +  b
+
+where:
+- $l$ is the lake level
+- $a$ is the amplitude of the lake level variation
+- $t$ is the ISO week
+- $d$ is the phase shift of the lake level variation
+- $b$ is the mean lake level
+
+We then used these parameters as a base value for the following equation to perturb the historical lake levels:
+
+    Where the lake levels were greater than the annual mean lake level:
+
+    .. math::
+        lh = a_high  (|sin((t - d) / 52 * 2\pi)|)^{k_high} +  b_high
+
+    Where the lake levels were less than the annual mean lake level:
+
+    .. math::
+        ll = -a_low  (|sin((t - d) / 52 * 2\pi)|)^{k_low} +  b_high
+
+    where
+    - $lh$ is the high lake level
+    - $ll$ is the low lake level
+    - $a_high$ is the amplitude of the high lake level variation
+    - $a_low$ is the amplitude of the low lake level variation
+    - $b_high$ is the mean lake level for the high lake level variation
+    - $b_low$ is the mean lake level for the low lake level variation
+    - $k_high$ is the width parameter of the high lake level variation
+    - $k_low$ is the width parameter of the low lake level variation
+    - $t$ is the ISO week
+    - $d$ is the phase shift of the lake level variation (not modified)
+
+This allows us to modify the lake amplitude, mean, and the width of the sin wave for both the high and low lake
+levels.
+
+.. figure:: ../Scenarios/boundary_condition_plots/low_lake_perturbations.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: example of the perturbations to the lake levels for the low lake scenarios
+
+.. figure:: ../Scenarios/boundary_condition_plots/low_lake_fit.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+    *Figure: The fit of the typological lake levels to ISO weekly lake levels for the low lake scenarios
 
 
 Standard Scenario Outputs
@@ -175,17 +272,30 @@ Indicator monitoring points
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # todo
 
-Scenarios/indicator_wells.png
+The Hawea model is a 4 dimensional model (3 spatial dimensions and 1 temporal dimension). In order to visualise the
+impacts of scenarios we have developed a series of indicator monitoring points. These points are spaced through the model
+domain and were developed by expert judgment.
+
+.. figure:: ../Scenarios/indicator_wells.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: The indicator monitoring points for the Hawea model
 
 Data outputs
 ^^^^^^^^^^^^
 
 We have developed standard data outputs for the scenarios, they are as follows:
-- all_well_output_dataset.csv:# todo
-- converged.txt: text file with a boolean value indicating whether the model converged
-- key_input_data.csv:# todo
-- output_dataset.csv:# todo
-- zone_budget.csv:# todo
+- all_well_output_dataset.csv: model heads at every known well in the model domain.
+- converged.txt: text file with a boolean value indicating whether the model converged.
+- key_input_data.csv: a record of key input data including recharge, hill inflows, and lake levels.
+- output_dataset.csv: the key output data for each time step which is comprised of:
+  - model heads at the indicator monitoring points and at the high frequency monitoring bores.
+  - river gain/losses for each conductance parameter zone.
+  - key extracts from the zone budget.
+- zone_budget.csv: the full zone budget.
 
 In addition, some scenarios also contain the following files:
 - {}.list: list file from the model runs.
