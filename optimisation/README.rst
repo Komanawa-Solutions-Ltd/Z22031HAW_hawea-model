@@ -54,7 +54,7 @@ Module Index
 - Model overview
     -  `pre_optimisation_overview.py <../optimisation/pre_optimisation_overview.py>`_: make pre optimisation overview plots
     -  `make_preopt_slideshow.py <../optimisation/make_preopt_slideshow.py>`_: make a pre optimisation slideshow
-    -  `pre_optimisation_plots_png <../optimisation/pre_optimisation_plots_png>`_: pre optimisation plots of boundary conditions, targets, parameterization, and other supporting work, many of these figures are referenced in the various readme.rst files
+    -  `pre_optimisation_plots_png <../optimisation/pre_optimisation_plots_png>`_: pre optimisation plots of boundary conditions, targets, parameterisation, and other supporting work, many of these figures are referenced in the various readme.rst files
     -  `make_opt_presentation.py <../optimisation/make_opt_presentation.py>`_: make a presentation of the optimisation results for a meeting
 
 
@@ -82,7 +82,7 @@ The interface to the model was handled via `flopy <https://flopy.readthedocs.io/
 which is a Python package for working with MODFLOW models and `pyemu <https://pyemu.readthedocs.io/en/develop/pyemu.html>`_
 which is a Python package for working with PEST models. The PEST iterations were run in parallel on a cluster
 of linux machines using `Beopest <https://www.prinmath.com/pest/>`_ which is a subpackage of PEST. Beopest was managed
-via an in house class called BeopestManager.  In addition some manual optimisation was undertaken in the course of
+via an in house class called BeopestManager.  In addition some manual optimisation was undertaken in the course of #todo unsure if this sentence makes sense - full stop needed after undertaken or reword second part
 the optimisation process to better understand the limits of specific model structures.  These manual optimisations were
 undertaken using another in house class called SshDist. The main optimisation script was
 `a_build_run_optimisation_version.py <../optimisation/a_build_run_optimisation_version.py>`_
@@ -347,7 +347,7 @@ this area.  Instead, we have to accept that the model is not suitable in this ar
 
 In general the model does a good job of replicating the groundwater levels across the model domain.  There are some areas
 where the model over or under predicts the groundwater levels. As discussed above the areas to the east of the inferred Grandview Fault
-are significant under estimates and the model does not preform well in this area. There are multiple targets in and around the Hawea flat
+are significant under estimates and the model does not preform well in these areas. There are multiple targets in and around the Hawea flat
 township which are underestimated by the model, but given the close proximity of the high frequency observations at bore
 G40/0367, we believe that these misfits are most likely due to either poor data quality of the targets or problems arising from applying the
 historical measured water levels to the time period within the optimisation period. The latter is the most likely as there is a
@@ -383,7 +383,7 @@ westward bend.
 The figure below shows the steady state groundwater heads around the moraine zone in all three layers.
 We don't have any targets to inform this data, but it does produce a key prediction that could be tested in the future.
 The model predicts that the groundwater levels are significantly higher in the northeastern edge of the moraine and that
-this is the area which ultimately controls flow between the lake and the groundwater system. This is not inconsistent
+this is the area which ultimately controls flow between the lake and the groundwater system. This is not inconsistent #todo the double negative makes this sentence a tiny bit confusing, but not a big deal
 with either the perched aquifer conceptual model or the local penetration conceptual model (see the Lake Hawea Moraine
 Conceptual Model section of `the model build readme <../model_build/README.rst>`_. )
 
@@ -482,7 +482,7 @@ Fit to higher frequency groundwater levels at G40/0366
 Discussion and implications
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Model versions 3D_v1a, 3D_v1b, and 3D_v1d all do an adequate job or replicating the high frequency groundwater level
+Model versions 3D_v1a, 3D_v1b, and 3D_v1d all do an adequate job of replicating the high frequency groundwater level
 observations. 3D_v1d does a slightly better job of replicating the high frequency groundwater levels than 3D_v1a and
 3D_v1b, but it does this at the expense of the moderate frequency groundwater observations (i.e. the NGMP wells
 G40/0129 & G40/0120). This prioritisation was intentional as the NGMP bores are designed to monitor contaminants rather
@@ -569,13 +569,13 @@ and scientific merit.
   and around the Grandview/John Creek alluvial fans. Testing this prediction would require a high frequency groundwater
   level record in this area of at least a couple of years in length. The exact location of such a bore would need more
   detailed consideration.
-- **A high frequency groundwater record near the exit of the Maungawera Valley:**  The Maungawera Valley is has a relative paucity of data
+- **A high frequency groundwater record near the exit of the Maungawera Valley:**  The Maungawera Valley has a relative paucity of data
   which makes predictions regarding the sustainable use of groundwater uncertain. A high frequency monitoring bore near
   the exit of the valley (e.g. up valley of the Maungawera Valley Road and Lake Hawea Albert Town Road intersection) would
-  act as an integrater for the up valley groundwater system and would provide significantly more information about the
+  act as an integrator for the up valley groundwater system and would provide significantly more information about the
   local groundwater system. The exact location of such a bore would need more detailed consideration.
 - **A high frequency bore near the Hawea domain and/or Butterfield Road**: Water from Lake Hawea can flow either toward
-  Hawea Flat township or it can flow back towards the Hawea River.  Understanding the piezometic surface in the aforementioned
+  Hawea Flat township or it can flow back towards the Hawea River.  Understanding the piezometric surface in the aforementioned
   area would help constrain that flow. The exact location of such a bore would need more detailed consideration.
 - **A detailed investigation of moraine structure**: As mentioned multiple times within this repository, the moraine
   structure is not well constrained by the data. A detailed investigation of the moraine structure would help constrain
@@ -591,15 +591,15 @@ and scientific merit.
   however, both of the gauged streams are of similar size so the correlation may not hold for the smaller hillside streams.
   Multiple concurrent gaugings (at high and low flows) of multiple hillside streams (both large and small catchment areas
   would help constrain the predictions of inflows from the hillside streams.
-- **Additional Piezometric surveys:** At present the only piezometric survey that was completed in the Hawea region was
-  conducted in Sept of 2011. This survey was conducted we had adequate abstraction information.
-  A significant portion of the model domain therefore does not any more recent observations. One or more additional
+- **Additional Piezometric surveys:** At present the only piezometric survey completed in the Hawea region was
+  conducted in Sept of 2011. This survey was conducted we had adequate abstraction information #todo this sentence doesn't make sense.
+  A significant portion of the model domain therefore does not any more recent observations #todo does not contain? or have? word missing. One or more additional
   piezometric surveys (e.g. at high and low water levels) would help constrain the model predictions in these areas.
-- **Model parameter / structural uncertainty analysis**: In the absense of additional data collection more information
+- **Model parameter / structural uncertainty analysis**: In the absence of additional data collection more information
   about the uncertainty of the model predictions could be obtained by conducting a parameter / structural uncertainty
-  analysis. Given the significant structural uncertainty in the Moraine zone we would recommend calibrating and conducting
+  analysis. Given the significant structural uncertainty in the moraine zone we would recommend calibrating and conducting
   parameter uncertainty analysis on many different model structures. This would be a significant undertaking, but could
-  easily build on the work and data analysis from this project and contained within this Repo.
+  easily build on the work and data analysis from this project and contained within this repo.
 
 .. figure:: ../support_figures/additional_monitoring_wells.png
     :height: 650 px
@@ -728,7 +728,7 @@ described below (working notes) for completeness.
 #. Structure_v9
 
     -  Fix river targets (they were backwards!)
-    -  Implement grandview and john creek (+Hawea and Clutha) as str
+    -  Implement Grandview and John Creek (+Hawea and Clutha) as str
        package
     -  Lake stage vs g40_0415
     -  Looks fine, honestly the fact that them model isn’t matching it
@@ -745,7 +745,7 @@ described below (working notes) for completeness.
        data lengths
     -  look/lower basement in dry cells near model boundaries
     -  NE hillside area (done)
-    -  Near clutha river (done)
+    -  Near Clutha River (done)
     -  I think I need some more pilot points
     -  Near pt 402 on camp hill moraine (move Maungawera south?) ()
        and another in the moraine (to interpolate with other river group
@@ -791,7 +791,7 @@ described below (working notes) for completeness.
 #. lake_bar
 
     -  Add a 1 cell thick barrier for kh
-    -  Remove additional v12 parameterization
+    -  Remove additional v12 parameterisation
 
 #. cond_int
 
@@ -810,7 +810,7 @@ described below (working notes) for completeness.
     -  Remove from dam to “dam control” road from model (e.g. no flow)
     -  Re-run pre_optimisation_overview.py
     -  remove the slope fixer on the east side
-    -  remove additional parameterization of v12
+    -  remove additional parameterisation of v12
 
 #. 3d_v2
 
