@@ -129,6 +129,9 @@ Development of the pumping curve
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # todo
 
+Scenarios/boundary_condition_plots/pumping/grid_pumping_curve.png
+
+
 extended_pump
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # todo
@@ -148,11 +151,16 @@ extended_max_allo_pc
 Additional abstraction (grid_pump)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # todo
+Scenarios/boundary_condition_plots/pumping/grid_pumping_locs/Hawea Flat_grid_pumps.png
 
 Reduced abstraction (reduced allocation scenarios)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # todo
 
+Plots of the abstractions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Scenarios/boundary_condition_plots/pumping
+Scenarios/boundary_condition_plots/pumping_use_allo_difs
 
 
 Lake Hawea Levels for low lake scenarios
@@ -160,43 +168,49 @@ Lake Hawea Levels for low lake scenarios
 # todo
 
 
-
-
-
-
 Standard Scenario Outputs
 =========================
 
-Typological monitoring points
+Indicator monitoring points
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # todo
 
+Scenarios/indicator_wells.png
+
 Data outputs
 ^^^^^^^^^^^^
-# todo
 
-all_well_output_dataset.csv
-converged.txt
-full_allocation.list
-key_input_data.csv
-output_dataset.csv
-zone_budget.csv
+We have developed standard data outputs for the scenarios, they are as follows:
+- all_well_output_dataset.csv:# todo
+- converged.txt: text file with a boolean value indicating whether the model converged
+- key_input_data.csv:# todo
+- output_dataset.csv:# todo
+- zone_budget.csv:# todo
+
+In addition, some scenarios also contain the following files:
+- {}.list: list file from the model runs.
+- {}_hds: compressed and split model heads
+- plots: plots of the model results (similar to the plots in the
+         `Standard optimisation outputs in the model_optimisation <../model_optimisation/README.RST>`_)
 
 Figure outputs
 ^^^^^^^^^^^^^^
 # todo
-comp_plots
-qq_plots
-quantile_plots
+- comp_plots:
+- qq_plots:
+- quantile_plots:
 
 Reading quantile plots
+^^^^^^^^^^^^^^^^^^^^^^
+# todo
+
+Reading q-q plots
 ^^^^^^^^^^^^^^^^^^^^^^
 # todo
 
 Adequate penetration
 --------------------
 # todo
-
 
 
 
@@ -221,48 +235,142 @@ Model information scenarios
 
 Boundary condition sensitivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+# todo table and example plot and link to all plots
 
 Naturalised vs current without abstraction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+# todo example plots and link to all plots
 
 Naturalised vs current vs long current
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+# todo example plots and link to all plots
 
 Naturalised vs current vs long current (opt period only)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+# todo example plots and link to all plots bit of description
 
 
 Low Lake Hawea Level Scenarios
 ------------------------------
-# todo table see MT3D Indicator Scenarios
+
+The Low Lake Hawea Level scenarios are designed to test the sensitivity of the model to the Lake Hawea head boundary
+conditions and to test the impacts of the complex moraine structure specifically.  These scenarios involve creating a
+synthetic lake level boundary conditions and then ascertaining how the model responds to these conditions.  The figures
+below show all of the synthetic lake level scenarios that were tested.
+
+.. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_low_amp.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: ake Hawea head boundary conditions for the low_amp_{} scenarios
+
+.. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_low_wid_amp.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Lake Hawea head boundary conditions for the low_wid_amp_{} scenarios
+
+.. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_low_wide.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Lake Hawea head boundary conditions for the low_wide_{} scenarios
+
+.. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_shift.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Lake Hawea head boundary conditions for the shift_{} scenarios
+
+.. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_lake_drop.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Lake Hawea head boundary conditions for the lake_drop_{} scenarios.
 
 Methods
 ^^^^^^^
 # todo
 
-Lake_drop Scenario
-^^^^^^^^^^^^^^^^^^^^^^
-# todo
+Results overview
+^^^^^^^^^^^^^^^^
+# todo discuss results
 
-Low_amp Scenario
-^^^^^^^^^^^^^^^^^^^^^^
-# todo
 
-Low_wid_amp Scenario
-^^^^^^^^^^^^^^^^^^^^^^
-# todo
+The sections below so some key figures for the various lake level scenarios.  Many more figures for each scenario are
+available in the `low lake level results <Scenarios/low_lake_scenarios/0_results>`_ folder.
+Scenarios/low_lake_scenarios/0_results/lake_drop/comp_plots/hds_monitoring.png
 
-Low_wide Scenario
-^^^^^^^^^^^^^^^^^^^^^^
-# todo
 
-Shift
-^^^^^^^^^^^^^^^^^^^^^^
-# todo
+Lake_drop Scenario results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: ../Scenarios/low_lake_scenarios/0_results/lake_drop/comp_plots/hds_monitoring.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Responses at the high frequency monitoring bores for the lake drop scenarios.
+
+
+Low_amp Scenario results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: ../Scenarios/low_lake_scenarios/0_results/low_amp/comp_plots/hds_monitoring.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Responses at the high frequency monitoring bores for the low_amp scenarios.
+
+
+Low_wid_amp Scenario results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. figure:: ../Scenarios/low_lake_scenarios/0_results/low_wid_amp/comp_plots/hds_monitoring.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Responses at the high frequency monitoring bores for the low_wide_amp scenarios.
+
+
+Low_wide Scenario results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: ../Scenarios/low_lake_scenarios/0_results/low_wide/comp_plots/hds_monitoring.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Responses at the high frequency monitoring bores for the low_wide scenarios.
+
+
+
+Shift results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: ../Scenarios/low_lake_scenarios/0_results/shift/comp_plots/hds_monitoring.png
+   :height: 650 px
+   :align: center
+
+.. class::
+
+    *Figure: Responses at the high frequency monitoring bores for the shift scenarios.
+
 
 
 MT3D Indicator Scenarios
@@ -290,6 +398,11 @@ Results
 # todo
 
 
+../Scenarios/mt3d_indicator_scenarios/plots/lake_con_indicator.png
+../Scenarios/mt3d_indicator_scenarios/plots/hill_rch_indicator.png
+../Scenarios/mt3d_indicator_scenarios/plots/race_con_indicator.png
+../Scenarios/mt3d_indicator_scenarios/plots/all_str.png
+
 
 
 
@@ -298,7 +411,8 @@ Recommended Allocation Zones
 ----------------------------
 # todo (no recommended allocation limits)
 
-
+Scenarios/allocation_results/new_allo_zones.png
+Scenarios/allocation_results/old_allo_zones.png
 
 
 

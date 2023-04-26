@@ -422,7 +422,8 @@ process_results = True
 run_modflow = True
 
 if __name__ == '__main__':
-    mangawera_reduction()
+    plot_grid_locs(True)
+    # mangawera_reduction()
     # full_allocation()
     # max_allocation()
     # max_allocation_on_pump_curve()

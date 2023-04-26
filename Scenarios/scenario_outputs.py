@@ -1122,13 +1122,28 @@ def test_3d_xsections():
     _plot_moraine_cross_sections(all_hds, None, [1, 4, 8], ['1', '2', '3'], ['solid', ':', '--'], 'tst')
 
 
+def plot_indicator_wells():
+    locs = get_indicator_well_locs()
+    locs = smt.io.add_mxmy_to_df(locs)
+    fig, ax = smt.plot.plt_basemap(no_flow_layer=0, figsize=(10, 10))
+    ax.scatter(locs.mx, locs.my, c='r', s=100)
+    for (mx,my) in zip(locs.mx, locs.my):
+        ax.annotate(locs.index[locs.mx == mx][0], (mx, my), bbox={'facecolor': 'white', 'alpha': 0.5})
+    ax.set_ylim([locs.my.min() - 1000, locs.my.max() + 1000])
+    ax.set_title('Indicator wells')
+    fig.tight_layout()
+    fig.savefig(Path(__file__).parent.joinpath('indicator_wells.png'))
+    smt.plot.show()
+
 if __name__ == '__main__':
+    plot_indicator_wells()
+
+    raise NotImplementedError
     get_adiquate_penetration('all', 'long_current', True)
     get_adiquate_penetration('all', 'optimised', True)
     get_adiquate_penetration('all', 'long_nat', True)
 
     test_qqplot()
-    raise NotImplementedError
     _get_indicator_wells(True)
     tm = time.time()
     test_with_base_model()
