@@ -113,7 +113,7 @@ were simply the steady state component of each boundary condition (i.e. the mean
 | reduced abstraction     | Wel     | GW abstraction      | allocation reduction (fraction of extended_pump)                                    | below                                             |
 | grid_pump               | Wel     | GW abstraction      | gridded abstraction (additional allocation)                                         | below                                             |
 | lake                    | Ghb     | Lake Hawea          | Long record of Lake Hawea levels                                                    | `model_build readme <../model_build/README.RST>`_ |
-| low lake levels         | Ghb     | Lake Hawea          | typological low Lake Hawea levels                                                   | `model_build readme <../model_build/README.RST>`_ |
+| low lake levels         | Ghb     | Lake Hawea          | typological low Lake Hawea levels                                                   | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 
 
