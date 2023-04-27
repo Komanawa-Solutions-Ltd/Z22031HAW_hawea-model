@@ -682,7 +682,7 @@ boundaries.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: fraction of the water in the model sourced from Lake Hawea at steady state conditions.*
 
@@ -691,7 +691,7 @@ boundaries.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: fraction of the water in the model sourced from hillside inflow or LSR at steady state conditions. Note this excludes John and Grandview Creeks.*
 
@@ -700,7 +700,7 @@ boundaries.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: fraction of the water in the model sourced from water race leakage at steady state conditions.*
 
@@ -709,7 +709,7 @@ boundaries.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: fraction of the water in the model sourced from the Hawea and Clutha Rivers and John and Grandview Creeks at steady state conditions.*
 
@@ -724,7 +724,7 @@ for the hawea area. These are shown in the figure below.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Allocation zones recommended by Wilson (2012) for the Hawea area. Note the allocation zones are not*
     *recommended for the entire model area, only the area of the Hawea Basin Groundwater Review (2012) study.*
@@ -755,7 +755,7 @@ below. The main differences are:
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Recommended allocation zones for the Hawea area from this work.*
 
