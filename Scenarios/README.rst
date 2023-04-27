@@ -534,8 +534,8 @@ The sections below so some key figures for the various lake level scenarios.  Ma
 available in the `low lake level results <Scenarios/low_lake_scenarios/0_results>`_ folder.
 Scenarios/low_lake_scenarios/0_results/lake_drop/comp_plots/hds_monitoring.png
 
-# todo discuss results
-
+The changes in lake levels clearly propagate directly to the groundwater levels.  However the lake_drop and the
+low_wide_amp scenarios clearly show the predicted impacts of Lake levels falling below the threshold value.
 
 Lake_drop Scenario results
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -715,11 +715,33 @@ Allocation Scenarios
 --------------------
 Allocation via Zonal recharge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo include discussion and example plot
+
+For each of the allocation zones we extracted the range of hillside inflows and LSR. An example figure is shown below.
+It is a violin plot, so the width of the violin represents the probability of the value occurring. The full results,
+including tabular results are avalible in the `allo_zone_rch <../Scenarios/allocation_results/allo_zone_rch>`_ folder.
+
+
+.. figure:: ../Scenarios/allocation_results/allo_zone_rch/plots/Mangawera Valley.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: Example violin plot of the range of hillside inflows and LSR for the Maungawera Valley allocation zone.*
 
 Naturalised vs current vs full
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo include discussion and example plot
+
+In addition to the zonal recharge modelling we also compared the impact of the long current scenario with various
+full allocation and naturalised scenarios. The full results are available in the `nat_current_full <../Scenarios/allocation_results/nat_current_full>`_ folder.
+
+.. figure:: ../Scenarios/allocation_results/nat_current_full/quantile_plots/hds_terrace_2.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: An example of the comparison between the long_current, naturalised, and various full allocation scenarios.*
 
 Zone specific Scenario Methods and Results
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -763,8 +785,9 @@ Quartz Creek Allocation Zone LSR analysis
 The Quartz Creek Allocation Zone is a small area to the west of the Maungawera Valley in the catchment and alluvial fan
 of Quartz Creek. The allocation zone is shown in the figure below. Water in this area drains towards Lake Wanaka and was
 therefore out of scope of this project. However, we have included the results of LSR modelling for this area in this
-repository for completeness and because it required minimal additional effort. The LSR results are located in # todo and
-are shown in the figure below.  Note that Allocation in some of these areas have the potential to impact the groundwater
+repository for completeness and because it required minimal additional effort. The LSR results are located in the
+`quartz_creek_lsr/results folder <../quartz_creek_lsr/results>`_ and are shown in the figure below.
+Note that Allocation in some of these areas have the potential to impact the groundwater
 levels in the Maungawera Valley and therefore should be considered in the context of the Maungawera Valley allocation zone.
 
 # todo do anlysis and include plot of location and plot of LSR results.  Location to LSR results.
@@ -772,16 +795,73 @@ levels in the Maungawera Valley and therefore should be considered in the contex
 
 Wetland Setback Scenarios
 =========================
-# todo
+The purpose of the wetland setback modelling was to assess the impact of abstraction on the two sensitive wetland in
+the Hawea Basin.
+
+.. figure:: ../Scenarios/wetland_setback/figures/wetland_locations.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: Locations of the two wetlands in the Hawea Basin and the boundaries for the clip out models.*
 
 Methodology
--------------
-# todo
+--------------
+
+We wanted to examine a larger range of parameters than the optimised model parameter set. therefore we made two clip out
+models -- one for each wetland. The clip out models were made by clipping out the wetland and an approximately 5 km
+up gradient buffer. We set the boundary conditions of these models as follows:
+
+- No existing abstraction was included in the model.
+- Steady state LSR
+- Steady state conditions for the Hawea and Clutha Rivers.
+- For the Campbell's wetland model we set the North, East, and West boundaries as constant head boundaries with the
+  head set from the optimised model.
+
+We then created a semi-regular polar grid of test abstraction well locations. To identify the impact of abstraction on the
+wetland we ran a base scenario (no abstraction) and then ran a series of scenarios. the head difference between the
+base and new scenarios at the wetland location was extracted. We varied the following parameters:
+
+- pumping rate
+- hydraulic conductivity
+- specific yield
+- river conductance
+
+.. figure:: ../support_figures/clipout_model_boundary_conditions.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: boundary conditions for the clip out models.*
+
+To visualize the results we assigned the head difference at the wetland location to the well location and then
+interpolated the results for each unique combination of parameters. Finally we qualitatively assessed the various
+parameterisations to determine an area where abstraction would likely impact the wetland.
 
 Results
 --------
-# todo
 
+The full suite of results are available in:
+
+- Campbell's: `Scenarios/wetland_setback_campbells/results <../Scenarios/wetland_setback_campbells/results>`_
+- Butterfield: `Scenarios/wetland_setback_butterfield/results <../Scenarios/wetland_setback_butterfield/results>`_
+
+An example of the results for the Campbell's wetland are shown below. The results for the Butterfield wetland are
+similar. This specific example is for a pumping rate of 500 $$m^3/d$$, hydraulic conductivity of 0.316 m/d, specific yield of
+0.316, and river conductance of 750 $$m^2/d$$. This specific example shows that abstraction within 1 km of the wetland
+is likely to cause c. 0.5 m drawdown at the wetland location. However, abstraction 2 km or further from the wetland is unlikely
+to cause drawdown at the wetland location.  Note that several of the example bore locations were not able to sustain
+abstraction at this rate. The drawdown at these locations are excluded from the interpolation.
+
+.. figure:: ../Scenarios/wetland_setback_campbells/results/plots/mp500.0_tk0.316_fk0.316_ts750.0.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: An example of the wetland setback modelling results for Campbell's wetland.*
 
 References
 ===========

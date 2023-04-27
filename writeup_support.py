@@ -390,6 +390,78 @@ def additional_monitoring():
     fig.savefig(proj_root.joinpath('support_figures', 'additional_monitoring_wells.png'))
     plt.show()
 
+def wetland_clipouts():
+    from targets_and_sensitive_sites.senstive_sites import get_wetlands
+    from Scenarios.wetland_setback_butterfield.project_model_tools import smt as but_smt
+    from Scenarios.wetland_setback_campbells.project_model_tools import smt as camp_smt
+
+    wet = get_wetlands()
+    outdata = smt.get_model_zeros() * np.nan
+    for k, v in wet.items():
+        outdata[v] = k
+
+    fig, ax, handles, labels = smt.plot.plt_discrete_matrix(outdata,
+                                           names={k: f'Wetland {n}' for k, n in
+                                                  zip(wet.keys(),
+                                                      ['Butterfield Wetland', 'Campbells Reserve Pond Margins'])},
+                                           colors={k: c for k, c in zip(wet.keys(), smt.plot.get_colors(wet.keys()))},
+                                           title='Wetlands clip out model locations', base_map=True, no_flow_layer=0, alpha=1,
+                                           legend_loc='lower left', return_handles_labels=True
+                                           )
+
+    wnames = ['Butterfield Reserve clip out', "Campbell's Reserve clip out"]
+    wtools = [but_smt, camp_smt]
+    colors = ['r', 'b']
+    from matplotlib. patches import Rectangle
+    for wname, wtool, c in zip(wnames, wtools, colors):
+        (x_min, x_max), (y_min, y_max) = wtool.get_xlim_ylim()
+        rect = Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, facecolor='none', edgecolor=c, lw=4)
+        ax.add_patch(rect)
+        handles.append(rect)
+        labels.append(wname)
+    ax.legend(handles, labels, loc='lower left')
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'model_wetlands_clipouts.png'))
+    plt.show()
+    pass
+
+def clipout_boundary_conditions():
+    from Scenarios.wetland_setback_butterfield.project_model_tools import smt as but_smt
+    from Scenarios.wetland_setback_campbells.project_model_tools import smt as camp_smt
+    from Scenarios.wetland_setback_butterfield import model_bcs as but_bcs
+    from Scenarios.wetland_setback_campbells import model_bcs as camp_bcs
+    from Scenarios.wetland_setback_butterfield.generate_runs import get_run_locs as get_but_locs
+    from Scenarios.wetland_setback_campbells.generate_runs import get_run_locs as get_camp_locs
+    from matplotlib.patches import Patch
+    fig, axs = plt.subplots(ncols=2, figsize=(14, 8))
+
+    for ax, usmt, ubcs, name, ulocs in zip(axs,
+                                           [but_smt, camp_smt],
+                                           [but_bcs, camp_bcs],
+                                           ['Butterfield', 'Campbells'],
+                                           [get_but_locs(), get_camp_locs()]
+                                           ):
+        from model_tools.regular_modeltools import ModelTools_RegularGrid
+        assert isinstance(usmt, ModelTools_RegularGrid)
+        usmt.plot.plt_basemap(ax, no_flow_layer=0)
+        wloc = ubcs.get_wetland_loc(0, return_just_kij=False)
+        ax.scatter(wloc.x, wloc.y, color='blue', label='Wetland', s=100)
+        rlocs = ubcs.get_riv(1000)
+        rlocs = pd.DataFrame(rlocs[0])
+        rlocs = usmt.io.add_mxmy_to_df(rlocs)
+        ax.scatter(rlocs.mx, rlocs.my, color='orange', label='River')
+        ulocs = usmt.io.add_mxmy_to_df(ulocs)
+        ax.scatter(ulocs.mx, ulocs.my, color='r', label='Well locations')
+        hand, lab = ax.get_legend_handles_labels()
+        eh, el = usmt.plot.get_no_flow_legend_handles_labels()
+        hand.extend(eh)
+        lab.extend(el)
+        ax.legend(hand, lab, loc='lower left')
+        ax.set_title(f'{name} model boundary conditions')
+
+    fig.tight_layout()
+    fig.savefig(proj_root.joinpath('support_figures', 'clipout_model_boundary_conditions.png'))
+    plt.show()
 
 if __name__ == '__main__':
     # model_2d_structure_plots()
@@ -403,5 +475,7 @@ if __name__ == '__main__':
     # plot_regular()
     # hill_params()
     # terrace_only_plot()
-    additional_monitoring()
+    #additional_monitoring()
+    # wetland_clipouts()
+    clipout_boundary_conditions()
     pass

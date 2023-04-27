@@ -178,6 +178,9 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `make_preopt_slideshow.py <optimisation/make_preopt_slideshow.py>`_: make a pre optimisation slideshow
         -  `pre_optimisation_plots_png <optimisation/pre_optimisation_plots_png>`_: pre optimisation plots of boundary conditions, targets, parameterisation, and other supporting work, many of these figures are referenced in the various readme.rst files
         -  `make_opt_presentation.py <optimisation/make_opt_presentation.py>`_: make a presentation of the optimisation results for a meeting
+- `quartz_creek_lsr <quartz_creek_lsr>`_: modelling of LSR for the Quartz Creek area see the `Scenarios readme <Scenarios/README.rst>`_ for more information
+    - ` results <quartz_creek_lsr/results>`_: results from the LSR modelling
+    - ` model_qtz_ck_lsr.py <quartz_creek_lsr/model_qtz_ck_lsr.py>`_: script for LSR modelling
 -  `Scenarios <Scenarios>`_: scenario modelling code and results
     -  `README.rst <Scenarios/README.rst>`_: document describing the scenario modelling methods and results
     -   Scenario development and supporting scripts
