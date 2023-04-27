@@ -163,7 +163,7 @@ of the pumping curve is c. 135 suggesting that on average the annual usage is 13
 
 .. class:: centered
 
-    *Figure: typological pumping curve
+    *Figure: typological pumping curve*
 
 extended_pump
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -247,7 +247,7 @@ where:
 
 .. class:: centered
 
-    *Figure: The fit of the typological lake levels to ISO weekly lake levels for the low lake scenarios
+    *Figure: The fit of the typological lake levels to ISO weekly lake levels for the low lake scenarios*
 
 We then used these parameters as a base value for the following equation to perturb the historical lake levels:
 
@@ -385,12 +385,12 @@ construction data. In addition this approach can cause challenges when there are
 model over/under estimates the groundwater levels). To address these issues we have calculated the adequate penetration
 level for a given scenario based on the model results as follows:
 
-$$apl = h_mean - 3\\sigma$$
+$$apl = h_{mean} - 3\\sigma$$
 
 where:
 
 - $apl$ is the adequate penetration level
-- $h_mean$ is the mean of the model heads at the indicator well
+- $h_{mean}$ is the mean of the model heads at the indicator well
 - $\\sigma$ is the standard deviation of the model heads at the indicator well
 
 For these models we typically compare results to the adequate penetration level for the long_current scenario and long_nat
@@ -447,11 +447,17 @@ the real world.
 | Zone              | Recharge | Hill inflows | Lake levels | Pumping        |
 +===================+==========+==============+=============+================+
 | Hawea Flat        | Moderate | Low          | High        | Low            |
++-------------------+----------+--------------+-------------+----------------+
 | Te Awa            | Low      | Low          | High        | N/A            |
++-------------------+----------+--------------+-------------+----------------+
 | Terrace-River     | Moderate | Moderate     | Moderate    | Localised high |
++-------------------+----------+--------------+-------------+----------------+
 | Terrace-Hill      | High     | High         | Moderate    | Low            |
++-------------------+----------+--------------+-------------+----------------+
 | Maungawera Flat   | Low      | Low          | High        | N/A            |
++-------------------+----------+--------------+-------------+----------------+
 | Maungawera Valley | High     | High         | N/A         | Moderate       |
++-------------------+----------+--------------+-------------+----------------+
 | Sandy Point       | High     | Moderate     | Low         | N/A            |
 +-------------------+----------+--------------+-------------+----------------+
 
@@ -470,7 +476,7 @@ high and low groundwater levels (0-20th and 80-100th percentiles).
 
 .. class:: centered
 
-    *Figure: example results of the boundary condition sensitivity analysis at the mid_e_terrace indicator well
+    *Figure: example results of the boundary condition sensitivity analysis at the mid_e_terrace indicator well*
 
 Naturalised vs current without abstraction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -490,7 +496,7 @@ groundwater levels.  The full set of results are available at
 
 .. class:: centered
 
-    *Figure: example results of the comparison of the naturalised, long current, and no abstraction scenarios at the mid_terrace indicator well
+    *Figure: example results of the comparison of the naturalised, long current, and no abstraction scenarios at the mid_terrace indicator well*
 
 
 Naturalised vs current vs long current
@@ -521,7 +527,7 @@ below show all of the synthetic lake level scenarios that were tested.
 
 .. class::
 
-    *Figure: ake Hawea head boundary conditions for the low_amp_{} scenarios
+    *Figure: ake Hawea head boundary conditions for the low_amp scenarios*
 
 .. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_low_wid_amp.png
    :height: 650 px
@@ -529,7 +535,7 @@ below show all of the synthetic lake level scenarios that were tested.
 
 .. class::
 
-    *Figure: Lake Hawea head boundary conditions for the low_wid_amp_{} scenarios
+    *Figure: Lake Hawea head boundary conditions for the low_wid_amp scenarios*
 
 .. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_low_wide.png
    :height: 650 px
@@ -537,7 +543,7 @@ below show all of the synthetic lake level scenarios that were tested.
 
 .. class::
 
-    *Figure: Lake Hawea head boundary conditions for the low_wide_{} scenarios
+    *Figure: Lake Hawea head boundary conditions for the low_wide scenarios
 
 .. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_shift.png
    :height: 650 px
@@ -545,7 +551,7 @@ below show all of the synthetic lake level scenarios that were tested.
 
 .. class::
 
-    *Figure: Lake Hawea head boundary conditions for the shift_{} scenarios
+    *Figure: Lake Hawea head boundary conditions for the shift scenarios*
 
 .. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_lake_drop.png
    :height: 650 px
@@ -553,7 +559,7 @@ below show all of the synthetic lake level scenarios that were tested.
 
 .. class::
 
-    *Figure: Lake Hawea head boundary conditions for the lake_drop_{} scenarios.
+    *Figure: Lake Hawea head boundary conditions for the lake_drop scenarios.*
 
 Methods and results
 ^^^^^^^^^^^^^^^^^^^
@@ -579,7 +585,7 @@ Lake_drop Scenario results
 
 .. class::
 
-    *Figure: Responses at the high frequency monitoring bores for the lake drop scenarios.
+    *Figure: Responses at the high frequency monitoring bores for the lake drop scenarios.*
 
 
 Low_amp Scenario results
@@ -591,7 +597,7 @@ Low_amp Scenario results
 
 .. class::
 
-    *Figure: Responses at the high frequency monitoring bores for the low_amp scenarios.
+    *Figure: Responses at the high frequency monitoring bores for the low_amp scenarios.*
 
 
 Low_wid_amp Scenario results
@@ -603,7 +609,7 @@ Low_wid_amp Scenario results
 
 .. class::
 
-    *Figure: Responses at the high frequency monitoring bores for the low_wide_amp scenarios.
+    *Figure: Responses at the high frequency monitoring bores for the low_wide_amp scenarios.*
 
 
 Low_wide Scenario results
@@ -615,7 +621,7 @@ Low_wide Scenario results
 
 .. class::
 
-    *Figure: Responses at the high frequency monitoring bores for the low_wide scenarios.
+    *Figure: Responses at the high frequency monitoring bores for the low_wide scenarios.*
 
 
 
@@ -628,7 +634,7 @@ Shift results
 
 .. class::
 
-    *Figure: Responses at the high frequency monitoring bores for the shift scenarios.
+    *Figure: Responses at the high frequency monitoring bores for the shift scenarios.*
 
 
 
@@ -638,13 +644,21 @@ MT3D Indicator Scenarios
 | Scenario name      |  Boundary condition concentration                                                 |
 +====================+===================================================================================+
 | all_any            |  all boundary conditions set to 1 (process check)                                 |
++--------------------+-----------------------------------------------------------------------------------+
 | all_hill_indicator |  all hillside inflows (excluding John and Grandview creeks) set to 1              |
++--------------------+-----------------------------------------------------------------------------------+
 | all_str            |  all stream boundary conditions set to 1                                          |
++--------------------+-----------------------------------------------------------------------------------+
 | hill_rch_indicator |  all hillside inflows (excluding John and Grandview Creeks) and recharge set to 1 |
++--------------------+-----------------------------------------------------------------------------------+
 | lake_con_indicator |  all lake boundary conditions set to 1                                            |
++--------------------+-----------------------------------------------------------------------------------+
 | not_any            |  all boundary conditions set to 0 (process check)                                 |
++--------------------+-----------------------------------------------------------------------------------+
 | not_str            |  all boundary conditions (except str package                                      |
++--------------------+-----------------------------------------------------------------------------------+
 | race_con_indicator |  all race cells set to 1                                                          |
++--------------------+-----------------------------------------------------------------------------------+
 | rch_indicator      |  recharge concentration set to 1                                                  |
 +--------------------+-----------------------------------------------------------------------------------+
 
@@ -670,7 +684,7 @@ boundaries.
 
 .. class::
 
-    *Figure: fraction of the water in the model sourced from Lake Hawea at steady state conditions.
+    *Figure: fraction of the water in the model sourced from Lake Hawea at steady state conditions.*
 
 
 .. figure:: ../Scenarios/mt3d_indicator_scenarios/plots/hill_rch_indicator.png
@@ -679,7 +693,7 @@ boundaries.
 
 .. class::
 
-    *Figure: fraction of the water in the model sourced from hillside inflow or LSR at steady state conditions. Note this excludes John and Grandview Creeks.
+    *Figure: fraction of the water in the model sourced from hillside inflow or LSR at steady state conditions. Note this excludes John and Grandview Creeks.*
 
 
 .. figure:: ../Scenarios/mt3d_indicator_scenarios/plots/race_con_indicator.png
@@ -688,7 +702,7 @@ boundaries.
 
 .. class::
 
-    *Figure: fraction of the water in the model sourced from water race leakage at steady state conditions.
+    *Figure: fraction of the water in the model sourced from water race leakage at steady state conditions.*
 
 
 .. figure:: ../Scenarios/mt3d_indicator_scenarios/plots/all_str.png
@@ -697,7 +711,7 @@ boundaries.
 
 .. class::
 
-    *Figure: fraction of the water in the model sourced from the Hawea and Clutha Rivers and John and Grandview Creeks at steady state conditions.
+    *Figure: fraction of the water in the model sourced from the Hawea and Clutha Rivers and John and Grandview Creeks at steady state conditions.*
 
 
 Recommended Allocation Zones
@@ -712,8 +726,8 @@ for the hawea area. These are shown in the figure below.
 
 .. class::
 
-    *Figure: Allocation zones recommended by Wilson (2012) for the Hawea area. Note the allocation zones are not
-    recommended for the entire model area, only the area of the Hawea Basin Groundwater Review (2012) study.*
+    *Figure: Allocation zones recommended by Wilson (2012) for the Hawea area. Note the allocation zones are not*
+    *recommended for the entire model area, only the area of the Hawea Basin Groundwater Review (2012) study.*
 
 From the current modelling we have recommended some slight changes to the allocation zones. These are shown in the figure
 below. The main differences are:
@@ -743,7 +757,7 @@ below. The main differences are:
 
 .. class::
 
-    *Figure: Recommended allocation zones for the Hawea area from this work.
+    *Figure: Recommended allocation zones for the Hawea area from this work.*
 
 Allocation Scenarios
 --------------------
@@ -794,10 +808,15 @@ we suggest any allocation in these zones should be based on the results of the z
 | Allocation Zone         | Scenarios modelled allocation: | Path to results                                                                                                    |
 +=========================+================================+====================================================================================================================+
 | Hawea Flat              | Increases                      |  `Scenarios/allocation_results/Hawea Flat_results <../Scenarios/allocation_results/Hawea Flat_results>`_           |
++-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | mangawera_valley        | Decreases                      |  `Scenarios/allocation_results/mangawera_valley <../Scenarios/allocation_results/mangawera_valley>`_               |
++-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | Maungawera Flat         | Increases                      |  `Scenarios/allocation_results/Maungawera Flat_results <../Scenarios/allocation_results/Maungawera Flat_results>`_ |
++-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | Te Awa                  | Increases                      |  `Scenarios/allocation_results/Te Awa_results <../Scenarios/allocation_results/Te Awa_results>`_                   |
++-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | Terrace-Hill            | Increases                      |  `Scenarios/allocation_results/Terrace-Hill_results <../Scenarios/allocation_results/Terrace-Hill_results>`_       |
++-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | Terrace-River           | Increases                      |  `Scenarios/allocation_results/Terrace-River_results <../Scenarios/allocation_results/Terrace-River_results>`_     |
 +-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 
