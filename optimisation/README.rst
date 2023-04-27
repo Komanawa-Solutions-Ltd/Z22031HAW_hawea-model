@@ -82,13 +82,14 @@ The interface to the model was handled via `flopy <https://flopy.readthedocs.io/
 which is a Python package for working with MODFLOW models and `pyemu <https://pyemu.readthedocs.io/en/develop/pyemu.html>`_
 which is a Python package for working with PEST models. The PEST iterations were run in parallel on a cluster
 of linux machines using `Beopest <https://www.prinmath.com/pest/>`_ which is a subpackage of PEST. Beopest was managed
-via an in house class called BeopestManager.  In addition some manual optimisation was undertaken in the course of #todo unsure if this sentence makes sense - full stop needed after undertaken or reword second part
+via an in house class called BeopestManager.  In addition, some manual optimisation was undertaken during
 the optimisation process to better understand the limits of specific model structures.  These manual optimisations were
 undertaken using another in house class called SshDist. The main optimisation script was
 `a_build_run_optimisation_version.py <../optimisation/a_build_run_optimisation_version.py>`_
 
 The build of the PEST runfile was undertaken in `build_optimisation.py <../optimisation/build_optimisation.py>`_.
 which has a number of component functions:
+
 - `raw_pest <../optimisation/build_optimisation.py#L251>`_:
   - Overarching function to build the PEST runfile (calls the following functions).
   - Also handles the singular value decomposition (SVD) parameters.
@@ -383,7 +384,7 @@ westward bend.
 The figure below shows the steady state groundwater heads around the moraine zone in all three layers.
 We don't have any targets to inform this data, but it does produce a key prediction that could be tested in the future.
 The model predicts that the groundwater levels are significantly higher in the northeastern edge of the moraine and that
-this is the area which ultimately controls flow between the lake and the groundwater system. This is not inconsistent #todo the double negative makes this sentence a tiny bit confusing, but not a big deal
+this is the area which ultimately controls flow between the lake and the groundwater system. This is consistent
 with either the perched aquifer conceptual model or the local penetration conceptual model (see the Lake Hawea Moraine
 Conceptual Model section of `the model build readme <../model_build/README.rst>`_. )
 
@@ -500,7 +501,6 @@ in the `scenarios readme file. <../scenarios/README.rst>`_.  Note that we did at
 to get this optimisation to converge, so we do not believe that the lack of convergence here indicates that the threshold
 value cannot be as high as 337 m msl.
 
-#todo discuss new Jens info!
 
 Access to final optimised parameter sets and models
 ===================================================
@@ -594,9 +594,10 @@ and scientific merit.
   Multiple concurrent gaugings (at high and low flows) of multiple hillside streams (both large and small catchment areas
   would help constrain the predictions of inflows from the hillside streams.
 - **Additional Piezometric surveys:** At present the only piezometric survey completed in the Hawea region was
-  conducted in Sept of 2011. This survey was conducted we had adequate abstraction information #todo this sentence doesn't make sense.
-  A significant portion of the model domain therefore does not any more recent observations #todo does not contain? or have? word missing. One or more additional
-  piezometric surveys (e.g. at high and low water levels) would help constrain the model predictions in these areas.
+  conducted in Sept of 2011. This survey was conducted we had adequate abstraction information and so we had to transpose
+  these groundwater head targets to dates inside the optimisation period, which adds error. One or more additional
+  piezometric surveys (e.g. at high and low water levels) would help constrain the model predictions in the areas that
+  are only informed by the piezometric survey.
 - **Model parameter / structural uncertainty analysis**: In the absence of additional data collection more information
   about the uncertainty of the model predictions could be obtained by conducting a parameter / structural uncertainty
   analysis. Given the significant structural uncertainty in the moraine zone we would recommend calibrating and conducting

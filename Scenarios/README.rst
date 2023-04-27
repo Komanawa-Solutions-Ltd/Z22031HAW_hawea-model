@@ -70,7 +70,7 @@ Module Index
         -  `mangawera_valley <../Scenarios/allocation_results/mangawera_valley>`_: results for the Maungawera Valley allocation reduction scenarios
         -  `allo_zone_rch <../Scenarios/allocation_results/allo_zone_rch>`_: results comparing LSR, hillside inflows, and allocation for each zone
         -  `example_quantile_plots <../Scenarios/allocation_results/example_quantile_plots>`_: example quantile plots for the allocation scenarios to support presentations
--  Wetland Setback Modelling # todo add more detail?
+-  Wetland Setback Modelling
     -  `wetland_setback_campbells <../Scenarios/wetland_setback_campbells>`_: wetland setback modelling for Campbells wetland scripts and results
     -  `wetland_setback_butterfield <../Scenarios/wetland_setback_butterfield>`_: wetland setback modelling for Butterfield wetland scripts and results
 
@@ -484,8 +484,6 @@ conditions and to test the impacts of the complex moraine structure specifically
 synthetic lake level boundary conditions and then ascertaining how the model responds to these conditions.  The figures
 below show all of the synthetic lake level scenarios that were tested.
 
-# todo discuss the new JENS info
-
 .. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_low_amp.png
    :height: 650 px
    :align: center
@@ -526,19 +524,19 @@ below show all of the synthetic lake level scenarios that were tested.
 
     *Figure: Lake Hawea head boundary conditions for the lake_drop_{} scenarios.
 
-Methods
-^^^^^^^
-# todo
+Methods and results
+^^^^^^^^^^^^^^^^^^^
 
-Results overview
-^^^^^^^^^^^^^^^^
-# todo discuss results
-# todo context of JENs new info
-
+The synthetic lake levels were created for a three year period. all other boundary conditions were set at the steady
+state (mean of optimised period) values.  The synthetic lake levels were then applied to the model and the results were
+extracted at the indicator boundary points.  Finally we compared these scenarios to the base sin fit to the observed
+ISO weekly mean lake levels
 
 The sections below so some key figures for the various lake level scenarios.  Many more figures for each scenario are
 available in the `low lake level results <Scenarios/low_lake_scenarios/0_results>`_ folder.
 Scenarios/low_lake_scenarios/0_results/lake_drop/comp_plots/hds_monitoring.png
+
+# todo discuss results
 
 
 Lake_drop Scenario results
@@ -623,7 +621,7 @@ Methods
 We ran a steady state model with the mean optimised period boundary conditions and then ran the MT3D model with the
 concentrations for each boundary condition set to 1 and all others set to 0. The MT3D model was run for an arbitrarily
 period (7.305 E5 years) to ensure the concentrations were at pseudo steady state. The final concentrations for these
-scenarios were saved and plotted.  they are available in the `mt3d_indicator_scenarios <../Scenarios/mt3d_indicator_scenarios>`_ folder.
+scenarios were saved and plotted.  They are available in the `mt3d_indicator_scenarios <../Scenarios/mt3d_indicator_scenarios>`_ folder.
 
 Results
 ^^^^^^^

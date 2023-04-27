@@ -375,8 +375,6 @@ model structural design.
 
         *Figure: indicative conceptual model of the Lake Hawea Moraine (along the moraine) assuming local penetration of the moraine with a paleo-channel*
 
-# todo include new JENS data
-
 Implementation of the Lake Hawea Moraine Conceptual Model into the groundwater model
 ^^^^^^^^^^^
 
