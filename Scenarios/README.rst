@@ -202,7 +202,7 @@ should represent the impacts to the allocation zone as a whole.  We anticipate t
 (e.g. well interference and/or stream depletion assessments) would be used to limit the local impacts of any additional
 consented abstraction.
 
-.. figure:: ../Scenarios/boundary_condition_plots/pumping/grid_pumping_locs/Hawea Flat_grid_pumps.png
+.. figure:: {../Scenarios/boundary_condition_plots/pumping/grid_pumping_locs/Hawea Flat_grid_pumps.png}
    :height: 650 px
    :align: center
 
