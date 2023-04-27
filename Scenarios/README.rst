@@ -322,13 +322,14 @@ In addition, some scenarios also contain the following files:
 - {}.list: list file from the model runs.
 - {}_hds: compressed and split model heads
 - plots: plots of the model results (similar to the plots in the
-         `Standard optimisation outputs in the model_optimisation <../model_optimisation/README.RST>`_)
+  `Standard optimisation outputs in the model_optimisation <../model_optimisation/README.RST>`_)
 
 Figure outputs
 ---------------------------
 The standard output for comparing multiple scenarios is a series of plots including:
+
 - comp_plots: direct comparison of the model results for the full time period
-- quantile_plots:  comparison of the model quantile data
+- quantile_plots: comparison of the model quantile data
 - qq_plots: comparison of the model quantile to a base model scenario's quantile data
 
 Reading quantile plots
@@ -347,7 +348,7 @@ the modelled value (342.5 m msl).  Note that this does not account for potential
 
 .. class:: centered
 
-    *Figure: example of a quantile plot
+    *Figure: example of a quantile plot*
 
 Reading q-q plots
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -367,7 +368,7 @@ over/under estimates the groundwater levels) that are present in the quantile pl
 
 .. class:: centered
 
-    *Figure: example of a quantile-quantile plot
+    *Figure: example of a quantile-quantile plot*
 
 Adequate penetration
 --------------------
@@ -384,13 +385,12 @@ construction data. In addition this approach can cause challenges when there are
 model over/under estimates the groundwater levels). To address these issues we have calculated the adequate penetration
 level for a given scenario based on the model results as follows:
 
-.. math::
-    apl = h_mean - 3\sigma
+$$apl = h_mean - 3\\sigma$$
 
 where:
-- $$apl$$ is the adequate penetration level
-- $$h_mean$$ is the mean of the model heads at the indicator well
-- $$\sigma$$ is the standard deviation of the model heads at the indicator well
+- $apl$ is the adequate penetration level
+- $h_mean$ is the mean of the model heads at the indicator well
+- $\\sigma$ is the standard deviation of the model heads at the indicator well
 
 For these models we typically compare results to the adequate penetration level for the long_current scenario and long_nat
 scenario. The long_current scenario is a reasonable representation of the historical record, while the long_nat scenario
