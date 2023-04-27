@@ -359,7 +359,7 @@ The two figures below show the modelled groundwater-surface water interaction fo
 While there are some target misfits, the model does a very good job of reproducing the expected interaction between the
 groundwater and surface water systems.  The misfits occur in areas which both lose and gain water across the model period.
 The model does a good job reproducing the expected behaviour (gain/loss), but underestimates the total losses relative
-to the measured data. As discussed in the `model target readme <../targets_and_sensitive_sites/README.rst>` there is significant
+to the measured data. As discussed in the `model target readme <../targets_and_sensitive_sites/README.rst>`_ there is significant
 uncertainty in the measured gauging, therefore, we feel that the model is performing well in this area. In addition, the
 model does an excellent job of reproducing the expert judgment of the surface water and groundwater interaction.  The Hawea
 is gaining below the dam to approximately Camp Hill, and then loses a significant amount of water between Camp Hill and sharp
@@ -386,7 +386,7 @@ We don't have any targets to inform this data, but it does produce a key predict
 The model predicts that the groundwater levels are significantly higher in the northeastern edge of the moraine and that
 this is the area which ultimately controls flow between the lake and the groundwater system. This is consistent
 with either the perched aquifer conceptual model or the local penetration conceptual model (see the Lake Hawea Moraine
-Conceptual Model section of `the model build readme <../model_build/README.rst>`_. )
+Conceptual Model section of `the model build readme <../model_build/README.rst>`_).
 
 
 .. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/3d_hds.png
@@ -514,7 +514,8 @@ multiple parts with the 7zip library.  To uncompress these models you must use t
 function.
 
 To uncompress the 3d_v1d model to your downloads folder can use the following code:
-```
+
+.. code-block:: python
     from optimisation.final_opt_models.compress_uncompress_model import
     from project_base import proj_root
     from pathlib
