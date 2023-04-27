@@ -525,7 +525,7 @@ To uncompress the 3d_v1d model to your downloads folder can use the following co
     # path to save the uncompressed model to (currently set to 3d_v1d in your downloads folder)
     out_path = Path.home().joinpath('Downloads', '3d_v1d')
     uncompress_model(compressed_path, out_path)
-```
+
 
 Model limitations
 =================
