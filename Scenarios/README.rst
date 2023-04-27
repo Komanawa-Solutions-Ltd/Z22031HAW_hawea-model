@@ -257,10 +257,10 @@ Where:
 - $ll$ is the low lake level
 - $a_{high}$ is the amplitude of the high lake level variation
 - $a_{low}$ is the amplitude of the low lake level variation
-- $b_high$ is the mean lake level for the high lake level variation
-- $b_low$ is the mean lake level for the low lake level variation
-- $k_high$ is the width parameter of the high lake level variation
-- $k_low$ is the width parameter of the low lake level variation
+- $b_{high}$ is the mean lake level for the high lake level variation
+- $b_{low}$ is the mean lake level for the low lake level variation
+- $k_{high}$ is the width parameter of the high lake level variation
+- $k_{low}$ is the width parameter of the low lake level variation
 - $t$ is the ISO week
 - $d$ is the phase shift of the lake level variation (not modified)
 
