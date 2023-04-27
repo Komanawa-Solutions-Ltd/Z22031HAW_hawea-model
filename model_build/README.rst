@@ -200,7 +200,7 @@ approximately 10 m of vertical displacement. We developed and fitted a very simp
 at G40/0415 to better understand the relationship between the lake levels and the groundwater levels in this well.
 The model parameterised the groundwater levels as:
 
-$$h_{gw}(t) = \\sum_{n=t+l}^{t+l+s}h_{lake mod(n)}} {s}$$
+$$h_{gw}(t) = \\sum_{n=t+l}^{t+l+s}h_{lake mod(n)}} / s$$
 
 $$h_{lake mod}(t) = ((h_{lake}(t) -  h_{lakeMean}) * a) + h_{lakeMean} + \\Delta_{h}$$
 
