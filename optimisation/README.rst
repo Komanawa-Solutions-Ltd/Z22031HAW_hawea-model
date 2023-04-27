@@ -421,6 +421,7 @@ Fit to higher frequency groundwater levels at G40/0415
     :align: center
 
 .. class:: centered
+
     *Figure: the groundwater levels for the 3d_v1a model at bore G40/0415*
 
 
@@ -431,6 +432,7 @@ Fit to higher frequency groundwater levels at G40/0416
     :align: center
 
 .. class:: centered
+
     *Figure: the groundwater levels for the 3d_v1a model at bore G40/0416*
 
 
@@ -441,6 +443,7 @@ Fit to higher frequency groundwater levels at G40/0041
     :align: center
 
 .. class:: centered
+
     *Figure: the groundwater levels for the 3d_v1a model at bore G40/0041*
 
 Fit to higher frequency groundwater levels at G40/0129
@@ -450,6 +453,7 @@ Fit to higher frequency groundwater levels at G40/0129
     :align: center
 
 .. class:: centered
+
     *Figure: the groundwater levels for the 3d_v1a model at bore G40/0129 (NGMP bore)*
 
 Fit to higher frequency groundwater levels at G40/0120
@@ -460,6 +464,7 @@ Fit to higher frequency groundwater levels at G40/0120
     :align: center
 
 .. class:: centered
+
     *Figure: the groundwater levels for the 3d_v1a model at bore G40/0120 (NGMP bore)*
 
 Fit to higher frequency groundwater levels at G40/0367
@@ -469,6 +474,7 @@ Fit to higher frequency groundwater levels at G40/0367
     :align: center
 
 .. class:: centered
+
     *Figure: the groundwater levels for the 3d_v1a model at bore G40/0367*
 
 Fit to higher frequency groundwater levels at G40/0366
@@ -478,6 +484,7 @@ Fit to higher frequency groundwater levels at G40/0366
     :align: center
 
 .. class:: centered
+
     *Figure: the groundwater levels for the 3d_v1a model at bore G40/0366*
 
 Discussion and implications
@@ -611,6 +618,7 @@ and scientific merit.
     :align: center
 
 .. class:: centered
+
     *Figure: Areas for possible additional high frequency monitoring bores*
 
 Optimisation working notes
