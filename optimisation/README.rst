@@ -509,6 +509,53 @@ in the `scenarios readme file. <../scenarios/README.rst>`_.  Note that we did at
 to get this optimisation to converge, so we do not believe that the lack of convergence here indicates that the threshold
 value cannot be as high as 337 m msl.
 
+Steady State Model Water Budget (3D_v1d)
+========================================
+The table below provides the steady state water budget for the 3D_v1d model.  Note that breaking the model
+boundary conditions budget down to the individual components (e.g. hillside inflow vs abstraction)
+components which introduces some dependencies due to double counting (e.g. where multiple boundary conditions
+exist in a single cell).  This discrepancy is c. 1700 $m^3/d$; the discrepancy for the model (e.g. all_well/all_riv) is
+c. 0.3 $m^3/d$.
+
++------------------------+-------------------+
+| Boundary Condition     | Steady State Flux |
++========================+===================+
+| Lake                   | 110384.9          |
++------------------------+-------------------+
+| Recharge               | 36216.2           |
++------------------------+-------------------+
+| Hawea1_flux            | -96472.1          |
++------------------------+-------------------+
+| Hawea2_flux            | 10649.3           |
++------------------------+-------------------+
+| Hawea3_flux            | 5536.4            |
++------------------------+-------------------+
+| Clutha1_flux           | -78458.9          |
++------------------------+-------------------+
+| Grandview_flux         | 3100.0            |
++------------------------+-------------------+
+| John_flux              | 1500.0            |
++------------------------+-------------------+
+| all River              | -154145.3         |
++------------------------+-------------------+
+| Race_flux              | 4605.7            |
++------------------------+-------------------+
+| Abstraction_flux       | -7365.3           |
++------------------------+-------------------+
+| hill_maungawera_flux   | 850.2             |
++------------------------+-------------------+
+| hill_flat_west_flux    | 259.8             |
++------------------------+-------------------+
+| hill_flat_east_flux    | 1537.8            |
++------------------------+-------------------+
+| hill_terrace_east_flux | 3357.6            |
++------------------------+-------------------+
+| hill_south_east_flux   | 6083.2            |
++------------------------+-------------------+
+| all well               | 7544.0            |
++------------------------+-------------------+
+| discrepancy            | -0.3              |
++------------------------+-------------------+
 
 Access to final optimised parameter sets and models
 ===================================================
