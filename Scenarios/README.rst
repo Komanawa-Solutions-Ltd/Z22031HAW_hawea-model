@@ -525,15 +525,15 @@ below show all of the synthetic lake level scenarios that were tested.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
-    *Figure: ake Hawea head boundary conditions for the low_amp scenarios*
+    *Figure: Lake Hawea head boundary conditions for the low_amp scenarios*
 
 .. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_low_wid_amp.png
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Lake Hawea head boundary conditions for the low_wid_amp scenarios*
 
@@ -541,7 +541,7 @@ below show all of the synthetic lake level scenarios that were tested.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Lake Hawea head boundary conditions for the low_wide scenarios
 
@@ -549,7 +549,7 @@ below show all of the synthetic lake level scenarios that were tested.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Lake Hawea head boundary conditions for the shift scenarios*
 
@@ -557,7 +557,7 @@ below show all of the synthetic lake level scenarios that were tested.
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Lake Hawea head boundary conditions for the lake_drop scenarios.*
 
