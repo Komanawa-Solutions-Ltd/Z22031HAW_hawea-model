@@ -268,7 +268,7 @@ Standard Scenario Outputs
 =========================
 
 Indicator monitoring points
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 The Hawea model is a 4 dimensional model (3 spatial dimensions and 1 temporal dimension). In order to visualise the
 impacts of scenarios we have developed a series of indicator monitoring points. These points are spaced through the model
@@ -283,7 +283,7 @@ domain and were developed by expert judgment.
     *Figure: The indicator monitoring points for the Hawea model
 
 Data outputs
-^^^^^^^^^^^^
+---------------------------
 
 We have developed standard data outputs for the scenarios, they are as follows:
 - all_well_output_dataset.csv: model heads at every known well in the model domain.
@@ -302,7 +302,7 @@ In addition, some scenarios also contain the following files:
          `Standard optimisation outputs in the model_optimisation <../model_optimisation/README.RST>`_)
 
 Figure outputs
-^^^^^^^^^^^^^^
+---------------------------
 The standard output for comparing multiple scenarios is a series of plots including:
 - comp_plots: direct comparison of the model results for the full time period
 - quantile_plots:  comparison of the model quantile data
@@ -539,7 +539,7 @@ The changes in lake levels clearly propagate directly to the groundwater levels.
 low_wide_amp scenarios clearly show the predicted impacts of Lake levels falling below the threshold value.
 
 Lake_drop Scenario results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""
 
 .. figure:: ../Scenarios/low_lake_scenarios/0_results/lake_drop/comp_plots/hds_monitoring.png
    :height: 650 px
@@ -551,7 +551,7 @@ Lake_drop Scenario results
 
 
 Low_amp Scenario results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""
 
 .. figure:: ../Scenarios/low_lake_scenarios/0_results/low_amp/comp_plots/hds_monitoring.png
    :height: 650 px
@@ -563,7 +563,8 @@ Low_amp Scenario results
 
 
 Low_wid_amp Scenario results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""
+
 .. figure:: ../Scenarios/low_lake_scenarios/0_results/low_wid_amp/comp_plots/hds_monitoring.png
    :height: 650 px
    :align: center
@@ -574,7 +575,7 @@ Low_wid_amp Scenario results
 
 
 Low_wide Scenario results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""""""""""""""""""""""""
 
 .. figure:: ../Scenarios/low_lake_scenarios/0_results/low_wide/comp_plots/hds_monitoring.png
    :height: 650 px
@@ -587,7 +588,7 @@ Low_wide Scenario results
 
 
 Shift results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""
 
 .. figure:: ../Scenarios/low_lake_scenarios/0_results/shift/comp_plots/hds_monitoring.png
    :height: 650 px
