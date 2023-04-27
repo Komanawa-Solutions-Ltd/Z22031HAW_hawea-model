@@ -231,8 +231,7 @@ Lake Hawea Levels for low lake scenarios
 In order to assess the impacts of heretofore unseen lake levels we developed a typological annual lake level variation.
 this was done my creating the best fit between the ISO weekly mean lake levels to a modified sin wave function:
 
-.. math::
-    l = a * sin((t - d) / 52 * 2 \\pi) +  b
+$$l = a * sin((t - d) / 52 * 2 \\pi) +  b$$
 
 where:
 
@@ -246,13 +245,12 @@ We then used these parameters as a base value for the following equation to pert
 
     Where the lake levels were greater than the annual mean lake level:
 
-    .. math::
-        lh = a_high  (|sin((t - d) / 52 * 2\pi)|)^{k_high} +  b_high
+
+        $$lh = a_high  (|sin((t - d) / 52 * 2\pi)|)^{k_high} +  b_high$$
 
     Where the lake levels were less than the annual mean lake level:
 
-    .. math::
-        ll = -a_low  (|sin((t - d) / 52 * 2\pi)|)^{k_low} +  b_high
+        $$ll = -a_low  (|sin((t - d) / 52 * 2\pi)|)^{k_low} +  b_high$$
 
     where
     - $lh$ is the high lake level
