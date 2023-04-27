@@ -330,6 +330,7 @@ information to justify adding this structure to the model, but it may warrant fu
     :align: center
 
 .. class:: centered
+
     *Figure: the possible indicative location (yellow dashed line) of a moraine structure to the east of the Hawea Flat township*
 
 
@@ -422,7 +423,7 @@ Fit to higher frequency groundwater levels at G40/0415
 
 .. class:: centered
 
-    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0415*
+    *Figure: the groundwater levels for the 3d_v1a/b/d models at bore G40/0415*
 
 
 Fit to higher frequency groundwater levels at G40/0416
@@ -433,7 +434,7 @@ Fit to higher frequency groundwater levels at G40/0416
 
 .. class:: centered
 
-    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0416*
+    *Figure: the groundwater levels for the 3d_v1a/b/d models at bore G40/0416*
 
 
 Fit to higher frequency groundwater levels at G40/0041
@@ -444,7 +445,7 @@ Fit to higher frequency groundwater levels at G40/0041
 
 .. class:: centered
 
-    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0041*
+    *Figure: the groundwater levels for the 3d_v1a/b/d models at bore G40/0041*
 
 Fit to higher frequency groundwater levels at G40/0129
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -454,7 +455,7 @@ Fit to higher frequency groundwater levels at G40/0129
 
 .. class:: centered
 
-    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0129 (NGMP bore)*
+    *Figure: the groundwater levels for the 3d_v1a/b/d models at bore G40/0129 (NGMP bore)*
 
 Fit to higher frequency groundwater levels at G40/0120
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -465,7 +466,7 @@ Fit to higher frequency groundwater levels at G40/0120
 
 .. class:: centered
 
-    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0120 (NGMP bore)*
+    *Figure: the groundwater levels for the 3d_v1a/b/d models at bore G40/0120 (NGMP bore)*
 
 Fit to higher frequency groundwater levels at G40/0367
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -475,7 +476,7 @@ Fit to higher frequency groundwater levels at G40/0367
 
 .. class:: centered
 
-    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0367*
+    *Figure: the groundwater levels for the 3d_v1a/b/d models at bore G40/0367*
 
 Fit to higher frequency groundwater levels at G40/0366
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -485,7 +486,7 @@ Fit to higher frequency groundwater levels at G40/0366
 
 .. class:: centered
 
-    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0366*
+    *Figure: the groundwater levels for the 3d_v1a/b/d models at bore G40/0366*
 
 Discussion and implications
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
