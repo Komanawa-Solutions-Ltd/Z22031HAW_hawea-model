@@ -281,7 +281,7 @@ levels.
 
 .. class:: centered
 
-    *Figure: example of the perturbations to the lake levels for the low lake scenarios
+    *Figure: example of the perturbations to the lake levels for the low lake scenarios*
 
 
 
@@ -301,12 +301,13 @@ domain and were developed by expert judgment.
 
 .. class:: centered
 
-    *Figure: The indicator monitoring points for the Hawea model
+    *Figure: The indicator monitoring points for the Hawea model*
 
 Data outputs
 ---------------------------
 
 We have developed standard data outputs for the scenarios, they are as follows:
+
 - all_well_output_dataset.csv: model heads at every known well in the model domain.
 - converged.txt: text file with a boolean value indicating whether the model converged.
 - key_input_data.csv: a record of key input data including recharge, hill inflows, and lake levels.
@@ -317,6 +318,7 @@ We have developed standard data outputs for the scenarios, they are as follows:
 - zone_budget.csv: the full zone budget.
 
 In addition, some scenarios also contain the following files:
+
 - {}.list: list file from the model runs.
 - {}_hds: compressed and split model heads
 - plots: plots of the model results (similar to the plots in the
