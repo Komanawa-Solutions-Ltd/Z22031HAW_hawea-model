@@ -583,7 +583,7 @@ Lake_drop Scenario results
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Responses at the high frequency monitoring bores for the lake drop scenarios.*
 
@@ -595,7 +595,7 @@ Low_amp Scenario results
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Responses at the high frequency monitoring bores for the low_amp scenarios.*
 
@@ -607,7 +607,7 @@ Low_wid_amp Scenario results
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Responses at the high frequency monitoring bores for the low_wide_amp scenarios.*
 
@@ -619,7 +619,7 @@ Low_wide Scenario results
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Responses at the high frequency monitoring bores for the low_wide scenarios.*
 
@@ -632,7 +632,7 @@ Shift results
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Responses at the high frequency monitoring bores for the shift scenarios.*
 
