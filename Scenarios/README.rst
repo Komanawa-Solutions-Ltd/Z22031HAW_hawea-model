@@ -245,17 +245,18 @@ We then used these parameters as a base value for the following equation to pert
 
 Where the lake levels were greater than the annual mean lake level:
 
-$$lh = a_high  (|sin((t - d) / 52 * 2\pi)|)^{k_high} +  b_high$$
+$$lh = a_{high}  (|sin((t - d) / 52 * 2\pi)|)^{k_{high}} +  b_{high}$$
 
 Where the lake levels were less than the annual mean lake level:
 
-$$ll = -a_low  (|sin((t - d) / 52 * 2\pi)|)^{k_low} +  b_high$$
+$$ll = -a_{low}  (|sin((t - d) / 52 * 2\pi)|)^{k_{low}} +  b_{high}$$
 
 Where:
+
 - $lh$ is the high lake level
 - $ll$ is the low lake level
-- $a_high$ is the amplitude of the high lake level variation
-- $a_low$ is the amplitude of the low lake level variation
+- $a_{high}$ is the amplitude of the high lake level variation
+- $a_{low}$ is the amplitude of the low lake level variation
 - $b_high$ is the mean lake level for the high lake level variation
 - $b_low$ is the mean lake level for the low lake level variation
 - $k_high$ is the width parameter of the high lake level variation
