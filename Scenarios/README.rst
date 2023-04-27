@@ -70,8 +70,8 @@ Module Index
         -  `allo_zone_rch <../Scenarios/allocation_results/allo_zone_rch>`_: results comparing LSR, hillside inflows, and allocation for each zone
         -  `example_quantile_plots <../Scenarios/allocation_results/example_quantile_plots>`_: example quantile plots for the allocation scenarios to support presentations
 -  Wetland Setback Modelling
-    -  `wetland_setback_campbells <../Scenarios/wetland_setback_campbells>`_: wetland setback modelling for Campbells wetland scripts and results
-    -  `wetland_setback_butterfield <../Scenarios/wetland_setback_butterfield>`_: wetland setback modelling for Butterfield wetland scripts and results
+    -  `wetland_setback_campbells <../Scenarios/wetland_setback_campbells>`_: wetland setback modelling for Campbells Wetland scripts and results
+    -  `wetland_setback_butterfield <../Scenarios/wetland_setback_butterfield>`_: wetland setback modelling for Butterfield Wetland scripts and results
 
 Scenarios Overview
 ==================
@@ -84,9 +84,9 @@ Scenarios Overview
 +-----------------------------+--------------------------------------------------------------------------+
 | MT3D indicator scenarios    | Where is the water sourced from?                                         |
 +-----------------------------+--------------------------------------------------------------------------+
-| Allocation Scenarios        | What is a sustainable level of Abstraction?                              |
+| Allocation Scenarios        | What is a sustainable level of abstraction?                              |
 +-----------------------------+--------------------------------------------------------------------------+
-| Wetland setback scenarios   | where, and to what extent, does abstraction impact significant wetlands? |
+| Wetland setback scenarios   | Where, and to what extent, does abstraction impact significant wetlands? |
 +-----------------------------+--------------------------------------------------------------------------+
 
 Boundary Conditions Overview
@@ -114,7 +114,7 @@ were simply the steady state component of each boundary condition (i.e. the mean
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | race losses             | Wel     | race losses         | ISO weekly mean race losses                                                         | `model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| no_pump                 | Wel     | GW abstraction      | No abstraction                                                                      | n/a                                               |
+| no_pump                 | Wel     | GW abstraction      | no abstraction                                                                      | n/a                                               |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | pump curve              | Wel     | GW abstraction      | typological annual pumping curve (0-1)                                              | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
@@ -124,15 +124,15 @@ were simply the steady state component of each boundary condition (i.e. the mean
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | extended_full_allo      | Wel     | GW abstraction      | ISO weekly mean of maximum daily allocation normalised to historical pumping record | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| extended_max_allo       | Wel     | GW abstraction      | Maximum daily allocation applied to every day of the year                           | below                                             |
+| extended_max_allo       | Wel     | GW abstraction      | maximum daily allocation applied to every day of the year                           | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| extended_max_allo_pc    | Wel     | GW abstraction      | Maximum daily allocation applied to pump curve                                      | below                                             |
+| extended_max_allo_pc    | Wel     | GW abstraction      | maximum daily allocation applied to pump curve                                      | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | reduced abstraction     | Wel     | GW abstraction      | allocation reduction (fraction of extended_pump)                                    | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | grid_pump               | Wel     | GW abstraction      | gridded abstraction (additional allocation)                                         | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| lake                    | Ghb     | Lake Hawea          | Long record of Lake Hawea levels                                                    | `model_build readme <../model_build/README.RST>`_ |
+| lake                    | Ghb     | Lake Hawea          | long record of Lake Hawea levels                                                    | `model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | low lake levels         | Ghb     | Lake Hawea          | typological low Lake Hawea levels                                                   | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
@@ -152,7 +152,7 @@ Development of the pumping curve
 
 In order to apply additional levels of groundwater abstraction in a sensible way that is constant with the annual usage
 patterns we developed a typological pumping curve. This was developed by analysing the ISO weekly mean pumping data.
-the ISO weekly data still has some variation so we then applied a centered moving window mean of 9 weeks to smooth the
+The ISO weekly data still has some variation so we then applied a centered moving window mean of 9 weeks to smooth the
 data. The data was then transformed via min/max normalisation to a range of 0-1. For increased abstraction scenarios we
 could then apply a maximum daily take rate to the pumping curve to get the daily abstraction. For reference the integral
 of the pumping curve is c. 135 suggesting that on average the annual usage is 135 times the mean annual maximum daily take.
@@ -173,7 +173,7 @@ was done by simply repeating the ISO weekly mean historical pumping data to all 
 extended_full_allo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The extended_full_allo pumping record is maximum daily allocation applied to the min/max
-normalised historical pumping record (2015-2020). this likely represents an underestimate of the full allocation scenario
+normalised historical pumping record (2015-2020). This likely underestimates the full allocation scenario
 as most users do not regularly take their maximum daily usage every year.
 
 
@@ -182,7 +182,7 @@ extended_max_allo
 The extended_max_allo pumping record is maximum daily allocation applied to every day of the year. This is almost
 certainly not attainable for 2 reasons.  1) no water users are likely to use their allocation every day of the year
 (e.g. irrigators do not irrigate in winter) and 2) many consents have maximum annual allocations as well as maximum
-daily allocations; however analysis of these data were not included in the usage analysis preformed by
+daily allocations; however, analysis of these data were not included in the usage analysis preformed by
 `Kitteridge (2022) <../model_build/base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_.
 
 extended_max_allo_pc
@@ -194,7 +194,7 @@ activities.
 Additional abstraction (grid_pump)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 One of our goals was to explore the impacts of additional water allocation. Introducing new allocation is challenging
-because the spatial location of these abstractions are unknowable. To address this we developed a 500 m grid of
+because the spatial locations of these abstractions are unknowable. To address this we developed a 500 m grid of
 abstraction points for each of the allocation zones. To assess the impact of additional abstraction we then applied
 an additional maximum daily take to the typological pumping curve and then evenly distributed this abstraction across
 the grid points within the allocation zone.  This approach will underestimate the local impacts of abstraction, but it
@@ -219,7 +219,7 @@ Plots of the abstractions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It is beyond the scope of this document to provide and interpret all of the plots of the boundary conditions. However,
-these plots are all avalbile in the following directories:
+these plots are all available in the following directories:
 
 - `Scenarios/boundary_condition_plots/pumping <../Scenarios/boundary_condition_plots/pumping>`_: full record of the pumping records.
 - `Scenarios/boundary_condition_plots/pumping_use_allo_difs <../Scenarios/boundary_condition_plots/pumping_use_allo_difs>`_: comparisons of the different pumping records.
@@ -229,7 +229,7 @@ Lake Hawea Levels for low lake scenarios
 ----------------------------------------
 
 In order to assess the impacts of heretofore unseen lake levels we developed a typological annual lake level variation.
-this was done my creating the best fit between the ISO weekly mean lake levels to a modified sin wave function:
+This was done by creating the best fit between the ISO weekly mean lake levels to a modified sin wave function:
 
 $$l = a * sin((t - d) / 52 * 2 \\pi) +  b$$
 
@@ -293,7 +293,7 @@ Indicator monitoring points
 
 The Hawea model is a 4 dimensional model (3 spatial dimensions and 1 temporal dimension). In order to visualise the
 impacts of scenarios we have developed a series of indicator monitoring points. These points are spaced through the model
-domain and were developed by expert judgment.
+domain and were developed by expert judgement.
 
 .. figure:: ../Scenarios/indicator_wells.png
    :height: 650 px
@@ -336,8 +336,8 @@ Reading quantile plots
 ^^^^^^^^^^^^^^^^^^^^^^
 An example of a quantile plot is shown below. This plots the calculated percentile of the model heads at the indicator
 well. In the figure below the point at (10, 342.5) on the long current line indicates that 10% of the model heads for
-the long_current scenario at the the upper Maungawera indicator well are less than or equal to 342.5 m msl. Because the
-long_current scenarios is a reasonable sample of the historical record we can infer that if the future record is similar
+the long_current scenario at the upper Maungawera indicator well are less than or equal to 342.5 m msl. Because the
+long_current scenario is a reasonable sample of the historical record we can infer that if the future record is similar
 to the historical record (e.g. weather/climate) and the boundary conditions are similar to the long_current scenario
 then there is a 10% chance that the model heads at the upper Maungawera indicator well will be less than or equal to
 the modelled value (342.5 m msl).  Note that this does not account for potential biases in the model results.
@@ -352,14 +352,14 @@ the modelled value (342.5 m msl).  Note that this does not account for potential
 
 Reading q-q plots
 ^^^^^^^^^^^^^^^^^^^^^^
-An example of a quantile-quantile plots is shown below, note that the data is the same a the example quantile plot
-described in the `reading quantile plots` section above. This figure compares the quantile data from a base scenario (
-in this case the long_current scenario) to the quantile data from the scenario of interest. So for the point at
+An example of a quantile-quantile plots is shown below. Note that the data is the same a the example quantile plot
+described in the `reading quantile plots` section above. This figure compares the quantile data from a base scenario
+(in this case the long_current scenario) to the quantile data from the scenario of interest. So the point at
 approximately (10, 60) on the reduction_0.5 line can be interpreted as the modelled 10th percentile heads (342.5 m msl,
-from the quantile plot in the section above) would be the 60th percentile heads for the reduction_0.5 scenario. From this
-if we assume that the long_current scenario is a reasonable representation of the historical record then we can infer
+from the quantile plot in the section above) would be the 60th percentile heads for the reduction_0.5 scenario #todo the last part of this sentence doesn't make sense with the first part.
+From this if we assume that the long_current scenario is a reasonable representation of the historical record then we can infer
 that if we transitioned to the reduction_0.5 scenario then we would expect that the current low levels that were experienced
-10 percent of the time would now be experienced 60 percent.  This address the potential bias problems (e.g. if the model
+10 percent of the time would now be experienced 60 percent of the time. This addresses the potential bias problems (e.g. if the model
 over/under estimates the groundwater levels) that are present in the quantile plots, but does make it harder to interpret.
 
 .. figure:: ../Scenarios/allocation_results/mangawera_valley/qq_plots/hds_mangawera_0.png
@@ -377,10 +377,10 @@ In addition to the standard outputs we need to estimate an adequate penetration 
 The adequate penetration level is the level at which we would expect water supply wells to be screened to maintain reliability.
 That is if an individual owns a water supply well that is screened above the adequate penetration level then they would
 expect to have interruptions in their water supply, while if the well is screened below the adequate penetration level
-then they would expect to have a reliable water supply. the adequate penetration level becomes a key constraint for the
-model scenarios (e.g. if the model scenario results is lower than the adequate penetration level we would expect
+then they would expect to have a reliable water supply. The adequate penetration level becomes a key constraint for the
+model scenarios (e.g. if the model scenario results are lower than the adequate penetration level we would expect
 significant water supply issues). Adequate penetration levels can be set based on an analysis of current well screens
-and historical water levels; however this approach is difficult in the Hawea Area as many bores do not have detailed well
+and historical water levels; however, this approach is difficult in the Hawea Area as many bores do not have detailed well
 construction data. In addition this approach can cause challenges when there are biases in the model results (e.g. if the
 model over/under estimates the groundwater levels). To address these issues we have calculated the adequate penetration
 level for a given scenario based on the model results as follows:
@@ -401,9 +401,9 @@ Scenario Methods & Results
 ===========================
 
 The following sections describe the methods and results for each scenario set. Note that we typically will only
-include the results for an individual indicator well. a link to the location for the full sets of model results is
+include the results for an individual indicator well. A link to the location for the full sets of model results is
 provided in the section. We include some discussion and analysis of these results, but our primary discussion is in
-`final report <../Final_report.pdf>`_. Regardless full discussion of all the results is beyond the scope of this
+`final report <../Final_report.pdf>`_. Regardless, a full discussion of all the results is beyond the scope of this
 document and this project, but below we provide some example discussion of the results, so that these results could
 be used to address a future specific question.
 
@@ -411,7 +411,7 @@ be used to address a future specific question.
 Model information scenarios
 ----------------------------
 +--------------------+---------------------------------------------------------------------------------+
-| Scenario Name      | purpose/comment                                                                 |
+| Scenario Name      | Purpose/comment                                                                 |
 +====================+=================================================================================+
 | optimised          | Optimised model results                                                         |
 +--------------------+---------------------------------------------------------------------------------+
@@ -436,11 +436,11 @@ Boundary condition sensitivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To conduct the boundary condition sensitivity we compared the model scenarios where all but one boundary condition was
-held static to the long current scenario. we could then qualitatively assess the contribution of each boundary condition
+held static to the long current scenario. We could then qualitatively assess the contribution of each boundary condition
 to the total model variation.  An analytical approach is also possible, but we feel it would suffer from false precision,
 that is that while it would perfectly represent the contribution of each boundary condition to the total model variation
 the contribution to the experienced real world variation would likely have a significant and unspecified level of error.
-the results shown in the table below are the results of the qualitative assessment, which we believe should hold true in
+The results shown in the table below are the results of the qualitative assessment, which we believe should hold true in
 the real world.
 
 +-------------------+----------+--------------+-------------+----------------+
@@ -480,12 +480,12 @@ high and low groundwater levels (0-20th and 80-100th percentiles).
 
 Naturalised vs current without abstraction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-These scenarios compare the results of the long_current, long_nat, and no_pump scenarios. On the example figure below
-the naturalised scenario (long_nat) has a significantly lower mean water level than the no_pump scenario. This means is
+These scenarios compare the results of the long_current, long_nat, and no_pump scenarios. In the example figure below
+the naturalised scenario (long_nat) has a significantly lower mean water level than the no_pump scenario. This is
 likely because there is significant irrigation on the high terrace, which is not represented in the naturalised scenario.
 The long_current scenario has a mean water level between the long_nat and no_pump scenarios, which shows that while the
 current level of abstraction has a significant impact on the water levels, it does not reduce the water levels below
-the naturalised state. This is consistant with our understanding of the area as the irrigation on the high terrace is
+the naturalised state. This is consistent with our understanding of the area as the irrigation on the High Terrace is
 primarily supplied by abstraction from the Hawea River, thus development in this area has shown a net increase in
 groundwater levels.  The full set of results are available at
 `Scenarios/model_info_scen_results/0_results/nat_long_nopump <../Scenarios/model_info_scen_results/0_results/nat_long_nopump>`_.
@@ -508,7 +508,7 @@ results are available at `Scenarios/model_info_scen_results/0_results/nat_long_o
 
 Naturalised vs current vs long current (opt period only)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-these scenarios compare the results of the long_current, long_nat, and optimised scenarios but only for the
+These scenarios compare the results of the long_current, long_nat, and optimised scenarios but only for the
 optimisation period. We do not include an example
 figure here as the results are very similar to the naturalised vs current without abstraction scenarios. The full set of
 results are available at `Scenarios/model_info_scen_results/0_results/nat_opt_long_opt_per_only <../Scenarios/model_info_scen_results/0_results/nat_opt_long_opt_per_only>`_.
@@ -564,12 +564,12 @@ below show all of the synthetic lake level scenarios that were tested.
 Methods and results
 ^^^^^^^^^^^^^^^^^^^
 
-The synthetic lake levels were created for a three year period. all other boundary conditions were set at the steady
+The synthetic lake levels were created for a three year period. All other boundary conditions were set at the steady
 state (mean of optimised period) values.  The synthetic lake levels were then applied to the model and the results were
 extracted at the indicator boundary points.  Finally we compared these scenarios to the base sin fit to the observed
 ISO weekly mean lake levels
 
-The sections below so some key figures for the various lake level scenarios.  Many more figures for each scenario are
+The sections below show some key figures for the various lake level scenarios.  Many more figures for each scenario are
 available in the `low lake level results <Scenarios/low_lake_scenarios/0_results>`_ folder.
 Scenarios/low_lake_scenarios/0_results/lake_drop/comp_plots/hds_monitoring.png
 
@@ -655,7 +655,7 @@ MT3D Indicator Scenarios
 +--------------------+-----------------------------------------------------------------------------------+
 | not_any            |  all boundary conditions set to 0 (process check)                                 |
 +--------------------+-----------------------------------------------------------------------------------+
-| not_str            |  all boundary conditions (except str package                                      |
+| not_str            |  all boundary conditions (except str package)                                     |
 +--------------------+-----------------------------------------------------------------------------------+
 | race_con_indicator |  all race cells set to 1                                                          |
 +--------------------+-----------------------------------------------------------------------------------+
@@ -665,7 +665,7 @@ MT3D Indicator Scenarios
 Methods
 ^^^^^^^
 We ran a steady state model with the mean optimised period boundary conditions and then ran the MT3D model with the
-concentrations for each boundary condition set to 1 and all others set to 0. The MT3D model was run for an arbitrarily
+concentrations for each boundary condition set to 1 and all others set to 0. The MT3D model was run for an arbitrary
 period (7.305 E5 years) to ensure the concentrations were at pseudo steady state. The final concentrations for these
 scenarios were saved and plotted.  They are available in the `mt3d_indicator_scenarios <../Scenarios/mt3d_indicator_scenarios>`_ folder.
 
@@ -735,20 +735,20 @@ below. The main differences are:
 #. The Hawea Flat-hillside and Hawea Flat-lake allocation zones have been rearranged into the Hawea Flat allocation zone
    and Grandview allocation zone. This is based on the new information that Lake Hawea levels impact the groundwater
    levels in most of the Hawea Flat area. The Grandview allocation zone is defined as the area to the west of the Hawea
-   flat allocation zone which is not impacted by Lake Hawea levels. The location of the Grandview-Hawea Flat boundary
+   Flat allocation zone which is not impacted by Lake Hawea levels. The location of the Grandview-Hawea Flat boundary
    was approximately defined by the inferred Grandview Fault location.  The Grandview Fault is thought to uplift basement
    rock above the Hawea Flat groundwater levels and therefore prevent the lake levels from impacting the groundwater in
-   this area. Because the Grandview Fault is not well defined we suggest that areas show in the Grandview allocation zone
+   this area. Because the Grandview Fault is not well defined we suggest that areas show #todo this part doesn't make sense with the current sentence, in the Grandview allocation zone
    could be reassigned to the Hawea Flat allocation zone if further investigation shows that water levels at that location
    are impacted by the Lake Hawea levels and that it would be reasonable to infer that groundwater flows from the lake to
    the area of interest.
 #. We explicitly included the Camp Hill Moraine, but we suggest that very limited water is likely to be available in this
    zone.
-#. We extend the sandy point zone to the northern border of the next allocation zone.
+#. We extend the sandy point zone to the Northern border of the next allocation zone.
 #. We explicitly model and include the Maungawera Valley allocation zone, which was not addressed in the Wilson (2012)
    report.
-#. Here we have suggested possible setback areas for the Butterfield and Campbell's wetland, note these location are suggestions
-   however the actual location of the setback areas requires planning consideration and is beyond the scope of this project.
+#. Here we have suggested possible setback areas for the Butterfield and Campbell wetlands, note these location are suggestions
+   however, the actual location of the setback areas requires planning consideration and is beyond the scope of this project.
    We have provided scientific guidance to support the planning process.
 
 .. figure:: ../Scenarios/allocation_results/new_allo_zones.png
@@ -766,7 +766,7 @@ Allocation via Zonal recharge
 
 For each of the allocation zones we extracted the range of hillside inflows and LSR. An example figure is shown below.
 It is a violin plot, so the width of the violin represents the probability of the value occurring. The full results,
-including tabular results are avalible in the `allo_zone_rch <../Scenarios/allocation_results/allo_zone_rch>`_ folder.
+including tabular results are available in the `allo_zone_rch <../Scenarios/allocation_results/allo_zone_rch>`_ folder.
 
 
 .. figure:: ../Scenarios/allocation_results/allo_zone_rch/plots/Mangawera%20Valley.png
@@ -796,8 +796,8 @@ Zone specific Scenario Methods and Results
 
 We modelled a number of scenarios to determine the impact of potential changes to zonal allocation on the groundwater
 levels for most allocation zones. An overview of these results are shown in the table below. However, there were
-some allocation zones that we did not conduct scenario modelling for. These zones and the rational are described below and
-we suggest any allocation in these zones should be based on the results of the zonal recharge modelling.
+some allocation zones that we did not conduct scenario modelling for. These zones and the rational for not modelling them
+are described below and we suggest any allocation in these zones should be based on the results of the zonal recharge modelling.
 
 - **Grandview Zone:** The model does not provide a good representation of the groundwater levels in this area.
 - **Camp Hill Moraine:** We suggest that very limited water is likely to be available in this zone and it was not modelled.
@@ -823,12 +823,12 @@ we suggest any allocation in these zones should be based on the results of the z
 Full discussion of potential allocation levels are reserved for the `final report <../Final_report.pdf>`_. However we
 want to highlight several key points:
 
-#. changes in allocation in one zone can impact the groundwater levels in other zones. Therefore, we suggest that
+#. Changes in allocation in one zone can impact the groundwater levels in other zones. Therefore, we suggest that
    allocation in all zones should be considered collectively.
 #. These scenarios do not discriminate between groundwater and induced stream depletion. Therefore, we suggest that
    allocation should be considered in the context of the stream depletion that is acceptable for the Hawea River and
    Clutha River.
-#. Where the results suggest that a significant increase in allocation is possible, particularly when there is limited
+#. Where the results suggest that a significant increase in allocation is possible, particularly where there is limited
    or no present allocation we suggest a very conservative approach. The lack of current abstraction means that the model
    has minimal to no information about the impact of abstraction to local groundwater levels. Any increase in allocation
    in these areas should be phased in over time to allow for monitoring and revised assessment of the impact of the
@@ -841,7 +841,7 @@ of Quartz Creek. The allocation zone is shown in the figure below. Water in this
 therefore out of scope of this project. However, we have included the results of LSR modelling for this area in this
 repository for completeness and because it required minimal additional effort. The LSR results are located in the
 `quartz_creek_lsr/results folder <../quartz_creek_lsr/results>`_ and are shown in the figure below.
-Note that Allocation in some of these areas have the potential to impact the groundwater
+Note that allocation in some of these areas have the potential to impact the groundwater
 levels in the Maungawera Valley and therefore should be considered in the context of the Maungawera Valley allocation zone.
 
 # todo do anlysis and include plot of location and plot of LSR results.  Location to LSR results.
@@ -863,8 +863,8 @@ the Hawea Basin.
 Methodology
 --------------
 
-We wanted to examine a larger range of parameters than the optimised model parameter set. therefore we made two clip out
-models - one for each wetland. The clip out models were made by clipping out the wetland and an approximately 5 km
+We wanted to examine a larger range of parameters than the optimised model parameter set. Therefore we made two clip out
+models; one for each wetland. The clip out models were made by clipping out the wetland and an approximately 5 km
 up gradient buffer. We set the boundary conditions of these models as follows:
 
 - No existing abstraction was included in the model.
@@ -874,7 +874,7 @@ up gradient buffer. We set the boundary conditions of these models as follows:
   head set from the optimised model.
 
 We then created a semi-regular polar grid of test abstraction well locations. To identify the impact of abstraction on the
-wetland we ran a base scenario (no abstraction) and then ran a series of scenarios. the head difference between the
+wetland we ran a base scenario (no abstraction) and then ran a series of scenarios. The head difference between the
 base and new scenarios at the wetland location was extracted. We varied the following parameters:
 
 - pumping rate
@@ -890,7 +890,7 @@ base and new scenarios at the wetland location was extracted. We varied the foll
 
     *Figure: boundary conditions for the clip out models.*
 
-To visualize the results we assigned the head difference at the wetland location to the well location and then
+To visualise the results we assigned the head difference at the wetland location to the well location and then
 interpolated the results for each unique combination of parameters. Finally we qualitatively assessed the various
 parameterisations to determine an area where abstraction would likely impact the wetland.
 
@@ -902,7 +902,7 @@ The full suite of results are available in:
 - Campbell's: `Scenarios/wetland_setback_campbells/results <../Scenarios/wetland_setback_campbells/results>`_
 - Butterfield: `Scenarios/wetland_setback_butterfield/results <../Scenarios/wetland_setback_butterfield/results>`_
 
-An example of the results for the Campbell's wetland are shown below. The results for the Butterfield wetland are
+An example of the results for the Campbell's Wetland are shown below. The results for the Butterfield Wetland are
 similar. This specific example is for a pumping rate of 500 $m^3/d$, hydraulic conductivity of 0.316 m/d, specific yield of
 0.316, and river conductance of 750 $m^2/d$. This specific example shows that abstraction within 1 km of the wetland
 is likely to cause c. 0.5 m drawdown at the wetland location. However, abstraction 2 km or further from the wetland is unlikely
@@ -915,7 +915,7 @@ abstraction at this rate. The drawdown at these locations are excluded from the 
 
 .. class:: centered
 
-    *Figure: An example of the wetland setback modelling results for Campbell's wetland.*
+    *Figure: An example of the wetland setback modelling results for Campbell's Wetland.*
 
 References
 ===========
