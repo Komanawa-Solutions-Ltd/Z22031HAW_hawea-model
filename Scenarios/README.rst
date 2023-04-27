@@ -157,7 +157,7 @@ data. The data was then transformed via min/max normalisation to a range of 0-1.
 could then apply a maximum daily take rate to the pumping curve to get the daily abstraction. For reference the integral
 of the pumping curve is c. 135 suggesting that on average the annual usage is 135 times the mean annual maximum daily take.
 
-.. figure:: Scenarios/boundary_condition_plots/pumping/grid_pumping_curve.png
+.. figure:: ../Scenarios/boundary_condition_plots/pumping/grid_pumping_curve.png
    :height: 650 px
    :align: center
 
@@ -208,7 +208,7 @@ consented abstraction.
 
 .. class:: centered
 
-    *Figure: grid of abstraction points for the Hawea Flat allocation zone
+    *Figure: grid of abstraction points for the Hawea Flat allocation zone*
 
 Reduced abstraction (reduced allocation scenarios)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
