@@ -388,6 +388,7 @@ level for a given scenario based on the model results as follows:
 $$apl = h_mean - 3\\sigma$$
 
 where:
+
 - $apl$ is the adequate penetration level
 - $h_mean$ is the mean of the model heads at the indicator well
 - $\\sigma$ is the standard deviation of the model heads at the indicator well
@@ -413,13 +414,21 @@ Model information scenarios
 | Scenario Name      | purpose/comment                                                                 |
 +====================+=================================================================================+
 | optimised          | Optimised model results                                                         |
++--------------------+---------------------------------------------------------------------------------+
 | long_current       | Long scenario with long_current abstraction and irr_LSR                         |
++--------------------+---------------------------------------------------------------------------------+
 | long_nat           | Long current, but with dryland recharge, and no pumping (races left on)         |
++--------------------+---------------------------------------------------------------------------------+
 | no_pumping         | Long current, but with no pumping                                               |
++--------------------+---------------------------------------------------------------------------------+
 | hillslope_only_var | What extent does the hillslope inflow variation influence total model variation |
++--------------------+---------------------------------------------------------------------------------+
 | lake_only_var      | What extent does the Lake Hawea level variation influence total model variation |
++--------------------+---------------------------------------------------------------------------------+
 | pump_only_var      | What extent does the groundwater abstraction influence total model variation    |
++--------------------+---------------------------------------------------------------------------------+
 | rch_only_var       | What extent does the LSR variation influence total model variation              |
++--------------------+---------------------------------------------------------------------------------+
 | static_pumping     | What variation exists with only pumping held static                             |
 +--------------------+---------------------------------------------------------------------------------+
 
