@@ -1,15 +1,13 @@
-
 Hawea Transient groundwater model (Hawea Model) scenarios methods and results
 ############################################################################
 
-.. figure:: ../support_figures/model_2d_boundary_conditions.png
+.. figure:: ../Scenarios/model_info_scen_results/0_results/boundary_sense/quantile_plots/hds_terrace_0.png
    :height: 650 px
    :align: center
 
 .. class:: centered
 
-    *Figure: Overview of model boundary conditions* # todo new figure
-
+    *Figure: results of the boundary condition sensitivity analysis at the mid_e_terrace indicator well
 
 :Author:  Matt Dumont
 :Date:  2021-11-02
