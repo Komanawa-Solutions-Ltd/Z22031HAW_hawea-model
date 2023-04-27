@@ -822,6 +822,7 @@ we suggest any allocation in these zones should be based on the results of the z
 
 Full discussion of potential allocation levels are reserved for the `final report <../Final_report.pdf>`_. However we
 want to highlight several key points:
+
 #. changes in allocation in one zone can impact the groundwater levels in other zones. Therefore, we suggest that
    allocation in all zones should be considered collectively.
 #. These scenarios do not discriminate between groundwater and induced stream depletion. Therefore, we suggest that
@@ -851,7 +852,7 @@ Wetland Setback Scenarios
 The purpose of the wetland setback modelling was to assess the impact of abstraction on the two sensitive wetland in
 the Hawea Basin.
 
-.. figure:: ../Scenarios/wetland_setback/figures/wetland_locations.png
+.. figure:: ../support_figures/model_wetlands_clipouts.png
    :height: 650 px
    :align: center
 
@@ -863,7 +864,7 @@ Methodology
 --------------
 
 We wanted to examine a larger range of parameters than the optimised model parameter set. therefore we made two clip out
-models -- one for each wetland. The clip out models were made by clipping out the wetland and an approximately 5 km
+models - one for each wetland. The clip out models were made by clipping out the wetland and an approximately 5 km
 up gradient buffer. We set the boundary conditions of these models as follows:
 
 - No existing abstraction was included in the model.
@@ -902,8 +903,8 @@ The full suite of results are available in:
 - Butterfield: `Scenarios/wetland_setback_butterfield/results <../Scenarios/wetland_setback_butterfield/results>`_
 
 An example of the results for the Campbell's wetland are shown below. The results for the Butterfield wetland are
-similar. This specific example is for a pumping rate of 500 $$m^3/d$$, hydraulic conductivity of 0.316 m/d, specific yield of
-0.316, and river conductance of 750 $$m^2/d$$. This specific example shows that abstraction within 1 km of the wetland
+similar. This specific example is for a pumping rate of 500 $m^3/d$, hydraulic conductivity of 0.316 m/d, specific yield of
+0.316, and river conductance of 750 $m^2/d$. This specific example shows that abstraction within 1 km of the wetland
 is likely to cause c. 0.5 m drawdown at the wetland location. However, abstraction 2 km or further from the wetland is unlikely
 to cause drawdown at the wetland location.  Note that several of the example bore locations were not able to sustain
 abstraction at this rate. The drawdown at these locations are excluded from the interpolation.
