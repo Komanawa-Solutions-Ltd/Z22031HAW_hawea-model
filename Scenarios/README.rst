@@ -8,14 +8,14 @@ Hawea Transient groundwater model (Hawea Model) scenarios methods and results
 
 .. class:: centered
 
-    *Figure: results of the boundary condition sensitivity analysis at the mid_e_terrace indicator well
+    *Figure: results of the boundary condition sensitivity analysis at the mid_e_terrace indicator well*
 
 :Author:  Matt Dumont
 :Date:  2021-11-02
 :Version:  1.0.0
 :Status:  Draft
 :KSL project: Z22031HAW_hawea-model
-:Purpose: This document provides the methodology and results for the model build process
+:Purpose: This document provides the methodology and results for the model scenario process
 
 Index
 =====
@@ -24,7 +24,7 @@ Index
 Module Index
 ============
 -  `README.rst <../Scenarios/README.rst>`_: document describing the scenario modelling methods and results
--   Scenario development and supporting scripts
+-  Scenario development and supporting scripts
     -  `scen_period.py <../Scenarios/scen_period.py>`_: script to handle the scenario period
     -  `boundary_condition_plots <../Scenarios/boundary_condition_plots>`_: plots of the scenarios boundary conditions
     -  `base_data <../Scenarios/base_data>`_: base input data for the scenarios
