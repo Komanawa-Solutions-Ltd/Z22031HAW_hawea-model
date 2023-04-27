@@ -500,6 +500,8 @@ in the `scenarios readme file. <../scenarios/README.rst>`_.  Note that we did at
 to get this optimisation to converge, so we do not believe that the lack of convergence here indicates that the threshold
 value cannot be as high as 337 m msl.
 
+#todo discuss new Jens info!
+
 Access to final optimised parameter sets and models
 ===================================================
 
