@@ -232,14 +232,15 @@ In order to assess the impacts of heretofore unseen lake levels we developed a t
 this was done my creating the best fit between the ISO weekly mean lake levels to a modified sin wave function:
 
 .. math::
-    l = a * sin((t - d) / 52 * 2\pi) +  b
+    $$l = a * sin((t - d) / 52 * 2\pi) +  b$$
 
 where:
-- $l$ is the lake level
-- $a$ is the amplitude of the lake level variation
-- $t$ is the ISO week
-- $d$ is the phase shift of the lake level variation
-- $b$ is the mean lake level
+
+- $$l$$ is the lake level
+- $$a$$ is the amplitude of the lake level variation
+- $$t$$ is the ISO week
+- $$d$$ is the phase shift of the lake level variation
+- $$b$$ is the mean lake level
 
 We then used these parameters as a base value for the following equation to perturb the historical lake levels:
 
