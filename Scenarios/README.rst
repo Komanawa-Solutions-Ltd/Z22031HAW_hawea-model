@@ -769,7 +769,7 @@ It is a violin plot, so the width of the violin represents the probability of th
 including tabular results are avalible in the `allo_zone_rch <../Scenarios/allocation_results/allo_zone_rch>`_ folder.
 
 
-.. figure:: ../Scenarios/allocation_results/allo_zone_rch/plots/Mangawera Valley.png
+.. figure:: ../Scenarios/allocation_results/allo_zone_rch/plots/Mangawera%20Valley.png
    :height: 650 px
    :align: center
 
