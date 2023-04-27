@@ -241,6 +241,14 @@ where:
 - $d$ is the phase shift of the lake level variation
 - $b$ is the mean lake level
 
+.. figure:: ../Scenarios/boundary_condition_plots/low_lake_fit.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+    *Figure: The fit of the typological lake levels to ISO weekly lake levels for the low lake scenarios
+
 We then used these parameters as a base value for the following equation to perturb the historical lake levels:
 
 Where the lake levels were greater than the annual mean lake level:
@@ -275,13 +283,6 @@ levels.
 
     *Figure: example of the perturbations to the lake levels for the low lake scenarios
 
-.. figure:: ../Scenarios/boundary_condition_plots/low_lake_fit.png
-    :height: 650 px
-    :align: center
-
-.. class:: centered
-
-    *Figure: The fit of the typological lake levels to ISO weekly lake levels for the low lake scenarios
 
 
 Standard Scenario Outputs
