@@ -243,26 +243,25 @@ where:
 
 We then used these parameters as a base value for the following equation to perturb the historical lake levels:
 
-    Where the lake levels were greater than the annual mean lake level:
+Where the lake levels were greater than the annual mean lake level:
 
+$$lh = a_high  (|sin((t - d) / 52 * 2\pi)|)^{k_high} +  b_high$$
 
-        $$lh = a_high  (|sin((t - d) / 52 * 2\pi)|)^{k_high} +  b_high$$
+Where the lake levels were less than the annual mean lake level:
 
-    Where the lake levels were less than the annual mean lake level:
+$$ll = -a_low  (|sin((t - d) / 52 * 2\pi)|)^{k_low} +  b_high$$
 
-        $$ll = -a_low  (|sin((t - d) / 52 * 2\pi)|)^{k_low} +  b_high$$
-
-    where
-    - $lh$ is the high lake level
-    - $ll$ is the low lake level
-    - $a_high$ is the amplitude of the high lake level variation
-    - $a_low$ is the amplitude of the low lake level variation
-    - $b_high$ is the mean lake level for the high lake level variation
-    - $b_low$ is the mean lake level for the low lake level variation
-    - $k_high$ is the width parameter of the high lake level variation
-    - $k_low$ is the width parameter of the low lake level variation
-    - $t$ is the ISO week
-    - $d$ is the phase shift of the lake level variation (not modified)
+Where:
+- $lh$ is the high lake level
+- $ll$ is the low lake level
+- $a_high$ is the amplitude of the high lake level variation
+- $a_low$ is the amplitude of the low lake level variation
+- $b_high$ is the mean lake level for the high lake level variation
+- $b_low$ is the mean lake level for the low lake level variation
+- $k_high$ is the width parameter of the high lake level variation
+- $k_low$ is the width parameter of the low lake level variation
+- $t$ is the ISO week
+- $d$ is the phase shift of the lake level variation (not modified)
 
 This allows us to modify the lake amplitude, mean, and the width of the sin wave for both the high and low lake
 levels.
