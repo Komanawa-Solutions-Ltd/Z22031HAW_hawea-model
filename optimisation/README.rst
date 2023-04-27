@@ -230,7 +230,7 @@ relatively deep (e.g. 50+ m).
 
 .. class:: centered
 
-        *Figure: all groundwater levels relative to the Lake Hawea level on the sampling date (positive values are groundwater levels below the lake)*
+    *Figure: all groundwater levels relative to the Lake Hawea level on the sampling date (positive values are groundwater levels below the lake)*
 
 Because we could not reproduce the groundwater levels at G40/0415, we deemed that the we could reject the hypothesis that
 a 1 layer model could reproduce the groundwater levels the Hawea system with confidence. This is an essential outcome
@@ -312,7 +312,7 @@ The full set of optimisation plots for this model are available in the `3d_v1d o
 
 .. class:: centered
 
-        *Figure: the number of model stress periods with dry cells in the final model*
+    *Figure: the number of model stress periods with dry cells in the final model*
 
 There are a number of areas in the model with consistent dry cells. There are a number dry cells directly south of the moraine.
 These are not a concern and are instead simply an artefact of the complex 3D structure in the area. Many more of these persistent dry cells
@@ -330,7 +330,7 @@ information to justify adding this structure to the model, but it may warrant fu
     :align: center
 
 .. class:: centered
-        *Figure: the possible indicative location (yellow dashed line) of a moraine structure to the east of the Hawea Flat township*
+    *Figure: the possible indicative location (yellow dashed line) of a moraine structure to the east of the Hawea Flat township*
 
 
 Finally the model does a very poor job of reproducing the groundwater levels in the area to the east of the inferred Grandview Fault.
@@ -371,7 +371,7 @@ westward bend.
 
 .. class:: centered
 
-        *Figure: the river fluxes for the final model at each of the parameter zones*
+    *Figure: the river fluxes for the final model at each of the parameter zones*
 
 .. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_riv/riv_mean.png
     :height: 650 px
@@ -379,7 +379,7 @@ westward bend.
 
 .. class:: centered
 
-        *Figure: the mean river fluxes spatially for the final model*
+    *Figure: the mean river fluxes spatially for the final model*
 
 The figure below shows the steady state groundwater heads around the moraine zone in all three layers.
 We don't have any targets to inform this data, but it does produce a key prediction that could be tested in the future.
@@ -395,7 +395,7 @@ Conceptual Model section of `the model build readme <../model_build/README.rst>`
 
 .. class:: centered
 
-        *Figure: the steady state groundwater heads around the moraine zone in all three layers*
+    *Figure: the steady state groundwater heads around the moraine zone in all three layers*
 
 3D_v1a
 -------
@@ -421,7 +421,7 @@ Fit to higher frequency groundwater levels at G40/0415
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0415*
+    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0415*
 
 
 Fit to higher frequency groundwater levels at G40/0416
@@ -431,7 +431,7 @@ Fit to higher frequency groundwater levels at G40/0416
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0416*
+    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0416*
 
 
 Fit to higher frequency groundwater levels at G40/0041
@@ -441,7 +441,7 @@ Fit to higher frequency groundwater levels at G40/0041
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0041*
+    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0041*
 
 Fit to higher frequency groundwater levels at G40/0129
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -450,7 +450,7 @@ Fit to higher frequency groundwater levels at G40/0129
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0129 (NGMP bore)*
+    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0129 (NGMP bore)*
 
 Fit to higher frequency groundwater levels at G40/0120
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -460,7 +460,7 @@ Fit to higher frequency groundwater levels at G40/0120
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0120 (NGMP bore)*
+    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0120 (NGMP bore)*
 
 Fit to higher frequency groundwater levels at G40/0367
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -469,7 +469,7 @@ Fit to higher frequency groundwater levels at G40/0367
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0367*
+    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0367*
 
 Fit to higher frequency groundwater levels at G40/0366
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -478,7 +478,7 @@ Fit to higher frequency groundwater levels at G40/0366
     :align: center
 
 .. class:: centered
-        *Figure: the groundwater levels for the 3d_v1a model at bore G40/0366*
+    *Figure: the groundwater levels for the 3d_v1a model at bore G40/0366*
 
 Discussion and implications
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -589,7 +589,7 @@ and scientific merit.
   there could be a low permeability structure to the west of Hawea Flat township associated with a potential lateral
   moraine of the Albert Town advance. Further investigation of this possible structure would help constrain our understanding
   of the groundwater system in this area.
-- **multiple concurrent gauging of multiple hillside streams:**  As described in the `model build readme <../model_build/README.rst`_
+- **multiple concurrent gauging of multiple hillside streams:**  As described in the `model build readme <../model_build/README.rst>`_
   the hillside streams are a major source of water to the Hawea aquifer system. However, we only have observations from
   two gauging sites for a limited period of time. We estimated the inflows from a a correlation with the Lindis River;
   however, both of the gauged streams are of similar size so the correlation may not hold for the smaller hillside streams.
@@ -611,7 +611,7 @@ and scientific merit.
     :align: center
 
 .. class:: centered
-        *Figure: Areas for possible additional high frequency monitoring bores*
+    *Figure: Areas for possible additional high frequency monitoring bores*
 
 Optimisation working notes
 ==========================
@@ -732,128 +732,128 @@ described below (working notes) for completeness.
 
 #. Structure_v9
 
-    -  Fix river targets (they were backwards!)
-    -  Implement Grandview and John Creek (+Hawea and Clutha) as str
-       package
-    -  Lake stage vs g40_0415
-    -  Looks fine, honestly the fact that them model isn’t matching it
-       suggests some sort of structural error. Reworked transport in
-       grandview stream?/ water through grandview stream??? Likely the
-       problem google maps shows water in grandview to the lake (and in
-       john creek (to the north), all other creeks are probably fine.
-    -  Lower basement around g40_0366
+   -  Fix river targets (they were backwards!)
+   -  Implement Grandview and John Creek (+Hawea and Clutha) as str
+      package
+   -  Lake stage vs g40_0415
+   -  Looks fine, honestly the fact that them model isn’t matching it
+      suggests some sort of structural error. Reworked transport in
+      grandview stream?/ water through grandview stream??? Likely the
+      problem google maps shows water in grandview to the lake (and in
+      john creek (to the north), all other creeks are probably fine.
+   -  Lower basement around g40_0366
 
 #. Structure_v10
 
-    -  Set weight of regular year targets to 0
-    -  set each of the ‘h_hf’ targets equal weights despite different
-       data lengths
-    -  look/lower basement in dry cells near model boundaries
-    -  NE hillside area (done)
-    -  Near Clutha River (done)
-    -  I think I need some more pilot points
-    -  Near pt 402 on camp hill moraine (move Maungawera south?) ()
-       and another in the moraine (to interpolate with other river group
-    -  To stop dry cells south of camp hill moraine
-    -  Significant number in the hillslope area just off the bounds to
-       allow conductivity to fall there if needed for stability. And to
-       manage the change in geologic setting near hillslope
-    -  Adjust some locations based on the new pilot point locations
-    -  New rivergroup south of Maungawera valley entrance to allow for
-       the difference between the two settings
-    -  Additional point in the middle of the terrace to manage near
-       hillside environment.
-    -  Try lowering hillside conductance → set to 100 vs 1000 for
-       Hawea/Clutha, which means much of the peak flow does does not
-       make it into the model.
+   -  Set weight of regular year targets to 0
+   -  set each of the ‘h_hf’ targets equal weights despite different
+      data lengths
+   -  look/lower basement in dry cells near model boundaries
+   -  NE hillside area (done)
+   -  Near Clutha River (done)
+   -  I think I need some more pilot points
+   -  Near pt 402 on camp hill moraine (move Maungawera south?) ()
+      and another in the moraine (to interpolate with other river group
+   -  To stop dry cells south of camp hill moraine
+   -  Significant number in the hillslope area just off the bounds to
+      allow conductivity to fall there if needed for stability. And to
+      manage the change in geologic setting near hillslope
+   -  Adjust some locations based on the new pilot point locations
+   -  New rivergroup south of Maungawera valley entrance to allow for
+      the difference between the two settings
+   -  Additional point in the middle of the terrace to manage near
+      hillside environment.
+   -  Try lowering hillside conductance → set to 100 vs 1000 for
+      Hawea/Clutha, which means much of the peak flow does does not
+      make it into the model.
 
 #. Structure_v11
 
-    -  Move to 1 global recharge modifier (done)
-    -  Much higher initial kh (lake=5, rest = 300) (in progress
-    -  Lower sy, and lower sy bounds
-    -  Change weights (lower low frequency targets)
-    -  Bit of a hail mary before the weekend
-    -  retired (even though I’m happy with the parameterisation. If I
-       want to change back to vll parameters do it from v12
+   -  Move to 1 global recharge modifier (done)
+   -  Much higher initial kh (lake=5, rest = 300) (in progress
+   -  Lower sy, and lower sy bounds
+   -  Change weights (lower low frequency targets)
+   -  Bit of a hail mary before the weekend
+   -  retired (even though I’m happy with the parameterisation. If I
+      want to change back to vll parameters do it from v12
 
 #. Structure_v12
 
-    -  Increase kh/sy parameterisation in the near lake environment
+   -  Increase kh/sy parameterisation in the near lake environment
 
 #. terrace only
 
-    - see above
+   - see above
 
 #. p_lake
 
-    -  As per structure_v11 but with a single additive parameter for
-       lake heads (e.g. lake hds = lake hds + mod
-    -  A test to see if the lake levels problems are sorted everything
-       else works great?
-    -  Note the parameter is offset by 100 m as pyemu has bugs!
+   -  As per structure_v11 but with a single additive parameter for
+      lake heads (e.g. lake hds = lake hds + mod
+   -  A test to see if the lake levels problems are sorted everything
+      else works great?
+   -  Note the parameter is offset by 100 m as pyemu has bugs!
 
 #. lake_bar
 
-    -  Add a 1 cell thick barrier for kh
-    -  Remove additional v12 parameterisation
+   -  Add a 1 cell thick barrier for kh
+   -  Remove additional v12 parameterisation
 
 #. cond_int
 
-    -  Try to fit the heads by simply setting lake conductance (1 cell
-       width lake)
+   -  Try to fit the heads by simply setting lake conductance (1 cell
+      width lake)
 
 #. 3d_v1
 
-    -  Address the 3D moraine issues in structure
-    -  3 layers the bottom two pinch out against the bottom of the
-       model.
-    -  well management
-    -  target management
-    -  other structural pieces
-    -  Add abrupt parameter change at terrace interface
-    -  Remove from dam to “dam control” road from model (e.g. no flow)
-    -  Re-run pre_optimisation_overview.py
-    -  remove the slope fixer on the east side
-    -  remove additional parameterisation of v12
+   -  Address the 3D moraine issues in structure
+   -  3 layers the bottom two pinch out against the bottom of the
+      model.
+   -  well management
+   -  target management
+   -  other structural pieces
+   -  Add abrupt parameter change at terrace interface
+   -  Remove from dam to “dam control” road from model (e.g. no flow)
+   -  Re-run pre_optimisation_overview.py
+   -  remove the slope fixer on the east side
+   -  remove additional parameterisation of v12
 
 #. 3d_v2
 
-    -  As per v1 but fully confined (to increase stability)
-    -  Ss[0] = sy[0]
-    -  Initial parameters do not manage the drop quite so well. This may
-       really need the unconfined aspects of the model.
-    -  Bit of a hail mary over xmas. Really need the unconfined action
-       to make the ‘waterfall happen’
+   -  As per v1 but fully confined (to increase stability)
+   -  Ss[0] = sy[0]
+   -  Initial parameters do not manage the drop quite so well. This may
+      really need the unconfined aspects of the model.
+   -  Bit of a hail mary over xmas. Really need the unconfined action
+      to make the ‘waterfall happen’
 
 #. 3d_v1a
 
-    - see above
+   - see above
 
 #. 3d_v1b
 
-    - see above
+   - see above
 
 #. 3d_v1c
 
-    -  As 3d_v1a but with top of bund set to 337
-    -  great difficulty getting this to converge
-    -  abandoned
+   -  As 3d_v1a but with top of bund set to 337
+   -  great difficulty getting this to converge
+   -  abandoned
 
 #. 3d_v4
 
-    -  As 3d_v1a, but top of bund is set to 340 m MSL instead of 335
-    -  Difficult to get model to converge
-    -  abandoned
+   -  As 3d_v1a, but top of bund is set to 340 m MSL instead of 335
+   -  Difficult to get model to converge
+   -  abandoned
 
 #. 3d_v5
 
-    -  As 3d_v1a, but top of bund is parameterised
-    -  Largely unstable
+   -  As 3d_v1a, but top of bund is parameterised
+   -  Largely unstable
 
 #. 3d_v1d
 
-    - see above
+   - see above
 
 References
 ===========
