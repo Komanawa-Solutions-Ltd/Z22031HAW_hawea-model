@@ -516,6 +516,7 @@ function.
 To uncompress the 3d_v1d model to your downloads folder can use the following code:
 
 .. code-block::
+
     from optimisation.final_opt_models.compress_uncompress_model import
     from project_base import proj_root
     from pathlib
