@@ -1,0 +1,11 @@
+        group norm_param_val
+pname                       
+all       rch           -0.0
+se       hill       0.006798
+main     hill            1.0
+c1        riv           -0.0
+riv_g23    kh       0.061394
+riv_g24    kh            1.0
+ter33      kh       0.000008
+h_flat1    kh           -0.0
+sandy32    kh       0.009787

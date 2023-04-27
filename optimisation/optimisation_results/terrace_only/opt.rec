@@ -1,0 +1,2624 @@
+ PEST RUN RECORD: CASE /home/matt_dumont/unbacked/hawea/terrace_only/init_terrace_only/Optimisations/opt
+
+
+ BEOPEST Version: 17.3
+
+
+ PEST run mode:-
+
+    Parameter estimation mode
+
+
+ Case dimensions:-
+
+    Number of parameters                           :    90
+    Number of adjustable parameters                :    38
+    Number of parameter groups                     :     6
+    Number of observations                         :   363
+    Number of prior estimates                      :     0
+
+
+ Model command line(s):-
+
+    conda run -n hawea python /home/matt_dumont/unbacked/hawea/terrace_only/init_terrace_only/Optimisations/forward_run.py
+
+
+ Jacobian command line:-
+
+    na
+
+
+ Model interface files:-
+
+    Templates:
+       /home/matt_dumont/unbacked/hawea/terrace_only/init_terrace_only/Optimisations/parameters.dat.tpl
+    for model input files:
+       /home/matt_dumont/unbacked/hawea/terrace_only/init_terrace_only/Optimisations/parameters.dat
+
+    (Parameter values written using single precision protocol.)
+    (Decimal point always included.)
+
+    Instruction files:
+       /home/matt_dumont/unbacked/hawea/terrace_only/init_terrace_only/Optimisations/observations.dat.ins
+    for reading model output files:
+       /home/matt_dumont/unbacked/hawea/terrace_only/init_terrace_only/Optimisations/observations.dat
+
+
+ PEST-to-model message file:-
+
+    na
+
+
+ Singular value decomposition:-
+
+    Perform SVD on XtQX or Q^(1/2)X               : XtQX
+    Max. number of singular values to employ      : 10000000
+    Ratio of lowest/highest singular value        :  1.000000E-06
+    Record eigenvectors in SVD file               : yes
+
+
+ Derivatives calculation:-
+
+ Param        Increment   Increment   Increment   Forward or   Multiplier  Method
+ group        type                    low bound   central      (central)   (central)
+ hill         relative    1.0000E-02   none         switch       2.000     parabolic
+ kh           relative    1.0000E-02   none         switch       2.000     parabolic
+ race         relative    1.0000E-02   none         switch       2.000     parabolic
+ rch          relative    1.0000E-02   none         switch       2.000     parabolic
+ riv          relative    1.0000E-02   none         switch       2.000     parabolic
+ sy           relative    1.0000E-02   none         switch       2.000     parabolic
+
+
+ Parameter definitions:-
+
+ This information not provided as non-verbose run record file requested.
+
+
+ Prior information:-
+
+    No prior information supplied
+
+
+ Observations:-
+
+ This information not provided as non-verbose run record file requested.
+
+
+ Control settings:-
+
+    Initial lambda                                               :  10.000    
+    Lambda adjustment factor                                     : iteration-dependent
+    Value of variable governing adjustment                       : -3.0000    
+    Sufficient new/old phi ratio per optimisation iteration      : 0.30000    
+    Limiting relative phi reduction between lambdas              : 1.00000E-02
+    Maximum trial lambdas per iteration                          :  10
+    Forgive model run failure during lamda testing               : yes
+    Forgive model run failure during Jacobian runs               : yes
+
+    Perform Broyden's update of Jacobian matrix                  : no
+    Undertake observation re-referencing                         : no
+
+    Maximum  factor  parameter change (factor-limited changes)   :  10.000
+    Maximum relative parameter change (relative-limited changes) : na
+    Fraction of initial parameter values used in computing
+    change limit for near-zero parameters                        : 1.00000E-03
+    Absolute parameter change limit (1)                          : 0.10000
+    Allow bending of parameter upgrade vector                    : no
+    Allow parameters to stick to their bounds                    : no
+
+    Relative phi reduction below which to begin use of
+    central derivatives                                          : 0.10000             
+    Iteration at which to first consider derivatives switch      :   3
+
+    Relative phi reduction indicating convergence                : 0.50000E-02
+    Number of phi values required within this range              :   6
+    Maximum number of consecutive failures to lower phi          :   6
+    Minimal relative parameter change indicating convergence     : 0.50000E-02
+    Number of consecutive iterations with minimal param change   :   6
+    Maximum number of optimisation iterations                    : 100
+
+    Attempt automatic user intervention                          : no
+
+    Attempt reuse of parameter sensitivities                     : no
+
+    Scale parameters by their bounds                             : no
+
+
+ File saving options: -
+
+    Save best JCO file                                           : yes
+    Save multiple JCO files                                      : yes
+    Save multiple REI files                                      : yes
+    Save multiple PAR files                                      : yes
+
+
+                             OPTIMISATION RECORD
+
+
+ INITIAL CONDITIONS: 
+    Sum of squared weighted residuals (ie phi)               =   813.15    
+    Contribution to phi from observation group "h_piezo"     =   98.406    
+    Contribution to phi from observation group "h_single_3"  =   55.105    
+    Contribution to phi from observation group "h_single_1"  =   41.728    
+    Contribution to phi from observation group "h_hf"        =   617.91    
+    Contribution to phi from observation group "rwh_hf"      =   0.0000    
+
+
+ OPTIMISATION ITERATION NO.        : 1
+    Model calls so far             : 1
+    Starting phi for this iteration                          :   813.15    
+    Contribution to phi from observation group "h_piezo"     :   98.406    
+    Contribution to phi from observation group "h_single_3"  :   55.105    
+    Contribution to phi from observation group "h_single_1"  :   41.728    
+    Contribution to phi from observation group "h_hf"        :   617.91    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+
+        Lambda =   10.000     ----->
+           Phi =   804.49      (  0.989 of starting phi)
+
+        Lambda =   4.6416     ----->
+           Phi =   804.94      (  0.990 of starting phi)
+
+        Lambda =   21.544     ----->
+           Phi =   803.51      (  0.988 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   803.51    
+    Maximum   factor change:  10.00     ["sy_hill14"]
+    Maximum relative change: 0.9000     ["sy_hill14"]
+    Maximum absolute(1) change: 1.0943E-02 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 2
+    Model calls so far             : 50
+    Starting phi for this iteration                          :   803.51    
+    Contribution to phi from observation group "h_piezo"     :   97.058    
+    Contribution to phi from observation group "h_single_3"  :   54.444    
+    Contribution to phi from observation group "h_single_1"  :   41.402    
+    Contribution to phi from observation group "h_hf"        :   610.61    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+
+        Lambda =   21.544     ----->
+           Phi =   774.90      (  0.964 of starting phi)
+
+        Lambda =   7.7426     ----->
+           Phi =   769.90      (  0.958 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   769.90    
+    Maximum   factor change:  10.00     ["sy_sandy31"]
+    Maximum relative change: 0.9000     ["sy_sandy31"]
+    Maximum absolute(1) change: 2.3964E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 3
+    Model calls so far             : 99
+    Starting phi for this iteration                          :   769.90    
+    Contribution to phi from observation group "h_piezo"     :   93.382    
+    Contribution to phi from observation group "h_single_3"  :   51.891    
+    Contribution to phi from observation group "h_single_1"  :   40.463    
+    Contribution to phi from observation group "h_hf"        :   584.16    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+
+        Lambda =   2.7826     ----->
+           Phi =   747.28      (  0.971 of starting phi)
+
+        Lambda =   1.3913     ----->
+           Phi =   746.19      (  0.969 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   746.19    
+    Relative phi reduction between optimisation iterations less than 0.1000
+    Switch to higher order derivatives calculation
+    Maximum   factor change:  7.707     ["sy_sandy31"]
+    Maximum relative change: 0.8703     ["sy_sandy31"]
+    Maximum absolute(1) change: 4.8676E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 4
+    Model calls so far             : 148
+    Starting phi for this iteration                          :   746.19    
+    Contribution to phi from observation group "h_piezo"     :   91.494    
+    Contribution to phi from observation group "h_single_3"  :   49.899    
+    Contribution to phi from observation group "h_single_1"  :   39.954    
+    Contribution to phi from observation group "h_hf"        :   564.84    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+
+        Lambda =  0.69564     ----->
+           Phi =   735.82      (  0.986 of starting phi)
+
+        Lambda =  0.34782     ----->
+           Phi =   738.20      (  0.989 of starting phi)
+
+        Lambda =   1.3913     ----->
+           Phi =   729.18      (  0.977 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   729.18    
+    Maximum   factor change:  10.00     ["sy_ter39"]
+    Maximum relative change: 0.9000     ["sy_ter39"]
+    Maximum absolute(1) change: 2.0418E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 5
+    Model calls so far             : 235
+    Starting phi for this iteration                          :   729.18    
+    Contribution to phi from observation group "h_piezo"     :   89.510    
+    Contribution to phi from observation group "h_single_3"  :   48.646    
+    Contribution to phi from observation group "h_single_1"  :   39.584    
+    Contribution to phi from observation group "h_hf"        :   551.44    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+
+        Lambda =   1.3913     ----->
+           Phi =   722.34      (  0.991 of starting phi)
+
+        Lambda =  0.69564     ----->
+           Phi =   722.53      (  0.991 of starting phi)
+
+        Lambda =   2.7826     ----->
+           Phi =   723.73      (  0.993 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   722.34    
+    Maximum   factor change:  2.366     ["sy_hill14"]
+    Maximum relative change: 0.5774     ["sy_hill14"]
+    Maximum absolute(1) change: 1.6347E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 6
+    Model calls so far             : 322
+    Starting phi for this iteration                          :   722.34    
+    Contribution to phi from observation group "h_piezo"     :   88.854    
+    Contribution to phi from observation group "h_single_3"  :   48.148    
+    Contribution to phi from observation group "h_single_1"  :   39.435    
+    Contribution to phi from observation group "h_hf"        :   545.90    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+        param "sy_sandy31" frozen: gradient and update vectors out of bounds
+
+        Lambda =   1.3913     ----->
+           Phi =   716.01      (  0.991 of starting phi)
+
+        Lambda =  0.69564     ----->
+           Phi =   714.40      (  0.989 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   714.40    
+    Maximum   factor change:  4.155     ["sy_hill14"]
+    Maximum relative change: 0.7593     ["sy_hill14"]
+    Maximum absolute(1) change: 1.1017E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 7
+    Model calls so far             : 400
+    Starting phi for this iteration                          :   714.40    
+    Contribution to phi from observation group "h_piezo"     :   88.066    
+    Contribution to phi from observation group "h_single_3"  :   47.550    
+    Contribution to phi from observation group "h_single_1"  :   39.254    
+    Contribution to phi from observation group "h_hf"        :   539.53    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+
+        Lambda =  0.34782     ----->
+           Phi =   706.92      (  0.990 of starting phi)
+
+        Lambda =  0.17391     ----->
+           Phi =   706.75      (  0.989 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   706.75    
+    Maximum   factor change:  3.819     ["sy_ter39"]
+    Maximum relative change:  1.224     ["sy_hill11"]
+    Maximum absolute(1) change: 4.3884E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 8
+    Model calls so far             : 478
+    Starting phi for this iteration                          :   706.75    
+    Contribution to phi from observation group "h_piezo"     :   87.175    
+    Contribution to phi from observation group "h_single_3"  :   46.999    
+    Contribution to phi from observation group "h_single_1"  :   39.128    
+    Contribution to phi from observation group "h_hf"        :   533.45    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+
+        Lambda =  8.69550E-02 ----->
+           Phi =   705.35      (  0.998 of starting phi)
+
+        Lambda =  3.85235E-02 ----->
+           Phi =   705.35      (  0.998 of starting phi)
+
+        Lambda =  0.19627     ----->
+           Phi =   705.35      (  0.998 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   705.35    
+    Maximum   factor change:  1.333     ["sy_ter39"]
+    Maximum relative change: 0.2500     ["sy_ter39"]
+    Maximum absolute(1) change: 6.6830E-04 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 9
+    Model calls so far             : 565
+    Starting phi for this iteration                          :   705.35    
+    Contribution to phi from observation group "h_piezo"     :   87.101    
+    Contribution to phi from observation group "h_single_3"  :   46.895    
+    Contribution to phi from observation group "h_single_1"  :   39.106    
+    Contribution to phi from observation group "h_hf"        :   532.24    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+
+        Lambda =  0.19627     ----->
+           Phi =   698.07      (  0.990 of starting phi)
+
+        Lambda =  9.81370E-02 ----->
+           Phi =   698.05      (  0.990 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   698.05    
+    Maximum   factor change:  10.00     ["sy_hill15"]
+    Maximum relative change: 0.9000     ["sy_hill15"]
+    Maximum absolute(1) change: 2.4833E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 10
+    Model calls so far             : 643
+    Starting phi for this iteration                          :   698.05    
+    Contribution to phi from observation group "h_piezo"     :   86.447    
+    Contribution to phi from observation group "h_single_3"  :   46.370    
+    Contribution to phi from observation group "h_single_1"  :   38.987    
+    Contribution to phi from observation group "h_hf"        :   526.25    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: - update vector out of bounds
+        param "sy_ter39" frozen: - update vector out of bounds
+
+        Lambda =  4.90685E-02 ----->
+           Phi =   697.67      (  0.999 of starting phi)
+
+        Lambda =  1.79640E-02 ----->
+           Phi =   697.69      (  0.999 of starting phi)
+
+        Lambda =  0.13403     ----->
+           Phi =   697.63      (  0.999 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   697.63    
+    Maximum   factor change:  1.067     ["sy_h_flat1"]
+    Maximum relative change: 6.7352E-02 ["sy_h_flat1"]
+    Maximum absolute(1) change: 1.2416E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 11
+    Model calls so far             : 722
+    Starting phi for this iteration                          :   697.63    
+    Contribution to phi from observation group "h_piezo"     :   86.404    
+    Contribution to phi from observation group "h_single_3"  :   46.340    
+    Contribution to phi from observation group "h_single_1"  :   38.980    
+    Contribution to phi from observation group "h_hf"        :   525.91    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_ter36" frozen: - update vector out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+
+        Lambda =  0.13403     ----->
+           Phi =   680.53      (  0.975 of starting phi)
+
+        Lambda =  6.70150E-02 ----->
+           Phi =   681.58      (  0.977 of starting phi)
+
+        Lambda =  0.26806     ----->
+           Phi =   697.44      (  1.000 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   680.53    
+    Maximum   factor change:  10.00     ["sy_ter38"]
+    Maximum relative change:  1.721     ["sy_h_flat1"]
+    Maximum absolute(1) change: 3.5870E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 12
+    Model calls so far             : 801
+    Starting phi for this iteration                          :   680.53    
+    Contribution to phi from observation group "h_piezo"     :   84.984    
+    Contribution to phi from observation group "h_single_3"  :   44.467    
+    Contribution to phi from observation group "h_single_1"  :   38.724    
+    Contribution to phi from observation group "h_hf"        :   512.35    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+
+        Lambda =  0.13403     ----->
+           Phi =   677.33      (  0.995 of starting phi)
+
+        Lambda =  6.70150E-02 ----->
+           Phi =   677.50      (  0.996 of starting phi)
+
+        Lambda =  0.26806     ----->
+           Phi =   674.08      (  0.991 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   674.08    
+    Maximum   factor change:  1.796     ["sy_h_flat1"]
+    Maximum relative change: 0.7956     ["sy_h_flat1"]
+    Maximum absolute(1) change: 1.3294E-02 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 13
+    Model calls so far             : 880
+    Starting phi for this iteration                          :   674.08    
+    Contribution to phi from observation group "h_piezo"     :   84.416    
+    Contribution to phi from observation group "h_single_3"  :   44.004    
+    Contribution to phi from observation group "h_single_1"  :   38.597    
+    Contribution to phi from observation group "h_hf"        :   507.07    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: - update vector out of bounds
+
+        Lambda =  0.26806     ----->
+           Phi =   667.46      (  0.990 of starting phi)
+
+        Lambda =  0.13403     ----->
+           Phi =   664.70      (  0.986 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   664.70    
+    Maximum   factor change:  2.080     ["sy_h_flat1"]
+    Maximum relative change:  1.080     ["sy_h_flat1"]
+    Maximum absolute(1) change: 4.0117E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 14
+    Model calls so far             : 958
+    Starting phi for this iteration                          :   664.70    
+    Contribution to phi from observation group "h_piezo"     :   83.519    
+    Contribution to phi from observation group "h_single_3"  :   43.274    
+    Contribution to phi from observation group "h_single_1"  :   38.456    
+    Contribution to phi from observation group "h_hf"        :   499.45    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: - update vector out of bounds
+
+        Lambda =  6.70150E-02 ----->
+           Phi =   660.77      (  0.994 of starting phi)
+
+        Lambda =  2.72205E-02 ----->
+           Phi =   660.77      (  0.994 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   660.77    
+    Maximum   factor change:  1.548     ["sy_sandy31"]
+    Maximum relative change: 0.3539     ["sy_sandy31"]
+    Maximum absolute(1) change: 1.8094E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 15
+    Model calls so far             : 1036
+    Starting phi for this iteration                          :   660.77    
+    Contribution to phi from observation group "h_piezo"     :   83.206    
+    Contribution to phi from observation group "h_single_3"  :   42.990    
+    Contribution to phi from observation group "h_single_1"  :   38.398    
+    Contribution to phi from observation group "h_hf"        :   496.17    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+
+        Lambda =  1.10566E-02 ----->
+           Phi =   655.74      (  0.992 of starting phi)
+
+        Lambda =  2.46316E-03 ----->
+           Phi =   655.74      (  0.992 of starting phi)
+
+        Lambda =  4.96303E-02 ----->
+           Phi =   655.71      (  0.992 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   655.71    
+    Maximum   factor change:  1.215     ["sy_sandy31"]
+    Maximum relative change: 0.1771     ["sy_sandy31"]
+    Maximum absolute(1) change: 2.9936E-03 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 16
+    Model calls so far             : 1115
+    Starting phi for this iteration                          :   655.71    
+    Contribution to phi from observation group "h_piezo"     :   82.709    
+    Contribution to phi from observation group "h_single_3"  :   42.634    
+    Contribution to phi from observation group "h_single_1"  :   38.327    
+    Contribution to phi from observation group "h_hf"        :   492.04    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: - update vector out of bounds
+
+        Lambda =  4.96303E-02 ----->
+           Phi =   649.15      (  0.990 of starting phi)
+
+        Lambda =  1.82388E-02 ----->
+           Phi =   649.16      (  0.990 of starting phi)
+
+        Lambda =  0.13505     ----->
+           Phi =   647.00      (  0.987 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   647.00    
+    Maximum   factor change:  2.216     ["sy_sandy31"]
+    Maximum relative change: 0.7465     ["sy_ter38"]
+    Maximum absolute(1) change: 3.5461E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 17
+    Model calls so far             : 1194
+    Starting phi for this iteration                          :   647.00    
+    Contribution to phi from observation group "h_piezo"     :   82.021    
+    Contribution to phi from observation group "h_single_3"  :   41.889    
+    Contribution to phi from observation group "h_single_1"  :   38.208    
+    Contribution to phi from observation group "h_hf"        :   484.89    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_ter36" frozen: - update vector out of bounds
+
+        Lambda =  0.13505     ----->
+           Phi =   522.50      (  0.808 of starting phi)
+
+        Lambda =  6.75255E-02 ----->
+           Phi =   619.90      (  0.958 of starting phi)
+
+        Lambda =  0.27010     ----->
+           Phi =   591.23      (  0.914 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   522.50    
+    Maximum   factor change:  7.520     ["sy_ter38"]
+    Maximum relative change:  6.520     ["sy_ter38"]
+    Maximum absolute(1) change: 4.1959E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 18
+    Model calls so far             : 1273
+    Starting phi for this iteration                          :   522.50    
+    Contribution to phi from observation group "h_piezo"     :   78.159    
+    Contribution to phi from observation group "h_single_3"  :   30.713    
+    Contribution to phi from observation group "h_single_1"  :   37.173    
+    Contribution to phi from observation group "h_hf"        :   376.45    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_ter36" frozen: - update vector out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+
+        Lambda =  0.13505     ----->
+           Phi =   496.56      (  0.950 of starting phi)
+
+        Lambda =  6.75255E-02 ----->
+           Phi =   501.37      (  0.960 of starting phi)
+
+        Lambda =  0.27010     ----->
+           Phi =   394.19      (  0.754 of starting phi)
+
+        Lambda =  0.54020     ----->
+           Phi =   408.19      (  0.781 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   394.19    
+    Maximum   factor change:  8.767     ["sy_hill15"]
+    Maximum relative change:  7.767     ["sy_hill15"]
+    Maximum absolute(1) change: 0.1000     ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 19
+    Model calls so far             : 1353
+    Starting phi for this iteration                          :   394.19    
+    Contribution to phi from observation group "h_piezo"     :   65.511    
+    Contribution to phi from observation group "h_single_3"  :   19.437    
+    Contribution to phi from observation group "h_single_1"  :   35.826    
+    Contribution to phi from observation group "h_hf"        :   273.42    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_ter36" frozen: - update vector out of bounds
+
+        Lambda =  0.27010     ----->
+           Phi =   392.92      (  0.997 of starting phi)
+
+        Lambda =  0.13505     ----->
+           Phi =   392.46      (  0.996 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   392.46    
+    Maximum   factor change:  3.059     ["sy_hill15"]
+    Maximum relative change: 0.6731     ["sy_hill15"]
+    Maximum absolute(1) change: 1.5008E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 20
+    Model calls so far             : 1431
+    Starting phi for this iteration                          :   392.46    
+    Contribution to phi from observation group "h_piezo"     :   65.266    
+    Contribution to phi from observation group "h_single_3"  :   19.335    
+    Contribution to phi from observation group "h_single_1"  :   35.806    
+    Contribution to phi from observation group "h_hf"        :   272.05    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter36" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  6.75255E-02 ----->
+           Phi =   389.44      (  0.992 of starting phi)
+
+        Lambda =  2.74973E-02 ----->
+           Phi =   389.50      (  0.992 of starting phi)
+
+        Lambda =  0.16582     ----->
+           Phi =   389.31      (  0.992 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   389.31    
+    Maximum   factor change:  4.567     ["sy_hill15"]
+    Maximum relative change: 0.7810     ["sy_hill15"]
+    Maximum absolute(1) change: 2.6136E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 21
+    Model calls so far             : 1510
+    Starting phi for this iteration                          :   389.31    
+    Contribution to phi from observation group "h_piezo"     :   64.840    
+    Contribution to phi from observation group "h_single_3"  :   19.140    
+    Contribution to phi from observation group "h_single_1"  :   35.768    
+    Contribution to phi from observation group "h_hf"        :   269.56    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  0.16582     ----->
+           Phi =   383.50      (  0.985 of starting phi)
+
+        Lambda =  8.29116E-02 ----->
+           Phi =   385.67      (  0.991 of starting phi)
+
+        Lambda =  0.33165     ----->
+           Phi =   384.13      (  0.987 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   383.50    
+    Maximum   factor change:  1.426     ["sy_hill15"]
+    Maximum relative change: 0.4263     ["sy_hill15"]
+    Maximum absolute(1) change: 4.4729E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 22
+    Model calls so far             : 1589
+    Starting phi for this iteration                          :   383.50    
+    Contribution to phi from observation group "h_piezo"     :   64.040    
+    Contribution to phi from observation group "h_single_3"  :   18.762    
+    Contribution to phi from observation group "h_single_1"  :   35.704    
+    Contribution to phi from observation group "h_hf"        :   264.99    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_sandy31" frozen: - update vector out of bounds
+
+        Lambda =  0.16582     ----->
+           Phi =   354.57      (  0.925 of starting phi)
+
+        Lambda =  8.29116E-02 ----->
+           Phi =   350.60      (  0.914 of starting phi)
+
+        Lambda =  4.14558E-02 ----->
+           Phi =   348.07      (  0.908 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   348.07    
+    Maximum   factor change:  3.499     ["sy_ter36"]
+    Maximum relative change:  2.499     ["sy_ter36"]
+    Maximum absolute(1) change: 8.9114E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 23
+    Model calls so far             : 1668
+    Starting phi for this iteration                          :   348.07    
+    Contribution to phi from observation group "h_piezo"     :   59.079    
+    Contribution to phi from observation group "h_single_3"  :   16.795    
+    Contribution to phi from observation group "h_single_1"  :   35.258    
+    Contribution to phi from observation group "h_hf"        :   236.94    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_sandy31" frozen: - update vector out of bounds
+
+        Lambda =  2.07279E-02 ----->
+           Phi =   344.49      (  0.990 of starting phi)
+
+        Lambda =  5.69386E-03 ----->
+           Phi =   344.49      (  0.990 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   344.49    
+    Maximum   factor change:  1.385     ["sy_ter39"]
+    Maximum relative change: 0.2779     ["sy_ter39"]
+    Maximum absolute(1) change: 1.6949E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 24
+    Model calls so far             : 1746
+    Starting phi for this iteration                          :   344.49    
+    Contribution to phi from observation group "h_piezo"     :   58.709    
+    Contribution to phi from observation group "h_single_3"  :   16.584    
+    Contribution to phi from observation group "h_single_1"  :   35.210    
+    Contribution to phi from observation group "h_hf"        :   233.98    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "sy_sandy31" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  1.56408E-03 ----->
+           Phi =   343.73      (  0.998 of starting phi)
+
+        Lambda =  1.81556E-04 ----->
+           Phi =   343.73      (  0.998 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   343.73    
+    Maximum   factor change:  1.123     ["sy_hill14"]
+    Maximum relative change: 0.1094     ["sy_hill14"]
+    Maximum absolute(1) change: 7.5729E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 25
+    Model calls so far             : 1824
+    Starting phi for this iteration                          :   343.73    
+    Contribution to phi from observation group "h_piezo"     :   58.655    
+    Contribution to phi from observation group "h_single_3"  :   16.536    
+    Contribution to phi from observation group "h_single_1"  :   35.202    
+    Contribution to phi from observation group "h_hf"        :   233.34    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  2.10748E-05 ----->
+           Phi =   333.92      (  0.971 of starting phi)
+
+        Lambda =  5.82129E-07 ----->
+           Phi =   333.92      (  0.971 of starting phi)
+
+        Lambda =  7.62974E-04 ----->
+           Phi =   333.90      (  0.971 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   333.90    
+    Maximum   factor change:  5.577     ["sy_h_flat1"]
+    Maximum relative change: 0.8207     ["sy_h_flat1"]
+    Maximum absolute(1) change: 8.0149E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 26
+    Model calls so far             : 1903
+    Starting phi for this iteration                          :   333.90    
+    Contribution to phi from observation group "h_piezo"     :   56.947    
+    Contribution to phi from observation group "h_single_3"  :   16.027    
+    Contribution to phi from observation group "h_single_1"  :   35.094    
+    Contribution to phi from observation group "h_hf"        :   225.84    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  7.62974E-04 ----->
+           Phi =   329.76      (  0.988 of starting phi)
+
+        Lambda =  6.97182E-05 ----->
+           Phi =   329.76      (  0.988 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   329.76    
+    Maximum   factor change:  4.139     ["sy_h_flat1"]
+    Maximum relative change: 0.7584     ["sy_h_flat1"]
+    Maximum absolute(1) change: 4.2162E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 27
+    Model calls so far             : 1981
+    Starting phi for this iteration                          :   329.76    
+    Contribution to phi from observation group "h_piezo"     :   56.364    
+    Contribution to phi from observation group "h_single_3"  :   15.766    
+    Contribution to phi from observation group "h_single_1"  :   35.049    
+    Contribution to phi from observation group "h_hf"        :   222.58    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_sandy31" frozen: - update vector out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+
+        Lambda =  6.37063E-06 ----->
+           Phi =   326.97      (  0.992 of starting phi)
+
+        Lambda =  1.18098E-07 ----->
+           Phi =   326.97      (  0.992 of starting phi)
+
+        Lambda =  3.43654E-04 ----->
+           Phi =   326.96      (  0.992 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   326.96    
+    Maximum   factor change:  1.460     ["sy_ter36"]
+    Maximum relative change: 0.4600     ["sy_ter36"]
+
+
+ OPTIMISATION ITERATION NO.        : 28
+    Model calls so far             : 2060
+    Starting phi for this iteration                          :   326.96    
+    Contribution to phi from observation group "h_piezo"     :   56.075    
+    Contribution to phi from observation group "h_single_3"  :   15.546    
+    Contribution to phi from observation group "h_single_1"  :   35.034    
+    Contribution to phi from observation group "h_hf"        :   220.31    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_hill15" frozen: - update vector out of bounds
+
+        Lambda =  3.43654E-04 ----->
+           Phi =   318.75      (  0.975 of starting phi)
+
+        Lambda =  2.40711E-05 ----->
+           Phi =   318.75      (  0.975 of starting phi)
+
+        Lambda =  4.90623E-03 ----->
+           Phi =   318.74      (  0.975 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   318.74    
+    Maximum   factor change:  6.654     ["sy_sandy32"]
+    Maximum relative change: 0.8497     ["sy_sandy32"]
+    Maximum absolute(1) change: 2.4497E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 29
+    Model calls so far             : 2139
+    Starting phi for this iteration                          :   318.74    
+    Contribution to phi from observation group "h_piezo"     :   55.004    
+    Contribution to phi from observation group "h_single_3"  :   15.096    
+    Contribution to phi from observation group "h_single_1"  :   34.939    
+    Contribution to phi from observation group "h_hf"        :   213.70    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat1" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_hill15" frozen: - update vector out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  4.90623E-03 ----->
+           Phi =   318.32      (  0.999 of starting phi)
+
+        Lambda =  8.33676E-04 ----->
+           Phi =   318.33      (  0.999 of starting phi)
+
+        Lambda =  2.88734E-02 ----->
+           Phi =   318.32      (  0.999 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   318.32    
+    Maximum   factor change:  1.194     ["sy_sandy31"]
+    Maximum relative change: 0.1935     ["sy_sandy31"]
+    Maximum absolute(1) change: 1.2249E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 30
+    Model calls so far             : 2218
+    Starting phi for this iteration                          :   318.32    
+    Contribution to phi from observation group "h_piezo"     :   54.943    
+    Contribution to phi from observation group "h_single_3"  :   15.072    
+    Contribution to phi from observation group "h_single_1"  :   34.937    
+    Contribution to phi from observation group "h_hf"        :   213.37    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  2.88734E-02 ----->
+           Phi =   312.69      (  0.982 of starting phi)
+
+        Lambda =  8.85791E-03 ----->
+           Phi =   312.73      (  0.982 of starting phi)
+
+        Lambda =  9.41165E-02 ----->
+           Phi =   312.58      (  0.982 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   312.58    
+    Maximum   factor change:  5.623     ["sy_sandy32"]
+    Maximum relative change:  1.837     ["sy_sandy31"]
+    Maximum absolute(1) change: 1.2248E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 31
+    Model calls so far             : 2297
+    Starting phi for this iteration                          :   312.58    
+    Contribution to phi from observation group "h_piezo"     :   54.368    
+    Contribution to phi from observation group "h_single_3"  :   16.345    
+    Contribution to phi from observation group "h_single_1"  :   34.860    
+    Contribution to phi from observation group "h_hf"        :   207.00    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+
+        Lambda =  9.41165E-02 ----->
+           Phi =   308.71      (  0.988 of starting phi)
+
+        Lambda =  4.28109E-02 ----->
+           Phi =   308.82      (  0.988 of starting phi)
+        param "sy_sandy32" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  0.20691     ----->
+           Phi =   307.15      (  0.983 of starting phi)
+
+        Lambda =  9.41165E-02 ----->
+           Phi =   285.13      (  0.912 of starting phi)
+
+        Lambda =  4.28109E-02 ----->
+           Phi =   284.08      (  0.909 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   284.08    
+    Maximum   factor change:  10.00     ["sy_ter36"]
+    Maximum relative change:  2.086     ["sy_h_flat1"]
+
+
+ OPTIMISATION ITERATION NO.        : 32
+    Model calls so far             : 2378
+    Starting phi for this iteration                          :   284.08    
+    Contribution to phi from observation group "h_piezo"     :   50.501    
+    Contribution to phi from observation group "h_single_3"  :   14.510    
+    Contribution to phi from observation group "h_single_1"  :   34.793    
+    Contribution to phi from observation group "h_hf"        :   184.27    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  1.94734E-02 ----->
+           Phi =   283.34      (  0.997 of starting phi)
+
+        Lambda =  5.23911E-03 ----->
+           Phi =   283.34      (  0.997 of starting phi)
+
+        Lambda =  7.23817E-02 ----->
+           Phi =   283.33      (  0.997 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   283.33    
+    Maximum   factor change:  1.679     ["sy_hill14"]
+    Maximum relative change: 0.4043     ["sy_hill14"]
+    Maximum absolute(1) change: 1.6614E-03 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 33
+    Model calls so far             : 2457
+    Starting phi for this iteration                          :   283.33    
+    Contribution to phi from observation group "h_piezo"     :   50.441    
+    Contribution to phi from observation group "h_single_3"  :   14.462    
+    Contribution to phi from observation group "h_single_1"  :   34.778    
+    Contribution to phi from observation group "h_hf"        :   183.65    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_hill15" frozen: - update vector out of bounds
+
+        Lambda =  7.23817E-02 ----->
+           Phi =   282.86      (  0.998 of starting phi)
+
+        Lambda =  3.01651E-02 ----->
+           Phi =   282.89      (  0.998 of starting phi)
+
+        Lambda =  0.17368     ----->
+           Phi =   282.80      (  0.998 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   282.80    
+    Maximum   factor change:  1.402     ["sy_h_flat1"]
+    Maximum relative change: 0.2869     ["sy_h_flat1"]
+    Maximum absolute(1) change: 8.3070E-04 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 34
+    Model calls so far             : 2536
+    Starting phi for this iteration                          :   282.80    
+    Contribution to phi from observation group "h_piezo"     :   50.361    
+    Contribution to phi from observation group "h_single_3"  :   14.432    
+    Contribution to phi from observation group "h_single_1"  :   34.758    
+    Contribution to phi from observation group "h_hf"        :   183.25    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+
+        Lambda =  0.17368     ----->
+           Phi =   282.33      (  0.998 of starting phi)
+
+        Lambda =  8.68405E-02 ----->
+           Phi =   282.40      (  0.999 of starting phi)
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  0.34736     ----->
+           Phi =   282.63      (  0.999 of starting phi)
+
+        Lambda =  0.17368     ----->
+           Phi =   282.67      (  1.000 of starting phi)
+
+        Lambda =  0.69472     ----->
+           Phi =   282.26      (  0.998 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   282.26    
+    Maximum   factor change:  1.189     ["sy_sandy31"]
+    Maximum relative change: 0.1591     ["sy_sandy31"]
+    Maximum absolute(1) change: 4.1540E-04 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 35
+    Model calls so far             : 2617
+    Starting phi for this iteration                          :   282.26    
+    Contribution to phi from observation group "h_piezo"     :   50.280    
+    Contribution to phi from observation group "h_single_3"  :   14.403    
+    Contribution to phi from observation group "h_single_1"  :   34.743    
+    Contribution to phi from observation group "h_hf"        :   182.84    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+
+        Lambda =  0.69472     ----->
+           Phi =   278.94      (  0.988 of starting phi)
+
+        Lambda =  0.34736     ----->
+           Phi =   278.87      (  0.988 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   278.87    
+    Maximum   factor change:  3.351     ["sy_sandy31"]
+    Maximum relative change: 0.7641     ["sy_sandy32"]
+    Maximum absolute(1) change: 7.8556E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 36
+    Model calls so far             : 2695
+    Starting phi for this iteration                          :   278.87    
+    Contribution to phi from observation group "h_piezo"     :   49.766    
+    Contribution to phi from observation group "h_single_3"  :   14.201    
+    Contribution to phi from observation group "h_single_1"  :   34.643    
+    Contribution to phi from observation group "h_hf"        :   180.26    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_sandy31" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+
+        Lambda =  0.17368     ----->
+           Phi =   278.66      (  0.999 of starting phi)
+
+        Lambda =  8.68405E-02 ----->
+           Phi =   278.67      (  0.999 of starting phi)
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+
+        Lambda =  0.34736     ----->
+           Phi =   275.97      (  0.990 of starting phi)
+
+        Lambda =  0.17368     ----->
+           Phi =   278.67      (  0.999 of starting phi)
+
+        Lambda =  0.69472     ----->
+           Phi =   275.52      (  0.988 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   275.52    
+    Maximum   factor change:  1.993     ["sy_sandy32"]
+    Maximum relative change: 0.9926     ["sy_sandy32"]
+    Maximum absolute(1) change: 9.7384E-03 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 37
+    Model calls so far             : 2776
+    Starting phi for this iteration                          :   275.52    
+    Contribution to phi from observation group "h_piezo"     :   49.259    
+    Contribution to phi from observation group "h_single_3"  :   14.004    
+    Contribution to phi from observation group "h_single_1"  :   34.563    
+    Contribution to phi from observation group "h_hf"        :   177.70    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "sy_hill15" frozen: - update vector out of bounds
+        param "sy_sandy31" frozen: - update vector out of bounds
+
+        Lambda =  0.69472     ----->
+           Phi =   225.59      (  0.819 of starting phi)
+
+        Lambda =  0.34736     ----->
+           Phi =   212.78      (  0.772 of starting phi)
+
+        Lambda =  0.17368     ----->
+           Phi =   275.28      (  0.999 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   212.78    
+    Maximum   factor change:  8.775     ["kh_sandy32"]
+    Maximum relative change:  7.775     ["kh_sandy32"]
+    Maximum absolute(1) change: 0.1000     ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 38
+    Model calls so far             : 2855
+    Starting phi for this iteration                          :   212.78    
+    Contribution to phi from observation group "h_piezo"     :   43.317    
+    Contribution to phi from observation group "h_single_3"  :   9.2200    
+    Contribution to phi from observation group "h_single_1"  :   33.661    
+    Contribution to phi from observation group "h_hf"        :   126.58    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_sandy31" frozen: - update vector out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+
+        Lambda =  0.17368     ----->
+           Phi =   208.63      (  0.981 of starting phi)
+
+        Lambda =  8.68405E-02 ----->
+           Phi =   208.96      (  0.982 of starting phi)
+
+        Lambda =  0.34736     ----->
+           Phi =   209.21      (  0.983 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   208.63    
+    Maximum   factor change:  2.314     ["sy_ter36"]
+    Maximum relative change:  1.314     ["sy_ter36"]
+    Maximum absolute(1) change: 5.0000E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 39
+    Model calls so far             : 2934
+    Starting phi for this iteration                          :   208.63    
+    Contribution to phi from observation group "h_piezo"     :   42.580    
+    Contribution to phi from observation group "h_single_3"  :   8.9894    
+    Contribution to phi from observation group "h_single_1"  :   33.656    
+    Contribution to phi from observation group "h_hf"        :   123.41    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  0.17368     ----->
+           Phi =   207.91      (  0.997 of starting phi)
+
+        Lambda =  8.68405E-02 ----->
+           Phi =   207.91      (  0.997 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   207.91    
+    Maximum   factor change:  1.751     ["sy_sandy32"]
+    Maximum relative change: 0.4288     ["sy_sandy32"]
+    Maximum absolute(1) change: 2.2443E-04 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 40
+    Model calls so far             : 3012
+    Starting phi for this iteration                          :   207.91    
+    Contribution to phi from observation group "h_piezo"     :   42.501    
+    Contribution to phi from observation group "h_single_3"  :   8.9416    
+    Contribution to phi from observation group "h_single_1"  :   33.649    
+    Contribution to phi from observation group "h_hf"        :   122.82    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+        param "sy_sandy32" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  4.34203E-02 ----->
+           Phi =   207.40      (  0.998 of starting phi)
+
+        Lambda =  1.52612E-02 ----->
+           Phi =   207.40      (  0.998 of starting phi)
+
+        Lambda =  0.12354     ----->
+           Phi =   207.40      (  0.998 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   207.40    
+    Maximum   factor change:  1.406     ["sy_ter39"]
+    Maximum relative change: 0.2886     ["sy_ter39"]
+    Maximum absolute(1) change: 2.2646E-04 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 41
+    Model calls so far             : 3091
+    Starting phi for this iteration                          :   207.40    
+    Contribution to phi from observation group "h_piezo"     :   42.475    
+    Contribution to phi from observation group "h_single_3"  :   8.9089    
+    Contribution to phi from observation group "h_single_1"  :   33.644    
+    Contribution to phi from observation group "h_hf"        :   122.38    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_sandy31" frozen: gradient and update vectors out of bounds
+        param "sy_sandy32" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  4.34203E-02 ----->
+           Phi =   191.57      (  0.924 of starting phi)
+
+        Lambda =  1.52612E-02 ----->
+           Phi =   191.83      (  0.925 of starting phi)
+
+        Lambda =  0.12354     ----->
+           Phi =   190.84      (  0.920 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   190.84    
+    Maximum   factor change:  3.505     ["sy_hill15"]
+    Maximum relative change:  2.505     ["sy_hill15"]
+    Maximum absolute(1) change: 6.7143E-02 ["hill_main"]
+
+
+ OPTIMISATION ITERATION NO.        : 42
+    Model calls so far             : 3170
+    Starting phi for this iteration                          :   190.84    
+    Contribution to phi from observation group "h_piezo"     :   35.331    
+    Contribution to phi from observation group "h_single_3"  :   8.7314    
+    Contribution to phi from observation group "h_single_1"  :   34.482    
+    Contribution to phi from observation group "h_hf"        :   112.29    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_sandy32" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  0.12354     ----->
+           Phi =   189.56      (  0.993 of starting phi)
+
+        Lambda =  6.15262E-02 ----->
+           Phi =   189.50      (  0.993 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   189.50    
+    Maximum   factor change:  1.442     ["sy_h_flat1"]
+    Maximum relative change: 0.4420     ["sy_h_flat1"]
+    Maximum absolute(1) change: 9.3615E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 43
+    Model calls so far             : 3248
+    Starting phi for this iteration                          :   189.50    
+    Contribution to phi from observation group "h_piezo"     :   35.173    
+    Contribution to phi from observation group "h_single_3"  :   8.6504    
+    Contribution to phi from observation group "h_single_1"  :   34.417    
+    Contribution to phi from observation group "h_hf"        :   111.26    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+
+        Lambda =  3.06425E-02 ----->
+           Phi =   183.75      (  0.970 of starting phi)
+
+        Lambda =  9.58885E-03 ----->
+           Phi =   183.75      (  0.970 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   183.75    
+    Maximum   factor change:  10.00     ["sy_sandy31"]
+    Maximum relative change:  9.000     ["sy_sandy31"]
+    Maximum absolute(1) change: 1.8622E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 44
+    Model calls so far             : 3326
+    Starting phi for this iteration                          :   183.75    
+    Contribution to phi from observation group "h_piezo"     :   34.527    
+    Contribution to phi from observation group "h_single_3"  :   8.2390    
+    Contribution to phi from observation group "h_single_1"  :   34.334    
+    Contribution to phi from observation group "h_hf"        :   106.65    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+
+        Lambda =  3.00060E-03 ----->
+           Phi =   182.58      (  0.994 of starting phi)
+
+        Lambda =  4.32790E-04 ----->
+           Phi =   182.58      (  0.994 of starting phi)
+
+        Lambda =  2.08036E-02 ----->
+           Phi =   182.58      (  0.994 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   182.58    
+    Maximum   factor change:  1.368     ["sy_sandy32"]
+    Maximum relative change: 0.2691     ["sy_sandy32"]
+    Maximum absolute(1) change: 9.3110E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 45
+    Model calls so far             : 3405
+    Starting phi for this iteration                          :   182.58    
+    Contribution to phi from observation group "h_piezo"     :   34.392    
+    Contribution to phi from observation group "h_single_3"  :   8.1637    
+    Contribution to phi from observation group "h_single_1"  :   34.317    
+    Contribution to phi from observation group "h_hf"        :   105.70    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+
+        Lambda =  2.08036E-02 ----->
+           Phi =   180.59      (  0.989 of starting phi)
+
+        Lambda =  5.72161E-03 ----->
+           Phi =   180.59      (  0.989 of starting phi)
+
+        Lambda =  7.56413E-02 ----->
+           Phi =   180.58      (  0.989 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   180.58    
+    Maximum   factor change:  10.00     ["sy_hill15"]
+    Maximum relative change:  1.199     ["sy_sandy32"]
+    Maximum absolute(1) change: 1.8712E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 46
+    Model calls so far             : 3484
+    Starting phi for this iteration                          :   180.58    
+    Contribution to phi from observation group "h_piezo"     :   34.173    
+    Contribution to phi from observation group "h_single_3"  :   8.0323    
+    Contribution to phi from observation group "h_single_1"  :   34.290    
+    Contribution to phi from observation group "h_hf"        :   104.08    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+
+        Lambda =  7.56413E-02 ----->
+           Phi =   179.09      (  0.992 of starting phi)
+
+        Lambda =  3.19899E-02 ----->
+           Phi =   179.09      (  0.992 of starting phi)
+
+        Lambda =  0.17886     ----->
+           Phi =   179.08      (  0.992 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   179.08    
+    Maximum   factor change:  3.420     ["sy_hill15"]
+    Maximum relative change: 0.7076     ["sy_hill15"]
+    Maximum absolute(1) change: 1.0085E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 47
+    Model calls so far             : 3563
+    Starting phi for this iteration                          :   179.08    
+    Contribution to phi from observation group "h_piezo"     :   34.001    
+    Contribution to phi from observation group "h_single_3"  :   7.9392    
+    Contribution to phi from observation group "h_single_1"  :   34.270    
+    Contribution to phi from observation group "h_hf"        :   102.87    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_hill15" frozen: - update vector out of bounds
+
+        Lambda =  0.17886     ----->
+           Phi =   174.48      (  0.974 of starting phi)
+
+        Lambda =  8.94285E-02 ----->
+           Phi =   174.49      (  0.974 of starting phi)
+
+        Lambda =  0.35771     ----->
+           Phi =   174.45      (  0.974 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   174.45    
+    Maximum   factor change:  5.073     ["sy_sandy31"]
+    Maximum relative change: 0.8029     ["sy_sandy31"]
+    Maximum absolute(1) change: 4.7260E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 48
+    Model calls so far             : 3642
+    Starting phi for this iteration                          :   174.45    
+    Contribution to phi from observation group "h_piezo"     :   33.508    
+    Contribution to phi from observation group "h_single_3"  :   7.6469    
+    Contribution to phi from observation group "h_single_1"  :   34.199    
+    Contribution to phi from observation group "h_hf"        :   99.099    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_sandy31" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_hill15" frozen: - update vector out of bounds
+
+        Lambda =  0.35771     ----->
+           Phi =   174.29      (  0.999 of starting phi)
+
+        Lambda =  0.17886     ----->
+           Phi =   174.31      (  0.999 of starting phi)
+
+        Lambda =  0.71543     ----->
+           Phi =   174.27      (  0.999 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   174.27    
+    Maximum   factor change:  1.090     ["sy_hill14"]
+    Maximum relative change: 8.2557E-02 ["sy_hill14"]
+    Maximum absolute(1) change: 2.3630E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 49
+    Model calls so far             : 3721
+    Starting phi for this iteration                          :   174.27    
+    Contribution to phi from observation group "h_piezo"     :   33.488    
+    Contribution to phi from observation group "h_single_3"  :   7.6356    
+    Contribution to phi from observation group "h_single_1"  :   34.196    
+    Contribution to phi from observation group "h_hf"        :   98.952    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_sandy31" frozen: - update vector out of bounds
+        param "sy_hill15" frozen: - update vector out of bounds
+
+        Lambda =  0.71543     ----->
+           Phi =   172.74      (  0.991 of starting phi)
+
+        Lambda =  0.35771     ----->
+           Phi =   172.74      (  0.991 of starting phi)
+
+        Lambda =   1.4309     ----->
+           Phi =   174.24      (  1.000 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   172.74    
+    Maximum   factor change:  1.525     ["sy_ter39"]
+    Maximum relative change: 0.3445     ["sy_ter39"]
+    Maximum absolute(1) change: 2.5914E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 50
+    Model calls so far             : 3800
+    Starting phi for this iteration                          :   172.74    
+    Contribution to phi from observation group "h_piezo"     :   33.367    
+    Contribution to phi from observation group "h_single_3"  :   7.5348    
+    Contribution to phi from observation group "h_single_1"  :   34.175    
+    Contribution to phi from observation group "h_hf"        :   97.662    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_h_flat9" frozen: - update vector out of bounds
+        param "sy_hill14" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "sy_sandy31" frozen: gradient and update vectors out of bounds
+
+        Lambda =  0.71543     ----->
+           Phi =   172.56      (  0.999 of starting phi)
+
+        Lambda =  0.35771     ----->
+           Phi =   172.60      (  0.999 of starting phi)
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+
+        Lambda =   1.4309     ----->
+           Phi =   166.18      (  0.962 of starting phi)
+
+        Lambda =  0.71543     ----->
+           Phi =   172.57      (  0.999 of starting phi)
+
+        Lambda =   2.8617     ----->
+           Phi =   160.36      (  0.928 of starting phi)
+
+        Lambda =   5.7234     ----->
+           Phi =   149.13      (  0.863 of starting phi)
+        param "sy_hill15" frozen: gradient and update vectors out of bounds
+
+        Lambda =   11.447     ----->
+           Phi =   143.56      (  0.831 of starting phi)
+
+        Lambda =   5.7234     ----->
+           Phi =   149.13      (  0.863 of starting phi)
+
+        Lambda =   22.894     ----->
+           Phi =   148.93      (  0.862 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   143.56    
+    Maximum   factor change:  10.00     ["sy_ter36"]
+    Maximum relative change:  1.931     ["sy_sandy32"]
+    Maximum absolute(1) change: 5.0578E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 51
+    Model calls so far             : 3885
+    Starting phi for this iteration                          :   143.56    
+    Contribution to phi from observation group "h_piezo"     :   30.300    
+    Contribution to phi from observation group "h_single_3"  :   5.6168    
+    Contribution to phi from observation group "h_single_1"  :   33.617    
+    Contribution to phi from observation group "h_hf"        :   74.027    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+
+        Lambda =   11.447     ----->
+           Phi =   133.23      (  0.928 of starting phi)
+
+        Lambda =   5.0791     ----->
+           Phi =   132.74      (  0.925 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   132.74    
+    Maximum   factor change:  10.00     ["sy_hill15"]
+    Maximum relative change:  9.000     ["sy_hill15"]
+    Maximum absolute(1) change: 5.6827E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 52
+    Model calls so far             : 3963
+    Starting phi for this iteration                          :   132.74    
+    Contribution to phi from observation group "h_piezo"     :   29.634    
+    Contribution to phi from observation group "h_single_3"  :   4.9603    
+    Contribution to phi from observation group "h_single_1"  :   33.739    
+    Contribution to phi from observation group "h_hf"        :   64.410    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "hill_se" frozen: - update vector out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_sandy32" frozen: - update vector out of bounds
+
+        Lambda =   2.2537     ----->
+           Phi =   132.63      (  0.999 of starting phi)
+
+        Lambda =   1.1268     ----->
+           Phi =   132.63      (  0.999 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   132.63    
+    Maximum   factor change:  1.818     ["sy_hill15"]
+    Maximum relative change: 0.4500     ["sy_hill15"]
+    Maximum absolute(1) change: 3.0740E-04 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 53
+    Model calls so far             : 4041
+    Starting phi for this iteration                          :   132.63    
+    Contribution to phi from observation group "h_piezo"     :   29.618    
+    Contribution to phi from observation group "h_single_3"  :   4.9541    
+    Contribution to phi from observation group "h_single_1"  :   33.737    
+    Contribution to phi from observation group "h_hf"        :   64.317    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_sandy32" frozen: - update vector out of bounds
+
+        Lambda =  0.56342     ----->
+           Phi =   132.61      (  1.000 of starting phi)
+
+        Lambda =  0.28171     ----->
+           Phi =   132.61      (  1.000 of starting phi)
+
+        Lambda =   1.1268     ----->
+           Phi =   132.10      (  0.996 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   132.10    
+    Maximum   factor change:  3.027     ["sy_sandy31"]
+    Maximum relative change: 0.6697     ["sy_sandy31"]
+    Maximum absolute(1) change: 9.2740E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 54
+    Model calls so far             : 4120
+    Starting phi for this iteration                          :   132.10    
+    Contribution to phi from observation group "h_piezo"     :   29.545    
+    Contribution to phi from observation group "h_single_3"  :   4.9237    
+    Contribution to phi from observation group "h_single_1"  :   33.729    
+    Contribution to phi from observation group "h_hf"        :   63.898    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_sandy32" frozen: - update vector out of bounds
+
+        Lambda =   1.1268     ----->
+           Phi =   128.28      (  0.971 of starting phi)
+
+        Lambda =  0.56342     ----->
+           Phi =   128.85      (  0.975 of starting phi)
+
+        Lambda =   2.2537     ----->
+           Phi =   131.96      (  0.999 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   128.28    
+    Maximum   factor change:  3.501     ["sy_hill14"]
+    Maximum relative change:  2.183     ["sy_hill15"]
+    Maximum absolute(1) change: 2.3405E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 55
+    Model calls so far             : 4199
+    Starting phi for this iteration                          :   128.28    
+    Contribution to phi from observation group "h_piezo"     :   29.101    
+    Contribution to phi from observation group "h_single_3"  :   4.6905    
+    Contribution to phi from observation group "h_single_1"  :   33.683    
+    Contribution to phi from observation group "h_hf"        :   60.810    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_sandy32" frozen: - update vector out of bounds
+
+        Lambda =   1.1268     ----->
+           Phi =   128.08      (  0.998 of starting phi)
+
+        Lambda =  0.56342     ----->
+           Phi =   128.08      (  0.998 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   128.08    
+    Maximum   factor change:  1.798     ["sy_hill15"]
+    Maximum relative change: 0.7984     ["sy_hill15"]
+    Maximum absolute(1) change: 5.5400E-05 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 56
+    Model calls so far             : 4277
+    Starting phi for this iteration                          :   128.08    
+    Contribution to phi from observation group "h_piezo"     :   29.090    
+    Contribution to phi from observation group "h_single_3"  :   4.6757    
+    Contribution to phi from observation group "h_single_1"  :   33.679    
+    Contribution to phi from observation group "h_hf"        :   60.635    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_sandy32" frozen: - update vector out of bounds
+
+        Lambda =  0.28171     ----->
+           Phi =   126.77      (  0.990 of starting phi)
+
+        Lambda =  0.14086     ----->
+           Phi =   126.77      (  0.990 of starting phi)
+
+        Lambda =  0.56342     ----->
+           Phi =   126.77      (  0.990 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   126.77    
+    Maximum   factor change:  1.559     ["sy_hill15"]
+    Maximum relative change: 0.5592     ["sy_hill15"]
+    Maximum absolute(1) change: 1.1057E-03 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 57
+    Model calls so far             : 4356
+    Starting phi for this iteration                          :   126.77    
+    Contribution to phi from observation group "h_piezo"     :   28.918    
+    Contribution to phi from observation group "h_single_3"  :   4.5996    
+    Contribution to phi from observation group "h_single_1"  :   33.660    
+    Contribution to phi from observation group "h_hf"        :   59.591    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+
+        Lambda =  0.56342     ----->
+           Phi =   126.34      (  0.997 of starting phi)
+
+        Lambda =  0.28171     ----->
+           Phi =   126.34      (  0.997 of starting phi)
+
+        Lambda =   1.1268     ----->
+           Phi =   126.34      (  0.997 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   126.34    
+    Maximum   factor change:  10.00     ["sy_hill15"]
+    Maximum relative change: 0.9000     ["sy_hill15"]
+    Maximum absolute(1) change: 2.2536E-02 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 58
+    Model calls so far             : 4435
+    Starting phi for this iteration                          :   126.34    
+    Contribution to phi from observation group "h_piezo"     :   28.290    
+    Contribution to phi from observation group "h_single_3"  :   4.5661    
+    Contribution to phi from observation group "h_single_1"  :   33.782    
+    Contribution to phi from observation group "h_hf"        :   59.702    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+
+        Lambda =   1.1268     ----->
+           Phi =   111.51      (  0.883 of starting phi)
+
+        Lambda =  0.56342     ----->
+           Phi =   111.94      (  0.886 of starting phi)
+
+        Lambda =   2.2537     ----->
+           Phi =   113.53      (  0.899 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   111.51    
+    Maximum   factor change:  5.606     ["sy_sandy31"]
+    Maximum relative change:  4.606     ["sy_sandy31"]
+    Maximum absolute(1) change: 9.6328E-03 ["rch_all"]
+
+
+ OPTIMISATION ITERATION NO.        : 59
+    Model calls so far             : 4514
+    Starting phi for this iteration                          :   111.51    
+    Contribution to phi from observation group "h_piezo"     :   28.165    
+    Contribution to phi from observation group "h_single_3"  :   3.1657    
+    Contribution to phi from observation group "h_single_1"  :   33.634    
+    Contribution to phi from observation group "h_hf"        :   46.547    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_hill14" frozen: - update vector out of bounds
+
+        Lambda =   1.1268     ----->
+           Phi =   111.07      (  0.996 of starting phi)
+
+        Lambda =  0.56342     ----->
+           Phi =   111.09      (  0.996 of starting phi)
+
+        Lambda =   2.2537     ----->
+           Phi =   111.01      (  0.995 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   111.01    
+    Maximum   factor change:  2.223     ["sy_ter39"]
+    Maximum relative change: 0.5501     ["sy_ter39"]
+    Maximum absolute(1) change: 3.8747E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 60
+    Model calls so far             : 4593
+    Starting phi for this iteration                          :   111.01    
+    Contribution to phi from observation group "h_piezo"     :   28.128    
+    Contribution to phi from observation group "h_single_3"  :   3.1399    
+    Contribution to phi from observation group "h_single_1"  :   33.629    
+    Contribution to phi from observation group "h_hf"        :   46.109    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_sandy32" frozen: - update vector out of bounds
+
+        Lambda =   2.2537     ----->
+           Phi =   110.26      (  0.993 of starting phi)
+
+        Lambda =   1.1268     ----->
+           Phi =   109.00      (  0.982 of starting phi)
+
+        Lambda =  0.56342     ----->
+           Phi =   109.05      (  0.982 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   109.00    
+    Maximum   factor change:  10.00     ["sy_sandy32"]
+    Maximum relative change:  2.832     ["sy_hill15"]
+    Maximum absolute(1) change: 2.2150E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 61
+    Model calls so far             : 4672
+    Starting phi for this iteration                          :   109.00    
+    Contribution to phi from observation group "h_piezo"     :   27.865    
+    Contribution to phi from observation group "h_single_3"  :   3.0425    
+    Contribution to phi from observation group "h_single_1"  :   33.595    
+    Contribution to phi from observation group "h_hf"        :   44.495    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "kh_sandy32" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  0.56342     ----->
+           Phi =   107.25      (  0.984 of starting phi)
+
+        Lambda =  0.28171     ----->
+           Phi =   107.25      (  0.984 of starting phi)
+
+        Lambda =   1.1268     ----->
+           Phi =   107.25      (  0.984 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   107.25    
+    Maximum   factor change:  4.007     ["sy_h_flat1"]
+    Maximum relative change: 0.7504     ["sy_h_flat1"]
+    Maximum absolute(1) change: 7.3180E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 62
+    Model calls so far             : 4751
+    Starting phi for this iteration                          :   107.25    
+    Contribution to phi from observation group "h_piezo"     :   27.587    
+    Contribution to phi from observation group "h_single_3"  :   2.9596    
+    Contribution to phi from observation group "h_single_1"  :   33.563    
+    Contribution to phi from observation group "h_hf"        :   43.139    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "kh_sandy32" frozen: - update vector out of bounds
+
+        Lambda =  0.56342     ----->
+           Phi =   107.91      (  1.006 times starting phi)
+
+        Lambda =  0.28171     ----->
+           Phi =   107.90      (  1.006 times starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   107.90    
+    Maximum   factor change:  1.587     ["sy_hill15"]
+    Maximum relative change: 0.5872     ["sy_hill15"]
+    Maximum absolute(1) change: 9.3900E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 63
+    Model calls so far             : 4829
+    Starting phi for this iteration                          :   107.90    
+    Contribution to phi from observation group "h_piezo"     :   27.616    
+    Contribution to phi from observation group "h_single_3"  :   3.1413    
+    Contribution to phi from observation group "h_single_1"  :   33.561    
+    Contribution to phi from observation group "h_hf"        :   43.576    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  0.14086     ----->
+           Phi =   107.39      (  0.995 of starting phi)
+
+        Lambda =  7.04280E-02 ----->
+           Phi =   107.40      (  0.995 of starting phi)
+
+        Lambda =  0.28171     ----->
+           Phi =   107.38      (  0.995 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   107.38    
+    Maximum   factor change:  7.188     ["sy_hill15"]
+    Maximum relative change:  1.175     ["sy_sandy32"]
+    Maximum absolute(1) change: 3.0033E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 64
+    Model calls so far             : 4908
+    Starting phi for this iteration                          :   107.38    
+    Contribution to phi from observation group "h_piezo"     :   27.530    
+    Contribution to phi from observation group "h_single_3"  :   3.1141    
+    Contribution to phi from observation group "h_single_1"  :   33.555    
+    Contribution to phi from observation group "h_hf"        :   43.183    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  0.28171     ----->
+           Phi =   105.64      (  0.984 of starting phi)
+
+        Lambda =  0.14086     ----->
+           Phi =   105.61      (  0.984 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   105.61    
+    Maximum   factor change:  5.500     ["sy_hill15"]
+    Maximum relative change:  4.500     ["sy_hill15"]
+    Maximum absolute(1) change: 4.6220E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 65
+    Model calls so far             : 4986
+    Starting phi for this iteration                          :   105.61    
+    Contribution to phi from observation group "h_piezo"     :   27.260    
+    Contribution to phi from observation group "h_single_3"  :   3.0182    
+    Contribution to phi from observation group "h_single_1"  :   33.522    
+    Contribution to phi from observation group "h_hf"        :   41.815    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+
+        Lambda =  7.04280E-02 ----->
+           Phi =   105.30      (  0.997 of starting phi)
+
+        Lambda =  2.90844E-02 ----->
+           Phi =   105.30      (  0.997 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   105.30    
+    Maximum   factor change:  2.156     ["sy_sandy32"]
+    Maximum relative change: 0.7429     ["sy_hill15"]
+    Maximum absolute(1) change: 1.2290E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 66
+    Model calls so far             : 5064
+    Starting phi for this iteration                          :   105.30    
+    Contribution to phi from observation group "h_piezo"     :   27.217    
+    Contribution to phi from observation group "h_single_3"  :   3.0010    
+    Contribution to phi from observation group "h_single_1"  :   33.516    
+    Contribution to phi from observation group "h_hf"        :   41.562    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  1.20109E-02 ----->
+           Phi =   105.29      (  1.000 of starting phi)
+
+        Lambda =  2.75064E-03 ----->
+           Phi =   105.29      (  1.000 of starting phi)
+
+        Lambda =  5.24466E-02 ----->
+           Phi =   105.29      (  1.000 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   105.29    
+    Maximum   factor change:  1.006     ["sy_sandy31"]
+    Maximum relative change: 6.3162E-03 ["sy_sandy31"]
+    Maximum absolute(1) change: 6.1500E-05 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 67
+    Model calls so far             : 5143
+    Starting phi for this iteration                          :   105.29    
+    Contribution to phi from observation group "h_piezo"     :   27.216    
+    Contribution to phi from observation group "h_single_3"  :   3.0009    
+    Contribution to phi from observation group "h_single_1"  :   33.516    
+    Contribution to phi from observation group "h_hf"        :   41.559    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+
+        Lambda =  5.24466E-02 ----->
+           Phi =   105.18      (  0.999 of starting phi)
+
+        Lambda =  1.96316E-02 ----->
+           Phi =   105.18      (  0.999 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   105.18    
+    Maximum   factor change:  1.327     ["sy_hill15"]
+    Maximum relative change: 0.3272     ["sy_hill15"]
+    Maximum absolute(1) change: 3.0700E-05 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 68
+    Model calls so far             : 5221
+    Starting phi for this iteration                          :   105.18    
+    Contribution to phi from observation group "h_piezo"     :   27.202    
+    Contribution to phi from observation group "h_single_3"  :   2.9950    
+    Contribution to phi from observation group "h_single_1"  :   33.514    
+    Contribution to phi from observation group "h_hf"        :   41.469    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+
+        Lambda =  7.34844E-03 ----->
+           Phi =   104.35      (  0.992 of starting phi)
+
+        Lambda =  1.42865E-03 ----->
+           Phi =   104.35      (  0.992 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   104.35    
+    Maximum   factor change:  10.00     ["sy_sandy32"]
+    Maximum relative change: 0.9000     ["sy_sandy32"]
+    Maximum absolute(1) change: 2.7620E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 69
+    Model calls so far             : 5299
+    Starting phi for this iteration                          :   104.35    
+    Contribution to phi from observation group "h_piezo"     :   27.203    
+    Contribution to phi from observation group "h_single_3"  :   2.9428    
+    Contribution to phi from observation group "h_single_1"  :   33.495    
+    Contribution to phi from observation group "h_hf"        :   40.710    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  2.77753E-04 ----->
+           Phi =   104.34      (  1.000 of starting phi)
+
+        Lambda =  1.81222E-05 ----->
+           Phi =   104.34      (  1.000 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   104.34    
+    Maximum   factor change:  1.025     ["sy_hill15"]
+    Maximum relative change: 2.4363E-02 ["sy_hill15"]
+    Maximum absolute(1) change: 1.3810E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 70
+    Model calls so far             : 5377
+    Starting phi for this iteration                          :   104.34    
+    Contribution to phi from observation group "h_piezo"     :   27.201    
+    Contribution to phi from observation group "h_single_3"  :   2.9425    
+    Contribution to phi from observation group "h_single_1"  :   33.495    
+    Contribution to phi from observation group "h_hf"        :   40.706    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  1.81222E-05 ----->
+           Phi =   103.74      (  0.994 of starting phi)
+
+        Lambda =  4.76009E-07 ----->
+           Phi =   103.74      (  0.994 of starting phi)
+
+        Lambda =  6.89934E-04 ----->
+           Phi =   103.74      (  0.994 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   103.74    
+    Maximum   factor change:  1.580     ["sy_hill15"]
+    Maximum relative change: 0.5801     ["sy_hill15"]
+    Maximum absolute(1) change: 4.5074E-03 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 71
+    Model calls so far             : 5456
+    Starting phi for this iteration                          :   103.74    
+    Contribution to phi from observation group "h_piezo"     :   26.450    
+    Contribution to phi from observation group "h_single_3"  :   2.9183    
+    Contribution to phi from observation group "h_single_1"  :   33.623    
+    Contribution to phi from observation group "h_hf"        :   40.745    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "kh_ter33" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  1.81222E-05 ----->
+           Phi =   103.20      (  0.995 of starting phi)
+
+        Lambda =  4.76009E-07 ----->
+           Phi =   103.20      (  0.995 of starting phi)
+
+        Lambda =  6.89934E-04 ----->
+           Phi =   103.20      (  0.995 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   103.20    
+    Maximum   factor change:  1.688     ["sy_hill15"]
+    Maximum relative change: 0.6875     ["sy_hill15"]
+    Maximum absolute(1) change: 9.2420E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 72
+    Model calls so far             : 5535
+    Starting phi for this iteration                          :   103.20    
+    Contribution to phi from observation group "h_piezo"     :   26.403    
+    Contribution to phi from observation group "h_single_3"  :   2.8892    
+    Contribution to phi from observation group "h_single_1"  :   33.610    
+    Contribution to phi from observation group "h_hf"        :   40.293    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  6.89934E-04 ----->
+           Phi =   103.05      (  0.999 of starting phi)
+
+        Lambda =  6.09645E-05 ----->
+           Phi =   103.05      (  0.999 of starting phi)
+
+        Lambda =  7.80798E-03 ----->
+           Phi =   103.05      (  0.999 of starting phi)
+
+    No more lambdas: phi rising
+    Lowest phi this iteration:   103.05    
+    Maximum   factor change:  10.00     ["sy_hill15"]
+    Maximum relative change: 0.9000     ["sy_hill15"]
+    Maximum absolute(1) change: 2.3380E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 73
+    Model calls so far             : 5614
+    Starting phi for this iteration                          :   103.05    
+    Contribution to phi from observation group "h_piezo"     :   26.383    
+    Contribution to phi from observation group "h_single_3"  :   2.8830    
+    Contribution to phi from observation group "h_single_1"  :   33.607    
+    Contribution to phi from observation group "h_hf"        :   40.180    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  6.89934E-04 ----->
+           Phi =   102.63      (  0.996 of starting phi)
+
+        Lambda =  6.09645E-05 ----->
+           Phi =   102.63      (  0.996 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   102.63    
+    Maximum   factor change:  1.763     ["sy_sandy31"]
+    Maximum relative change: 0.7633     ["sy_sandy31"]
+    Maximum absolute(1) change: 9.3170E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 74
+    Model calls so far             : 5692
+    Starting phi for this iteration                          :   102.63    
+    Contribution to phi from observation group "h_piezo"     :   26.347    
+    Contribution to phi from observation group "h_single_3"  :   2.8600    
+    Contribution to phi from observation group "h_single_1"  :   33.597    
+    Contribution to phi from observation group "h_hf"        :   39.830    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_ter39" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  5.38699E-06 ----->
+           Phi =   102.37      (  0.997 of starting phi)
+
+        Lambda =  9.44339E-08 ----->
+           Phi =   102.37      (  0.997 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   102.37    
+    Maximum   factor change:  1.687     ["sy_hill15"]
+    Maximum relative change: 0.4073     ["sy_hill15"]
+    Maximum absolute(1) change: 5.6480E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 75
+    Model calls so far             : 5770
+    Starting phi for this iteration                          :   102.37    
+    Contribution to phi from observation group "h_piezo"     :   26.310    
+    Contribution to phi from observation group "h_single_3"  :   2.8466    
+    Contribution to phi from observation group "h_single_1"  :   33.591    
+    Contribution to phi from observation group "h_hf"        :   39.622    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  9.44339E-08 ----->
+           Phi =   101.91      (  0.995 of starting phi)
+
+        Lambda =  4.30035E-10 ----->
+           Phi =   101.91      (  0.995 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   101.91    
+    Maximum   factor change:  1.618     ["sy_sandy32"]
+    Maximum relative change: 0.6180     ["sy_sandy32"]
+    Maximum absolute(1) change: 1.4230E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 76
+    Model calls so far             : 5848
+    Starting phi for this iteration                          :   101.91    
+    Contribution to phi from observation group "h_piezo"     :   26.266    
+    Contribution to phi from observation group "h_single_3"  :   2.8213    
+    Contribution to phi from observation group "h_single_1"  :   33.581    
+    Contribution to phi from observation group "h_hf"        :   39.239    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "kh_ter33" frozen: - update vector out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   101.81      (  0.999 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   101.81      (  0.999 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   101.81    
+    Maximum   factor change:  1.768     ["sy_sandy31"]
+    Maximum relative change: 0.4343     ["sy_sandy31"]
+    Maximum absolute(1) change: 2.3500E-05 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 77
+    Model calls so far             : 5926
+    Starting phi for this iteration                          :   101.81    
+    Contribution to phi from observation group "h_piezo"     :   26.277    
+    Contribution to phi from observation group "h_single_3"  :   2.8150    
+    Contribution to phi from observation group "h_single_1"  :   33.579    
+    Contribution to phi from observation group "h_hf"        :   39.139    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   101.50      (  0.997 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   101.50      (  0.997 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   101.50    
+    Maximum   factor change:  2.061     ["sy_sandy32"]
+    Maximum relative change: 0.5147     ["sy_sandy32"]
+    Maximum absolute(1) change: 6.6000E-05 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 78
+    Model calls so far             : 6004
+    Starting phi for this iteration                          :   101.50    
+    Contribution to phi from observation group "h_piezo"     :   26.266    
+    Contribution to phi from observation group "h_single_3"  :   2.7912    
+    Contribution to phi from observation group "h_single_1"  :   33.574    
+    Contribution to phi from observation group "h_hf"        :   38.872    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   101.34      (  0.998 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   101.34      (  0.998 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   101.34    
+    Maximum   factor change:  2.562     ["sy_sandy32"]
+    Maximum relative change:  1.562     ["sy_sandy32"]
+    Maximum absolute(1) change: 2.2260E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 79
+    Model calls so far             : 6082
+    Starting phi for this iteration                          :   101.34    
+    Contribution to phi from observation group "h_piezo"     :   26.233    
+    Contribution to phi from observation group "h_single_3"  :   2.7818    
+    Contribution to phi from observation group "h_single_1"  :   33.574    
+    Contribution to phi from observation group "h_hf"        :   38.748    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   101.08      (  0.997 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   101.08      (  0.997 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   101.08    
+    Maximum   factor change:  1.160     ["sy_sandy31"]
+    Maximum relative change: 0.1602     ["sy_sandy31"]
+    Maximum absolute(1) change: 1.1110E-04 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 80
+    Model calls so far             : 6160
+    Starting phi for this iteration                          :   101.08    
+    Contribution to phi from observation group "h_piezo"     :   26.208    
+    Contribution to phi from observation group "h_single_3"  :   2.7678    
+    Contribution to phi from observation group "h_single_1"  :   33.568    
+    Contribution to phi from observation group "h_hf"        :   38.534    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.
+        param "hill_main" frozen: gradient and update vectors out of bounds
+        param "kh_h_flat1" frozen: gradient and update vectors out of bounds
+        param "sy_hill11" frozen: gradient and update vectors out of bounds
+        param "sy_hill14" frozen: gradient and update vectors out of bounds
+        param "riv_c1" frozen: gradient and update vectors out of bounds
+        param "kh_riv_g24" frozen: - update vector out of bounds
+        param "rch_all" frozen: - update vector out of bounds
+
+        Lambda =  1.00000E-08 ----->
+           Phi =   101.08      (  1.000 of starting phi)
+
+        Lambda =  2.15443E-11 ----->
+           Phi =   101.08      (  1.000 of starting phi)
+
+    No more lambdas: relative phi reduction between lambdas less than 0.0100
+    Lowest phi this iteration:   101.08    
+    Maximum   factor change:  1.008     ["sy_hill15"]
+    Maximum relative change: 7.5507E-03 ["sy_hill15"]
+    Maximum absolute(1) change: 5.5600E-05 ["hill_se"]
+
+
+ OPTIMISATION ITERATION NO.        : 81
+    Model calls so far             : 6238
+    Starting phi for this iteration                          :   101.08    
+    Contribution to phi from observation group "h_piezo"     :   26.208    
+    Contribution to phi from observation group "h_single_3"  :   2.7677    
+    Contribution to phi from observation group "h_single_1"  :   33.568    
+    Contribution to phi from observation group "h_hf"        :   38.533    
+    Contribution to phi from observation group "rwh_hf"      :   0.0000    
+    All frozen parameters freed.

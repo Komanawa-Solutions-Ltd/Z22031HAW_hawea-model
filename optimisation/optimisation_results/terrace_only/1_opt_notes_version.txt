@@ -1,0 +1,16 @@
+version = base_model
+
+mversion = init_terrace_only
+branch: terrace_only
+previous optimisation: init_v11
+previous branch: structure_v11
+
+
+* test to see if I can fit the southern high frequency without the connection to the lake.
+
+
+
+unique start params from: None
+unique start prams: 
+n/a
+

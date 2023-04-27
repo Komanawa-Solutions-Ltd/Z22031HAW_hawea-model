@@ -1,0 +1,37 @@
+ PESTCHEK Version 17.3. Watermark Numerical Computing.
+
+ Errors ----->
+ No errors encountered.
+
+ Warnings ----->
+ It appears that the PEST control file contains a "rsi" section. PESTCHEK did 
+   not check this. It can only be used by RSI_HP.
+ Integer variable NPHISTP unusually high (6).
+ Integer variable NPHINORED unusually high (6).
+ Integer variable NRELPAR unusually high (6).
+ All parameters belonging to parameter group "race" are either fixed or tied.
+ MAXSING in the singular value decomposition section is greater than the 
+   number of adjustable parameters.
+ INSCHEK Version 17.3. Watermark Numerical Computing.
+
+ Errors in file observations.dat.ins ----->
+ No errors encountered.
+
+ Reading model output file observations.dat ----->
+ No errors encountered.
+
+ 363 observations identified in file observations.dat.ins: these are listed 
+   in file observations.dat.obf together with their values as read from file 
+   observations.dat.
+
+ TEMPCHEK Version 17.3. Watermark Numerical Computing.
+
+ Errors in file parameters.dat.tpl ----->
+ No errors encountered.
+
+ Errors in parameter value file trial.par ----->
+ No errors encountered.
+
+ Writing model input file parameters.dat.tpl.tempcheck.dat ----->
+ File parameters.dat.tpl.tempcheck.dat written ok.
+

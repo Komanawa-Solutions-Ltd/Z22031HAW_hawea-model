@@ -1,0 +1,1 @@
+scp -r matt_dumont@100.121.150.68:/media/matt_dumont/data/mh_unbacked/hawea/terrace_only/init_terrace_only/Optimisations/* /home/matt_dumont/unbacked/hawea/terrace_only/init_terrace_only/Optimisations/tuke_remote_files
