@@ -193,7 +193,7 @@ The output structure is as follows (links to the files are provided to 3d_v1d wh
 
 1 layer model (2D) optimisation results
 =======================================
-With the 1D model we were able to fit many of the targets within the model, but despite numerous (we ran
+With the 2D model we were able to fit many of the targets within the model, but despite numerous (we ran
 17 unique optimisations) parameterisations, observation weighting schemes, and change to the model structure
 we were unable to replicate the water levels at G40/0415.
 The model could either fit the shape of the groundwater levels but there was substantial bias in the mean groundwater
