@@ -355,8 +355,9 @@ Reading q-q plots
 An example of a quantile-quantile plots is shown below. Note that the data is the same a the example quantile plot
 described in the `reading quantile plots` section above. This figure compares the quantile data from a base scenario
 (in this case the long_current scenario) to the quantile data from the scenario of interest. So the point at
-approximately (10, 60) on the reduction_0.5 line can be interpreted as the modelled 10th percentile heads (342.5 m msl,
-from the quantile plot in the section above) would be the 60th percentile heads for the reduction_0.5 scenario #todo the last part of this sentence doesn't make sense with the first part.
+approximately (10, 60) on the reduction_0.5 line can be interpreted as the modelled 10th percentile heads
+for the long current scenario (342.5 m msl,from the quantile plot in the section above) would be the
+60th percentile heads for the reduction_0.5 scenario.
 From this if we assume that the long_current scenario is a reasonable representation of the historical record then we can infer
 that if we transitioned to the reduction_0.5 scenario then we would expect that the current low levels that were experienced
 10 percent of the time would now be experienced 60 percent of the time. This addresses the potential bias problems (e.g. if the model
@@ -738,7 +739,7 @@ below. The main differences are:
    Flat allocation zone which is not impacted by Lake Hawea levels. The location of the Grandview-Hawea Flat boundary
    was approximately defined by the inferred Grandview Fault location.  The Grandview Fault is thought to uplift basement
    rock above the Hawea Flat groundwater levels and therefore prevent the lake levels from impacting the groundwater in
-   this area. Because the Grandview Fault is not well defined we suggest that areas show #todo this part doesn't make sense with the current sentence, in the Grandview allocation zone
+   this area. Because the location of the Grandview Fault is not well defined we suggest that areas in the Grandview allocation zone
    could be reassigned to the Hawea Flat allocation zone if further investigation shows that water levels at that location
    are impacted by the Lake Hawea levels and that it would be reasonable to infer that groundwater flows from the lake to
    the area of interest.
