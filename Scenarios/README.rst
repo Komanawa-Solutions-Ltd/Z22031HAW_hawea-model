@@ -100,19 +100,19 @@ were simply the steady state component of each boundary condition (i.e. the mean
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | Boundary condition name | Package | Water component     | Overview                                                                            | Reference                                         |
 +=========================+=========+=====================+=====================================================================================+===================================================+
-| dryland_rch             | Rch     | LSR                 | scenario period ERA5 dry-land recharge                                              | `model_build readme <../model_build/README.RST>`_ |
+| dryland_rch             | Rch     | LSR                 | scenario period ERA5 dry-land recharge                                              | `../model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| irr_rch                 | Rch     | LSR                 | scenario period ERA5 irrigated recharge                                             | `model_build readme <../model_build/README.RST>`_ |
+| irr_rch                 | Rch     | LSR                 | scenario period ERA5 irrigated recharge                                             | `../model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| hist_rch                | Rch     | LSR                 | opt period met recharge                                                             | `model_build readme <../model_build/README.RST>`_ |
+| hist_rch                | Rch     | LSR                 | opt period met recharge                                                             | `../model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| hist_era5_rch           | Rch     | LSR                 | opt period ERA5 recharge                                                            | `model_build readme <../model_build/README.RST>`_ |
+| hist_era5_rch           | Rch     | LSR                 | opt period ERA5 recharge                                                            | `../model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| large rivers            | Str     | Hawea and Clutha R. | ISO weekly mean river flows / stage                                                 | `model_build readme <../model_build/README.RST>`_ |
+| large rivers            | Str     | Hawea and Clutha R. | ISO weekly mean river flows / stage                                                 | `../model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| hillside flows          | Str/Wel | Hillside inflows    | long record of hillside inflows                                                     | `model_build readme <../model_build/README.RST>`_ |
+| hillside flows          | Str/Wel | Hillside inflows    | long record of hillside inflows                                                     | `../model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| race losses             | Wel     | race losses         | ISO weekly mean race losses                                                         | `model_build readme <../model_build/README.RST>`_ |
+| race losses             | Wel     | race losses         | ISO weekly mean race losses                                                         | `../model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | no_pump                 | Wel     | GW abstraction      | no abstraction                                                                      | n/a                                               |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
@@ -132,7 +132,7 @@ were simply the steady state component of each boundary condition (i.e. the mean
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | grid_pump               | Wel     | GW abstraction      | gridded abstraction (additional allocation)                                         | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| lake                    | Ghb     | Lake Hawea          | long record of Lake Hawea levels                                                    | `model_build readme <../model_build/README.RST>`_ |
+| lake                    | Ghb     | Lake Hawea          | long record of Lake Hawea levels                                                    | `../model_build readme <../model_build/README.RST>`_ |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
 | low lake levels         | Ghb     | Lake Hawea          | typological low Lake Hawea levels                                                   | below                                             |
 +-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
@@ -762,6 +762,34 @@ below. The main differences are:
 
 Allocation Scenarios
 --------------------
+
+Allocation Scenario overview
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| Scenario Name                  | Abstraction                                                                                                                                                                                      | LSR                 | Other comments                                 |
++================================+==================================================================================================================================================================================================+=====================+================================================+
+| optimised                      | optimisation period                                                                                                                                                                              | optimisation period | final optimised model                          |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| long_current                   | extended_pump:  ISO weekly mean pumping                                                                                                                                                          | irr_rch             |                                                |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| long_nat                       | None                                                                                                                                                                                             | dryland_rch         | race losses still included                     |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| no_pumping                     | None                                                                                                                                                                                             | irr_rch             |                                                |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| full_allocation                | extended_full_allo: ISO weekly mean of maximum daily allocation normalised to historical pumping record                                                                                          | irr_rch             |                                                |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| max_allocation_on_pump_curve   | extended_max_allo_pc: maximum daily allocation applied to pump curve                                                                                                                             | irr_rch             |                                                |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| {zone} MAPC + {rate} $m^3/day$ | extended_max_allo_pc + {rate} applied to the grid_pump wells for {zone}. Increased allocation scenarios.                                                                                         | irr_rch             |                                                |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| reduction _ {faction}          | extended_max_allo_pc, wells in the Maungawera Valley allocation zone are multiplied by {fraction} e.g. .9 = 90% of maximum allocation on pumping curve for the maungawera valley                 | irr_rch             | only applies to the Maungawera allocation zone |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+| max_allocation                 | extended_max_allo: maximum daily allocation applied to every day of the year                                                                                                                     |                     | not realistic                                  |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+------------------------------------------------+
+
+
+
 Allocation via Zonal recharge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -808,13 +836,13 @@ are described below and we suggest any allocation in these zones should be based
 +-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | Allocation Zone         | Scenarios modelled allocation: | Path to results                                                                                                    |
 +=========================+================================+====================================================================================================================+
-| Hawea Flat              | Increases                      |  `Scenarios/allocation_results/Hawea Flat_results <../Scenarios/allocation_results/Hawea Flat_results>`_           |
+| Hawea Flat              | Increases                      |  `Scenarios/allocation_results/Hawea Flat_results <../Scenarios/allocation_results/Hawea%20Flat_results>`_           |
 +-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | mangawera_valley        | Decreases                      |  `Scenarios/allocation_results/mangawera_valley <../Scenarios/allocation_results/mangawera_valley>`_               |
 +-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| Maungawera Flat         | Increases                      |  `Scenarios/allocation_results/Maungawera Flat_results <../Scenarios/allocation_results/Maungawera Flat_results>`_ |
+| Maungawera Flat         | Increases                      |  `Scenarios/allocation_results/Maungawera Flat_results <../Scenarios/allocation_results/Maungawera%20Flat_results>`_ |
 +-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| Te Awa                  | Increases                      |  `Scenarios/allocation_results/Te Awa_results <../Scenarios/allocation_results/Te Awa_results>`_                   |
+| Te Awa                  | Increases                      |  `Scenarios/allocation_results/Te Awa_results <../Scenarios/allocation_results/Te%20Awa_results>`_                   |
 +-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | Terrace-Hill            | Increases                      |  `Scenarios/allocation_results/Terrace-Hill_results <../Scenarios/allocation_results/Terrace-Hill_results>`_       |
 +-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
