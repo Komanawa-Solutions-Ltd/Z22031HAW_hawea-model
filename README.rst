@@ -39,26 +39,6 @@ its methodology and, where applicable, the results of the step:
 4.  `Model Optimisation and limitations <optimisation/README.rst>`_: optimise the model to the available data
 5.  `Model Scenarios <Scenarios/README.rst>`_: run a series of scenarios to better understand the model behaviour and to predict the systems response to changing conditions
 
-Input and Processed data
-========================
-This repository contains all of the input and procesed data needed to build and run the model.  There are two exceptions
-to this; the 1 m LIDAR dem for the Clutha and Hawea rivers and the 15 m DEM used for the model top.  Both DEMs are too large
-to store in the repo, so they have been simplified and the simplified versions are stored in the repo. There are a number
-of directories in the repo that contain the input and processed data each of these directories contains a readme.rst file
-that briefly describes the data in the directory.  The directories are:
-
-- `model_build/base_data <model_build/base_data/README.rst>`_: contains the base data used to build the model
-- `model_build/processed_input_data <model_build/processed_input_data/README.rst>`_: contains the processed data used to build the model
-- `model_parameterisation/base_data <model_parameterisation/base_data/README.rst>`_: contains the base data used to parameterise the model
-- `model_parameterisation/processed_data <model_parameterisation/processed_data/README.rst>`_: contains the processed data used to parameterise the model
-- `Scenarios/wetland_setback_butterfield/base_input_data <Scenarios/wetland_setback_butterfield/base_input_data/README.rst>`_: contains the base data used to run the butterfield wetland setback scenario
-- `Scenarios/wetland_setback_butterfield/processed_input_data <Scenarios/wetland_setback_butterfield/processed_input_data/README.rst>`_: contains the processed data used to run the butterfield wetland setback scenario
-- `Scenarios/base_data <Scenarios/base_data/README.rst>`_: contains the base data used to run the scenarios
-- `Scenarios/processed_input_data <Scenarios/processed_input_data/README.rst>`_: contains the processed data used to run the scenarios
-- `Scenarios/wetland_setback_campbells/base_input_data <Scenarios/wetland_setback_campbells/base_input_data/README.rst>`_: contains the base data used to run the campbells wetland setback scenario
-- `Scenarios/wetland_setback_campbells/processed_input_data <Scenarios/wetland_setback_campbells/processed_input_data/README.rst>`_: contains the processed data used to run the campbells wetland setback scenario
-- `targets_and_sensitive_sites/base_data <targets_and_sensitive_sites/base_data/README.rst>`_: contains the base data used to define the model targets and objective function
-- `targets_and_sensitive_sites/processed_data <targets_and_sensitive_sites/processed_data/README.rst>`_: contains the processed data used to define the model targets and objective function
 
 Modelling Software
 ===================
@@ -257,7 +237,25 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
 
 Supporting data index
 --------------------------------
-# todo once done
+This repository contains all of the input and processed data needed to build and run the model.  There are two exceptions
+to this; the 1 m LIDAR dem for the Clutha and Hawea rivers and the 15 m DEM used for the model top.  Both DEMs are too large
+to store in the repo, so they have been simplified and the simplified versions are stored in the repo. There are a number
+of directories in the repo that contain the input and processed data each of these directories contains a readme.rst file
+that briefly describes the data in the directory.  The directories are:
+
+- `model_build/base_data <model_build/base_data/README.rst>`_: contains the base data used to build the model
+- `model_build/processed_input_data <model_build/processed_input_data/README.rst>`_: contains the processed data used to build the model
+- `model_parameterisation/base_data <model_parameterisation/base_data/README.rst>`_: contains the base data used to parameterise the model
+- `model_parameterisation/processed_data <model_parameterisation/processed_data/README.rst>`_: contains the processed data used to parameterise the model
+- `Scenarios/wetland_setback_butterfield/base_input_data <Scenarios/wetland_setback_butterfield/base_input_data/README.rst>`_: contains the base data used to run the butterfield wetland setback scenario
+- `Scenarios/wetland_setback_butterfield/processed_input_data <Scenarios/wetland_setback_butterfield/processed_input_data/README.rst>`_: contains the processed data used to run the butterfield wetland setback scenario
+- `Scenarios/base_data <Scenarios/base_data/README.rst>`_: contains the base data used to run the scenarios
+- `Scenarios/processed_input_data <Scenarios/processed_input_data/README.rst>`_: contains the processed data used to run the scenarios
+- `Scenarios/wetland_setback_campbells/base_input_data <Scenarios/wetland_setback_campbells/base_input_data/README.rst>`_: contains the base data used to run the campbells wetland setback scenario
+- `Scenarios/wetland_setback_campbells/processed_input_data <Scenarios/wetland_setback_campbells/processed_input_data/README.rst>`_: contains the processed data used to run the campbells wetland setback scenario
+- `targets_and_sensitive_sites/base_data <targets_and_sensitive_sites/base_data/README.rst>`_: contains the base data used to define the model targets and objective function
+- `targets_and_sensitive_sites/processed_data <targets_and_sensitive_sites/processed_data/README.rst>`_: contains the processed data used to define the model targets and objective function
+
 
 Proprietary packages
 --------------------
@@ -315,6 +313,15 @@ The proprietary packages used in this model are:
         - plot model results
     - from model_tools.plot_optimisation import plot_optimisation_and_extract_info
         - plot optimisation results
+
+Dead links
+----------
+We have made a substantial effort to ensure that all links in the model are valid. However, there are likely some links that
+return a 404 error.  If you come across this, then please contact the author of this model: Matt@komanawa.com so that
+he can fix the links.  Typically the links are relative to the repository.  if the link is broken you can likely infer
+the correct location by looking at the link and the repo structure.
+
+
 
 Branches and releases
 =====================
