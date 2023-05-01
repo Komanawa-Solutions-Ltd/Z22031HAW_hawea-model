@@ -1,4 +1,4 @@
-- `Hawea_Updated_RSWetlands.shp <../base_data/Hawea_Updated_RSWetlands.shp>`_:
-- `NGMP bore fluctuations 1996 - 2019.csv <../base_data/NGMP bore fluctuations 1996 - 2019.csv>`_:
-- `Peizo Survey 20Sept2011.xlsx <../base_data/Peizo Survey 20Sept2011.xlsx>`_:
-- `daily_head_obs.csv <../base_data/daily_head_obs.csv>`_:
+- `Hawea_Updated_RSWetlands.shp <../base_data/Hawea_Updated_RSWetlands.shp>`_: shapefile to locate wetlands
+- `NGMP bore fluctuations 1996 - 2019.csv <../base_data/NGMP bore fluctuations 1996 - 2019.csv>`_:  NGMP well data
+- `Peizo Survey 20Sept2011.xlsx <../base_data/Peizo Survey 20Sept2011.xlsx>`_: Results of the 2011 piezometer survey (Wilson, 2012)
+- `daily_head_obs.csv <../base_data/daily_head_obs.csv>`_: Daily head observations for the 5 high frequency bores
