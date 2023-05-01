@@ -833,21 +833,21 @@ are described below and we suggest any allocation in these zones should be based
 - **Sandy Point:** The model does not provide a good representation of the groundwater levels in this area as there is very
   limited data available to constrain the model.
 
-+-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| Allocation Zone         | Scenarios modelled allocation: | Path to results                                                                                                    |
-+=========================+================================+====================================================================================================================+
++-------------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------+
+| Allocation Zone         | Scenarios modelled allocation: | Path to results                                                                                                      |
++=========================+================================+======================================================================================================================+
 | Hawea Flat              | Increases                      |  `Scenarios/allocation_results/Hawea Flat_results <../Scenarios/allocation_results/Hawea%20Flat_results>`_           |
-+-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| mangawera_valley        | Decreases                      |  `Scenarios/allocation_results/mangawera_valley <../Scenarios/allocation_results/mangawera_valley>`_               |
-+-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
++-------------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------+
+| mangawera_valley        | Decreases                      |  `Scenarios/allocation_results/mangawera_valley <../Scenarios/allocation_results/mangawera_valley>`_                 |
++-------------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------+
 | Maungawera Flat         | Increases                      |  `Scenarios/allocation_results/Maungawera Flat_results <../Scenarios/allocation_results/Maungawera%20Flat_results>`_ |
-+-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
++-------------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------+
 | Te Awa                  | Increases                      |  `Scenarios/allocation_results/Te Awa_results <../Scenarios/allocation_results/Te%20Awa_results>`_                   |
-+-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| Terrace-Hill            | Increases                      |  `Scenarios/allocation_results/Terrace-Hill_results <../Scenarios/allocation_results/Terrace-Hill_results>`_       |
-+-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| Terrace-River           | Increases                      |  `Scenarios/allocation_results/Terrace-River_results <../Scenarios/allocation_results/Terrace-River_results>`_     |
-+-------------------------+--------------------------------+--------------------------------------------------------------------------------------------------------------------+
++-------------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------+
+| Terrace-Hill            | Increases                      |  `Scenarios/allocation_results/Terrace-Hill_results <../Scenarios/allocation_results/Terrace-Hill_results>`_         |
++-------------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------+
+| Terrace-River           | Increases                      |  `Scenarios/allocation_results/Terrace-River_results <../Scenarios/allocation_results/Terrace-River_results>`_       |
++-------------------------+--------------------------------+----------------------------------------------------------------------------------------------------------------------+
 
 Full discussion of potential allocation levels are reserved for the `final report <../Final_report.pdf>`_. However we
 want to highlight several key points:
