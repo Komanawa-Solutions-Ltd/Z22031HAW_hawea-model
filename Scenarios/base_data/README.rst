@@ -1,3 +1,7 @@
+A quick overview of the files in this directory follows
+=======================================================
+
+
 - `README.rst <../base_data/README.rst>`_: This document
 - `grid_well.shp <../base_data/grid_well.shp>`_: Shapefile of the grid wells
 - `indicator_wells.shp <../base_data/indicator_wells.shp>`_: Shapefile of the indicator wells

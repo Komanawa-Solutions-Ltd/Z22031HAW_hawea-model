@@ -1,3 +1,6 @@
+A quick overview of the files in this directory follows
+=======================================================
+
 - `hawea_r_targets-optimisation_period.p <../processed_data/hawea_r_targets-optimisation_period.p>`_: all river target data
 - `head_target_locations.csv <../processed_data/head_target_locations.csv>`_: all head target info
 - `indicative_time_mapper.csv <../processed_data/indicative_time_mapper.csv>`_: links for the indicative time mapper

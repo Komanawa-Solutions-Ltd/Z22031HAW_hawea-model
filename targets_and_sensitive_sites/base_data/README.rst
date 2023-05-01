@@ -1,3 +1,7 @@
+A quick overview of the files in this directory follows
+=======================================================
+
+
 - `Hawea_Updated_RSWetlands.shp <../base_data/Hawea_Updated_RSWetlands.shp>`_: shapefile to locate wetlands
 - `NGMP bore fluctuations 1996 - 2019.csv <../base_data/NGMP bore fluctuations 1996 - 2019.csv>`_:  NGMP well data
 - `Peizo Survey 20Sept2011.xlsx <../base_data/Peizo Survey 20Sept2011.xlsx>`_: Results of the 2011 piezometer survey (Wilson, 2012)

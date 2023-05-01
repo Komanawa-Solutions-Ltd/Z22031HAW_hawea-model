@@ -1,3 +1,7 @@
+A quick overview of the files in this directory follows
+=======================================================
+
+
 - `README.rst <../../processed_input_data/README.rst>`_:this document
 - `hd_data.npy <../../processed_input_data/hd_data.npy>`_:the hk data (typo in file name)
 - `ibound.npy <../../processed_input_data/ibound.npy>`_:the no flow layer used in the model

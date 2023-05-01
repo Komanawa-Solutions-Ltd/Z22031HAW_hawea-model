@@ -1,3 +1,6 @@
+A quick overview of the files in this directory follows
+=======================================================
+
 - `README.rst <../processed_input_data/README.rst>`_: This document
 - `all_well_locs.csv <../processed_input_data/all_well_locs.csv>`_: all known well locations processed with the model indexes
 - `allo_info.csv <../processed_input_data/allo_info.csv>`_: annual allocation information

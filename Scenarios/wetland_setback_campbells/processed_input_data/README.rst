@@ -1,3 +1,7 @@
+A quick overview of the files in this directory follows
+=======================================================
+
+
 - `README.rst <../../processed_input_data/README.rst>`_: this document
 - `constant_hds.npy <../../processed_input_data/constant_hds.npy>`_: the constant heads used in the model
 - `hd_data.npy <../../processed_input_data/hd_data.npy>`_: the hk data (typo in file name)

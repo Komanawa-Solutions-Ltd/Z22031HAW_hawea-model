@@ -1,0 +1,80 @@
+A quick overview of the files in this directory follows
+=======================================================
+
+
+- `3d_examiner.shp <../base_data/3d_examiner.shp>`_: line shapefile to define where to make crossections across the model zone.
+- `3d_smoother.shp <../base_data/3d_smoother.shp>`_:line to smooth the layer pinch-out area
+- `Amalgamated Lake Hawea Levels (weekly & daily).csv <../base_data/Amalgamated Lake Hawea Levels (weekly & daily).csv>`_: Lake Hawea data from 1976 - 2021, weekly and daily data (as available)
+- `Estimate of Current indiv gw take consents and meters.xlsx <../base_data/Estimate of Current indiv gw take consents and meters.xlsx>`_: not used
+- `Hawea Irrigation Co - Lake Hawea Takes (daily).csv <../base_data/Hawea Irrigation Co - Lake Hawea Takes (daily).csv>`_: daily takes for hawea irrigation company (used to define race losses)
+- `Hawea River - ORC Gaugings for Gain & Loss Estimation.xlsx <../base_data/Hawea River - ORC Gaugings for Gain & Loss Estimation.xlsx>`_: Hawea river gauging data
+- `Hawea Wellsdata request ZEB.xlsx <../base_data/Hawea Wellsdata request ZEB.xlsx>`_: Hawea area well data (locations etc.)
+- `John_creek.shp <../base_data/John_creek.shp>`_: shapefile of john creek as polyline
+- `John_creek_points.shp <../base_data/John_creek_points.shp>`_: shapefile of john creek as ordered points
+- `Lake_Hawea.csv <../base_data/Lake_Hawea.csv>`_: lake hawea level data from 2012-2021 daily
+- `Model_bot.tif <../base_data/Model_bot.tif>`_: raster of the raw model bottom elevations
+- `Model_botUnknown.tif <../base_data/Model_botUnknown.tif>`_: not used
+- `ORCBores - Lithology.csv <../base_data/ORCBores - Lithology.csv>`_: bore lithology data
+- `README.rst <../base_data/README.rst>`_: This document
+- `Rainfall_Hawea.csv <../base_data/Rainfall_Hawea.csv>`_: met station rainfall data for lake Hawea
+- `River_Level_Hawea.csv <../base_data/River_Level_Hawea.csv>`_: river level data for hawea at camp hill
+- `bottoms_fixer_flat.shp <../base_data/bottoms_fixer_flat.shp>`_: shapefile used to lower bottoms to fixed level
+- `bottoms_fixer_line.shp <../base_data/bottoms_fixer_line.shp>`_: previouly used but depreciated
+- `bottoms_fixer_slope.shp <../base_data/bottoms_fixer_slope.shp>`_: shape file used to lower bottoms via slope
+- `cameron_hill.shp <../base_data/cameron_hill.shp>`_: shapefile of the cameron hill area, set to no flow
+- `camp_hill_moraine.shp <../base_data/camp_hill_moraine.shp>`_: shapefile of the camp hill moraine (set to no flow)
+- `consent_database_from_Mike_kitterage.csv <../base_data/consent_database_from_Mike_kitterage.csv>`_: consent database from Mike Kitterage
+- `dam.shp <../base_data/dam.shp>`_: shapefile of the dam area, set to no flow
+- `era5_data <../base_data/era5_data>`_: era5-land data from Tethys
+    - `era5_data/era5_potential_et.nc <../base_data/era5_data/era5_potential_et.nc>`_: extracted era5-land potential et
+    - `era5_data/era5_precipitation.nc <../base_data/era5_data/era5_precipitation.nc>`_: extracted era5-land precipitation
+    - `era5_data/era5_reference_et.nc <../base_data/era5_data/era5_reference_et.nc>`_: extracted era5-land reference et
+    - `era5_data/hawea_era5_land.py <../base_data/era5_data/hawea_era5_land.py>`_: python script to extract era5 data from Tethys
+- `grand_view_lagoon_ck.csv <../base_data/grand_view_lagoon_ck.csv>`_: measured flows for grand view lagoon creek
+- `grandview_creek.shp <../base_data/grandview_creek.shp>`_: grandview as a polyline
+- `grandview_creek_points.shp <../base_data/grandview_creek_points.shp>`_: grandview as ordered points
+- `hawea_river.shp <../base_data/hawea_river.shp>`_: shapefile of the hawea river
+- `hillflow_inputs.shp <../base_data/hillflow_inputs.shp>`_: shapefile of the hillside inflow pour points
+- `irrigated_area <../base_data/irrigated_area>`_: irrigated area shapefiles for 2015, 2020, 2021 and the model extent
+    - `irrigated_area/ia_2015.shp <../base_data/irrigated_area/ia_2015.shp>`_:
+    - `irrigated_area/ia_2020.shp <../base_data/irrigated_area/ia_2020.shp>`_:
+    - `irrigated_area/ia_2021.shp <../base_data/irrigated_area/ia_2021.shp>`_:
+    - `irrigated_area/otago_irrigated_area_26oct2021_model_extent.shp <../base_data/irrigated_area/otago_irrigated_area_26oct2021_model_extent.shp>`_:
+- `lake_hawea.shp <../base_data/lake_hawea.shp>`_: shapefile of lake hawea
+- `lakefront.shp <../base_data/lakefront.shp>`_: shapefile of the lake front
+- `lower_clutha.shp <../base_data/lower_clutha.shp>`_: shapefile of the lower clutha river
+- `model_boundary.shp <../base_data/model_boundary.shp>`_: shapefile of the model boundary
+- `moraine.shp <../base_data/moraine.shp>`_: shapefile of the moraine
+- `moraine.txt <../base_data/moraine.txt>`_: index array of the moraine
+- `moraine_units.csv <../base_data/moraine_units.csv>`_: borelog units in the moraine area
+- `nz-topo50-maps.jpg <../base_data/nz-topo50-maps.jpg>`_: georeferenced topo50 map used for basemap
+- `otago_irrigated_area_26oct2021_model_extent.shp <../base_data/otago_irrigated_area_26oct2021_model_extent.shp>`_: irrigated area for all of otago
+- `pump_to_layer_2.shp <../base_data/pump_to_layer_2.shp>`_: shapefile of the area to move pumping to the second model layer (layer 1)
+- `races.shp <../base_data/races.shp>`_: shape file of the race locations
+- `raw_mean_dem_top.txt <../base_data/raw_mean_dem_top.txt>`_: resampled DEM to model resolution, original data too large to incorporate here
+- `raw_min_dem.txt <../base_data/raw_min_dem.txt>`_:  resampled 1m lidar of the clutha and hawea river areas: UpperClutha_DEM_1m.tif  used to set river inverts. original data was too large to include here
+- `rm_sandy_point.shp <../base_data/rm_sandy_point.shp>`_: shapefile to set most of sandy point to no flow and remove it from the model
+- `soils_with_paw.shp <../base_data/soils_with_paw.shp>`_: soil map with PAW data
+- `special_zones.shp <../base_data/special_zones.shp>`_: shapefile with zones for Maungawera and Sandy point
+- `streamflow_Grandview Creek at Lake Hawea Station_data.csv <../base_data/streamflow_Grandview Creek at Lake Hawea Station_data.csv>`_: stream flow record for Grandview Creek at Lake Hawea Station
+- `streamflow_Lagoon Creek at Mount Grand Station_data.csv <../base_data/streamflow_Lagoon Creek at Mount Grand Station_data.csv>`_: stream flow record for Lagoon Creek at Mount Grand Station
+- `streamflow_Lindis at Lindis Peak_data.csv <../base_data/streamflow_Lindis at Lindis Peak_data.csv>`_: stream flow record for the Lindis River at Lindis Peak
+- `streamflow_Luggate Creek at SH6 Bridge_data.csv <../base_data/streamflow_Luggate Creek at SH6 Bridge_data.csv>`_: stream flow record for Luggate Creek at SH6 Bridge
+- `water_permit_meter_results_2022-07-20 <../base_data/water_permit_meter_results_2022-07-20>`_: processed water permit data, see pdf report for metadata
+    - `water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf <../base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_: report on processing of water permit data
+    - `water_permit_meter_results_2022-07-20/water_permit_meter_daily_data_2022-07-20.csv <../base_data/water_permit_meter_results_2022-07-20/water_permit_meter_daily_data_2022-07-20.csv>`_: see pdf report for metadata
+    - `water_permit_meter_results_2022-07-20/water_permit_meter_daily_exceedences_2022-07-20.csv <../base_data/water_permit_meter_results_2022-07-20/water_permit_meter_daily_exceedences_2022-07-20.csv>`_: see pdf report for metadata
+    - `water_permit_meter_results_2022-07-20/water_permit_meter_exceedence_summary_2022-07-20.csv <../base_data/water_permit_meter_results_2022-07-20/water_permit_meter_exceedence_summary_2022-07-20.csv>`_: see pdf report for metadata
+    - `water_permit_meter_results_2022-07-20/water_permit_meter_monthly_data_2022-07-20.csv <../base_data/water_permit_meter_results_2022-07-20/water_permit_meter_monthly_data_2022-07-20.csv>`_: see pdf report for metadata
+    - `water_permit_meter_results_2022-07-20/water_permit_meter_monthly_exceedences_2022-07-20.csv <../base_data/water_permit_meter_results_2022-07-20/water_permit_meter_monthly_exceedences_2022-07-20.csv>`_: see pdf report for metadata
+    - `water_permit_meter_results_2022-07-20/water_permit_meter_yearly_data_2022-07-20.csv <../base_data/water_permit_meter_results_2022-07-20/water_permit_meter_yearly_data_2022-07-20.csv>`_: see pdf report for metadata
+    - `water_permit_meter_results_2022-07-20/water_permit_meter_yearly_exceedences_2022-07-20.csv <../base_data/water_permit_meter_results_2022-07-20/water_permit_meter_yearly_exceedences_2022-07-20.csv>`_: see pdf report for metadata
+- `zones <../base_data/zones>`_: shapefiles to define various model zones, note that they often overlap and the final zones are defined based on various intersections
+    - `zones/clutha.shp <../base_data/zones/clutha.shp>`_: see directory description
+    - `zones/east.shp <../base_data/zones/east.shp>`_: see directory description
+    - `zones/flat.shp <../base_data/zones/flat.shp>`_: see directory description
+    - `zones/hawea_flat.shp <../base_data/zones/hawea_flat.shp>`_: see directory description
+    - `zones/hawea_town.shp <../base_data/zones/hawea_town.shp>`_: see directory description
+    - `zones/near_river.shp <../base_data/zones/near_river.shp>`_: see directory description
+    - `zones/sub_terrace.shp <../base_data/zones/sub_terrace.shp>`_: see directory description
+    - `zones/terrace.shp <../base_data/zones/terrace.shp>`_: see directory description
