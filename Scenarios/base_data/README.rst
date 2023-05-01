@@ -1,0 +1,11 @@
+- `README.rst <../base_data/README.rst>`_: This document
+- `grid_well.shp <../base_data/grid_well.shp>`_: Shapefile of the grid wells
+- `indicator_wells.shp <../base_data/indicator_wells.shp>`_: Shapefile of the indicator wells
+- `recommended_zones <../base_data/recommended_zones>`_: directory
+    - `recommended_zones/additional_monitoring.shp <../base_data/recommended_zones/additional_monitoring.shp>`_: shapefile of rough locations for additional monitoring
+    - `recommended_zones/butterfield_split.shp <../base_data/recommended_zones/butterfield_split.shp>`_: shapefile to split out the butterfield setback area
+    - `recommended_zones/campbells_split.shp <../base_data/recommended_zones/campbells_split.shp>`_: shapefile to split out the campbells setback area
+    - `recommended_zones/hflat_split.shp <../base_data/recommended_zones/hflat_split.shp>`_: shapefile to split the Hawea flat zone into the hawea flat and grandview zones
+    - `recommended_zones/new_zones.shp <../base_data/recommended_zones/new_zones.shp>`_: shapefile of the zones recommended by this work.
+- `scott_zones <../base_data/scott_zones>`_: directory
+    - `scott_zones/scott_zones.shp <../base_data/scott_zones/scott_zones.shp>`_: shapefile of the zones used in Wilson et al, 2012
