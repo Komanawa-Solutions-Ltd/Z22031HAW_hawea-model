@@ -1,0 +1,216 @@
+- `README.rst <../processed_input_data/README.rst>`_: This document
+- `all_well_locs.csv <../processed_input_data/all_well_locs.csv>`_: all known well locations processed with the model indexes
+- `allo_info.csv <../processed_input_data/allo_info.csv>`_: annual allocation information
+- `catchment_areas.csv <../processed_input_data/catchment_areas.csv>`_: catchment areas for each hillside catchment
+- `catchment_locs.csv <../processed_input_data/catchment_locs.csv>`_: locations of hillside catchment pour points
+- `corrected_era5_data.csv <../processed_input_data/corrected_era5_data.csv>`_: corrected ERA5 data
+- `corrected_weekly_historical_era5_rch_dates_limited_irr.npz <../processed_input_data/corrected_weekly_historical_era5_rch_dates_limited_irr.npz>`_: dates for the below arrays
+- `corrected_weekly_historical_era5_rch_dates_unlimited_irr.npz <../processed_input_data/corrected_weekly_historical_era5_rch_dates_unlimited_irr.npz>`_: dates for the below arrays
+- `corrected_weekly_historical_era5_rch_limited_irr.npz <../processed_input_data/corrected_weekly_historical_era5_rch_limited_irr.npz>`_: weekly ERA5 recharge data for the limited irrigation (limited by water availability) at historical irrigated area
+- `corrected_weekly_historical_era5_rch_unlimited_irr.npz <../processed_input_data/corrected_weekly_historical_era5_rch_unlimited_irr.npz>`_: weekly ERA5 recharge data for the unlimited irrigation (not limited by water availability) at historical irrigated area
+- `elv_db.npy <../processed_input_data/elv_db.npy>`_: model elevation data (top, bottomL0, bottomL1, bottomL2)
+- `flow_rsme.csv <../processed_input_data/flow_rsme.csv>`_: RMSE for the hillside inflow modelling
+- `flowmeter_loc_mapper.csv <../processed_input_data/flowmeter_loc_mapper.csv>`_: a mapper to map the flowmeter locations to the best abstraction point
+- `flowmeter_loc_mapper_inc_sw.csv <../processed_input_data/flowmeter_loc_mapper_inc_sw.csv>`_: a mapper to map the flowmeter locations to the best abstraction point, including near surface water takes
+- `ghb_stress_period_data-optimisation_period.p <../processed_input_data/ghb_stress_period_data-optimisation_period.p>`_: stress period data for the GHB (lake Hawea) boudnary condition
+- `hillside_flows.csv <../processed_input_data/hillside_flows.csv>`_: daily predicted hillside inflows
+- `historical_pumping.csv <../processed_input_data/historical_pumping.csv>`_: historical pumping data
+- `historical_pumping_max_allo.csv <../processed_input_data/historical_pumping_max_allo.csv>`_: historical pumping data, with the maximum allocation for each year
+- `ibound.txt <../processed_input_data/ibound.txt>`_: model ibound (no flow) array
+- `irrig_code_2020.txt <../processed_input_data/irrig_code_2020.txt>`_: the index array for the irrigation code in 2020
+- `irrig_code_2021_on.txt <../processed_input_data/irrig_code_2021_on.txt>`_: the index array for the irrigation code in 2021 onwards
+- `irrig_code_pre_2020.txt <../processed_input_data/irrig_code_pre_2020.txt>`_: the index array for the irrigation code before 2020
+- `lake_array.txt <../processed_input_data/lake_array.txt>`_: the index array for the lake locations
+- `lake_hawea_loc.csv <../processed_input_data/lake_hawea_loc.csv>`_: the location of lake Hawea boundary conditions
+- `lindis_area_right.shp <../processed_input_data/lindis_area_right.shp>`_: the shapefile for the Lindis R. at Lindis Pk. catchment
+- `luggate_catchment_area.csv <../processed_input_data/luggate_catchment_area.csv>`_: the area of the Luggate catchment
+- `model_boundary.shp <../processed_input_data/model_boundary.shp>`_: the shapefile for the model boundary
+- `param_zones.txt <../processed_input_data/param_zones.txt>`_: the index array for the parameter zones
+- `pump_mover.txt <../processed_input_data/pump_mover.txt>`_: index array for moving the pumping near hawea flat township to layer 1
+- `race_loc_data.csv <../processed_input_data/race_loc_data.csv>`_: location of the race data
+- `rch_historical_record_from_era5_limited <../processed_input_data/rch_historical_record_from_era5_limited>`_: daily results for the ERA5-land based recharge modelling, limited by water availability (1 file per year)
+    - `rch_historical_record_from_era5_limited/1949.nc <../processed_input_data/rch_historical_record_from_era5_limited/1949.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1950.nc <../processed_input_data/rch_historical_record_from_era5_limited/1950.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1951.nc <../processed_input_data/rch_historical_record_from_era5_limited/1951.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1952.nc <../processed_input_data/rch_historical_record_from_era5_limited/1952.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1953.nc <../processed_input_data/rch_historical_record_from_era5_limited/1953.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1954.nc <../processed_input_data/rch_historical_record_from_era5_limited/1954.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1955.nc <../processed_input_data/rch_historical_record_from_era5_limited/1955.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1956.nc <../processed_input_data/rch_historical_record_from_era5_limited/1956.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1957.nc <../processed_input_data/rch_historical_record_from_era5_limited/1957.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1958.nc <../processed_input_data/rch_historical_record_from_era5_limited/1958.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1959.nc <../processed_input_data/rch_historical_record_from_era5_limited/1959.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1960.nc <../processed_input_data/rch_historical_record_from_era5_limited/1960.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1961.nc <../processed_input_data/rch_historical_record_from_era5_limited/1961.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1962.nc <../processed_input_data/rch_historical_record_from_era5_limited/1962.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1963.nc <../processed_input_data/rch_historical_record_from_era5_limited/1963.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1964.nc <../processed_input_data/rch_historical_record_from_era5_limited/1964.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1965.nc <../processed_input_data/rch_historical_record_from_era5_limited/1965.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1966.nc <../processed_input_data/rch_historical_record_from_era5_limited/1966.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1967.nc <../processed_input_data/rch_historical_record_from_era5_limited/1967.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1968.nc <../processed_input_data/rch_historical_record_from_era5_limited/1968.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1969.nc <../processed_input_data/rch_historical_record_from_era5_limited/1969.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1970.nc <../processed_input_data/rch_historical_record_from_era5_limited/1970.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1971.nc <../processed_input_data/rch_historical_record_from_era5_limited/1971.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1972.nc <../processed_input_data/rch_historical_record_from_era5_limited/1972.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1973.nc <../processed_input_data/rch_historical_record_from_era5_limited/1973.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1974.nc <../processed_input_data/rch_historical_record_from_era5_limited/1974.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1975.nc <../processed_input_data/rch_historical_record_from_era5_limited/1975.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1976.nc <../processed_input_data/rch_historical_record_from_era5_limited/1976.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1977.nc <../processed_input_data/rch_historical_record_from_era5_limited/1977.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1978.nc <../processed_input_data/rch_historical_record_from_era5_limited/1978.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1979.nc <../processed_input_data/rch_historical_record_from_era5_limited/1979.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1980.nc <../processed_input_data/rch_historical_record_from_era5_limited/1980.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1981.nc <../processed_input_data/rch_historical_record_from_era5_limited/1981.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1982.nc <../processed_input_data/rch_historical_record_from_era5_limited/1982.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1983.nc <../processed_input_data/rch_historical_record_from_era5_limited/1983.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1984.nc <../processed_input_data/rch_historical_record_from_era5_limited/1984.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1985.nc <../processed_input_data/rch_historical_record_from_era5_limited/1985.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1986.nc <../processed_input_data/rch_historical_record_from_era5_limited/1986.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1987.nc <../processed_input_data/rch_historical_record_from_era5_limited/1987.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1988.nc <../processed_input_data/rch_historical_record_from_era5_limited/1988.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1989.nc <../processed_input_data/rch_historical_record_from_era5_limited/1989.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1990.nc <../processed_input_data/rch_historical_record_from_era5_limited/1990.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1991.nc <../processed_input_data/rch_historical_record_from_era5_limited/1991.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1992.nc <../processed_input_data/rch_historical_record_from_era5_limited/1992.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1993.nc <../processed_input_data/rch_historical_record_from_era5_limited/1993.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1994.nc <../processed_input_data/rch_historical_record_from_era5_limited/1994.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1995.nc <../processed_input_data/rch_historical_record_from_era5_limited/1995.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1996.nc <../processed_input_data/rch_historical_record_from_era5_limited/1996.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1997.nc <../processed_input_data/rch_historical_record_from_era5_limited/1997.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1998.nc <../processed_input_data/rch_historical_record_from_era5_limited/1998.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/1999.nc <../processed_input_data/rch_historical_record_from_era5_limited/1999.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2000.nc <../processed_input_data/rch_historical_record_from_era5_limited/2000.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2001.nc <../processed_input_data/rch_historical_record_from_era5_limited/2001.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2002.nc <../processed_input_data/rch_historical_record_from_era5_limited/2002.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2003.nc <../processed_input_data/rch_historical_record_from_era5_limited/2003.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2004.nc <../processed_input_data/rch_historical_record_from_era5_limited/2004.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2005.nc <../processed_input_data/rch_historical_record_from_era5_limited/2005.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2006.nc <../processed_input_data/rch_historical_record_from_era5_limited/2006.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2007.nc <../processed_input_data/rch_historical_record_from_era5_limited/2007.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2008.nc <../processed_input_data/rch_historical_record_from_era5_limited/2008.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2009.nc <../processed_input_data/rch_historical_record_from_era5_limited/2009.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2010.nc <../processed_input_data/rch_historical_record_from_era5_limited/2010.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2011.nc <../processed_input_data/rch_historical_record_from_era5_limited/2011.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2012.nc <../processed_input_data/rch_historical_record_from_era5_limited/2012.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2013.nc <../processed_input_data/rch_historical_record_from_era5_limited/2013.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2014.nc <../processed_input_data/rch_historical_record_from_era5_limited/2014.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2015.nc <../processed_input_data/rch_historical_record_from_era5_limited/2015.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2016.nc <../processed_input_data/rch_historical_record_from_era5_limited/2016.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2017.nc <../processed_input_data/rch_historical_record_from_era5_limited/2017.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2018.nc <../processed_input_data/rch_historical_record_from_era5_limited/2018.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2019.nc <../processed_input_data/rch_historical_record_from_era5_limited/2019.nc>`_: see directory description
+    - `rch_historical_record_from_era5_limited/2020.nc <../processed_input_data/rch_historical_record_from_era5_limited/2020.nc>`_: see directory description
+- `rch_historical_record_from_era5_unlimited <../processed_input_data/rch_historical_record_from_era5_unlimited>`_: daily recharge arrays from ERA5 data, one file per year, unlimited irrigation availability (1 file per year)
+    - `rch_historical_record_from_era5_unlimited/1949.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1949.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1950.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1950.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1951.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1951.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1952.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1952.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1953.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1953.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1954.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1954.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1955.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1955.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1956.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1956.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1957.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1957.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1958.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1958.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1959.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1959.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1960.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1960.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1961.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1961.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1962.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1962.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1963.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1963.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1964.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1964.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1965.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1965.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1966.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1966.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1967.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1967.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1968.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1968.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1969.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1969.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1970.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1970.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1971.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1971.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1972.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1972.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1973.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1973.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1974.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1974.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1975.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1975.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1976.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1976.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1977.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1977.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1978.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1978.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1979.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1979.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1980.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1980.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1981.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1981.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1982.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1982.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1983.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1983.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1984.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1984.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1985.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1985.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1986.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1986.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1987.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1987.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1988.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1988.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1989.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1989.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1990.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1990.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1991.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1991.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1992.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1992.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1993.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1993.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1994.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1994.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1995.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1995.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1996.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1996.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1997.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1997.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1998.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1998.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/1999.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/1999.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2000.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2000.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2001.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2001.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2002.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2002.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2003.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2003.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2004.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2004.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2005.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2005.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2006.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2006.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2007.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2007.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2008.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2008.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2009.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2009.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2010.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2010.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2011.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2011.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2012.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2012.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2013.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2013.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2014.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2014.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2015.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2015.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2016.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2016.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2017.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2017.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2018.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2018.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2019.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2019.nc>`_:see directory description
+    - `rch_historical_record_from_era5_unlimited/2020.nc <../processed_input_data/rch_historical_record_from_era5_unlimited/2020.nc>`_:see directory description
+- `rch_historical_record_from_historical_limited <../processed_input_data/rch_historical_record_from_historical_limited>`_: daily recharge from the historical met record, irrigation limited by water availability (1 file per year)
+    - `rch_historical_record_from_historical_limited/2012.nc <../processed_input_data/rch_historical_record_from_historical_limited/2012.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2013.nc <../processed_input_data/rch_historical_record_from_historical_limited/2013.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2014.nc <../processed_input_data/rch_historical_record_from_historical_limited/2014.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2015.nc <../processed_input_data/rch_historical_record_from_historical_limited/2015.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2016.nc <../processed_input_data/rch_historical_record_from_historical_limited/2016.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2017.nc <../processed_input_data/rch_historical_record_from_historical_limited/2017.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2018.nc <../processed_input_data/rch_historical_record_from_historical_limited/2018.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2019.nc <../processed_input_data/rch_historical_record_from_historical_limited/2019.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2020.nc <../processed_input_data/rch_historical_record_from_historical_limited/2020.nc>`_:see directory description
+    - `rch_historical_record_from_historical_limited/2021.nc <../processed_input_data/rch_historical_record_from_historical_limited/2021.nc>`_:see directory description
+- `rch_historical_record_from_historical_unlimited <../processed_input_data/rch_historical_record_from_historical_unlimited>`_: daily recharge from the historical met record, irrigation unlimited by water availability (1 file per year)
+    - `rch_historical_record_from_historical_unlimited/2012.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2012.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2013.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2013.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2014.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2014.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2015.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2015.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2016.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2016.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2017.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2017.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2018.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2018.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2019.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2019.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2020.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2020.nc>`_: see directory description
+    - `rch_historical_record_from_historical_unlimited/2021.nc <../processed_input_data/rch_historical_record_from_historical_unlimited/2021.nc>`_: see directory description
+- `rch_stress_period_data-optimisation_period.p <../processed_input_data/rch_stress_period_data-optimisation_period.p>`_: recharge stress period data for the optimisation period
+- `river_loc_data.csv <../processed_input_data/river_loc_data.csv>`_: str package locations
+- `river_stage_data.csv <../processed_input_data/river_stage_data.csv>`_: river stage data
+- `soil_classes.txt <../processed_input_data/soil_classes.txt>`_: soil classes
+- `start_heads.txt <../processed_input_data/start_heads.txt>`_: starting heads
+- `unit_mapper.csv <../processed_input_data/unit_mapper.csv>`_: bore log unit mapper
+- `well_stress_period_data-optimisation_period.p <../processed_input_data/well_stress_period_data-optimisation_period.p>`_: stress period data for the wel package for the optimisation period
+- `zone_active.txt <../processed_input_data/zone_active.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_clutha.txt <../processed_input_data/zone_clutha.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_east.txt <../processed_input_data/zone_east.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_flat.txt <../processed_input_data/zone_flat.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_hawea_flat.txt <../processed_input_data/zone_hawea_flat.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_hawea_town.txt <../processed_input_data/zone_hawea_town.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_main.txt <../processed_input_data/zone_main.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_near_river.txt <../processed_input_data/zone_near_river.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_sub_terrace.txt <../processed_input_data/zone_sub_terrace.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+- `zone_terrace.txt <../processed_input_data/zone_terrace.txt>`_: index array for zones see `image for zone locations <../../optimisation/pre_optimisation_plots_png/zones.png>`_
+
