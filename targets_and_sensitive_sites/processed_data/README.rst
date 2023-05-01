@@ -11,4 +11,4 @@ Dataset overview
 - `piezo_targets.csv <../../piezo_targets.csv>`_: list of the processed peizo target data
 - `river_target_locs.txt <../../river_target_locs.txt>`_: text array (model shape) of the river target locations
 - `simple_fit_lake_g40_0415.csv <../../simple_fit_lake_g40_0415.csv>`_: simple fit of the lake data should have been a .p file
-- `wetlands.txt <../../wetlands.txt>`_: text array (model shape) of the wetland locations
+- `wetlands.txt <../wetlands.txt>`_: text array (model shape) of the wetland locations
