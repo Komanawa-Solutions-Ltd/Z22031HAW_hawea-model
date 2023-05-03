@@ -372,7 +372,7 @@ def _map_from_irrig_code(irrig_codes, key):
 def _map_from_soil_class(soil_classes: np.ndarray, key: str, d_type=float):
     # data from Jens Rekker soil classes and his analysis.
     out = np.zeros(soil_classes.shape).astype(d_type)
-    assert np.issubdtype(soil_classes.dtype, np.integer)
+    assert np.issubdtype(soil_classes.dtype, np.integer), f'soil classes must be integer GOT {soil_classes.dtype}'
     data = {
         'scs_curve': {
             0: 57,

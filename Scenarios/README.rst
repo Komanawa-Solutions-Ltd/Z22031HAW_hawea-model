@@ -952,8 +952,13 @@ repository for completeness and because it required minimal additional effort. T
 Note that allocation in some of these areas have the potential to impact the groundwater
 levels in the Maungawera Valley and therefore should be considered in the context of the Maungawera Valley allocation zone.
 
-# todo do anlysis and include plot of location and plot of LSR results.  Location to LSR results.
-# add memo appenix to hawea report.
+.. figure:: ../quartz_creek_lsr/results/quartz_creek_lsr.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: Locations of the Quartz Creek allocation zone and the LSR results.*
 
 Wetland Setback Scenarios
 =========================
