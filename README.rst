@@ -27,7 +27,7 @@ Index
 
 
 Modelling methodology and results
-==============================
+==================================
 Rather than a traditional model report this repository serves as the detailed documentation of the modelling process.
 `The final report with the interpretation of the modelling process and results is available in the repo here <Final_report.pdf>`_.
 The modelling process was broadly undertaken in the following steps; each step has its own readme document detailing
@@ -64,7 +64,7 @@ In addition to the creation code above, the repo environment was exported in:
 -  `environment.txt <environment.txt>`_
 
 Github repo structure
-==================
+======================
 
 The full modelling process for the Hawea model was undertaken within
 this Github repo. The only exceptions are several large datasets
@@ -74,7 +74,7 @@ external datasets are necessary to completely recreate the Hawea model
 and the full methodology is present in this repo.
 
 Comment keyword standards:
----------------
+---------------------------
 
 We have used a number of keywords (case insensitive) to support identifying important comments within the text. These are:
 

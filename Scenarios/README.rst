@@ -90,52 +90,52 @@ Scenarios Overview
 +-----------------------------+--------------------------------------------------------------------------+
 
 Boundary Conditions Overview
-==========================
+=============================
 
 The table below has an overview of the different possible boundary conditions for the model Scenarios. Some of these
 boundary conditions were defined in the `model_build readme <../model_build/README.RST>`_ and other are defined more
 fully below. Note that we also used static recharge, hill inflows, lake levels, and river flows for the scenarios. These
 were simply the steady state component of each boundary condition (i.e. the mean value).
 
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| Boundary condition name | Package | Water component     | Overview                                                                            | Reference                                         |
-+=========================+=========+=====================+=====================================================================================+===================================================+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| Boundary condition name | Package | Water component     | Overview                                                                            | Reference                                            |
++=========================+=========+=====================+=====================================================================================+======================================================+
 | dryland_rch             | Rch     | LSR                 | scenario period ERA5 dry-land recharge                                              | `../model_build readme <../model_build/README.RST>`_ |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
 | irr_rch                 | Rch     | LSR                 | scenario period ERA5 irrigated recharge                                             | `../model_build readme <../model_build/README.RST>`_ |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
 | hist_rch                | Rch     | LSR                 | opt period met recharge                                                             | `../model_build readme <../model_build/README.RST>`_ |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
 | hist_era5_rch           | Rch     | LSR                 | opt period ERA5 recharge                                                            | `../model_build readme <../model_build/README.RST>`_ |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
 | large rivers            | Str     | Hawea and Clutha R. | ISO weekly mean river flows / stage                                                 | `../model_build readme <../model_build/README.RST>`_ |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
 | hillside flows          | Str/Wel | Hillside inflows    | long record of hillside inflows                                                     | `../model_build readme <../model_build/README.RST>`_ |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
 | race losses             | Wel     | race losses         | ISO weekly mean race losses                                                         | `../model_build readme <../model_build/README.RST>`_ |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| no_pump                 | Wel     | GW abstraction      | no abstraction                                                                      | n/a                                               |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| pump curve              | Wel     | GW abstraction      | typological annual pumping curve (0-1)                                              | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| static_pump             | Wel     | GW abstraction      | steady state optimisation pumping                                                   | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| extended_pump           | Wel     | GW abstraction      | ISO weekly mean pumping                                                             | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| extended_full_allo      | Wel     | GW abstraction      | ISO weekly mean of maximum daily allocation normalised to historical pumping record | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| extended_max_allo       | Wel     | GW abstraction      | maximum daily allocation applied to every day of the year                           | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| extended_max_allo_pc    | Wel     | GW abstraction      | maximum daily allocation applied to pump curve                                      | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| reduced abstraction     | Wel     | GW abstraction      | allocation reduction (fraction of extended_pump)                                    | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| grid_pump               | Wel     | GW abstraction      | gridded abstraction (additional allocation)                                         | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| no_pump                 | Wel     | GW abstraction      | no abstraction                                                                      | n/a                                                  |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| pump curve              | Wel     | GW abstraction      | typological annual pumping curve (0-1)                                              | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| static_pump             | Wel     | GW abstraction      | steady state optimisation pumping                                                   | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| extended_pump           | Wel     | GW abstraction      | ISO weekly mean pumping                                                             | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| extended_full_allo      | Wel     | GW abstraction      | ISO weekly mean of maximum daily allocation normalised to historical pumping record | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| extended_max_allo       | Wel     | GW abstraction      | maximum daily allocation applied to every day of the year                           | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| extended_max_allo_pc    | Wel     | GW abstraction      | maximum daily allocation applied to pump curve                                      | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| reduced abstraction     | Wel     | GW abstraction      | allocation reduction (fraction of extended_pump)                                    | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| grid_pump               | Wel     | GW abstraction      | gridded abstraction (additional allocation)                                         | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
 | lake                    | Ghb     | Lake Hawea          | long record of Lake Hawea levels                                                    | `../model_build readme <../model_build/README.RST>`_ |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
-| low lake levels         | Ghb     | Lake Hawea          | typological low Lake Hawea levels                                                   | below                                             |
-+-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+---------------------------------------------------+
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
+| low lake levels         | Ghb     | Lake Hawea          | typological low Lake Hawea levels                                                   | below                                                |
++-------------------------+---------+---------------------+-------------------------------------------------------------------------------------+------------------------------------------------------+
 
 
 Boundary conditions Methodology
@@ -202,7 +202,7 @@ should represent the impacts to the allocation zone as a whole.  We anticipate t
 (e.g. well interference and/or stream depletion assessments) would be used to limit the local impacts of any additional
 consented abstraction.
 
-.. figure:: ../Scenarios/boundary_condition_plots/pumping/grid_pumping_locs/Hawea%20Flat_grid_pumps.png
+.. figure:: ../Scenarios/boundary_condition_plots/pumping/grid_pumping_locs/Hawea_Flat_grid_pumps.png
    :height: 650 px
    :align: center
 
@@ -480,7 +480,7 @@ high and low groundwater levels (0-20th and 80-100th percentiles).
     *Figure: example results of the boundary condition sensitivity analysis at the mid_e_terrace indicator well*
 
 Naturalised vs current without abstraction
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 These scenarios compare the results of the long_current, long_nat, and no_pump scenarios. In the example figure below
 the naturalised scenario (long_nat) has a significantly lower mean water level than the no_pump scenario. This is
 likely because there is significant irrigation on the high terrace, which is not represented in the naturalised scenario.
@@ -544,7 +544,7 @@ below show all of the synthetic lake level scenarios that were tested.
 
 .. class:: centered
 
-    *Figure: Lake Hawea head boundary conditions for the low_wide scenarios
+    *Figure: Lake Hawea head boundary conditions for the low_wide scenarios*
 
 .. figure:: ../Scenarios/boundary_condition_plots/low_lake_hds_shift.png
    :height: 650 px
@@ -870,14 +870,14 @@ Full List of Zone Specific Scenarios
 +----------------------------------------+-------------------+------------------------------------+-------------------------------------+
 
 Allocation via Zonal recharge
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For each of the allocation zones we extracted the range of hillside inflows and LSR. An example figure is shown below.
 It is a violin plot, so the width of the violin represents the probability of the value occurring. The full results,
 including tabular results are available in the `allo_zone_rch <../Scenarios/allocation_results/allo_zone_rch>`_ folder.
 
 
-.. figure:: ../Scenarios/allocation_results/allo_zone_rch/plots/Mangawera%20Valley.png
+.. figure:: ../Scenarios/allocation_results/allo_zone_rch/plots/Mangawera_Valley.png
    :height: 650 px
    :align: center
 
@@ -952,7 +952,7 @@ repository for completeness and because it required minimal additional effort. T
 Note that allocation in some of these areas have the potential to impact the groundwater
 levels in the Maungawera Valley and therefore should be considered in the context of the Maungawera Valley allocation zone.
 
-.. figure:: ../quartz_creek_lsr/results/quartz_creek_lsr.png
+.. figure:: ../quartz_creek_lsr/results/rch_irr_mean_mm_y.png
    :height: 650 px
    :align: center
 

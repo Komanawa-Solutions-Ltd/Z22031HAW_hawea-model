@@ -1,4 +1,4 @@
-Hawea Transient groundwater model (Hawea Model) build optimisation and results
+Hawea Transient groundwater model (Hawea Model) optimisation and results
 ############################################################################
 
 .. figure:: ../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/obs_plots/phi_plot.png
@@ -125,7 +125,7 @@ The output structure is as follows (links to the files are provided to 3d_v1d wh
 
 -  Base_Optimisation_plots:
     -  `final_opt_model <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model>`_: plots of the final optimised model including the parameterisation, model heads, and the model
-        fits to the observations
+       fits to the observations
        -  `cross_sections <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/cross_sections>`_: plots of heads in model cross sections
        -  `spatial_hds <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_hds>`_: spatial plots of head target residuals
        -  `spatial_riv <../optimisation/optimisation_results/3d_v1d/Base_Optimisation_plots/final_opt_model/spatial_riv>`_: spatial plots of the river gain and losses
@@ -614,7 +614,7 @@ There are a number of limitations to this model and the model optimisation. The 
   caution.
 
 Recommended additional data
-==========================
+==============================
 
 Over the course of our optimisation process we identified a number of additional data sources that would be useful.
 We have listed them here, with a discussion of why the information would be useful, but we have not included any feasibility
@@ -679,7 +679,7 @@ Active Branches (optimisation versions)
 ---------------------------------------
 
 25. Main (3d_v1d)
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 -  The ‘final’ optimised model
 -  Contains 3D structure around the Lake Hawea Moraine
@@ -691,7 +691,7 @@ Active Branches (optimisation versions)
    primary purpose for sampling was water quality monitoring
 
 20. 3d_v1a
-~~~~~~
+~~~~~~~~~~~
 
 -  Identical to “Main (3d_v1d)” except that the NGMP wells were included
    in the objective function
@@ -700,7 +700,7 @@ Active Branches (optimisation versions)
 -  retained as active branch for comparison to “3d_v1b”
 
 21. 3d_v1b
-~~~~~~
+~~~~~~~~~~~~~
 
 -  Identical to “3d_v1a” except that the bund elevation was set to 333
    MSL.
@@ -709,7 +709,7 @@ Active Branches (optimisation versions)
 -  retained to demonstrate the non-uniqueness of the 3D structure
 
 14. terrace_only
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  This model structure only includes the High Terrace (south of Hawea
    Flat) to the Clutha River
@@ -915,4 +915,4 @@ References
 ===========
 
 - `Wilson, J., 2012. Hawea Basin Groundwater Review. prepared by Resource Science Unit of Otago Regional Council,
-   June 2012, Dunedin. <../scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_
+  June 2012, Dunedin. <../scott_model/Hawea_Basin_Groundwater_Review_2012_FINAL.pdf>`_

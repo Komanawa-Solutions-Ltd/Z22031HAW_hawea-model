@@ -5,7 +5,7 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
    :height: 650 px
    :align: center
 
-.. class::
+.. class:: centered
 
     *Figure: Overview of model boundary conditions*
 
@@ -123,7 +123,7 @@ it became clear that the model could not reproduce the data without additional s
 information on the optimisation process see the `optimisation readme <../optimisation/README.rst>`_.
 
 1 layer model structure
-------------------
+------------------------
 
 The 1 layer model was largely based on Wilson et al. (2012).  The model top was defined based on a 15 m DEM (from NZWaM - Hydro), and the
 model bottom was initially set from the model bottom used in Wilson et al. (2012).  The model bottom and top were then adjusted as follows:
@@ -181,7 +181,7 @@ model bottom was initially set from the model bottom used in Wilson et al. (2012
     *Figure: Example model cross-section 2*
 
 multi-layer (3d) model structure
-------------------
+----------------------------------
 
 The multi-layer model structure that was created better represents the complex geology in and around the Southern edge of
 Lake Hawea. There is likely to be other areas of the model domain that have more complex geology; however, excluding
@@ -376,7 +376,7 @@ model structural design.
         *Figure: indicative conceptual model of the Lake Hawea Moraine (along the moraine) assuming local penetration of the moraine with a paleo-channel*
 
 Implementation of the Lake Hawea Moraine Conceptual Model into the groundwater model
-^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We implemented a very simple version of the conceptual model described above, assuming a perched aquifer system. We:
 
@@ -483,7 +483,7 @@ if Irrigate (bool parameter):
 
 
 LSR model inputs -> Precip and PET
-^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We used two sets of inputs for meteorological data to estimate LSR:
 
@@ -531,7 +531,7 @@ The results of the regression are shown in the figure below.
     *Figure: Era5-land vs met data and regressions*
 
 Met station based LSR
-^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The weekly mean met station based recharge and spatial mean recharge are presented in the figures below.
 
@@ -582,7 +582,7 @@ our scenarios we analyse the results of the scenarios relative to the optimisati
 mitigate the bias.
 
 Generating a Long record of LSR
-^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The advantage of using the ERA5-land data is that it is available for the full scenario period.  We generated several
 long records of LSR for the full scenario period. The records are defined as follows and are show in the figure below.
@@ -820,7 +820,7 @@ Hillside stream inflows (hillside inflows)
     *Figure: Hillside inflow locations*
 
 Method to estimate hillside inflows
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There is has been rather minimal gauging data for the various hillside creeks that flow into the model domain, but it
 likely that these creeks contribute significantly to the groundwater budget. Recorders were put into Grandview and
@@ -885,7 +885,7 @@ Lagoon      0.024               0.014
     *Figure: The relationship used to predict daily hillside creek flows*
 
 Large Hillside Inflows (Grandview and John Creek) implementation
-^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Both John Creek and Grandview Creek can have significant flows, flow directly into Lake Hawea, and sometimes do not
 lose all of their water to groundwater. Therefore we implemented these using `the stream boundary condition package. <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/str.html>`_.
 This allowed the model to partition the groundwater losses across the length of the stream.  The stream bottom was set
@@ -904,7 +904,7 @@ described above and the stream stage was set at the smoothed model top (i.e. 2 m
 
 
 Smaller Hillside inflows (other hillside inflows) implementation
-^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 All of the smaller inflows were implemented using the `Well package <https://water.usgs.gov/nrp/gwsoftware/modflow2000/MFDOC/wel.html>`_.
 A series of 9 well boundary conditions were placed, centered on model cells that intersected the hillside inflow shapefiles.
 The flux was set to the daily hillside inflow estimate divided by 9 and spread evenly across the 9 well boundary conditions.

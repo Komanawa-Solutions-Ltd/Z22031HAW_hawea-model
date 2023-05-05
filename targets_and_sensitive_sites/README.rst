@@ -1,5 +1,5 @@
 Hawea Transient groundwater model (Hawea Model) Targets and Sensitive sites
-################################################
+##############################################################################
 
 .. figure:: ../support_figures/model_targets.png
    :height: 650 px
@@ -47,7 +47,7 @@ Groundwater head targets
 
 
 High and moderate frequency targets
-----------------------
+-------------------------------------
 High and moderate frequency targets were provided by Otago Regional Council (ORC) and included the following wells.
 Note that in the code these targets are often referred to as "regular" targets:
 
@@ -118,7 +118,7 @@ river proximal and riverbed gravels. Nevertheless, the river gain/loss targets a
 model and are therefore used in the optimisation.
 
 Expert judgement
----------------
+------------------
 In addition to the measured datasets described above, the expert judgement of the Hawea River is that it is largely a
 gaining reach from the Hawea Dam to Camp Hill.  After Camp Hill, the river loses a significant amount of water as the
 river turns west against the high terrace. The lower reaches are gaining and losing until it reaches the Clutha River.
@@ -163,7 +163,7 @@ The following figures show the results of this process. Figures of each target m
 
    Figure: Target period shifts for the targets measured in September, recall that the 2011-9 targets include the piezometric study
 
-.. figure:: ../optimisation/pre_optimisation_plots_png/indicative_target_times/target_time_correlations_Pp score.png
+.. figure:: ../optimisation/pre_optimisation_plots_png/indicative_target_times/target_time_correlations_Pp_score.png
     :height: 650 px
     :align: center
 

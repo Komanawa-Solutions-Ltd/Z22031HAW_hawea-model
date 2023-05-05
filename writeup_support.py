@@ -390,6 +390,7 @@ def additional_monitoring():
     fig.savefig(proj_root.joinpath('support_figures', 'additional_monitoring_wells.png'))
     plt.show()
 
+
 def wetland_clipouts():
     from targets_and_sensitive_sites.senstive_sites import get_wetlands
     from Scenarios.wetland_setback_butterfield.project_model_tools import smt as but_smt
@@ -401,18 +402,21 @@ def wetland_clipouts():
         outdata[v] = k
 
     fig, ax, handles, labels = smt.plot.plt_discrete_matrix(outdata,
-                                           names={k: f'Wetland {n}' for k, n in
-                                                  zip(wet.keys(),
-                                                      ['Butterfield Wetland', 'Campbells Reserve Pond Margins'])},
-                                           colors={k: c for k, c in zip(wet.keys(), smt.plot.get_colors(wet.keys()))},
-                                           title='Wetlands clip out model locations', base_map=True, no_flow_layer=0, alpha=1,
-                                           legend_loc='lower left', return_handles_labels=True
-                                           )
+                                                            names={k: f'Wetland {n}' for k, n in
+                                                                   zip(wet.keys(),
+                                                                       ['Butterfield Wetland',
+                                                                        'Campbells Reserve Pond Margins'])},
+                                                            colors={k: c for k, c in
+                                                                    zip(wet.keys(), smt.plot.get_colors(wet.keys()))},
+                                                            title='Wetlands clip out model locations', base_map=True,
+                                                            no_flow_layer=0, alpha=1,
+                                                            legend_loc='lower left', return_handles_labels=True
+                                                            )
 
     wnames = ['Butterfield Reserve clip out', "Campbell's Reserve clip out"]
     wtools = [but_smt, camp_smt]
     colors = ['r', 'b']
-    from matplotlib. patches import Rectangle
+    from matplotlib.patches import Rectangle
     for wname, wtool, c in zip(wnames, wtools, colors):
         (x_min, x_max), (y_min, y_max) = wtool.get_xlim_ylim()
         rect = Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, facecolor='none', edgecolor=c, lw=4)
@@ -424,6 +428,7 @@ def wetland_clipouts():
     fig.savefig(proj_root.joinpath('support_figures', 'model_wetlands_clipouts.png'))
     plt.show()
     pass
+
 
 def clipout_boundary_conditions():
     from Scenarios.wetland_setback_butterfield.project_model_tools import smt as but_smt
@@ -463,6 +468,45 @@ def clipout_boundary_conditions():
     fig.savefig(proj_root.joinpath('support_figures', 'clipout_model_boundary_conditions.png'))
     plt.show()
 
+
+def make_pdf_of_readmes(outdir):
+    from pathlib import Path
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
+    import subprocess
+    from PyPDF2 import PdfMerger, PdfReader
+    readme_files = [f for f in proj_root.glob('**/README.rst')]
+    github_path_base = 'https://github.com/Komanawa-Solutions-Ltd/Z22031HAW_hawea-model//tree/main'
+    for f in readme_files:
+        print(f)
+        use_bse = github_path_base + '/1' * (len(f.relative_to(proj_root).parents))
+        outname = str(f.relative_to(proj_root)).replace('/', '_').replace('.rst', '.pdf')
+        outpath = outdir.joinpath(outname)
+        subprocess.call(['rst2pdf', f"--baseurl={use_bse}",
+                         str(f), '-o', str(outpath)])
+
+        outpath = outdir.joinpath('final_github_readmes.pdf')
+        sections = [
+            'README.pdf',
+            'model_build_README.pdf',
+            'model_parameterisation_README.pdf',
+            'targets_and_sensitive_sites_README.pdf',
+            'optimisation_README.pdf',
+            'Scenarios_README.pdf',
+
+        ]
+        file = PdfMerger()
+        pos = 0
+        for i, s in enumerate(sections):
+            use_path = outdir.joinpath(s)
+            loaded = PdfReader(use_path)
+            file.merge(position=pos, fileobj=loaded,
+                       outline_item=f'{s}-{i}: {use_path.name.replace(".pdf", "")}')
+            pos += loaded.numPages
+
+        file.write(outpath)
+
+
 if __name__ == '__main__':
     # model_2d_structure_plots()
     # boundary_condition_figure()
@@ -475,7 +519,8 @@ if __name__ == '__main__':
     # plot_regular()
     # hill_params()
     # terrace_only_plot()
-    #additional_monitoring()
+    # additional_monitoring()
     # wetland_clipouts()
-    clipout_boundary_conditions()
+    # clipout_boundary_conditions()
+    make_pdf_of_readmes(proj_root.home().joinpath('Downloads', 'hawea_pdfs'))
     pass

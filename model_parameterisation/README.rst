@@ -1,6 +1,6 @@
 
 Hawea Transient groundwater model (Hawea Model) parameterization
-################################################
+###################################################################
 
 .. figure:: ../model_parameterisation/parameter_map.png
    :height: 650 px
