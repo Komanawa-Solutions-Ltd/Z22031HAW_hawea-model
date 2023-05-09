@@ -8,7 +8,7 @@ Hawea Transient groundwater model (Hawea Model)
 :Author:  Matt Dumont
 :Date:  2021-11-02
 :Version:  1.0.0
-:Status:  Draft
+:Status:  Final
 :KSL project: Z22031HAW_hawea-model
 :Purpose: This document describes the Hawea Model repo
 
