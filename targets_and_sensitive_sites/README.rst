@@ -12,7 +12,7 @@ Hawea Transient groundwater model (Hawea Model) Targets and Sensitive sites
 :Author:  Matt Dumont
 :Date:  2021-11-02
 :Version:  1.0.0
-:Status:  Draft
+:Status:  Final
 :KSL project: Z22031HAW_hawea-model
 :Purpose: This document describes the development of model targets and the identification of sensitive sites
 
