@@ -58,6 +58,10 @@ The environment was created using the following command: ::
     pip install fpdf
     pip install pdfkit
 
+
+Versioned Conda Install
+---------------------------
+
 If you wish to use the exact package versions you may install with: ::
 
     conda create -c conda-forge --name hawea python=3.10.5 numpy=1.23.4 pandas=1.4.3 pytables=3.7.0 openpyxl=3.0.9 matplotlib=3.5.2 scipy=1.9.0 netcdf4=1.6.0 psutil=5.9.1 geopandas=0.11.1 flopy=3.3.5 pysheds=0.3.3 scikit-learn=1.1.1 py7zr=0.20.0
