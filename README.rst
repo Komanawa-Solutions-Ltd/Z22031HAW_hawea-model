@@ -58,10 +58,26 @@ The environment was created using the following command: ::
     pip install fpdf
     pip install pdfkit
 
+If you wish to use the exact package versions you may install with: ::
+
+    conda create -c conda-forge --name hawea python=3.10.5 numpy=1.23.4 pandas=1.4.3 pytables=3.7.0 openpyxl=3.0.9 matplotlib=3.5.2 scipy=1.9.0 netcdf4=1.6.0 psutil=5.9.1 geopandas=0.11.1 flopy=3.3.5 pysheds=0.3.3 scikit-learn=1.1.1 py7zr=0.20.0
+    
+    conda activate hawea
+    pip install pyemu==1.2.0
+    pip install ppscore==1.3.0
+    pip install tabulate==0.9.0
+    pip install fpdf==1.7.2
+    pip install pdfkit==1.0.0
+
+This install was tested successfully on windows 10 on 13/07/2023
+
+
 In addition to the creation code above, the repo environment was exported in:
 
 -  `environment.yml <environment.yml>`_
 -  `environment.txt <environment.txt>`_
+
+However these exports are raw and therefore may be difficult to directly install and may contain proprietary packages (e.g. kslcore) We have left them as they provide an exact copy of the development environment if future users have versioning problems with the above conda installs
 
 Github repo structure
 ======================
@@ -299,6 +315,8 @@ The proprietary packages used in this model are:
     - from model_tools.regular_modeltools import ModelTools_RegularGrid
         - manage the model structure and real world coordinates to model coordinates
 - No Dummy packages provided
+    - kslcore
+        - an internal package used to ensure consistant access to our computational resources (google drive, NAS, etc.) across multiple machines 
     - from rushton_model.rushton import Rushton
         - land surface recharge model
     - from run_managers.beopest_manager import BeopestManager
