@@ -259,4 +259,4 @@ dependencies:
     - tabulate==0.9.0
     - tifffile==2022.8.12
     - tqdm==4.64.1
-prefix: /home/matt_dumont/miniconda3/envs/hawea
+
