@@ -21,7 +21,12 @@ from model_build.utils import get_colors, plot_1_to_1
 from model_build.project_model_tools import get_ibound, smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
     get_xsection_points
 from matplotlib.colors import SymLogNorm
-from model_tools.util_functions.list_file_utils import ListSolverInfo # keynote private repo
+
+try:
+    from model_tools.util_functions.list_file_utils import ListSolverInfo  # keynote private repo
+except ImportError:
+    ListSolverInfo = None
+
 from model_build.supporting_data_analysis import get_lake_heads
 import matplotlib.gridspec as gridspec
 
@@ -771,19 +776,20 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
 
 
 def plot_list_failures(list_file, plot_dir):
-    temp = ListSolverInfo(list_file)
-    all_overs = temp.get_over(50, 0)
+    if ListSolverInfo is not None:
+        temp = ListSolverInfo(list_file)
+        all_overs = temp.get_over(50, 0)
 
-    limits = [50, 100, 300, 500, 800]
-    for l in limits:
-        temp = all_overs.loc[all_overs.outer_iter >= l]
-        temp = temp.drop_duplicates(subset=['layer', 'row', 'column', 'nper', 'nstp'])
-        plt_data = temp.groupby(['layer', 'row', 'column']).count().outer_iter.reset_index()
-        fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
-        ax.scatter(*smt.convert_matrix_to_coords(plt_data.row, plt_data.column), color='r')
-        fig.tight_layout()
-        fig.savefig(plot_dir.joinpath(f'more_than_{l}_outers.png'))
-        plt.close(fig)
+        limits = [50, 100, 300, 500, 800]
+        for l in limits:
+            temp = all_overs.loc[all_overs.outer_iter >= l]
+            temp = temp.drop_duplicates(subset=['layer', 'row', 'column', 'nper', 'nstp'])
+            plt_data = temp.groupby(['layer', 'row', 'column']).count().outer_iter.reset_index()
+            fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
+            ax.scatter(*smt.convert_matrix_to_coords(plt_data.row, plt_data.column), color='r')
+            fig.tight_layout()
+            fig.savefig(plot_dir.joinpath(f'more_than_{l}_outers.png'))
+            plt.close(fig)
 
 
 def modflow_converged(list_path):
