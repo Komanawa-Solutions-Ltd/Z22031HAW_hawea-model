@@ -117,7 +117,7 @@ def _minimize_func(params):
     return out
 
 
-def _fit_func(x, step, lag, amplitude, smooth, plot=False):
+def _fit_func(x, step, lag, amplitude, smooth, plot=False, clip=True):
     x0 = deepcopy(x)
     x = deepcopy(x)
     x += step
@@ -142,7 +142,10 @@ def _fit_func(x, step, lag, amplitude, smooth, plot=False):
             ax.plot(v.index, v, color=c, label=k)
         ax.legend()
         plt.show()
-    return x4.loc[(x4.index >= '2017-11-02') & (x4.index <= '2021-12-31')]  # clip
+    if clip:
+        return x4.loc[(x4.index >= '2017-11-02') & (x4.index <= '2021-12-31')]  # clip
+    else:
+        return x4
 
 
 def float_rolling(x, days):
