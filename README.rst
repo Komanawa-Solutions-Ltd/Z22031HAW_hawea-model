@@ -204,7 +204,7 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
     - ` model_qtz_ck_lsr.py <quartz_creek_lsr/model_qtz_ck_lsr.py>`_: script for LSR modelling
 -  `Scenarios <Scenarios>`_: scenario modelling code and results
     -  `README.rst <Scenarios/README.rst>`_: document describing the scenario modelling methods and results
-    -   Scenario development and supporting scripts
+    -  Scenario development and supporting scripts
         -  `scen_period.py <Scenarios/scen_period.py>`_: script to handle the scenario period
         -  `boundary_condition_plots <Scenarios/boundary_condition_plots>`_: plots of the scenarios boundary conditions
         -  `base_data <Scenarios/base_data>`_: base input data for the scenarios
