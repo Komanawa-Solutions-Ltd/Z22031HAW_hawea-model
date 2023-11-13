@@ -68,6 +68,10 @@ def plot_histoical_with_modified_lake():
 
 # todo plot high frequnecy for opt period to ensure this doesnt change too much.
 
+# todo merge selected info back into main
+
+# todo shift lake then compare.
+
 if __name__ == '__main__':
     plot_historical_well_heads_vmodelled()
     plot_histoical_with_modified_lake()
