@@ -63,7 +63,7 @@ base_outdir.mkdir(exist_ok=True, parents=True)
 
 def long_naturalised():
     print_myself()
-    model_name = 'long_nat'
+    model_name = 'long_nat_v10a'
     model_ws = base_run_dir.joinpath(model_name)
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
 
@@ -86,7 +86,7 @@ def long_naturalised():
 
 
 def get_hist_nat_data(site, recalc=False, freq='D'):
-    savepath = processed_historical_data_dir.joinpath('nat_historical_data.hdf')
+    savepath = processed_historical_data_dir.joinpath('nat_historical_data_v10a.hdf')
     t = None
     assert site in historical_well_names
     key = f'all_modelled_period_hds'
@@ -120,7 +120,7 @@ def get_hist_nat_data(site, recalc=False, freq='D'):
 
 
 if __name__ == '__main__':
-    run_modflow = False
+    run_modflow = True
     if run_modflow:
         long_naturalised()
     t = get_hist_nat_data(historical_well_names[0])
