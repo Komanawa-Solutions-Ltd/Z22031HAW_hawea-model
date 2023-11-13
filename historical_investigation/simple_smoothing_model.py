@@ -15,10 +15,6 @@ def fit_simple_smoothing_model(lake):
     out = out.x  # todo??
     return simple_smoothing_model(lake, *out, clip=False)
 
-# todo run the simple smoothin model on the historical period
-# todo compare the results to the historical data by time
-# todo compare the results to the historical data by lake head
-
 def fit_lake():
     lake = get_lake_heads('1975-12-30', '2020-01-01')
     temp = fit_simple_smoothing_model(lake)
