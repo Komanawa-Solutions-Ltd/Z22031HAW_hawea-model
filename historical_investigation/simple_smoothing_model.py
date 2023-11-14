@@ -7,7 +7,7 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from project_base import processed_historical_data_dir
+from project_base import processed_historical_data_dir, historical_figure_dir
 from model_build.supporting_data_analysis import get_lake_heads
 from optimisation.manual_optimisations.explore_lake_g40_0415 import _fit_func as simple_smoothing_model
 from optimisation.manual_optimisations.explore_lake_g40_0415 import curve_min as get_simple_smoothing_params
@@ -125,7 +125,7 @@ def fit_lake_g40_0415(outdir=None):
     ax3 = fig.add_subplot(gs[:, 1])
     ax4 = fig.add_subplot(gs[2, 0], sharex=ax)
     add_locator_to_ax(ax3, ['bore_315'], False)
-    params = [f'{e}: {round(out[i],2)}\n' for i, e in enumerate(['step', 'lag', 'amplitude', 'smooth'])]
+    params = [f'{e}: {round(out[i], 2)}\n' for i, e in enumerate(['step', 'lag', 'amplitude', 'smooth'])]
     ax3.set_title(''.join(params))
 
     ax.plot(lake.index, lake.values, label='Lake Head')
@@ -157,13 +157,11 @@ def fit_lake_g40_0415(outdir=None):
     fig.tight_layout()
     if outdir is not None:
         fig.savefig(outdir.joinpath('ssm_bore_315_g40_0415.png'))
-    plt.show()  # todo save # todo add peak lines
+    plt.show()
     pass
 
 
-# todo bespoke ssm from non low lake heads and named parameters
-
-def fit_plot_bespoke_ssm(bore, outdir=None, recalc=False):  # todo add peak lines and named parameters
+def fit_plot_bespoke_ssm(bore, outdir=None, recalc=False):
     lake = get_historical_lake_heads()
     historical_well = get_historical_well_heads(bore)
     well_max, well_min, lake_max, lake_min, min_diffs, max_diffs = find_peak_lows(bore, rolling=100, order=100)
@@ -177,7 +175,7 @@ def fit_plot_bespoke_ssm(bore, outdir=None, recalc=False):  # todo add peak line
     ax3 = fig.add_subplot(gs[:, 1])
     ax4 = fig.add_subplot(gs[2, 0], sharex=ax)
     add_locator_to_ax(ax3, [bore], False)
-    params = [f'{e}: {round(params[0][i],2)}\n' for i, e in enumerate(['step', 'lag', 'amplitude', 'smooth'])]
+    params = [f'{e}: {round(params[0][i], 2)}\n' for i, e in enumerate(['step', 'lag', 'amplitude', 'smooth'])]
     ax3.set_title(''.join(params))
 
     for axi in [ax, ax2, ax3]:
@@ -212,14 +210,15 @@ def fit_plot_bespoke_ssm(bore, outdir=None, recalc=False):  # todo add peak line
     fig.tight_layout()
     if outdir is not None:
         fig.savefig(outdir.joinpath(f'bespoke_ssm_{bore}.png'))
-    plt.show() # todo save fig
+    plt.show()
     pass
 
 
 if __name__ == '__main__':
-    # todo save below when done
-    fit_lake_g40_0415()
-    recalc=True
-    fit_plot_bespoke_ssm('bore_315', recalc=recalc)
-    fit_plot_bespoke_ssm('bore_515', recalc=recalc)
-    fit_plot_bespoke_ssm('bore_butterfields', recalc=recalc)
+    recalc = False
+    use_outdir = historical_figure_dir.joinpath('simple_smoothing_model')
+    use_outdir.mkdir(exist_ok=True)
+    fit_lake_g40_0415(outdir=use_outdir)
+    fit_plot_bespoke_ssm('bore_315', recalc=recalc, outdir=use_outdir)
+    fit_plot_bespoke_ssm('bore_515', recalc=recalc, outdir=use_outdir)
+    fit_plot_bespoke_ssm('bore_butterfields', recalc=recalc, outdir=use_outdir)
