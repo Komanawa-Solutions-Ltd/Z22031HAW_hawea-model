@@ -64,21 +64,21 @@ bounds = {
         'step': slice(-13, -7, 0.2),  # step
         'lag': slice(15, 25, 1),  # lag
         'amplitude': slice(0.6, 1., 0.05),  # amplitude
-        'smooth': slice(0, 150, 5),  # smooth
+        'smooth': slice(0, 50, 5),  # smooth
         'func': _minimize_func_bore_315,
     },
     'bore_515': {
         'step': slice(-25, -15, 0.2),  # step
         'lag': slice(30, 50, 1),  # lag
         'amplitude': slice(0.4, 1., 0.05),  # amplitude
-        'smooth': slice(0, 150, 5),  # smooth
+        'smooth': slice(0, 50, 5),  # smooth
         'func': _minimize_func_bore_515,
     },
     'bore_butterfields': {
         'step': slice(-30, -15, 0.2),  # step
         'lag': slice(50, 80, 1),  # lag
         'amplitude': slice(0.4, 1., 0.05),  # amplitude
-        'smooth': slice(0, 150, 5),  # smooth
+        'smooth': slice(0, 50, 5),  # smooth
         'func': _minimize_func_bore_but,
     },
 
@@ -113,6 +113,8 @@ def brute_min(well, recalc=False):
 def fit_lake_g40_0415(outdir=None):
     lake = get_lake_heads('1975-12-30', '2020-01-01')
     temp = fit_simple_smoothing_model(lake)
+    out = get_simple_smoothing_params()
+    out = out.x
     historical_well = get_historical_well_heads('bore_315')
     well_max, well_min, lake_max, lake_min, min_diffs, max_diffs = find_peak_lows('bore_315', rolling=100, order=100)
 
@@ -123,6 +125,8 @@ def fit_lake_g40_0415(outdir=None):
     ax3 = fig.add_subplot(gs[:, 1])
     ax4 = fig.add_subplot(gs[2, 0], sharex=ax)
     add_locator_to_ax(ax3, ['bore_315'], False)
+    params = [f'{e}: {round(out[i],2)}\n' for i, e in enumerate(['step', 'lag', 'amplitude', 'smooth'])]
+    ax3.set_title(''.join(params))
 
     ax.plot(lake.index, lake.values, label='Lake Head')
     ax.plot(lake.index, temp.values, label='Simple Smoothing Model')
@@ -144,7 +148,7 @@ def fit_lake_g40_0415(outdir=None):
 
     ax3.set_xlabel('Date')
 
-    for axi in [ax, ax2, ax3]:
+    for axi in [ax, ax2, ax4]:
         y1, y2 = axi.get_ylim()
         axi.vlines(historical_well.index[well_max], y1, y2, color='k', ls='--', alpha=0.3)
         axi.vlines(historical_well.index[well_min], y1, y2, color='k', ls='--', alpha=0.3)
@@ -173,6 +177,9 @@ def fit_plot_bespoke_ssm(bore, outdir=None, recalc=False):  # todo add peak line
     ax3 = fig.add_subplot(gs[:, 1])
     ax4 = fig.add_subplot(gs[2, 0], sharex=ax)
     add_locator_to_ax(ax3, [bore], False)
+    params = [f'{e}: {round(params[0][i],2)}\n' for i, e in enumerate(['step', 'lag', 'amplitude', 'smooth'])]
+    ax3.set_title(''.join(params))
+
     for axi in [ax, ax2, ax3]:
         axi.axvline(fit_lim, color='k', ls=':', alpha=0.5, label='model fit limit')
 
@@ -195,7 +202,7 @@ def fit_plot_bespoke_ssm(bore, outdir=None, recalc=False):  # todo add peak line
     ax4.fill_between(joint.index, joint.lake - joint.obs, 0, color='r', alpha=0.5)
 
     ax3.set_xlabel('Date')
-    for axi in [ax, ax2, ax3]:
+    for axi in [ax, ax2, ax4]:
         y1, y2 = axi.get_ylim()
         axi.vlines(historical_well.index[well_max], y1, y2, color='k', ls='--', alpha=0.3)
         axi.vlines(historical_well.index[well_min], y1, y2, color='k', ls='--', alpha=0.3)
@@ -205,12 +212,14 @@ def fit_plot_bespoke_ssm(bore, outdir=None, recalc=False):  # todo add peak line
     fig.tight_layout()
     if outdir is not None:
         fig.savefig(outdir.joinpath(f'bespoke_ssm_{bore}.png'))
-    # plt.show() # todo save fig
+    plt.show() # todo save fig
     pass
 
 
 if __name__ == '__main__':
-    # todo save fit_lake()
-    fit_plot_bespoke_ssm('bore_315', recalc=False)
-    fit_plot_bespoke_ssm('bore_515', recalc=False)
-    fit_plot_bespoke_ssm('bore_butterfields', recalc=False)
+    # todo save below when done
+    fit_lake_g40_0415()
+    recalc=True
+    fit_plot_bespoke_ssm('bore_315', recalc=recalc)
+    fit_plot_bespoke_ssm('bore_515', recalc=recalc)
+    fit_plot_bespoke_ssm('bore_butterfields', recalc=recalc)
