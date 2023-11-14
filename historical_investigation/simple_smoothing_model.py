@@ -11,34 +11,76 @@ from project_base import processed_historical_data_dir
 from model_build.supporting_data_analysis import get_lake_heads
 from optimisation.manual_optimisations.explore_lake_g40_0415 import _fit_func as simple_smoothing_model
 from optimisation.manual_optimisations.explore_lake_g40_0415 import curve_min as get_simple_smoothing_params
-from historical_investigation.get_historical_data import get_historical_well_heads
+from historical_investigation.get_historical_data import get_historical_well_heads, get_historical_lake_heads
 from historical_investigation.plot_historical_data import add_locator_to_ax
 from scipy.optimize import brute
+from historical_investigation.shift_diff import find_peak_lows
+
+fit_lim = pd.to_datetime('1979-03-01')
+
 
 def fit_simple_smoothing_model(lake):
     out = get_simple_smoothing_params()
     out = out.x
     return simple_smoothing_model(lake, *out, clip=False)
 
-def _minimize_func_bore_13(params):
+
+def _get_lake_bore(bore):
+    bore = get_historical_well_heads(bore)
+    bore.name = 'bore'
+    lake = get_historical_lake_heads()
+    lake.name = 'lake'
+    joint = pd.merge(bore, lake, left_index=True, right_index=True)
+    joint = joint.loc[joint.index <= fit_lim]
+    return joint.bore, joint.lake
+
+
+def _minimize_func_bore_315(params):
     step, lag, amplitude, smooth = params
-        high_freq, lake = None, None # todo
-    fit = simple_smoothing_model(lake, step, lag, amplitude, smooth)
-    out = ((high_freq - fit) ** 2).sum()
+    high_freq, lake = _get_lake_bore('bore_315')
+    fit = simple_smoothing_model(lake, step, lag, amplitude, smooth, clip=False, center=True)
+    out = np.nansum((high_freq - fit) ** 2)
     return out
 
+
+def _minimize_func_bore_515(params):
+    step, lag, amplitude, smooth = params
+    high_freq, lake = _get_lake_bore('bore_515')
+    fit = simple_smoothing_model(lake, step, lag, amplitude, smooth, clip=False, center=True)
+    out = np.nansum((high_freq - fit) ** 2)
+    return out
+
+
+def _minimize_func_bore_but(params):
+    step, lag, amplitude, smooth = params
+    high_freq, lake = _get_lake_bore('bore_butterfields')
+    fit = simple_smoothing_model(lake, step, lag, amplitude, smooth, clip=False, center=True)
+    out = np.nansum((high_freq - fit) ** 2)
+    return out
+
+
 bounds = {
-    'bore_13': {
-        'step': None,  # todo
-        'lag': None,  # todo
-        'amplitude': None,  # todo
-        'smooth': None,  # todo
-        'func': _minimize_func_bore_13,
+    'bore_315': {
+        'step': slice(-13, -7, 0.2),  # step
+        'lag': slice(15, 25, 1),  # lag
+        'amplitude': slice(0.6, 1., 0.05),  # amplitude
+        'smooth': slice(0, 150, 5),  # smooth
+        'func': _minimize_func_bore_315,
     },
-    'bore_315': 'navy',
-    'bore_513': 'darkred',
-    'bore_515': 'darkgreen',
-    'bore_butterfields': 'goldenrod',
+    'bore_515': {
+        'step': slice(-25, -15, 0.2),  # step
+        'lag': slice(30, 50, 1),  # lag
+        'amplitude': slice(0.4, 1., 0.05),  # amplitude
+        'smooth': slice(0, 150, 5),  # smooth
+        'func': _minimize_func_bore_515,
+    },
+    'bore_butterfields': {
+        'step': slice(-30, -15, 0.2),  # step
+        'lag': slice(50, 80, 1),  # lag
+        'amplitude': slice(0.4, 1., 0.05),  # amplitude
+        'smooth': slice(0, 150, 5),  # smooth
+        'func': _minimize_func_bore_but,
+    },
 
 }
 
@@ -56,11 +98,11 @@ def brute_min(well, recalc=False):
             out = pickle.load(f)
         return out
     else:
-        bounds = np.array([bounds[well][e] for e in ['step', 'lag', 'amplitude', 'smooth']])
+        use_bounds = np.array([bounds[well][e] for e in ['step', 'lag', 'amplitude', 'smooth']])
 
-        print(np.prod([np.mgrid[e].shape for e in bounds]))
+        print(np.prod([np.mgrid[e].shape for e in use_bounds]))
 
-        out = brute(bounds[well]['func'], full_output=True, ranges=bounds, workers=-1, disp=True)
+        out = brute(bounds[well]['func'], full_output=True, ranges=use_bounds, workers=-1, disp=True)
 
         with save_path.open('wb') as f:
             pickle.dump(out, f)
@@ -68,10 +110,11 @@ def brute_min(well, recalc=False):
         return out
 
 
-def fit_lake():
+def fit_lake_g40_0415(outdir=None):
     lake = get_lake_heads('1975-12-30', '2020-01-01')
     temp = fit_simple_smoothing_model(lake)
     historical_well = get_historical_well_heads('bore_315')
+    well_max, well_min, lake_max, lake_min, min_diffs, max_diffs = find_peak_lows('bore_315', rolling=100, order=100)
 
     fig = plt.figure(figsize=(14, 9))
     gs = plt.GridSpec(3, 2, height_ratios=(1, 0.5, 0.5), width_ratios=(1, 0.3))
@@ -89,7 +132,7 @@ def fit_lake():
     ax.set_ylabel('Head (m msl)')
     temp.name = 'ssm'
     historical_well.name = 'obs'
-    # todo fill between difference between model and observed
+    # fill between difference between model and observed
     joint = pd.merge(temp, historical_well, left_index=True, right_index=True)
     lake.name = 'lake'
     joint = pd.merge(joint, lake, left_index=True, right_index=True)
@@ -101,13 +144,73 @@ def fit_lake():
 
     ax3.set_xlabel('Date')
 
+    for axi in [ax, ax2, ax3]:
+        y1, y2 = axi.get_ylim()
+        axi.vlines(historical_well.index[well_max], y1, y2, color='k', ls='--', alpha=0.3)
+        axi.vlines(historical_well.index[well_min], y1, y2, color='k', ls='--', alpha=0.3)
+
     fig.suptitle('Lake Head and Simple Smoothing Model (fit from G40/0415) at Bore 315')
     fig.tight_layout()
-    plt.show()
+    if outdir is not None:
+        fig.savefig(outdir.joinpath('ssm_bore_315_g40_0415.png'))
+    plt.show()  # todo save # todo add peak lines
     pass
 
 
-# todo bespoke ssm from non low lake heads
+# todo bespoke ssm from non low lake heads and named parameters
+
+def fit_plot_bespoke_ssm(bore, outdir=None, recalc=False):  # todo add peak lines and named parameters
+    lake = get_historical_lake_heads()
+    historical_well = get_historical_well_heads(bore)
+    well_max, well_min, lake_max, lake_min, min_diffs, max_diffs = find_peak_lows(bore, rolling=100, order=100)
+    params = brute_min(bore, recalc=recalc)
+    temp = simple_smoothing_model(lake, *params[0], clip=False, center=True)
+
+    fig = plt.figure(figsize=(14, 9))
+    gs = plt.GridSpec(3, 2, height_ratios=(1, 0.5, 0.5), width_ratios=(1, 0.3))
+    ax = fig.add_subplot(gs[0, 0])
+    ax2 = fig.add_subplot(gs[1, 0], sharex=ax)
+    ax3 = fig.add_subplot(gs[:, 1])
+    ax4 = fig.add_subplot(gs[2, 0], sharex=ax)
+    add_locator_to_ax(ax3, [bore], False)
+    for axi in [ax, ax2, ax3]:
+        axi.axvline(fit_lim, color='k', ls=':', alpha=0.5, label='model fit limit')
+
+    ax.plot(lake.index, lake.values, label='Lake Head')
+    ax.plot(lake.index, temp.values, label='Simple Smoothing Model')
+    ax.plot(historical_well.index, historical_well.values, label='Historical Well Head')
+    ax.legend()
+    ax.set_xlim(historical_well.index.min() - datetime.timedelta(days=50), historical_well.index.max())
+    ax.set_ylabel('Head (m msl)')
+    temp.name = 'ssm'
+    historical_well.name = 'obs'
+    # fill between difference between model and observed
+    joint = pd.merge(temp, historical_well, left_index=True, right_index=True)
+    lake.name = 'lake'
+    joint = pd.merge(joint, lake, left_index=True, right_index=True)
+    ax2.plot(joint.index, joint.obs - joint.ssm, label='Observed - Simple Smoothing Model', color='k', ls='--')
+    ax2.fill_between(joint.index, joint.obs - joint.ssm, 0, color='r', alpha=0.5)
+
+    ax4.plot(joint.index, joint.lake - joint.obs, label='Observed - Simple Smoothing Model', color='k', ls='--')
+    ax4.fill_between(joint.index, joint.lake - joint.obs, 0, color='r', alpha=0.5)
+
+    ax3.set_xlabel('Date')
+    for axi in [ax, ax2, ax3]:
+        y1, y2 = axi.get_ylim()
+        axi.vlines(historical_well.index[well_max], y1, y2, color='k', ls='--', alpha=0.3)
+        axi.vlines(historical_well.index[well_min], y1, y2, color='k', ls='--', alpha=0.3)
+
+    fig.suptitle(f'Lake Head and Simple Smoothing Model for {bore.replace("_", " ").capitalize()}\n'
+                 f'fit from record after {fit_lim.date()}')
+    fig.tight_layout()
+    if outdir is not None:
+        fig.savefig(outdir.joinpath(f'bespoke_ssm_{bore}.png'))
+    # plt.show() # todo save fig
+    pass
+
 
 if __name__ == '__main__':
-    fit_lake()
+    # todo save fit_lake()
+    fit_plot_bespoke_ssm('bore_315', recalc=False)
+    fit_plot_bespoke_ssm('bore_515', recalc=False)
+    fit_plot_bespoke_ssm('bore_butterfields', recalc=False)
