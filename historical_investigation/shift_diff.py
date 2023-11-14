@@ -142,11 +142,13 @@ def plot_lake_well_delta(well_name, rolling=20):
     fig.tight_layout()
     return fig
 
-
-
+def plot_all_well_delta():
+    outdir = historical_figure_dir.joinpath('well_lake_delta')
+    outdir.mkdir(exist_ok=True)
+    for wellnm in historical_well_names:
+        fig = plot_lake_well_delta(wellnm)
+        fig.savefig(outdir.joinpath(f'{wellnm}_delta.png'))
 
 if __name__ == '__main__':
-    plot_all_extrema()
-    for wellnm in historical_well_names:
-        plot_lake_well_delta(wellnm)
-    plt.show()
+    #plot_all_extrema()
+    plot_all_well_delta()
