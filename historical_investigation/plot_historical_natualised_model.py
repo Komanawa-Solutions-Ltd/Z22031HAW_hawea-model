@@ -111,9 +111,6 @@ def plot_regular_v10a():
         plt.close(fig)
 
 
-# todo merge selected info back into main
-
-
 if __name__ == '__main__':
     #plot_historical_well_heads_vmodelled()
     #plot_histoical_with_modified_lake()
