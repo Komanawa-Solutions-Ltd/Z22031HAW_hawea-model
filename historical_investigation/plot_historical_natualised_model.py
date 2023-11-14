@@ -11,7 +11,7 @@ from historical_investigation.get_historical_data import get_historical_well_hea
 from historical_investigation.plot_historical_data import add_locator_to_ax, historical_well_colors
 from historical_investigation.current_model_prediction import get_hist_nat_data
 
-outdir = historical_figure_dir.joinpath('3d_v10a_historical')
+outdir = historical_figure_dir.joinpath('3d_v1d_historical')
 outdir.mkdir(exist_ok=True)
 
 

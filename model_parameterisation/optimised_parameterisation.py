@@ -22,8 +22,7 @@ def get_3d_v1b_params(return_individual=True):
 
 
 def get_3d_v1d_params(return_individual=True):
-    if not bund_top == 335:
-        warnings.warn(f'top of bund is expected to be 335msl but got {bund_top} wrong branch?')
+    assert bund_top == 335, (f'top of bund is expected to be 335msl but got {bund_top} wrong branch?')
     param_path = proj_root.joinpath('model_parameterisation/optimised_parameter_sets/3d_v1d_opt.par')
     return read_param_data(parameter_file=param_path, format_type='pest', return_individual=return_individual)
 
