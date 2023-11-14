@@ -12,7 +12,7 @@ from historical_investigation.get_historical_data import get_historical_well_hea
 
 def fit_simple_smoothing_model(lake):
     out = get_simple_smoothing_params()
-    out = out.x  # todo??
+    out = out.x
     return simple_smoothing_model(lake, *out, clip=False)
 
 def fit_lake():

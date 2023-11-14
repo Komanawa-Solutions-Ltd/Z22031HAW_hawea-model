@@ -3,9 +3,6 @@ created matt_dumont
 on: 2/11/23
 """
 
-# todo run the current model and extract data for the historical period
-# todo plot the results vs the historical data (by time)
-# todo plot the results vs the historical data (by lake hds)
 
 import datetime
 import pandas as pd
@@ -81,7 +78,7 @@ def long_naturalised():
                  str_spd=str_vals,
                  well_spd=wel_data,
                  outdir=base_outdir.joinpath(model_name),
-                 build_run_model=run_modflow, process_results=False)
+                 build_run_model=run_modflow, process_results=True)
 
 
 
@@ -120,8 +117,9 @@ def get_hist_nat_data(site, recalc=False, freq='D'):
 
 
 if __name__ == '__main__':
-    run_modflow = True
+    run_modflow = False
     if run_modflow:
-        long_naturalised()
+        pass
+    long_naturalised()
     t = get_hist_nat_data(historical_well_names[0])
     pass

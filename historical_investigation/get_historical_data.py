@@ -144,7 +144,7 @@ def _read_sampled_data(path):
     return series['head']
 
 
-def get_model_period_hds(site, freq='D', recalc=False):  # todo
+def get_model_period_hds(site, freq='D', recalc=False):
     """
     get the model period heads for the given site
     :param site:
