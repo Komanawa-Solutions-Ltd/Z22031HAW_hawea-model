@@ -105,7 +105,9 @@ def plot_model_period_hds():
                 ax.plot(hds.index, hds, color=c, label='Meas. ' + site)
         ax.legend()
         fig.tight_layout()
-        fig.savefig(historical_figure_dir.joinpath(f'{nm}_hds.png'))
+        useoutdir = historical_figure_dir.joinpath('model_period_hds')
+        useoutdir.mkdir(exist_ok=True)
+        fig.savefig(useoutdir.joinpath(f'{nm}_hds.png'))
         plt.close(fig)
 
 
@@ -199,8 +201,8 @@ def plot_lake_v_hds_modelled():
 
 if __name__ == '__main__':
     re_run = False
-    plot_lake_v_hds_modelled()
     if re_run:
+        plot_lake_v_hds_modelled()
         plot_lake_v_hds_nearest_modern()
-        plot_model_period_hds()
         plot_head_locs()
+        plot_model_period_hds()
