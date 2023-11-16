@@ -1,7 +1,7 @@
 Analysis of Historical Lake Hawea Low Lake levels corresponding groundwater levels)
 ###########################################################################################
 
-.. figure:: #todo
+.. figure:: ../historical_investigation/figures/simple_smoothing_model/bespoke_ssm_bore_315.png
    :height: 650 px
    :align: center
 
@@ -55,6 +55,11 @@ Shifted level comparison
 Simple smoothing model
 ---------------------------
 
+Simple smoothing model from bore G40/0415
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Bespoke simple smoothing models
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Model performance during Historic Low Lake levels
 ==================================================
@@ -67,8 +72,8 @@ Model performance during Historic Low Lake levels
 --------------
 
 
-Lake Drop scenarios
-----------------------
+Lake Drop scenarios (3d_v1d model)
+-----------------------------------
 
 Dataset and Resources
 =======================
