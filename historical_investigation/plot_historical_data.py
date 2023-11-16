@@ -14,7 +14,7 @@ from optimisation.optimisation_period import tdis as tdis_opt
 from targets_and_sensitive_sites.get_raw_target_data import get_high_freq_head_targets
 from model_build.utils import get_colors
 from historical_investigation.get_historical_data import get_historical_well_heads, get_historical_data_locs, \
-    get_historical_lake_heads, historical_well_names, historical_well_colors, get_model_period_hds
+    get_historical_lake_heads, historical_well_names, historical_well_colors, get_model_period_hds, historical_time_start, historical_time_end
 from model_build.project_model_tools import smt
 from model_build.supporting_data_analysis import get_lake_heads
 
@@ -74,6 +74,7 @@ def creater_well_hds_figure(sites, date_limits):
     ax_lake.plot(lake.index, lake, label='lake heads')
     ax_lake.set_ylabel('lake heads (m)')
     ax_lake.set_xlim(*date_limits)
+    ax.set_xlim(*date_limits)
     ax.set_xticks([])
     ax.set_xticklabels([])
     ax.set_xlabel('')
@@ -110,6 +111,19 @@ def plot_model_period_hds():
         fig.savefig(useoutdir.joinpath(f'{nm}_hds.png'))
         plt.close(fig)
 
+
+def plot_raw_historic():
+    for site in historical_well_names:
+        fig, ax = creater_well_hds_figure([site], [historical_time_start, historical_time_end])
+        c = historical_well_colors[site]
+        if site in historical_well_names:
+            hds = get_historical_well_heads(site, freq='W')
+            ax.plot(hds.index, hds, color=c, label='Measured ' + site)
+        ax.legend()
+        fig.tight_layout()
+        useoutdir = historical_figure_dir.joinpath('historic_period_hds')
+        useoutdir.mkdir(exist_ok=True)
+        fig.savefig(useoutdir.joinpath(f'{site}_hds.png'))
 
 def plot_lake_v_hds_nearest_modern():
     outdir = historical_figure_dir.joinpath('lake_v_hds_nearest_modern')
@@ -198,10 +212,21 @@ def plot_lake_v_hds_modelled():
         plt.close(fig)
 
 
+def plot_lake_hds():
+    t = get_historical_lake_heads()
+    fig, ax = plt.subplots()
+    ax.plot(t.index, t)
+    ax.set_title('Lake Hawea level')
+    ax.set_ylabel('Lake level (m)')
+    ax.set_xlabel('Date')
+    fig.tight_layout()
+    fig.savefig(historical_figure_dir.joinpath('lake_heads.png'))
 
 if __name__ == '__main__':
     re_run = False
+    plot_raw_historic()
     if re_run:
+        plot_lake_hds()
         plot_lake_v_hds_modelled()
         plot_lake_v_hds_nearest_modern()
         plot_head_locs()

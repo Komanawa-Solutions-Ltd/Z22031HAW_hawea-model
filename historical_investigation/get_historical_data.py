@@ -11,7 +11,7 @@ from scipy.interpolate import interp1d
 import numpy as np
 import geopandas as gpd
 from model_build.supporting_data_analysis import get_lake_heads
-from project_base import historical_data_dir, processed_historical_data_dir, proj_root
+from project_base import historical_data_dir, processed_historical_data_dir, proj_root, historical_figure_dir
 from optimisation.final_opt_models.compress_uncompress_model import uncompress_model
 from model_build.utils import select_resample
 
@@ -97,14 +97,28 @@ def _get_lake_hds_from_hist_document(recalc=False):
 
 def check_historic_document_lake_heads():
     hist = _get_lake_hds_from_hist_document()
+    hist = select_resample(hist, hist.index.min(), hist.index.max(), frequency='D', interpolate=True)
+    hist.name = 'digitised'
     true = get_historical_lake_heads()
-    fig, ax = plt.subplots(figsize=(10, 10))
-    ax.plot(hist.index, hist.values, label='hist', marker='o', alpha=0.5)
-    ax.plot(true.index, true.values, label='true', marker='o', alpha=0.5)
+    true.name = 'true'
+    joint = pd.merge(hist, true, left_index=True, right_index=True)
+
+
+    fig, (ax, ax2) = plt.subplots(nrows=2, sharex=True, figsize=(10, 10))
+    ax.plot(hist.index, hist.values, label='digitised')
+    ax.plot(true.index, true.values, label='true', ls='--')
     ax.legend()
-    ax.set_title('lake heads from historical document vs true')
-    ax.set_ylabel('head (m)')
-    ax.set_xlabel('time')
+    ax.set_title('Lake heads from historical document vs true')
+    ax.set_ylabel('lake level (m)')
+
+    ax2.plot(joint.index, joint.digitised - joint.true, label='digitised - true')
+    ax2.legend()
+    ax2.set_title('difference')
+    ax2.set_ylabel('digitised - true')
+    ax2.axhline(0, ls=':', color='k')
+    fig.supxlabel('date')
+    fig.tight_layout()
+    fig.savefig(historical_figure_dir.joinpath('lake_heads_from_hist_document.png'))
     plt.show()
 
 
@@ -222,8 +236,23 @@ def get_historical_data_locs(recalc=False):
     raw_data.to_hdf(historical_data_savepath, key='locs', complib='zlib', complevel=9)
     return raw_data
 
+def export_historical_hdf_to_csv():
+    """
+    export the historical data to csv for use in the report
+    :return:
+    """
+    outdir = processed_historical_data_dir.joinpath('csv_archive')
+    outdir.mkdir(exist_ok=True)
+    with pd.HDFStore(historical_data_savepath, 'r') as store:
+        for k in store.keys():
+            df = store[k]
+            df.to_csv(outdir.joinpath(f'{k.replace("/","")}.csv'))
+
 
 if __name__ == '__main__':
+    export_historical_hdf_to_csv()
+    check_historic_document_lake_heads()
+
     get_historical_data_locs()
     get_model_period_hds(historical_well_names[0])
     for site in historical_well_names:
