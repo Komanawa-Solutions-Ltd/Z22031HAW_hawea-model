@@ -253,11 +253,11 @@ We then used these parameters as a base value for the following equation to pert
 
 Where the lake levels were greater than the annual mean lake level:
 
-$lh = a_{high}  (|sin((t - d) / 52 * 2\pi)|)^{k_{high}} +  b_{high}$
+$$lh = a_{high}  (| sin((t - d) / 52 * 2\pi) |)^{k_{high}} +  b_{high}$$
 
 Where the lake levels were less than the annual mean lake level:
 
-$ll = -a_{low}  (|sin((t - d) / 52 * 2\pi)|)^{k_{low}} +  b_{high}$
+$$ll = -a_{low}  (|sin((t - d) / 52 * 2\pi)|)^{k_{low}} +  b_{high}$$
 
 Where:
 
