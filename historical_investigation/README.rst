@@ -80,7 +80,7 @@ The historical appendix contains:
 * a contoured map which identifies the lake level where the groundwater level is unlikely to be affected by the lake level (figure reproduced below)
 * discussion and conclusions
 
-..figure:: ../historical_investigation/figures/historical_head_locs.png
+.. figure:: ../historical_investigation/figures/historical_head_locs.png
    :height: 650 px
    :align: center
 
@@ -172,16 +172,67 @@ The digitised groundwater levels were plotted against the available lake level r
 
 Smoothed Extrema matching
 ---------------------------
-#todo well lake extrema
 
+To understand the shift between the observed groundwater level local minima and maxima and the observed lake level local minima and maxima we conducted an extrema matching process.  Briefly we first smoothed the observed groundwater and lake level data using a centered 100 day moving window.  This process removes much of the noise while leaving the system relative minima/maxima intact. We then calculated the period between each lake level local minima and maxima and the next nearest groundwater level local minima and maxima, respectively.  The results are shown below.  In most signals there are minima and maxima that do not correlate well, likely due to other influances in the groundwater system.  Never the less we identified the likely lag between changes in lake level and each historic bore as approximately:
+
+* bore_13: 26 days
+* bore_315: 21 days
+* bore_513: 45 days
+* bore_515: 45 days
+* bore_butterfields: 71 days
+
+.. figure:: ../historical_investigation/figures/well_lake_extrema/bore_13_extrema.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: Observed groundwater level response to historic lake level variations at bore 13.*
+
+.. figure:: ../historical_investigation/figures/well_lake_extrema/bore_315_extrema.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: Observed groundwater level response to historic lake level variations at bore 315.*
+
+.. figure:: ../historical_investigation/figures/well_lake_extrema/bore_513_extrema.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: Observed groundwater level response to historic lake level variations at bore 513.*
+
+.. figure:: ../historical_investigation/figures/well_lake_extrema/bore_515_extrema.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: Observed groundwater level response to historic lake level variations at bore 515.*
+
+.. figure:: ../historical_investigation/figures/well_lake_extrema/bore_butterfields_extrema.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: Observed groundwater level response to historic lake level variations at bore butterfields.*
 
 Lake and Groundwater level data comparison
 --------------------------------------------
-#todo  lake_v_hds_[nearest|modelled]
 
-Shifted level comparison
----------------------------
-# todo well_lake_delta
+We compared the shifted (see above) observed lake levels and groundwater level data for the recovery (only where the groundwater levels are increasing) periods in 1977 and 1978.  The results at Bore 315 are the most useful and are shown below.  In the first recovery there is a clear slope change when the shifted Lake Hawea level reaches 332 m msl. This slope change is also evident in the second recovery, but is less clear. we suggest that the increases in groundwater levels while the shifted lake levels are below 332 m msl are due to other influences in the groundwater system.  We suggest that the groundwater level response to lake level variations is only evident when the shifted lake levels are above 332 m msl.
+
+.. figure:: ../historical_investigation/figures/lake_v_hds_historic_only/bore_315_lake_v_hds.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: Observed groundwater level response to historic lake level variations at bore 315.*
 
 
 Simple smoothing model
@@ -234,9 +285,21 @@ In addition, we trained the simple smoothing model on the historical bore data (
         *Figure: Bespoke simple smoothing model trained on bore butterfields.*
 
 
-Simple smoothing model results and discussion
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# todo
+Re-analysis discussion
+-------------------------
+Our re-analysis finds:
+
+* that the lake level impacts in the historical bores are likely lagged behind the observed lake level variations by:
+    * bore_13: 26 days
+    * bore_315: 21 days
+    * bore_513: 45 days
+    * bore_515: 45 days
+    * bore_butterfields: 71 days
+* shifted lake levels in comparison to Bore 315 groundwater levels show a clear slope change when the shifted lake levels reach 332 m msl. This slope change is also evident in the second recovery, but is less clear. we suggest that the increases in groundwater levels while the shifted lake levels are below 332 m msl are due to other influences in the groundwater system. This suggests that the critical level for disconnection between the groundwater and lake system is 332 m msl. Note that this is higher than the historical analysis suggests (329.6 m msl).
+* The simple smoothing model developed for bore G40/0415 is able to match the observed groundwater level response to lake level variations at the nearby historical Bore 315, but includes some bias.
+* The bespoke simple smoothing models do a good matching the groundwater elevations at the historical bores after 1979-03-01 (once Lake Hawea levels returned to their normal operational range).
+* the bespoke simple smoothing model for bore 315 under estimates the groundwater elevation significantly during the first low lake period (1976-1977), but adequately matches the groundwater elevation during the second low lake period (1977-1979).  In the first period the lake was below 332m msl for 7 months, and below 330m msl for 4 months.  In the second low period the lake was below 332m for 5 months and below 330m msl for just over 3 weeks. The second low period is shorter than the fit model's smoothing period of 203 days (c. 6 months), which explains why the simple smoothing model does not show deviation too far from the observed groundwater levels despite lake levels that obviously fell below the cutoff elevation. This analysis does not disagree with an cutoff level between 330 and 332 m msl.
+* the bespoke simple smoothing models at bores 515 and butterfields overestimate the groundwater elevation rather than underestimate as we would expect. This suggests that the discontinuity between the lake and the groundwater levels may be obscured by the smoothing of lake levels (e.g. via storage) and/or other processes. Therefore we disagree with the Ministry of Works conclusion that different elements of the system become disconnected from Lake Hawea at different lake levels. That conclusion is not uniquely supported by the data and is conceptually/structurally difficult to explain.
 
 Model performance during Historic Low Lake levels
 ==================================================
@@ -431,14 +494,29 @@ Note we have only presented the lake drop 320 results here, but the results for 
 
 Model performance discussion
 -----------------------------
+
 # todo
 
 Conclusions and Recommendations
 ==================================
 
+Our conclusions are:
+
+* The Ministry of Works data provides essential information on the Lake Hawea system
+* The new data confirms the key modelling prediction that there is some level below which the lake becomes disconnected from the groundwater system.
+* The prior information suggested that the bottom elevation of the impermeable moraine was likely to be approximately 320 m msl and that the top of the impermeable moraine was likely between 327.6 - 338 m msl.  The new data further constrains the likely elevation of the top of the impermeable moraine to be between 330 and 332 m msl.
+* Given the impact of the lake level on the groundwater system we recommend that the lake level is maintained above a minimum elevation of 333 m msl to ensure that the groundwater system is not disconnected from the lake. This suggestion should not be seen as conclusive evidence to reset the current Lake Hawea consent conditions, but rather as an absolute minimum level below which the lake should not be allowed to fall even in extraordinary circumstances. As always should Lake levels fall below the current minimum level (338 m msl) the groundwater system should be closely monitored.
+* These results do not discredit the recommended  additional datasets (see `model optimisation readme <../optimisation/README.rst#recommended-additional-data>`_) as they are required to further constrain the model structure and to improve the model performance; however the results do increase the confidence in the implemented model and conceptual structure.
+* # todo model stuff.
+
+Our recommendations from this work are:
+* Despite the adequate performance of the model, we would strongly suggest re-optimising the model and including targets for the period 1976-01-01 to 1983-01-01.
+* Given the relative insensitivity of the invert level, we would suggest conducting formal parameter and structural uncertainly analysis to better understand the range of predictions.
+* These results further support the need for a high frequency monitoring well near the Northeast Corner of the Hawea Flat aquifer (see `model optimisation readme <../optimisation/README.rst#recommended-additional-data>`_).
+
 Dataset and Resources
 =======================
-# explain the data in the base_data, figures, and generated_data folders
+# todo explain the data in the base_data, figures, and generated_data folders
 
 
 Top readme addtiions
