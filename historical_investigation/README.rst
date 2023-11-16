@@ -252,7 +252,7 @@ To assess the current model preformance during the historic low lake levels we:
 
 The modelled vs observed groundwater levels for the 3d_v1d model are shown below.
 
-.. figure:: ../historical_investigation/figures/3d_v1d_model/bore_13_modelled.png
+.. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_13_modelled.png
    :height: 650 px
    :align: center
 
@@ -260,7 +260,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
     *Figure: 3d_v1d model results for bore 13.*
 
-.. figure:: ../historical_investigation/figures/3d_v1d_model/bore_315_modelled.png
+.. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_315_modelled.png
     :height: 650 px
     :align: center
 
@@ -268,7 +268,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
         *Figure: 3d_v1d model results for bore 315.*
 
-.. figure:: ../historical_investigation/figures/3d_v1d_model/bore_513_modelled.png
+.. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_513_modelled.png
     :height: 650 px
     :align: center
 
@@ -276,7 +276,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
         *Figure: 3d_v1d model results for bore 513.*
 
-.. figure:: ../historical_investigation/figures/3d_v1d_model/bore_515_modelled.png
+.. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_515_modelled.png
     :height: 650 px
     :align: center
 
@@ -284,7 +284,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
         *Figure: 3d_v1d model results for bore 515.*
 
-.. figure:: ../historical_investigation/figures/3d_v1d_model/bore_butterfields_modelled.png
+.. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_butterfields_modelled.png
     :height: 650 px
     :align: center
 
@@ -447,6 +447,7 @@ Top readme addtiions
 * add links to this readme
 * add module index from this readme
 * add 3d_v10a model to active branches
+* check links
 
 
 
