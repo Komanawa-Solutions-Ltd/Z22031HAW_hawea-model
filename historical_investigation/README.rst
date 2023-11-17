@@ -304,7 +304,7 @@ Our re-analysis finds:
 Model performance during Historic Low Lake levels
 ==================================================
 
-To assess the current model preformance during the historic low lake levels we:
+To assess the current model performance during the historic low lake levels we:
 
 1. ran the existing optimised model (3d_v1d) for the period 1976-01-01 to 1983-01-01, extracted the predicted groundwater levels at the historical bore locations, and compared the results to the observed groundwater levels.
 2. developed a new model (3d_v10a) which set the invert of the bund (see `model build documentation <../model_build/README.rst#lake-hawea-moraine-conceptual-model>`_) to 330 m msl and ran the new model for the period 1976-01-01 to 1983-01-01. We then extracted the predicted groundwater levels at the historical bore locations and compared the results to the observed groundwater levels.
@@ -492,10 +492,43 @@ Note we have only presented the lake drop 320 results here, but the results for 
 
         *Figure: Lake drop scenario results for bore butterfields.*
 
+MT3d component analysis during low lake levels (3d_v1d model)
+---------------------------------------------------------------
+
+Given the performance of the model during the historic low lake levels we also present the MT3d component analysis for the steady state 3d_v1d model where Lake Hawea levels are below the invert level.  The results are shown below.
+
+historical_investigation/mt3d_indicator_scenarios/plots/all_str.png
+historical_investigation/mt3d_indicator_scenarios/plots/lake_con_indicator.png
+
+.. figure:: ../historical_investigation/mt3d_indicator_scenarios/plots/all_str.png
+   :height: 650 px
+   :align: center
+
+.. class:: centered
+
+    *Figure: MT3d component analysis for Stream boundary conditions.*
+
+.. figure:: ../historical_investigation/mt3d_indicator_scenarios/plots/lake_con_indicator.png
+    :height: 650 px
+    :align: center
+
+.. class:: centered
+
+        *Figure: MT3d component analysis for Lake boundary conditions.*
+
+
 Model performance discussion
 -----------------------------
+Our model performance analysis finds:
 
-# todo
+* The model preforms surprisingly well during the historic low lake levels.  The modelled groundwater levels are within c. 2 m of the observed groundwater levels for the historical lake lows.
+* Most wells show very little bias, but the model consistently underestimates the groundwater levels at bore 13 and 315. the underestimation occurs during both the high and low lake levels (note that there is no data for bore 13 during the historical low levels).
+* the lake drop scenarios are broadly consistent with the observed data.
+* lake drop results at Bore 315 suggest that the observed historical groundwater levels did not reach their equilibrium state without Lake Hawea influences.
+* the low lake levels associated with the lake drop scenarios at bores: 513, 515, and butterfields propagate to the bore levels more slowly than the observed historical low lake levels.
+* In combination the misfit of the low lake levels provide evidence that there is likely information in the historical data that could contribute to a better groundwater model with re-calibration.
+* The results for the 3d_v10a model (invert set at 330 m msl) are very similar to the results of the 3d_v1d model (invert set at 335 m msl).  This suggests that the model is relatively insensitive to the exact elevation of the impermeable moraine. Further analysis, particularly formal structural and parameter uncertainty analysis, is required to better understand this perceived insensitivity to the impermeable moraine top elevation.
+* The Mt3d component analysis suggests that at low Lake Hawea levels the groundwater system in the Northern portion of the Lake Hawea aquifer system becomes dominated by the Grandview and John Creek inflows. At times of higher groundwater flow much of the losses from these creeks are diverted into Lake Hawea. This conclusion matches conventional understanding of the system but assumes that most of the Grandview and John Creek flow is lost to groundwater.  If these creeks are less strongly losing then groundwater levels would likely be over predicted by the model during low lake levels.
 
 Conclusions and Recommendations
 ==================================
@@ -507,16 +540,21 @@ Our conclusions are:
 * The prior information suggested that the bottom elevation of the impermeable moraine was likely to be approximately 320 m msl and that the top of the impermeable moraine was likely between 327.6 - 338 m msl.  The new data further constrains the likely elevation of the top of the impermeable moraine to be between 330 and 332 m msl.
 * Given the impact of the lake level on the groundwater system we recommend that the lake level is maintained above a minimum elevation of 333 m msl to ensure that the groundwater system is not disconnected from the lake. This suggestion should not be seen as conclusive evidence to reset the current Lake Hawea consent conditions, but rather as an absolute minimum level below which the lake should not be allowed to fall even in extraordinary circumstances. As always should Lake levels fall below the current minimum level (338 m msl) the groundwater system should be closely monitored.
 * These results do not discredit the recommended  additional datasets (see `model optimisation readme <../optimisation/README.rst#recommended-additional-data>`_) as they are required to further constrain the model structure and to improve the model performance; however the results do increase the confidence in the implemented model and conceptual structure.
-* # todo model stuff.
+* The model generally preforms well during the historic low lake levels. This result is surprising given there was no prior data to inform the model optimisation under these conditions.
+* Despite the good fit there is likely more information to be gleemed from the historical data via model re-calibration
+* The model is remarkably insensitive to the invert level of the impermeable moraine. A drop of 5m causes very little change in both the calibration and historical data matches. Further analysis, particularly formal structural and parameter uncertainty analysis, is required to better understand this perceived insensitivity to the impermeable moraine top elevation.
+* Comparison of the "lake drop" scenarios with the observed historical data suggests that the groundwater levels during this historical period of low lake levels did not reach steady state conditions / equilibrium state of the aquifer when disconnected to the lake.
+* MT3D component analysis suggests that as lake level fall below the impermeable moraine, the groundwater in the northern Lake Hawea Aquifer system becomes increasingly dominated by losses from Grandview and John Creeks. If these creeks are less well connected to the groundwater system than assumed, the model may significantly over predict steady state groundwater levels during low lake levels.
 
 Our recommendations from this work are:
+
 * Despite the adequate performance of the model, we would strongly suggest re-optimising the model and including targets for the period 1976-01-01 to 1983-01-01.
 * Given the relative insensitivity of the invert level, we would suggest conducting formal parameter and structural uncertainly analysis to better understand the range of predictions.
 * These results further support the need for a high frequency monitoring well near the Northeast Corner of the Hawea Flat aquifer (see `model optimisation readme <../optimisation/README.rst#recommended-additional-data>`_).
 
 Dataset and Resources
 =======================
-# todo explain the data in the base_data, figures, and generated_data folders
+# todo data link page explain the data in the base_data, figures, and generated_data folders
 
 
 Top readme addtiions
@@ -526,6 +564,7 @@ Top readme addtiions
 * add module index from this readme
 * add 3d_v10a model to active branches
 * check links
+* check figures
 
 
 
