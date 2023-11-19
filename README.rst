@@ -43,7 +43,7 @@ Subsequent Investigations
 =========================
 
 1. `Historical Hawea groundwater investigation <historical_investigation/README.rst>`_: investigate the historical data from 1976 - 1979 when the lake fell to the lowest level in the historical record (c. 327.5 m msl)
-2. `Quartz Creek LSR <Scenarios/README.rst#quartz-creek-allocation-zone-lsr-analysis>`_: investigate the LSR for the Quartz Creek area which was not included in the final model # todo check
+2. `Quartz Creek LSR <Scenarios/README.rst#quartz-creek-allocation-zone-lsr-analysis>`_: investigate the LSR for the Quartz Creek area which was not included in the final model
 
 Modelling Software
 ===================
@@ -273,7 +273,7 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
     - `plot_historical_data.py <historical_investigation/plot_historical_data.py>`_: plot the historical data
     - `plot_historical_natualised_model.py <historical_investigation/plot_historical_natualised_model.py>`_: plot the historical data and the naturalised model results
     - `shift_diff.py <historical_investigation/shift_diff.py>`_: compare lake and historical data, and calculate the shift between the two
-    - `simple_smoothing_model.py <historical_investigation/simple_smoothing_model.py>`_: develop and apply a simple smoothing model to the historical data # todo check
+    - `simple_smoothing_model.py <historical_investigation/simple_smoothing_model.py>`_: develop and apply a simple smoothing model to the historical data
 
 Supporting data index
 --------------------------------
