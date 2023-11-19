@@ -12,7 +12,6 @@ Hawea Transient groundwater model (Hawea Model)
 :KSL project: Z22031HAW_hawea-model
 :Purpose: This document describes the Hawea Model repo
 
-
 The Hawea model domain; the inactive portions of the model are coloured dark grey. The model domain is a 3D model of the Hawea
 aquifer systems including the Maungawera Valley.
 The model domain is bounded by Lake Hawea to the North, the Clutha River to
