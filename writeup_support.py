@@ -469,7 +469,7 @@ def clipout_boundary_conditions():
     plt.show()
 
 
-def make_pdf_of_readmes(outdir):
+def make_pdf_of_readmes(outdir): # todo use this
     from pathlib import Path
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
@@ -506,6 +506,18 @@ def make_pdf_of_readmes(outdir):
 
         file.write(outpath)
 
+def make_raw_module_index(module_base, outpath):
+
+    from pathlib import Path
+    files = Path(module_base).glob('**/*')
+    files = list(sorted([e.relative_to(proj_root) for e in files]))
+
+    with Path(outpath).open('w') as f:
+        for e in files:
+            f.write(f'- `{e.name} <{e}>`_:\n')
+
+
+
 
 if __name__ == '__main__':
     # model_2d_structure_plots()
@@ -522,5 +534,6 @@ if __name__ == '__main__':
     # additional_monitoring()
     # wetland_clipouts()
     # clipout_boundary_conditions()
-    make_pdf_of_readmes(proj_root.home().joinpath('Downloads', 'hawea_pdfs'))
+    #make_pdf_of_readmes(proj_root.home().joinpath('Downloads', 'hawea_pdfs'))
+    make_raw_module_index('/home/matt_dumont/PycharmProjects/hawea_historical/historical_investigation', proj_root.home().joinpath('Downloads/hawea_raw_module_index.rst'))
     pass
