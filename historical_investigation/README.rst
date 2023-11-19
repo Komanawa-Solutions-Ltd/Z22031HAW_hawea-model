@@ -510,8 +510,6 @@ MT3d component analysis during low lake levels (3d_v1d model)
 
 Given the performance of the model during the historic low lake levels we also present the MT3d component analysis for the steady state 3d_v1d model where Lake Hawea levels are below the invert level.  The results are shown below.
 
-# todo check
-
 .. figure:: ../historical_investigation/mt3d_indicator_scenarios/plots/joint/all_str.png
    :height: 800 px
    :align: center
@@ -607,16 +605,6 @@ Dataset and Resources
 - `mt3d_indicator_scenarios <../historical_investigation/mt3d_indicator_scenarios>`_: This folder contains the MT3d indicator scenarios for the 3d_v1d model.
     - `plots <../historical_investigation/mt3d_indicator_scenarios/plots>`_: plots of the MT3d indicator scenarios.
     - `ucn_data <../historical_investigation/mt3d_indicator_scenarios/ucn_data>`_: the MT3d indicator scenario data (arrays from 0-1 where 0 means no water from the component and 1 means all water from the component).
-
-
-Top readme addtiions
-=====================
-# todo
-* add links to this readme
-* add module index from this readme
-* add 3d_v10a model to active branches
-* check links
-* check figures
 
 
 
