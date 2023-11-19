@@ -43,7 +43,7 @@ Subsequent Investigations
 =========================
 
 1. `Historical Hawea groundwater investigation <historical_investigation/README.rst>`_: investigate the historical data from 1976 - 1979 when the lake fell to the lowest level in the historical record (c. 327.5 m msl)
-2. `Quartz Creek LSR <quartz_creek_lsr/README.rst>`_: investigate the LSR for the Quartz Creek area which was not included in the final model
+2. `Quartz Creek LSR <Scenarios/README.rst#quartz-creek-allocation-zone-lsr-analysis>`_: investigate the LSR for the Quartz Creek area which was not included in the final model # todo check
 
 Modelling Software
 ===================
@@ -205,8 +205,8 @@ If you have any questions please contact Matt Dumont (matt@komanawa.com)
         -  `pre_optimisation_plots_png <optimisation/pre_optimisation_plots_png>`_: pre optimisation plots of boundary conditions, targets, parameterisation, and other supporting work, many of these figures are referenced in the various readme.rst files
         -  `make_opt_presentation.py <optimisation/make_opt_presentation.py>`_: make a presentation of the optimisation results for a meeting
 - `quartz_creek_lsr <quartz_creek_lsr>`_: modelling of LSR for the Quartz Creek area see the `Scenarios readme <Scenarios/README.rst>`_ for more information
-    - ` results <quartz_creek_lsr/results>`_: results from the LSR modelling
-    - ` model_qtz_ck_lsr.py <quartz_creek_lsr/model_qtz_ck_lsr.py>`_: script for LSR modelling
+    - `results <quartz_creek_lsr/results>`_: results from the LSR modelling
+    - `model_qtz_ck_lsr.py <quartz_creek_lsr/model_qtz_ck_lsr.py>`_: script for LSR modelling
 -  `Scenarios <Scenarios>`_: scenario modelling code and results
     -  `README.rst <Scenarios/README.rst>`_: document describing the scenario modelling methods and results
     -  Scenario development and supporting scripts
@@ -310,6 +310,7 @@ that briefly describes the data in the directory.  The directories are:
 - `Scenarios/wetland_setback_campbells/processed_input_data <Scenarios/wetland_setback_campbells/processed_input_data/README.rst>`_: contains the processed data used to run the campbells wetland setback scenario
 - `targets_and_sensitive_sites/base_data <targets_and_sensitive_sites/base_data/README.rst>`_: contains the base data used to define the model targets and objective function
 - `targets_and_sensitive_sites/processed_data <targets_and_sensitive_sites/processed_data/README.rst>`_: contains the processed data used to define the model targets and objective function
+- `historical_investigation datasets <historical_investigation/README.rst#dataset-and-resources>`_: contains the datasets used in the historical investigation
 
 
 Proprietary packages
