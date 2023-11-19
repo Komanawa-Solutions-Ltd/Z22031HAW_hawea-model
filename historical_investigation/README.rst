@@ -41,7 +41,7 @@ Module Index
 Investigation Context and Objectives
 =======================================
 
-A key prediction of the Lake Hawea groundwater model hosted in this repository was that there was some threshold lake level below which the lake would become disconnected from the groundwater system.  Subsequently groundwater levels could fall significantly.  These predictions were based on the model structure required to match observed groundwater levels, particularly in bore G40/0415. This repository holds more information on the `model structure <../model_build/README.rst#multi-layer-3d-model-structure>`_ # todo check and `predictions at low lake levels <../Scenarios/README.rst#lake-drop-scenario-results>`_.
+A key prediction of the Lake Hawea groundwater model hosted in this repository was that there was some threshold lake level below which the lake would become disconnected from the groundwater system.  Subsequently groundwater levels could fall significantly.  These predictions were based on the model structure required to match observed groundwater levels, particularly in bore G40/0415. This repository holds more information on the `model structure <../model_build/README.rst#multi-layer-3d-model-structure>`_ and `predictions at low lake levels <../Scenarios/README.rst#lake-drop-scenario-results>`_.
 
 .. figure:: ../support_figures/concept_diagram_0.png
     :height: 650 px
@@ -72,7 +72,7 @@ Modern Lake Hawea levels are strictly controlled to be above 338 m msl. Historic
     *Figure: Lake Hawea levels from 1976 to 1979.*
 
 
-As part of the Lake Hawea modelling project the authors requested all information on historic lake levels and groundwater levels.  It was understood that there were no regular groundwater monitoring records concurrent with the historic low lake levels. This was incorrect. At the end of the modelling project one of the modelling team found a record of an appendix to a 1984 Ministry of works and development report which contained plots of high frequency groundwater level data for bores during the historic low lake levels. A copy of this appendix is included in this repository and is `accessible here <../historical_investigation/base_data/MWD_Hawea_Flats_Groundwater_1984.pdf>`_. # todo check This appendix was previously unknown to the modelling team or the science team at the Otago Regional Council. It's discovery was too late to be included in the modelling project; however the Otago Regional counil commissioned this addendum to the modelling project to digitise the data, investigate the implications of the historic low lake levels on groundwater levels, and to ascertain if the model predictions were consistent with the newly available historic groundwater level data.
+As part of the Lake Hawea modelling project the authors requested all information on historic lake levels and groundwater levels.  It was understood that there were no regular groundwater monitoring records concurrent with the historic low lake levels. This was incorrect. At the end of the modelling project one of the modelling team found a record of an appendix to a 1984 Ministry of works and development report which contained plots of high frequency groundwater level data for bores during the historic low lake levels. A copy of this appendix is included in this repository and is `accessible here <../historical_investigation/base_data/MWD_Hawea_Flats_Groundwater_1984.pdf>`_. This appendix was previously unknown to the modelling team or the science team at the Otago Regional Council. It's discovery was too late to be included in the modelling project; however the Otago Regional counil commissioned this addendum to the modelling project to digitise the data, investigate the implications of the historic low lake levels on groundwater levels, and to ascertain if the model predictions were consistent with the newly available historic groundwater level data.
 
 Digitization of Historical data and discussion of their results
 ===================================================================
@@ -89,8 +89,8 @@ The historical appendix contains:
     * Bore 513
     * Bore 515
     * "Butterfields" bore
-* a contoured map of the chane in groundwater level for every 1 meter drop in lake level (figure reproduced below)
-* a contoured map which identifies the lake level where the groundwater level is unlikely to be affected by the lake level (figure reproduced below)
+* a contoured map of the chane in groundwater level for every 1 meter drop in lake level
+* a contoured map which identifies the lake level where the groundwater level is unlikely to be affected by the lake level
 * discussion and conclusions
 
 .. figure:: ../historical_investigation/figures/historical_head_locs.png
@@ -417,7 +417,7 @@ The modelled vs observed groundwater levels for the 3d_v10a model are shown belo
 3d_v10a model period results
 -----------------------------
 
-As the 3d_v10a model was not optimised for the model period we also present the modelled vs observed groundwater level for the high frequency targets (`see the target documentation for more information <../targets_and_sensitive_sites/README.rst#high-and-moderate-frequency-targets>`_) # todo check for the 3d_v10a model.  The results are shown below.
+As the 3d_v10a model was not optimised for the model period we also present the modelled vs observed groundwater level for the high frequency targets (`see the target documentation for more information <../targets_and_sensitive_sites/README.rst#high-and-moderate-frequency-targets>`_) for the 3d_v10a model.  The results are shown below.
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/reg_opt_period/hds_closeup_g40_0041.png
    :height: 650 px
@@ -513,7 +513,7 @@ Given the performance of the model during the historic low lake levels we also p
 # todo check
 
 .. figure:: ../historical_investigation/mt3d_indicator_scenarios/plots/joint/all_str.png
-   :height: 650 px
+   :height: 800 px
    :align: center
 
 .. class:: centered
@@ -521,7 +521,7 @@ Given the performance of the model during the historic low lake levels we also p
     *Figure: MT3d component analysis for Stream boundary conditions.*
 
 .. figure:: ../historical_investigation/mt3d_indicator_scenarios/plots/joint/lake_con_indicator.png
-    :height: 650 px
+    :height: 800 px
     :align: center
 
 .. class:: centered
@@ -566,8 +566,6 @@ Our recommendations from this work are:
 
 Dataset and Resources
 =======================
-
-# todo check links
 
 - `base_data <../historical_investigation/base_data>`_:  This folder contains all the data used in this analysis.
     - `Bore_13 <../historical_investigation/base_data/Bore_13>`_: This folder contains the raw digitised data for Bore 13.
