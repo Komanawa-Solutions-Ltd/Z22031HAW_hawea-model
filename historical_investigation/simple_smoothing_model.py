@@ -153,7 +153,7 @@ def fit_lake_g40_0415(outdir=None):
         axi.vlines(historical_well.index[well_max], y1, y2, color='k', ls='--', alpha=0.3)
         axi.vlines(historical_well.index[well_min], y1, y2, color='k', ls='--', alpha=0.3)
 
-    fig.suptitle('Lake Head and Simple Smoothing Model (fit from G40/0415) at Bore 315')
+    fig.suptitle('Lake Head and Simple Smoothing Model (fit from G40/0415) at Bore_315')
     fig.tight_layout()
     if outdir is not None:
         fig.savefig(outdir.joinpath('ssm_bore_315_g40_0415.png'))

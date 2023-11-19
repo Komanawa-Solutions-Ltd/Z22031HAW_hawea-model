@@ -32,10 +32,10 @@ historical_well_colors = {
 }
 
 _historical_data_paths = {
-    'bore_13': historical_data_dir.joinpath('Bore 13/Bore_13_graph.csv'),
-    'bore_315': historical_data_dir.joinpath('Bore 315/Bore_315.csv'),
-    'bore_513': historical_data_dir.joinpath('Bore 513/Bore_513.csv'),
-    'bore_515': historical_data_dir.joinpath('Bore 515/Bore_515.csv'),
+    'bore_13': historical_data_dir.joinpath('Bore_13/Bore_13_graph.csv'),
+    'bore_315': historical_data_dir.joinpath('Bore_315/Bore_315.csv'),
+    'bore_513': historical_data_dir.joinpath('Bore_513/Bore_513.csv'),
+    'bore_515': historical_data_dir.joinpath('Bore_515/Bore_515.csv'),
     'bore_butterfields': historical_data_dir.joinpath('Butterfield bore/Butterfield_bore.csv'),
     'lake': historical_data_dir.joinpath('lake_plot.csv'),
 }
@@ -217,10 +217,10 @@ def get_historical_data_locs(recalc=False):
     raw_data['x'] = raw_data.geometry.x
     raw_data['y'] = raw_data.geometry.y
     name_mapper = {
-        'Bore 13': 'bore_13',
-        'Bore 315': 'bore_315',
-        'Bore 513': 'bore_513',
-        'Bore 515': 'bore_515',
+        'Bore_13': 'bore_13',
+        'Bore_315': 'bore_315',
+        'Bore_513': 'bore_513',
+        'Bore_515': 'bore_515',
         'Butterfields Bore': 'bore_butterfields',
 
     }
