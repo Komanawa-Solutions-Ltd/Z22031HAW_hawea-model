@@ -1,4 +1,4 @@
-Analysis of Historical Lake Hawea Low Lake levels corresponding groundwater levels)
+Analysis of Historical Lake Hāwea Low Lake levels corresponding groundwater levels)
 ###########################################################################################
 
 .. figure:: ../historical_investigation/figures/simple_smoothing_model/bespoke_ssm_bore_315.png
@@ -14,9 +14,8 @@ Analysis of Historical Lake Hawea Low Lake levels corresponding groundwater leve
 :Version:  1.0.0
 :Status:  Draft
 :KSL project: Z22031HAW_hawea-model - supplemental
-:Purpose: This document provides the results of a re-analysis of the historical low lake levels at Lake Hawea (1976-1979). The analysis was conducted to determine the corresponding groundwater levels at the time of the low lake levels.
+:Purpose: This document provides the results of a re-analysis of the historical low lake levels at Lake Hāwea (1976-1979). The analysis was conducted to determine the corresponding groundwater levels at the time of the low lake levels.
 
-# review change Hawea to Hāwea
 
 Index
 =====
@@ -43,7 +42,7 @@ Module Index
 Investigation Context and Objectives
 =======================================
 
-A key prediction of the Lake Hawea groundwater model hosted in this repository was that there was some threshold lake level below which the lake would become disconnected from the groundwater system.  Subsequently groundwater levels could fall significantly.  These predictions were based on the model structure being required to match observed groundwater levels, particularly in bore G40/0415. This repository holds more information on the `model structure <../model_build/README.rst#multi-layer-3d-model-structure>`_ and `predictions at low lake levels <../Scenarios/README.rst#lake-drop-scenario-results>`_.
+A key prediction of the Lake Hāwea groundwater model hosted in this repository was that there was some threshold lake level below which the lake would become disconnected from the groundwater system.  Subsequently groundwater levels could fall significantly.  These predictions were based on the model structure being required to match observed groundwater levels, particularly in Bore G40/0415. This repository holds more information on the `model structure <../model_build/README.rst#multi-layer-3d-model-structure>`_ and `predictions at low lake levels <../Scenarios/README.rst#lake-drop-scenario-results>`_.
 
 .. figure:: ../support_figures/concept_diagram_0.png
     :height: 650 px
@@ -51,7 +50,7 @@ A key prediction of the Lake Hawea groundwater model hosted in this repository w
 
 .. class:: centered
 
-        *Figure: conceptual model of the Lake Hawea Moraine (across the moraine)*
+        *Figure: conceptual model of the Lake Hāwea Moraine (across the moraine)*
 
 
 .. figure:: ../Scenarios/low_lake_scenarios/0_results/lake_drop/comp_plots/hds_monitoring.png
@@ -63,7 +62,7 @@ A key prediction of the Lake Hawea groundwater model hosted in this repository w
     *Figure: Responses at the high frequency monitoring bores for the lake drop scenarios.*
 
 
-Modern Lake Hawea levels are strictly controlled to be above 338 m msl. Historically, between 1976 to 1979, Lake Hawea levels fell to their lowest recorded level of c. 327.5 m MSL.  This was reportedly because of exceptionally high energy demands.
+Modern Lake Hāwea levels are strictly controlled to be above 338 m msl. Historically, between 1976 to 1979, Lake Hāwea levels fell to their lowest recorded level of c. 327.5 m MSL.  This was reportedly because of exceptionally high energy demands.
 
 .. figure:: ../historical_investigation/figures/lake_heads.png
    :height: 650 px
@@ -71,10 +70,10 @@ Modern Lake Hawea levels are strictly controlled to be above 338 m msl. Historic
 
 .. class:: centered
 
-    *Figure: Lake Hawea levels from 1976 to 1979.*
+    *Figure: Lake Hāwea levels from 1976 to 1979.*
 
 
-As part of the Lake Hawea modelling project the authors requested all information on historic lake levels and groundwater levels.  It was understood that there were no regular groundwater monitoring records concurrent with the historic low lake levels. This was incorrect. At the end of the modelling project one of the modelling team found a record of an appendix to a 1984 Ministry of Works and Development report which contained plots of high frequency groundwater level data for bores during the historic low lake levels. A copy of this appendix is included in this repository and is `accessible here <../historical_investigation/base_data/MWD_Hawea_Flats_Groundwater_1984.pdf>`_. This appendix was previously unknown to both the modelling team and the science team at the Otago Regional Council. Its discovery was too late to be included in the modelling project; however the Otago Regional Council commissioned this addendum to the modelling project to digitise the data, investigate the implications of the historic low lake levels on groundwater levels, and to ascertain if the model predictions were consistent with the newly available historic groundwater level data.
+As part of the Lake Hāwea modelling project the authors requested all information on historic lake levels and groundwater levels.  It was understood that there were no regular groundwater monitoring records concurrent with the historic low lake levels. This was incorrect. At the end of the modelling project one of the modelling team found a record of an appendix to a 1984 Ministry of Works and Development report which contained plots of high frequency groundwater level data for bores during the historic low lake levels. A copy of this appendix is included in this repository and is `accessible here <../historical_investigation/base_data/MWD_Hawea_Flats_Groundwater_1984.pdf>`_. This appendix was previously unknown to both the modelling team and the science team at the Otago Regional Council. Its discovery was too late to be included in the modelling project; however the Otago Regional Council commissioned this addendum to the modelling project to digitise the data, investigate the implications of the historic low lake levels on groundwater levels, and to ascertain if the model predictions were consistent with the newly available historic groundwater level data.
 
 Digitization of Historical data and discussion of their results
 ===================================================================
@@ -84,16 +83,16 @@ Summary of the historical data
 
 The historical appendix contains:
 
-* a map of the historic monitoring bores (figure reproduced below)
-* groundwater level records at 5 bores during the historic low lake levels
+* A map of the historic monitoring bores (figure reproduced below)
+* Groundwater level records at 5 bores during the historic low lake levels
     * Bore 13
     * Bore 315
     * Bore 513
     * Bore 515
-    * "Butterfields" bore
-* a contoured map of the change in groundwater level for every 1 meter drop in lake level
-* a contoured map which identifies the lake level where the groundwater level is unlikely to be affected by the lake level
-* discussion and conclusions
+    * Bore Butterfields
+* A contoured map of the change in groundwater level for every 1 meter drop in lake level
+* A contoured map which identifies the lake level where the groundwater level is unlikely to be affected by the lake level
+* Discussion and conclusions
 
 .. figure:: ../historical_investigation/figures/historical_head_locs.png
    :height: 650 px
@@ -105,9 +104,9 @@ The historical appendix contains:
 
 The key results from the appendix are:
 
-* Variation in Lake Hawea levels below 329.66 m msl (330 m Dunedin 1958) are unlikely to have any impact on the groundwater levels.
+* Variation in Lake Hāwea levels below 329.66 m msl (330 m Dunedin 1958) are unlikely to have any impact on the groundwater levels.
 * Groundwater levels further from the lake edge are less affected by variations in lake level.
-* the threshold for lake level variations to affect groundwater levels varies by distance from the lake edge:
+* The threshold for lake level variations to affect groundwater levels varies by distance from the lake edge:
     * "A lake level of between 330 and 333 m will influence the area within 2.8 km of the lake but no further"
     * "A lake level of between 333 and 336 m will influence the area within 2.8 to 5.3 km of the lake but no further"
 
@@ -136,7 +135,7 @@ A full re-analysis of the data is described below, but as a summary:
 1. We generally agree with the level of the lake at which groundwater levels are affected.
 2. We disagree with the interpretation that the threshold for lake level variations to affect groundwater levels varies by distance from the lake edge. We believe that the observed insensitivities are better accounted for by the smoothing of the groundwater level response to lake level variations.
 
-Re-analysis of Historical Lake Hawea Low Lake levels & corresponding groundwater levels
+Re-analysis of Historical Lake Hāwea Low Lake levels & corresponding groundwater levels
 ==========================================================================================
 
 Observed groundwater level response to historic lake level variations
@@ -150,7 +149,7 @@ The digitised groundwater levels were plotted against the available lake level r
 
 .. class:: centered
 
-    *Figure: Observed groundwater level response to historic lake level variations at bore 13.*
+    *Figure: Observed groundwater level response to historic lake level variations at Bore 13.*
 
 .. figure:: ../historical_investigation/figures/historic_period_hds/bore_315_hds.png
     :height: 650 px
@@ -158,7 +157,7 @@ The digitised groundwater levels were plotted against the available lake level r
 
 .. class:: centered
 
-        *Figure: Observed groundwater level response to historic lake level variations at bore 315.*
+        *Figure: Observed groundwater level response to historic lake level variations at Bore 315.*
 
 .. figure:: ../historical_investigation/figures/historic_period_hds/bore_513_hds.png
     :height: 650 px
@@ -166,7 +165,7 @@ The digitised groundwater levels were plotted against the available lake level r
 
 .. class:: centered
 
-        *Figure: Observed groundwater level response to historic lake level variations at bore 513.*
+        *Figure: Observed groundwater level response to historic lake level variations at Bore 513.*
 
 .. figure:: ../historical_investigation/figures/historic_period_hds/bore_515_hds.png
     :height: 650 px
@@ -174,7 +173,7 @@ The digitised groundwater levels were plotted against the available lake level r
 
 .. class:: centered
 
-        *Figure: Observed groundwater level response to historic lake level variations at bore 515.*
+        *Figure: Observed groundwater level response to historic lake level variations at Bore 515.*
 
 .. figure:: ../historical_investigation/figures/historic_period_hds/bore_butterfields_hds.png
     :height: 650 px
@@ -182,7 +181,7 @@ The digitised groundwater levels were plotted against the available lake level r
 
 .. class:: centered
 
-        *Figure: Observed groundwater level response to historic lake level variations at bore butterfields.*
+        *Figure: Observed groundwater level response to historic lake level variations at Bore Butterfields.*
 
 
 Smoothed Extrema matching
@@ -202,7 +201,7 @@ To understand the shift between the observed groundwater level local minima and 
 
 .. class:: centered
 
-    *Figure: Observed groundwater level response to historic lake level variations at bore 13.*
+    *Figure: Observed groundwater level response to historic lake level variations at Bore 13.*
 
 .. figure:: ../historical_investigation/figures/well_lake_extrema/bore_315_extrema.png
     :height: 650 px
@@ -210,7 +209,7 @@ To understand the shift between the observed groundwater level local minima and 
 
 .. class:: centered
 
-        *Figure: Observed groundwater level response to historic lake level variations at bore 315.*
+        *Figure: Observed groundwater level response to historic lake level variations at Bore 315.*
 
 .. figure:: ../historical_investigation/figures/well_lake_extrema/bore_513_extrema.png
     :height: 650 px
@@ -218,7 +217,7 @@ To understand the shift between the observed groundwater level local minima and 
 
 .. class:: centered
 
-        *Figure: Observed groundwater level response to historic lake level variations at bore 513.*
+        *Figure: Observed groundwater level response to historic lake level variations at Bore 513.*
 
 .. figure:: ../historical_investigation/figures/well_lake_extrema/bore_515_extrema.png
     :height: 650 px
@@ -226,7 +225,7 @@ To understand the shift between the observed groundwater level local minima and 
 
 .. class:: centered
 
-        *Figure: Observed groundwater level response to historic lake level variations at bore 515.*
+        *Figure: Observed groundwater level response to historic lake level variations at Bore 515.*
 
 .. figure:: ../historical_investigation/figures/well_lake_extrema/bore_butterfields_extrema.png
     :height: 650 px
@@ -234,12 +233,12 @@ To understand the shift between the observed groundwater level local minima and 
 
 .. class:: centered
 
-        *Figure: Observed groundwater level response to historic lake level variations at bore butterfields.*
+        *Figure: Observed groundwater level response to historic lake level variations at Bore Butterfields.*
 
 Lake and Groundwater level data comparison
 --------------------------------------------
 
-We compared the shifted (see above) observed lake levels and groundwater level data for the recovery (only where the groundwater levels are increasing) periods in 1977 and 1978.  The results at Bore 315 are the most useful and are shown below.  In the first recovery there is a clear slope change when the shifted Lake Hawea level reaches 332 m msl. This slope change is also evident in the second recovery, but is less clear. We suggest that the increases in groundwater levels while the shifted lake levels are below 332 m msl are due to other influences in the groundwater system.  We suggest that the groundwater level response to lake level variations is only evident when the shifted lake levels are above 332 m msl.
+We compared the shifted (see above) observed lake levels and groundwater level data for the recovery (only where the groundwater levels are increasing) periods in 1977 and 1978.  The results at Bore 315 are the most useful and are shown below.  In the first recovery there is a clear slope change when the shifted Lake Hāwea level reaches 332 m msl. This slope change is also evident in the second recovery, but is less clear. We suggest that the increases in groundwater levels while the shifted lake levels are below 332 m msl are due to other influences in the groundwater system.  We suggest that the groundwater level response to lake level variations is only evident when the shifted lake levels are above 332 m msl.
 
 .. figure:: ../historical_investigation/figures/lake_v_hds_historic_only/bore_315_lake_v_hds.png
    :height: 650 px
@@ -247,20 +246,19 @@ We compared the shifted (see above) observed lake levels and groundwater level d
 
 .. class:: centered
 
-    *Figure: Observed groundwater level response to historic lake level variations at bore 315.*
+    *Figure: Observed groundwater level response to historic lake level variations at Bore 315.*
 
-# review typo on the figure label - says minium instead of minimum
 
 
 Simple smoothing model
 ---------------------------
 
-In the model build a simple smoothing model was developed to match the observed groundwater level response to lake level variations. The details for this model are described in the `model build documentation <../model_build/README.rst#lake-hawea-moraine-conceptual-model>`_.  The model was developed to match the observed groundwater level response to lake level variations at bore G40/0415.  The purpose of this model was to define the model structure required to match the observed groundwater level response to lake level variations. Here we apply the model to the historical bores to see where it deviates from the observed groundwater level response to lake level variations.
+In the model build a simple smoothing model was developed to match the observed groundwater level response to lake level variations. The details for this model are described in the `model build documentation <../model_build/README.rst#lake-hawea-moraine-conceptual-model>`_.  The model was developed to match the observed groundwater level response to lake level variations at Bore G40/0415.  The purpose of this model was to define the model structure required to match the observed groundwater level response to lake level variations. Here we apply the model to the historical Bores to see where it deviates from the observed groundwater level response to lake level variations.
 
-Simple smoothing model from bore G40/0415
+Simple smoothing model from Bore G40/0415
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We applied the simple smoothing model developed for bore G40/0415 to the nearby historical Bore 315.  The results are shown below.
+We applied the simple smoothing model developed for Bore G40/0415 to the nearby historical Bore 315.  The results are shown below.
 
 .. figure:: ../historical_investigation/figures/simple_smoothing_model/ssm_bore_315_g40_0415.png
    :height: 650 px
@@ -268,13 +266,13 @@ We applied the simple smoothing model developed for bore G40/0415 to the nearby 
 
 .. class:: centered
 
-    *Figure: Simple smoothing model trained on bore G40/0415 applied to the historical Bore 315.*
+    *Figure: Simple smoothing model trained on Bore G40/0415 applied to the historical Bore 315.*
 
 
 Bespoke simple smoothing models
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In addition, we trained the simple smoothing model on the historical bore data (Bores 315, 515, Butterfields) after 1979-03-01 (once Lake Hawea levels returned to their normal operational range). The results are shown below.
+In addition, we trained the simple smoothing model on the historical bore data (Bores 315, 515, Butterfields) after 1979-03-01 (once Lake Hāwea levels returned to their normal operational range). The results are shown below.
 
 .. figure:: ../historical_investigation/figures/simple_smoothing_model/bespoke_ssm_bore_315.png
    :height: 650 px
@@ -282,7 +280,7 @@ In addition, we trained the simple smoothing model on the historical bore data (
 
 .. class:: centered
 
-    *Figure: Bespoke simple smoothing model trained on bore 315.*
+    *Figure: Bespoke simple smoothing model trained on Bore 315.*
 
 .. figure:: ../historical_investigation/figures/simple_smoothing_model/bespoke_ssm_bore_515.png
 
@@ -291,7 +289,7 @@ In addition, we trained the simple smoothing model on the historical bore data (
 
 .. class:: centered
 
-        *Figure: Bespoke simple smoothing model trained on bore 515.*
+        *Figure: Bespoke simple smoothing model trained on Bore 515.*
 
 .. figure:: ../historical_investigation/figures/simple_smoothing_model/bespoke_ssm_bore_butterfields.png
     :height: 650 px
@@ -299,7 +297,7 @@ In addition, we trained the simple smoothing model on the historical bore data (
 
 .. class:: centered
 
-        *Figure: Bespoke simple smoothing model trained on bore butterfields.*
+        *Figure: Bespoke simple smoothing model trained on Bore Butterfields.*
 
 
 Re-analysis discussion
@@ -307,25 +305,25 @@ Re-analysis discussion
 Our re-analysis finds:
 
 * That the lake level impacts in the historical bores are likely lagged behind the observed lake level variations by:
-    * bore_13: 26 days
-    * bore_315: 21 days
-    * bore_513: 45 days
-    * bore_515: 45 days
-    * bore_butterfields: 71 days
+    * Bore 13: 26 days
+    * Bore 315: 21 days
+    * Bore 513: 45 days
+    * Bore 515: 45 days
+    * Bore Butterfields: 71 days
 * Shifted lake levels in comparison to Bore 315 groundwater levels show a clear slope change when the shifted lake levels reach 332 m msl. This slope change is also evident in the second recovery, but is less clear. We suggest that the increases in groundwater levels while the shifted lake levels are below 332 m msl are due to other influences in the groundwater system. This suggests that the critical level for disconnection between the groundwater and lake system is 332 m msl. Note that this is higher than the historical analysis suggests (329.6 m msl).
-* The simple smoothing model developed for bore G40/0415 is able to match the observed groundwater level response to lake level variations at the nearby historical Bore 315, but includes some bias.
-* The bespoke simple smoothing models do a good job matching the groundwater elevations at the historical bores after 1979-03-01 (once Lake Hawea levels returned to their normal operational range).
-* the bespoke simple smoothing model for bore 315 underestimates the groundwater elevation significantly during the first low lake period (1976-1977), but adequately matches the groundwater elevation during the second low lake period (1977-1979).  In the first period the lake was below 332m msl for 7 months, and below 330m msl for 4 months.  In the second low period the lake was below 332m for 5 months and below 330m msl for just over 3 weeks. The second low period is shorter than the fit model's smoothing period of 203 days (c. 6 months), which explains why the simple smoothing model does not show deviation too far from the observed groundwater levels despite lake levels that obviously fell below the cutoff elevation. This analysis does not disagree with an cutoff level between 330 and 332 m msl.
-* the bespoke simple smoothing models at bores 515 and Butterfields overestimate the groundwater elevation rather than underestimate as we would expect. This suggests that the discontinuity between the lake and the groundwater levels may be obscured by the smoothing of lake levels (e.g. via storage) and/or other processes. Therefore we disagree with the Ministry of Works and Development conclusion that different elements of the system become disconnected from Lake Hawea at different lake levels. That conclusion is not uniquely supported by the data and is conceptually/structurally difficult to explain.
+* The simple smoothing model developed for Bore G40/0415 is able to match the observed groundwater level response to lake level variations at the nearby historical Bore 315, but includes some bias.
+* The bespoke simple smoothing models do a good job matching the groundwater elevations at the historical bores after 1979-03-01 (once Lake Hāwea levels returned to their normal operational range).
+* The bespoke simple smoothing model for Bore 315 underestimates the groundwater elevation significantly during the first low lake period (1976-1977), but adequately matches the groundwater elevation during the second low lake period (1977-1979).  In the first period the lake was below 332m msl for 7 months, and below 330m msl for 4 months.  In the second low period the lake was below 332m for 5 months and below 330m msl for just over 3 weeks. The second low period is shorter than the fit model's smoothing period of 203 days (c. 6 months), which explains why the simple smoothing model does not show deviation too far from the observed groundwater levels despite lake levels that obviously fell below the cutoff elevation. This analysis does not disagree with an cutoff level between 330 and 332 m msl.
+* The bespoke simple smoothing models at bores 515 and Butterfields overestimate the groundwater elevation rather than underestimate as we would expect. This suggests that the discontinuity between the lake and the groundwater levels may be obscured by the smoothing of lake levels (e.g. via storage) and/or other processes. Therefore we disagree with the Ministry of Works and Development conclusion that different elements of the system become disconnected from Lake Hāwea at different lake levels. That conclusion is not uniquely supported by the data and is conceptually/structurally difficult to explain.
 
 Model performance during Historic Low Lake levels
 ==================================================
 
 To assess the current model performance during the historic low lake levels we:
 
-1. ran the existing optimised model (3d_v1d) for the period 1976-01-01 to 1983-01-01, extracted the predicted groundwater levels at the historical bore locations, and compared the results to the observed groundwater levels.
-2. developed a new model (3d_v10a) which set the invert of the bund (see `model build documentation <../model_build/README.rst#lake-hawea-moraine-conceptual-model>`_) to 330 m msl and ran the new model for the period 1976-01-01 to 1983-01-01. We then extracted the predicted groundwater levels at the historical bore locations and compared the results to the observed groundwater levels.
-3. extracted the lake drop scenario results (see `Scenarios documentation <../Scenarios/README.rst#lake-drop-scenario-results>`_) at the historical bore locations, matched the results so that the time that the lake drop scenario went below the 3d_v1a bund elevation (335m) matched the time that the observed lake levels went below the historically observed limit (330m msl), and compared the results to the observed groundwater levels.
+1. Ran the existing optimised model (3d_v1d) for the period 1976-01-01 to 1983-01-01, extracted the predicted groundwater levels at the historical bore locations, and compared the results to the observed groundwater levels.
+2. Developed a new model (3d_v10a) which set the invert of the bund (see `model build documentation <../model_build/README.rst#lake-hawea-moraine-conceptual-model>`_) to 330 m msl and ran the new model for the period 1976-01-01 to 1983-01-01. We then extracted the predicted groundwater levels at the historical bore locations and compared the results to the observed groundwater levels.
+3. Extracted the lake drop scenario results (see `Scenarios documentation <../Scenarios/README.rst#lake-drop-scenario-results>`_) at the historical bore locations, matched the results so that the time that the lake drop scenario went below the 3d_v1a bund elevation (335m) matched the time that the observed lake levels went below the historically observed limit (330m msl), and compared the results to the observed groundwater levels.
 
 3d_v1d model results
 ----------------------
@@ -338,7 +336,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
 .. class:: centered
 
-    *Figure: 3d_v1d model results for bore 13.*
+    *Figure: 3d_v1d model results for Bore 13.*
 
 .. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_315_modelled.png
     :height: 650 px
@@ -346,7 +344,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
 .. class:: centered
 
-        *Figure: 3d_v1d model results for bore 315.*
+        *Figure: 3d_v1d model results for Bore 315.*
 
 .. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_513_modelled.png
     :height: 650 px
@@ -354,7 +352,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
 .. class:: centered
 
-        *Figure: 3d_v1d model results for bore 513.*
+        *Figure: 3d_v1d model results for Bore 513.*
 
 .. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_515_modelled.png
     :height: 650 px
@@ -362,7 +360,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
 .. class:: centered
 
-        *Figure: 3d_v1d model results for bore 515.*
+        *Figure: 3d_v1d model results for Bore 515.*
 
 .. figure:: ../historical_investigation/figures/3d_v1d_historical/bore_butterfields_modelled.png
     :height: 650 px
@@ -370,7 +368,7 @@ The modelled vs observed groundwater levels for the 3d_v1d model are shown below
 
 .. class:: centered
 
-        *Figure: 3d_v1d model results for bore butterfields.*
+        *Figure: 3d_v1d model results for Bore Butterfields.*
 
 3d_v10a historical period model results
 -----------------------------------------
@@ -383,7 +381,7 @@ The modelled vs observed groundwater levels for the 3d_v10a model are shown belo
 
 .. class:: centered
 
-    *Figure: 3d_v10a model results for bore 13.*
+    *Figure: 3d_v10a model results for Bore 13.*
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/bore_315_modelled.png
     :height: 650 px
@@ -391,7 +389,7 @@ The modelled vs observed groundwater levels for the 3d_v10a model are shown belo
 
 .. class:: centered
 
-        *Figure: 3d_v10a model results for bore 315.*
+        *Figure: 3d_v10a model results for Bore 315.*
 
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/bore_513_modelled.png
@@ -400,7 +398,7 @@ The modelled vs observed groundwater levels for the 3d_v10a model are shown belo
 
 .. class:: centered
 
-        *Figure: 3d_v10a model results for bore 513.*
+        *Figure: 3d_v10a model results for Bore 513.*
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/bore_515_modelled.png
     :height: 650 px
@@ -408,7 +406,7 @@ The modelled vs observed groundwater levels for the 3d_v10a model are shown belo
 
 .. class:: centered
 
-        *Figure: 3d_v10a model results for bore 515.*
+        *Figure: 3d_v10a model results for Bore 515.*
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/bore_butterfields_modelled.png
         :height: 650 px
@@ -416,7 +414,7 @@ The modelled vs observed groundwater levels for the 3d_v10a model are shown belo
 
 .. class:: centered
 
-            *Figure: 3d_v10a model results for bore butterfields.*
+            *Figure: 3d_v10a model results for Bore Butterfields.*
 
 3d_v10a model period results
 -----------------------------
@@ -429,7 +427,7 @@ As the 3d_v10a model was not optimised for the model period we also present the 
 
 .. class:: centered
 
-    *Figure: 3d_v10a model results for bore G40/0041.*
+    *Figure: 3d_v10a model results for Bore G40/0041.*
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/reg_opt_period/hds_closeup_g40_0366.png
     :height: 650 px
@@ -437,7 +435,7 @@ As the 3d_v10a model was not optimised for the model period we also present the 
 
 .. class:: centered
 
-        *Figure: 3d_v10a model results for bore G40/0366.*
+        *Figure: 3d_v10a model results for Bore G40/0366.*
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/reg_opt_period/hds_closeup_g40_0367.png
     :height: 650 px
@@ -445,7 +443,7 @@ As the 3d_v10a model was not optimised for the model period we also present the 
 
 .. class:: centered
 
-        *Figure: 3d_v10a model results for bore G40/0367.*
+        *Figure: 3d_v10a model results for Bore G40/0367.*
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/reg_opt_period/hds_closeup_g40_0415.png
     :height: 650 px
@@ -453,7 +451,7 @@ As the 3d_v10a model was not optimised for the model period we also present the 
 
 .. class:: centered
 
-        *Figure: 3d_v10a model results for bore G40/0415.*
+        *Figure: 3d_v10a model results for Bore G40/0415.*
 
 .. figure:: ../historical_investigation/figures/3d_v10a_historical/reg_opt_period/hds_closeup_g40_0416.png
     :height: 650 px
@@ -461,13 +459,12 @@ As the 3d_v10a model was not optimised for the model period we also present the 
 
 .. class:: centered
 
-        *Figure: 3d_v10a model results for bore G40/0416.*
+        *Figure: 3d_v10a model results for Bore G40/0416.*
 
 
 Lake Drop scenarios (3d_v1d model)
 -----------------------------------
-# review maybe a sentence explaining the lake drop 320 means when the lake drops below 320 m msl (sorry if it's been done and I've missed it!)
-Note we have only presented the lake drop 320 results here, but the results for the other lake drop scenarios are available in the `figures/lake_drop_scenarios <../historical_investigation/figures/lake_drop_scenarios>`_ folder.
+Note we have only presented the lake drop 320 (where lake levels were set to 320m msl) results here, but the results for the other lake drop scenarios are available in the `figures/lake_drop_scenarios <../historical_investigation/figures/lake_drop_scenarios>`_ folder.
 
 .. figure:: ../historical_investigation/figures/lake_drop_scenarios/bore_13_lake_drop_320.png
    :height: 650 px
@@ -475,7 +472,7 @@ Note we have only presented the lake drop 320 results here, but the results for 
 
 .. class:: centered
 
-    *Figure: Lake drop scenario results for bore 13.*
+    *Figure: Lake drop scenario results for Bore 13.*
 
 .. figure:: ../historical_investigation/figures/lake_drop_scenarios/bore_315_lake_drop_320.png
     :height: 650 px
@@ -483,7 +480,7 @@ Note we have only presented the lake drop 320 results here, but the results for 
 
 .. class:: centered
 
-        *Figure: Lake drop scenario results for bore 315.*
+        *Figure: Lake drop scenario results for Bore 315.*
 
 .. figure:: ../historical_investigation/figures/lake_drop_scenarios/bore_513_lake_drop_320.png
     :height: 650 px
@@ -491,7 +488,7 @@ Note we have only presented the lake drop 320 results here, but the results for 
 
 .. class:: centered
 
-        *Figure: Lake drop scenario results for bore 513.*
+        *Figure: Lake drop scenario results for Bore 513.*
 
 .. figure:: ../historical_investigation/figures/lake_drop_scenarios/bore_515_lake_drop_320.png
     :height: 650 px
@@ -499,7 +496,7 @@ Note we have only presented the lake drop 320 results here, but the results for 
 
 .. class:: centered
 
-        *Figure: Lake drop scenario results for bore 515.*
+        *Figure: Lake drop scenario results for Bore 515.*
 
 .. figure:: ../historical_investigation/figures/lake_drop_scenarios/bore_butterfields_lake_drop_320.png
     :height: 650 px
@@ -507,12 +504,12 @@ Note we have only presented the lake drop 320 results here, but the results for 
 
 .. class:: centered
 
-        *Figure: Lake drop scenario results for bore butterfields.*
+        *Figure: Lake drop scenario results for Bore Butterfields.*
 
 MT3d component analysis during low lake levels (3d_v1d model)
 ---------------------------------------------------------------
 
-Given the performance of the model during the historic low lake levels, we also present the MT3d component analysis for the steady state 3d_v1d model where Lake Hawea levels are below the invert level.  The results are shown below.
+Given the performance of the model during the historic low lake levels, we also present the MT3d component analysis for the steady state 3d_v1d model where Lake Hāwea levels are below the invert level.  The results are shown below.
 
 .. figure:: ../historical_investigation/mt3d_indicator_scenarios/plots/joint/all_str.png
    :height: 800 px
@@ -536,36 +533,36 @@ Model performance discussion
 Our model performance analysis finds:
 
 * The model preforms surprisingly well during the historic low lake levels.  The modelled groundwater levels are within c. 2 m of the observed groundwater levels for the historical lake lows.
-* Most wells show very little bias, but the model consistently underestimates the groundwater levels at bore 13 and 315. The underestimation occurs during both the high and low lake levels (note that there is no data for bore 13 during the historical low levels).
+* Most wells show very little bias, but the model consistently underestimates the groundwater levels at Bore 13 and 315. The underestimation occurs during both the high and low lake levels (note that there is no data for Bore 13 during the historical low levels).
 * The lake drop scenarios are broadly consistent with the observed data.
-# review not a big deal but would read nicer if consistent between writing bore 15 and Bore 15 (chose to capitalise or not)
-* Lake drop results at Bore 315 suggest that the observed historical groundwater levels did not reach their equilibrium state without Lake Hawea influences.
-* The low lake levels associated with the lake drop scenarios at bores: 513, 515, and Butterfields propagate to the bore levels more slowly than the observed historical low lake levels.
+* Lake drop results at Bore 315 suggest that the observed historical groundwater levels did not reach their equilibrium state without Lake Hāwea influences.
+* The low lake levels associated with the lake drop scenarios at bores: 513, 515, and Butterfields propagate to the bore levels more slowly than the observed historical low lake levels.  This suggests that the model may have lower than expected transmissivity in the main aquifer system. The lower transmissivity was necessary to fit the high frequency monitoring records; therefore this misfit may provide additional evidence of a second complex moraine structure in the main aquifer system.  For more information see: `model optimisation readme <../optimisation/README.rst#d-v1d-final-model>`_.
 * In combination the misfit of the low lake levels provide evidence that there is likely information in the historical data that could contribute to a better groundwater model with re-calibration.
 * The results for the 3d_v10a model (bund top set at 330 m msl) are very similar to the results of the 3d_v1d model (bund top set at 335 m msl).  This suggests that the model is relatively insensitive to the exact elevation of the impermeable moraine. Further analysis, particularly formal structural and parameter uncertainty analysis, is required to better understand this perceived insensitivity to the impermeable moraine top elevation.
-* The MT3D component analysis suggests that at low Lake Hawea levels the groundwater system in the Northern portion of the Lake Hawea aquifer system becomes dominated by the Grandview and John Creek inflows. At times of higher groundwater flow much of the losses from these creeks are diverted into Lake Hawea. This conclusion matches the conventional understanding of the system but assumes that most of the Grandview and John Creek flow is lost to groundwater.  If these creeks are less strongly losing then groundwater levels would likely be over predicted by the model during low lake levels.
+* The MT3D component analysis suggests that at low Lake Hāwea levels the groundwater system in the Northern portion of the Lake Hāwea aquifer system becomes dominated by the Grandview and John Creek inflows. At times of higher groundwater flow much of the losses from these creeks are diverted into Lake Hawea. This conclusion matches the conventional understanding of the system but assumes that most of the Grandview and John Creek flow is lost to groundwater.  If these creeks are less strongly losing then groundwater levels would likely be over predicted by the model during low lake levels.
 
 Conclusions and Recommendations
 ==================================
 
 Our conclusions are:
 
-* The Ministry of Works and Development data provides essential information on the Lake Hawea system.
+* The Ministry of Works and Development data provides essential information on the Lake Hāwea system.
 * The new data confirms the key modelling prediction that there is some level below which the lake becomes disconnected from the groundwater system.
 * The prior information suggested that the bottom elevation of the impermeable moraine was likely to be approximately 320 m msl and that the top of the impermeable moraine was likely between 327.6 - 338 m msl.  The new data further constrains the likely elevation of the top of the impermeable moraine to be between 330 and 332 m msl.
-* Given the impact of the lake level on the groundwater system we recommend that the lake level is maintained above a minimum elevation of 333 m msl to ensure that the groundwater system is not disconnected from the lake. This suggestion should not be seen as conclusive evidence to reset the current Lake Hawea consent conditions, but rather as an absolute minimum level below which the lake should not be allowed to fall even in extraordinary circumstances. As always, should lake levels fall below the current minimum level (338 m msl) the groundwater system should be closely monitored.
+* Given the impact of the lake level on the groundwater system we recommend that the lake level is maintained above a minimum elevation of 333 m msl to ensure that the groundwater system is not disconnected from the lake. This suggestion should not be seen as conclusive evidence to reset the current Lake Hāwea consent conditions, but rather as an absolute minimum level below which the lake should not be allowed to fall even in extraordinary circumstances. As always, should lake levels fall below the current minimum level (338 m msl) the groundwater system should be closely monitored.
 * These results do not discredit the recommended  additional datasets (see `model optimisation readme <../optimisation/README.rst#recommended-additional-data>`_) as they are required to further constrain the model structure and to improve the model performance; however the results do increase the confidence in the implemented model and conceptual structure.
 * The model generally performs well during the historic low lake levels. This result is surprising given there was no prior data to inform the model optimisation under these conditions.
 * Despite the good fit there is likely more information to be gleemed from the historical data via model re-calibration.
+* The model predicts slower than observed low head propagation to the more distant historical bores.  This observation may provide additional evidence for a second complex moraine structure in the main aquifer system.  For more information see: `model optimisation readme <../optimisation/README.rst#d-v1d-final-model>`_.
 * The model is remarkably insensitive to the level of the top of the impermeable moraine. A drop of 5m causes very little change in both the calibration and historical data matches. Further analysis, particularly formal structural and parameter uncertainty analysis, is required to better understand this perceived insensitivity to the impermeable moraine top elevation.
 * Comparison of the "lake drop" scenarios with the observed historical data suggests that the groundwater levels during this historical period of low lake levels did not reach steady state conditions / equilibrium state of the aquifer when disconnected to the lake.
-* MT3D component analysis suggests that as lake level fall below the impermeable moraine, the groundwater in the northern Lake Hawea aquifer system becomes increasingly dominated by losses from Grandview and John Creeks. If these creeks are less well connected to the groundwater system than assumed, the model may significantly over predict steady state groundwater levels during low lake levels.
+* MT3D component analysis suggests that as lake level fall below the impermeable moraine, the groundwater in the northern Lake Hāwea aquifer system becomes increasingly dominated by losses from Grandview and John Creeks. If these creeks are less well connected to the groundwater system than assumed, the model may significantly over predict steady state groundwater levels during low lake levels.
 
 Our recommendations from this work are:
 
 * Despite the adequate performance of the model, we would strongly suggest re-optimising the model and including targets for the period 1976-01-01 to 1983-01-01.
 * Given the relative insensitivity of the invert level, we would suggest conducting formal parameter and structural uncertainly analysis to better understand the range of predictions.
-* These results further support the need for a high frequency monitoring well near the Northeast Corner of the Hawea Flat aquifer (see `model optimisation readme <../optimisation/README.rst#recommended-additional-data>`_).  One of the key model predictions for the complex moraine structure is that groundwater levels (impacted by the lake) should be elevated in and around the Grandview/John Creek alluvial fans. Testing this prediction would require a high frequency groundwater level record in this area of at least a couple of years in length.
+* These results further support the need for a high frequency monitoring well near the Northeast Corner of the Hāwea Flat aquifer (see `model optimisation readme <../optimisation/README.rst#recommended-additional-data>`_).  One of the key model predictions for the complex moraine structure is that groundwater levels (impacted by the lake) should be elevated in and around the Grandview/John Creek alluvial fans. Testing this prediction would require a high frequency groundwater level record in this area of at least a couple of years in length.
 
 Dataset and Resources
 =======================
@@ -602,9 +599,9 @@ Dataset and Resources
     - `csv_archive <../historical_investigation/generated_data/csv_archive>`_: a CSV archive of the historical_data.hdf file.  For ease of access
     - `historical_data.hdf <../historical_investigation/generated_data/historical_data.hdf>`_: All historical data digitised and processed to meters above sea level (msl) from meters Dunedin 1958.  This includes the bore records, the lake level records, the bore locations, and the model period heads.
     - `long_nat_v10a.7z <../historical_investigation/generated_data/long_nat_v10a.7z>`_: standard outputs of the 3d_v10a model for the period 1976 to 2020.
-    - `min_fit_lake_bore_315_curve.p <../historical_investigation/generated_data/min_fit_lake_bore_315_curve.p>`_: The simple smoothing model parameters for bore 315.
-    - `min_fit_lake_bore_515_curve.p <../historical_investigation/generated_data/min_fit_lake_bore_515_curve.p>`_: The simple smoothing model parameters for bore 515.
-    - `min_fit_lake_bore_butterfields_curve.p <../historical_investigation/generated_data/min_fit_lake_bore_butterfields_curve.p>`_: The simple smoothing model parameters for bore butterfields.
+    - `min_fit_lake_bore_315_curve.p <../historical_investigation/generated_data/min_fit_lake_bore_315_curve.p>`_: The simple smoothing model parameters for Bore 315.
+    - `min_fit_lake_bore_515_curve.p <../historical_investigation/generated_data/min_fit_lake_bore_515_curve.p>`_: The simple smoothing model parameters for Bore 515.
+    - `min_fit_lake_bore_butterfields_curve.p <../historical_investigation/generated_data/min_fit_lake_bore_butterfields_curve.p>`_: The simple smoothing model parameters for Bore Butterfields.
     - `nat_historical_data.hdf <../historical_investigation/generated_data/nat_historical_data.hdf>`_: the modelled heads for the historical low lake period Model 3d_v1d.
     - `nat_historical_data_v10a.hdf <../historical_investigation/generated_data/nat_historical_data_v10a.hdf>`_: the modelled heads for the historical low lake period Model 3d_v10a.
 - `mt3d_indicator_scenarios <../historical_investigation/mt3d_indicator_scenarios>`_: This folder contains the MT3d indicator scenarios for the 3d_v1d model.

@@ -257,7 +257,7 @@ def plot_lake_v_hds_historic():
             idx = (historical.index >= datlim[0]) & (historical.index <= datlim[1]) & historical.increasing
             ax.plot(historical.loc[idx, 'lake'], historical.loc[idx, 'head'],
                     color='orange', label=f'increasing low lake period: {site}')
-            ax.axvline(min_lake, ls=':', label='minium lake level during optimisation')
+            ax.axvline(min_lake, ls=':', label='minimum lake level during optimisation')
             ax.legend()
             ax.set_xlabel(f'Lake Head (m) shifted forward by {use_shifts[site]} days')
             ax.set_ylabel('Well Head (m)')
