@@ -1,4 +1,4 @@
-Analysis of Historical Lake Hāwea Low Lake levels corresponding groundwater levels)
+Analysis of Historical Lake Hāwea Low Lake levels corresponding groundwater levels
 ###########################################################################################
 
 .. figure:: ../historical_investigation/figures/simple_smoothing_model/bespoke_ssm_bore_315.png
