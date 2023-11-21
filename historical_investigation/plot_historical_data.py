@@ -107,9 +107,7 @@ def plot_model_period_hds():
                 ax.plot(hds.index, hds, color=c, label='Meas. ' + site)
         ax.legend()
         fig.tight_layout()
-        useoutdir = historical_figure_dir.joinpath('model_period_hds')
-        useoutdir.mkdir(exist_ok=True)
-        fig.savefig(useoutdir.joinpath(f'{nm}_hds.png'))
+        fig.savefig(historical_figure_dir.joinpath(f'{nm}_hds.png'))
         plt.close(fig)
 
 

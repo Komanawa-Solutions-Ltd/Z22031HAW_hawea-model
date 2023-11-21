@@ -43,7 +43,7 @@ rows = int(abs(uly - lry) // grid_space) + 1
 
 layers = 3
 layer_type = [1, 0, 0]
-bund_top = 335
+bund_top = 330
 l2_top = 328
 
 temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
