@@ -21,7 +21,7 @@ def plot_hist_plus_lake_drop(scen, well):
 
     xs, modelled_lake = get_lake_hds(scen)
     fig = plt.figure(figsize=(14, 9))
-    gs = plt.GridSpec(2, 2, height_ratios=(1, 1), width_ratios=(1, 0.3))
+    gs = plt.GridSpec(2, 2, height_ratios=(2, 1), width_ratios=(1, 0.3))
     ax = fig.add_subplot(gs[0, 0])
     ax_lake = fig.add_subplot(gs[1, 0], sharex=ax)
     ax_loc = fig.add_subplot(gs[:, 1])
