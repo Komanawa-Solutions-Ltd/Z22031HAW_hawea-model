@@ -283,7 +283,6 @@ In addition, we trained the simple smoothing model on the historical bore data (
     *Figure: Bespoke simple smoothing model trained on Bore 315.*
 
 .. figure:: ../historical_investigation/figures/simple_smoothing_model/bespoke_ssm_bore_515.png
-
     :height: 650 px
     :align: center
 

@@ -485,26 +485,27 @@ def make_pdf_of_readmes(outdir): # todo use this
         subprocess.call(['rst2pdf', f"--baseurl={use_bse}",
                          str(f), '-o', str(outpath)])
 
-        outpath = outdir.joinpath('final_github_readmes.pdf')
-        sections = [
-            'README.pdf',
-            'model_build_README.pdf',
-            'model_parameterisation_README.pdf',
-            'targets_and_sensitive_sites_README.pdf',
-            'optimisation_README.pdf',
-            'Scenarios_README.pdf',
+    outpath = outdir.joinpath('final_github_readmes.pdf')
+    sections = [
+        'README.pdf',
+        'model_build_README.pdf',
+        'model_parameterisation_README.pdf',
+        'targets_and_sensitive_sites_README.pdf',
+        'optimisation_README.pdf',
+        'Scenarios_README.pdf',
+        'historical_investigation_README.pdf',
 
-        ]
-        file = PdfMerger()
-        pos = 0
-        for i, s in enumerate(sections):
-            use_path = outdir.joinpath(s)
-            loaded = PdfReader(use_path)
-            file.merge(position=pos, fileobj=loaded,
-                       outline_item=f'{s}-{i}: {use_path.name.replace(".pdf", "")}')
-            pos += loaded.numPages
+    ]
+    file = PdfMerger()
+    pos = 0
+    for i, s in enumerate(sections):
+        use_path = outdir.joinpath(s)
+        loaded = PdfReader(use_path)
+        file.merge(position=pos, fileobj=loaded,
+                   outline_item=f'{s}-{i}: {use_path.name.replace(".pdf", "")}')
+        pos += loaded.numPages
 
-        file.write(outpath)
+    file.write(outpath)
 
 def make_raw_module_index(module_base, outpath):
 
@@ -534,6 +535,6 @@ if __name__ == '__main__':
     # additional_monitoring()
     # wetland_clipouts()
     # clipout_boundary_conditions()
-    #make_pdf_of_readmes(proj_root.home().joinpath('Downloads', 'hawea_pdfs'))
-    make_raw_module_index('/home/matt_dumont/PycharmProjects/hawea_historical/historical_investigation', proj_root.home().joinpath('Downloads/hawea_raw_module_index.rst'))
+    make_pdf_of_readmes(proj_root.home().joinpath('Downloads', 'hawea_pdfs'))
+    #make_raw_module_index('/home/matt_dumont/PycharmProjects/hawea_historical/historical_investigation', proj_root.home().joinpath('Downloads/hawea_raw_module_index.rst'))
     pass

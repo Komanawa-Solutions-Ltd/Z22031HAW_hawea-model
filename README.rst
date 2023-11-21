@@ -425,7 +425,7 @@ terrace_only
 -  History matching was not achieved.
 
 3d_v10a
-~~~~~~
+~~~~~~~~~~
 
 -  Identical to “Main (3d_v1d)” including parameterisation, but the bund elevation was set to 330 m
    MSL to investigate the predictions of the historical investigation.
