@@ -6,6 +6,7 @@ import itertools
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from project_base import processed_scen_dir
 import flopy
@@ -19,6 +20,7 @@ from model_parameterisation.static_params import lake_conduct
 from Scenarios.supporting_data_analysis.pumping_data import accepted_pump_names, get_scen_pumping_data, \
     get_gridded_pumping
 from Scenarios.supporting_data_analysis.utils import make_long_weekly_mean
+from model_build.project_model_tools import smt
 
 
 def get_scen_rch(tdis, rch_param, dryland=False, recalc=False):
@@ -57,7 +59,7 @@ def _get_scen_race_losses(start_date, end_date, frequency='W'):
     return out
 
 
-def _get_scen_hill_race_data(tdis, recalc):
+def _get_scen_hill_race_data(tdis, recalc, fillna=False):
     """
     get the raw hill inflow and race loss data (no multipliers
     :param tdis: time discritisation
@@ -84,8 +86,23 @@ def _get_scen_hill_race_data(tdis, recalc):
 
         # hillside data
         hillside_locs = get_hillside_catchment_locs()
-        hillside_flow = get_hillside_flows(*tdis.date_limits)
-
+        try:
+            hillside_flow = get_hillside_flows(*tdis.date_limits)
+        except ValueError as val:
+            if 'earlier than dataset start date' in str(val) and fillna:
+                hillside_flow = get_hillside_flows('1976-09-23', tdis.date_limits[-1])
+                out = pd.DataFrame(index=pd.date_range(tdis.date_limits[0], '1976-09-23', freq='D'),
+                                   columns=hillside_flow.columns)
+                doy = out.index.dayofyear
+                for c in out.columns:
+                    temp = hillside_flow[c].copy()
+                    temp.index = temp.index.dayofyear
+                    filler = temp.groupby(temp.index).mean()
+                    out[c] = filler.loc[doy].values
+                hillside_flow = pd.concat([out, hillside_flow])
+                assert not hillside_flow.isna().any().any()
+            else:
+                raise val
         # remove flows from south of lugate tarras rd.
         hillside_flow = hillside_flow.loc[:, hillside_locs.index.unique()]
         hill_spd = tdis.map_data_locations(hillside_locs, {'flux': hillside_flow},
@@ -100,7 +117,7 @@ def _get_scen_hill_race_data(tdis, recalc):
     return race_spd, hill_spd
 
 
-def get_scen_well_data(pump_name, tdis, hill_param, race_param, return_unique_spd=False, recalc=False):
+def get_scen_well_data(pump_name, tdis, hill_param, race_param, return_unique_spd=False, recalc=False, fillna=False):
     """
     get scenario pumping data including hillslope inflows, race data, and pumping rates
     :param pump_name:  pump names see Scenarios/supporting_data_analysis/pumping_data.py --> accepted_pump_names
@@ -109,11 +126,12 @@ def get_scen_well_data(pump_name, tdis, hill_param, race_param, return_unique_sp
     :param race_param: race multiplier
     :param return_unique_spd: bool If False return data to go into model, if True then return dictionary of
                               different datasets.
+    :param fillna: bool if true then fill na values with the DOY mean year (for hillside inflows)
     :param recalc: bool recalc from base datasets
     :return:
     """
     assert pump_name in accepted_pump_names, f'unknown pump name: {pump_name}, expected on of: {accepted_pump_names}'
-    race_spd, hill_spd = _get_scen_hill_race_data(tdis, recalc)
+    race_spd, hill_spd = _get_scen_hill_race_data(tdis, recalc, fillna=fillna)
     pumping_spd = get_scen_pumping_data(pump_name, tdis, recalc)
     # manage parameters
     for p, d in race_spd.items():
@@ -212,7 +230,15 @@ def get_scen_ghb_data(tdis, recalc=False):
     # transform into GHB data
     out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
                                   flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
+
+    # remove lake cells with head below elv
     from model_build.project_model_tools import smt
+    bots = smt.get_bottoms()
+    for k, v in out.items():
+        v = pd.DataFrame(v)
+        v = v.loc[bots[v.k, v.i, v.j] < v.bhead]
+        out[k] = tdis.manage_period_dtypes(v, flopy.modflow.ModflowGhb.get_default_dtype(), k)
+
     groups = list(smt.grouper(len(out.keys()) // 6 + 1, list(out.keys()), None))
     assert len(groups) == len(save_paths)
     for g, p in zip(groups, save_paths):
@@ -239,13 +265,15 @@ def _get_str_stage_flow(start_date, end_date, frequency='W'):
     return riv_flow, riv_stage
 
 
-def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, return_unique=False, recalc=False):
+def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, return_unique=False, recalc=False,
+                      fill_na=False):
     """
     get stream data.  Stream flow and stage data are set from weekly averages during the inflow period
     :param tdis: time discritsiation class
     :param riv_params: optimisation riv parameters
     :param big_static: bool if true then set the big rivers (clutha/hawea) to static (e.g. steady state)
     :param small_static: bool if true then set the small rivers (grandview/john) to static (e.g. steady state)
+    :param fill_na: bool if true then fill na values with the DOY mean year
     :return:
     """
     param_mapper = {'h1': -1, 'h2': -2, 'h3': -3, 'c1': -4, 'gview': -5, 'john': -6}
@@ -266,6 +294,25 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
         })
         riv_locs.loc[:, ['width', 'slope', 'rough']] = 1.  # Keynote dummy values as I am not calculating stage
         riv_flow, riv_stage = _get_str_stage_flow(*tdis.date_limits)
+        if fill_na and riv_flow.isna().any().any():
+            for c in riv_flow.columns:
+                temp = riv_flow[c]
+                temp.index = temp.index.dayofyear
+                filler = temp.groupby(temp.index).mean()
+                idx = np.isnan(temp)
+                temp.loc[idx] = filler.loc[temp.index[idx]]
+                riv_flow.loc[:, c] = temp.values
+        if fill_na and riv_stage.isna().any().any():
+            for c in riv_stage.columns:
+                temp = riv_stage[c]
+                temp.index = temp.index.dayofyear
+                filler = temp.groupby(temp.index).mean()
+                idx = np.isnan(temp)
+                temp.loc[idx] = filler.loc[temp.index[idx]]
+                riv_stage.loc[:, c] = temp.values
+
+        assert riv_flow.notna().all().all()
+        assert riv_stage.notna().all().all()
         use_riv_flow = riv_stage.copy(deep=True) * 0
         for k in riv_locs.rname.unique():
             sreach = int(riv_locs.loc[riv_locs.rname == k, 'dist'].min())

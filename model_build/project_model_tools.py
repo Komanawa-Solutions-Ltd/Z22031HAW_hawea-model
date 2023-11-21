@@ -424,7 +424,7 @@ def get_ibound(recalc=False):
     if recalc:
         no_flow()
     out = np.loadtxt(processed_model_build_data_dir.joinpath('ibound.txt'))
-    return np.repeat(out[np.newaxis], 3, axis=0)
+    return np.repeat(out[np.newaxis], 3, axis=0).astype(int)
 
 
 smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,

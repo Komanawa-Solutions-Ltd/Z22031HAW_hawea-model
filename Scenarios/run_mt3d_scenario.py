@@ -94,7 +94,8 @@ def get_ftl(recalc=False):
 
 def create_ssm_data(race_con=0, all_hill=0,
                     hawear_con=0, clutha_con=0, lake_con=0, john_con=0, gview_con=0,
-                    maungawera=None, flat_west=None, flat_east=None, terrace_east=None, south_east=None, ):
+                    maungawera=None, flat_west=None, flat_east=None, terrace_east=None, south_east=None,
+                    include_top_ghb=True):
     sub_hills_none = np.array(
         [maungawera is None, flat_west is None, flat_east is None, terrace_east is None, south_east is None])
     assert all_hill is None or all(sub_hills_none), 'only one of (all hill, subhills) can be passed'
@@ -103,6 +104,8 @@ def create_ssm_data(race_con=0, all_hill=0,
     hill_locs = get_hillside_catchment_locs()
     str_locs = get_river_loc_data()
     lake_locs = get_lake_hawea_loc()
+    if not include_top_ghb:
+        lake_locs = lake_locs.loc[lake_locs.k>0]
     race_locs = get_race_locs()
 
     # specify itype
@@ -245,7 +248,7 @@ def create_mt3d(ftl_path, mt3d_name, mt3d_ws, smt, run_model=True, num_species=1
 
     # convert from pd.dataframe to record arrays as record arrays cannot be handled by pickle
     ssm_stress_period_data = opt_tdis.manage_dtypes(ssm_stress_period_data, flopy.mt3d.Mt3dSsm.get_default_dtype(),
-                                                    check_periods_match=False)
+                                                    check_periods_match=False, group_cells=True, grouper='first')
     # check that FTL is in the model_ws folder and if not move it there
 
     listfile = os.path.join(mt3d_ws, f'{mt3d_name}.list')

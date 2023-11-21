@@ -33,7 +33,8 @@ def fill_weekly_mean(data, keys=None, only_where_na=True):
     return outdata.loc[:, keys]
 
 
-def select_resample(data, start_date, end_date, frequency, func='mean', start_ends_out_bounds='raise'):
+def select_resample(data, start_date, end_date, frequency, func='mean', start_ends_out_bounds='raise',
+                    interpolate=False):
     """
     select and resample dataset between time dates to appropriate frequency
     :param data: pandas dataframe/series with datetime index
@@ -76,7 +77,8 @@ def select_resample(data, start_date, end_date, frequency, func='mean', start_en
     end_date = pd.to_datetime(end_date)
     idx = (data.index >= start_date) & (data.index <= end_date)
     outdata = data.loc[idx].resample(frequency).agg(func)
-
+    if interpolate:
+        outdata = outdata.interpolate()
     return outdata
 
 

@@ -117,7 +117,7 @@ def _minimize_func(params):
     return out
 
 
-def _fit_func(x, step, lag, amplitude, smooth, plot=False):
+def _fit_func(x, step, lag, amplitude, smooth, plot=False, clip=True, center=False):
     x0 = deepcopy(x)
     x = deepcopy(x)
     x += step
@@ -130,7 +130,7 @@ def _fit_func(x, step, lag, amplitude, smooth, plot=False):
     x3 = float_shift(x2, lag)
 
     # smooth
-    x4 = float_rolling(x3, smooth)
+    x4 = float_rolling(x3, smooth, center=center)
 
     if plot:
         fig, ax = plt.subplots(figsize=(10, 3))
@@ -142,15 +142,18 @@ def _fit_func(x, step, lag, amplitude, smooth, plot=False):
             ax.plot(v.index, v, color=c, label=k)
         ax.legend()
         plt.show()
-    return x4.loc[(x4.index >= '2017-11-02') & (x4.index <= '2021-12-31')]  # clip
+    if clip:
+        return x4.loc[(x4.index >= '2017-11-02') & (x4.index <= '2021-12-31')]  # clip
+    else:
+        return x4
 
 
-def float_rolling(x, days):
+def float_rolling(x, days, center=False):
     if days == 0:
         return deepcopy(x)
     low = int(days)
     high = int(days) + 1
-    temp = np.concatenate((x.rolling(low).mean().values[np.newaxis], x.rolling(high).mean().values[np.newaxis]))
+    temp = np.concatenate((x.rolling(low,center=center).mean().values[np.newaxis], x.rolling(high, center=center).mean().values[np.newaxis]))
     xmin = temp.min(axis=0)
     xmax = temp.min(axis=0)
     return pd.Series(xmin + (xmax - xmin) * (days - low), index=x.index)

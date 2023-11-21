@@ -9,7 +9,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-from model_tools.time_discretization import TimeDis
+try:
+    from model_tools.time_discretization import TimeDis
+except ModuleNotFoundError:
+    from dummy_packages import TimeDis
 from model_build.get_boundary_condition_data import get_well_data
 from optimisation.optimisation_period import tdis as opt_tdis
 from model_parameterisation.inital_parametersiation import get_race_multiplier, get_hillslope_multiplier

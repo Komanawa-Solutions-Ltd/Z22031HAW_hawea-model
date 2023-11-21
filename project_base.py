@@ -45,6 +45,10 @@ processed_param_dir = proj_root.joinpath('model_parameterisation/processed_data'
 base_scen_dir = proj_root.joinpath('Scenarios/base_data')
 processed_scen_dir = proj_root.joinpath('Scenarios/processed_input_data')
 
+historical_data_dir = proj_root.joinpath('historical_investigation/base_data')
+processed_historical_data_dir = proj_root.joinpath('historical_investigation/generated_data')
+historical_figure_dir = proj_root.joinpath('historical_investigation/figures')
+historical_figure_dir.mkdir(exist_ok=True)
 
 butterfield_dir = proj_root.joinpath('Scenarios/wetland_setback_butterfield')
 campbells_dir = proj_root.joinpath('Scenarios/wetland_setback_campbells')
