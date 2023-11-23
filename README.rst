@@ -6,11 +6,16 @@ Hawea Transient groundwater model (Hawea Model)
    :align: center
 
 :Author:  Matt Dumont
-:Date:  2021-11-02
+:Date:  2023-04-01
 :Version:  1.0.0
 :Status:  Final
 :KSL project: Z22031HAW_hawea-model
 :Purpose: This document describes the Hawea Model repo
+:Versions:
+    - 2023-11-24: Final version with peer review
+    - 2023-11-20: Final version with historical investigation
+    - 2023-05-09: Final version
+    - 2023-04-01: Initial version
 
 The Hawea model domain; the inactive portions of the model are coloured dark grey. The model domain is a 3D model of the Hawea
 aquifer systems including the Maungawera Valley.
@@ -37,6 +42,37 @@ its methodology and, where applicable, the results of the step:
 3.  `Model Parameterisation <model_parameterisation/README.rst>`_: define the initial model parameters and parameterisation
 4.  `Model Optimisation and limitations <optimisation/README.rst>`_: optimise the model to the available data
 5.  `Model Scenarios <Scenarios/README.rst>`_: run a series of scenarios to better understand the model behaviour and to predict the systems response to changing conditions
+
+Model Peer review
+====================
+
+ORC commissioned an independent peer review of the Hawea model as of July 2023.  The peer review was undertaken by Julian Weir of Aqualinc Research Ltd.  A full copy of the review is available in this repo at `Hawea Model Peer Review <Peer Review_Hawea GW Models_Final.pdf>`_. Note that this peer review does not extend to the subsequent investigation of Quartz Creek LSR and Historical water levels. In general the review was quite complimentary with the following conclusion:
+
+
+    Overall, the Hāwea Basin model has been soundly developed, accounting appropriately for key hydrogeological drivers. The use of a transient model means that effects during dry periods (and potential cumulative effects from year to year) can be quantified (noting that it is often the dry periods that dictate allocation decisions). Conceptualisation and development have been thorough, and model limitations have been transparently discussed. We support LA’s conclusions on additional data collection to improve model representation. Although relatively minor, the following additional areas could be targeted to feed into future model development.
+
+    * Further verification that the ‘Rushton’ soil-water balance model is appropriate to apply to the Hāwea Basin area;
+    * Additional field work to verify irrigation scheme race losses to ground;
+    * Targeted aquifer testing, and a comparison between measured and modelled aquifer test results (where relevant); and
+    * Undertaking thorough parameter and predictive uncertainty analyses.
+
+    We have no hesitation concluding that that model is fit for informing decisions relating to ORC’s groundwater
+    allocation limits and zones in the proposed Otago Land & Water Regional Plan. Undertaking some of the
+    above recommendations would add further confidence to the model conclusions.
+
+Response to peer review
+-------------------------
+
+We are pleased that the peer review was generally complimentary of the model and the modelling process and we generally agree with Julian's comments. For completeness we have included a response to the minor comments / critiques below:
+
+* **Further verification that the ‘Rushton’ soil-water balance model is appropriate to apply to the Hāwea Basin area;**
+    * We agree that further verification of Land surface recharge would be helpful;  LSR is always very challenging to verify as even well constructed lysimeters impact the measured land surface recharge.  Personally, we believe uncertainty analysis (note that LRS is parameterised with a multiplier) would likely be the best initial pathway to address this issue.
+* **Additional field work to verify irrigation scheme race losses to ground;**
+    * We agree, the irrigation losses were defined from general observations elsewhere. That said irrigation losses are a relatively small water budget component.
+* **Targeted aquifer testing, and a comparison between measured and modelled aquifer test results (where relevant)**
+    * We agree that more work to constrain the hydraulic parameters would be ideal. That said it is important to remember that on coarsely discretized models the hydraulic parameters can compensate for a number of structural, discretization and up-scaling errors.  Therefore care has to be taken when directly comparing these two parameter sets. That said, aquifer tests in the area generally support a highly conductive system, which we believe is sufficient to justify the results provided.  Personally, we believe that additional groundwater level monitoring will provide more useful additional information than aquifer tests, but we acknowledge that this is subject to debate.
+* **Undertaking thorough parameter and predictive uncertainty analyses.**
+    * We strongly agree with undertaking formal uncertainty analysis, but acknowledge that it is a significant additional investment.
 
 Subsequent Investigations
 =========================
