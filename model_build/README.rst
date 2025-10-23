@@ -629,7 +629,7 @@ Groundwater Abstraction (pumping)
     *Figure: Groundwater abstraction locations*
 
 Groundwater abstraction was defined from the ORC usage data.  The water use data was provided by the ORC and further
-interpreted in `Kitteridge (2022) <../model_build/base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_.
+interpreted in `Kitteridge (2022) <../model_build/base_data/water_permit_meter_results_2022-07-20/Hawea_Water_Usage_Processing_July_2022.pdf>`_.
 Good metering data is available from 2015 to 2020. The linkage between water metering data and the water abstraction point
 is complex with multiple abstraction points using 1 meter and multiple meters service 1 abstraction point.
 Where possible we matched the abstraction to the metering data, and where this was not possible we simply used the
@@ -694,7 +694,7 @@ Limitations
 
 The groundwater abstraction and processing of the metering data was undertaken for the specific use within this modelling project.
 These datasets are static and simplifying assumptions have been used in their processing.
-These are defined in `Kitteridge (2022) <../model_build/base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_.
+These are defined in `Kitteridge (2022) <../model_build/base_data/water_permit_meter_results_2022-07-20/Hawea_Water_Usage_Processing_July_2022.pdf>`_.
 Use of these data for other purposes should be undertaken with extreme caution.
 
 
