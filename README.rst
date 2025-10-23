@@ -30,6 +30,19 @@ Index
 .. contents:: Table of Contents
 
 
+Data and model usage and limitations
+==============================================
+
+The model and the associated datasets are provided here as an open source project with a MIT and creative commons 4.0 attribution license.
+The datasets, software, and information is provided "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED.
+Please note that all of the datasets here were implemented and designed for use in this specific groundwater model and as such may not be relevant for other purposes.
+For example simplifying assumptions have been made to facilitate data processing.
+Where the datasets presented here conflict with those held by Otago Regional Council, these data are presumed to be in error.
+Any used of these datasets should be done with caution and in collaboration with the Otago Regional Council.
+
+
+
 Modelling methodology and results
 ==================================
 Rather than a traditional model report this repository serves as the detailed documentation of the modelling process.

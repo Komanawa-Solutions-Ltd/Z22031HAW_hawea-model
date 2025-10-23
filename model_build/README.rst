@@ -689,6 +689,15 @@ the river proximal abstraction data to adjust our river gain and loss targets an
 
     *Figure: Comparisons of abstraction including and excluding the near river bores*
 
+Limitations
+^^^^^^^^^^^^^^^
+
+The groundwater abstraction and processing of the metering data was undertaken for the specific use within this modelling project.
+These datasets are static and simplifying assumptions have been used in their processing.
+These are defined in `Kitteridge (2022) <../model_build/base_data/water_permit_meter_results_2022-07-20/Hawea Water Usage Processing July 2022 .pdf>`_.
+Use of these data for other purposes should be undertaken with extreme caution.
+
+
 Major Rivers (Hawea river and Clutha River)
 -------------------------------------------
 
