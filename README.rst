@@ -39,7 +39,7 @@ IMPLIED.
 Please note that all of the datasets here were implemented and designed for use in this specific groundwater model and as such may not be relevant for other purposes.
 For example simplifying assumptions have been made to facilitate data processing.
 Where the datasets presented here conflict with those held by Otago Regional Council, these data are presumed to be in error.
-Any used of these datasets should be done with caution and in collaboration with the Otago Regional Council.
+Any use of these datasets should be done with caution and in collaboration with the Otago Regional Council.
 
 
 

@@ -689,8 +689,8 @@ the river proximal abstraction data to adjust our river gain and loss targets an
 
     *Figure: Comparisons of abstraction including and excluding the near river bores*
 
-Limitations
-^^^^^^^^^^^^^^^
+Groundwater Abstraction Limitations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The groundwater abstraction and processing of the metering data was undertaken for the specific use within this modelling project.
 These datasets are static and simplifying assumptions have been used in their processing.
