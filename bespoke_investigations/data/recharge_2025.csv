@@ -1,0 +1,26 @@
+# Mean recharge and discharge components extracted from the model (version 3d_v1d) for a ORC bespoke request on 11-11-2025
+# All values in m3/year
+# Positive values are inflows to the aquifer, negative values are outflows from the aquifer
+# There is a small imbalance (delta) as some portions of the model are not included in the area of interest (see Hawea_Basin_Cseries_aquifer.shp)and because these are the sum of the mean fluxes
+# mean_lsr: Mean long-term surface recharge (1950 - 2021)
+# all other components are for the modelled period (2012 - 2021)
+# the recharge components are:
+# hill_losses: losses from hillside catchments
+# race_losses: losses from the races
+# lake_hawea: leakage from Lake Hawea to the aquifer
+# river_to_aquifer: leakage from rivers to the aquifer
+# the discharge components are:
+# river_from_aquifer: leakage from the aquifer to rivers
+# well_losses: losses from wells in the aquifer (this excludes the "near river bores"
+,0
+mean_lsr,11282773.192009605
+hill_losses,1889975.299123342
+race_losses,2081844.2210897508
+lake_hawea,41573968.0
+river_to_aquifer,14205583.0
+river_from_aquifer,-70392976.0
+well_losses,-2302963.75
+total_recharge,71034143.7122227
+total_discharge,-72695936.0
+delta,-1661792.2877773046
+percent_difference,-2.3394274935017814
