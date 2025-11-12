@@ -51,6 +51,7 @@ def get_race_inflows(start_date, end_date, frequency='D'):
     data = pd.read_csv(inflow_path)
     data.loc[:, 'datetime'] = ht = pd.to_datetime(data.loc[:, 'Date'], format='%d/%m/%Y')
     data.rename(columns={'Combined': 'flow'}, inplace=True)  # in m3/day
+    data = data.drop(columns=['Date'])
     data.set_index('datetime', inplace=True)
     return select_resample(data, start_date, end_date, frequency, 'mean')
 

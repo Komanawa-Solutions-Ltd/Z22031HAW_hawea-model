@@ -10,6 +10,19 @@ import py7zr
 limit = 50  # limit in mb
 
 
+from io import BytesIO
+
+class InMemoryFactory:
+    def __init__(self):
+        self.files = {}
+
+    def create(self, filename):
+        # This method is called by py7zr to get an IO object for each file
+        bio = BytesIO()
+        self.files[filename] = bio
+        return bio
+
+
 def compress_model(indir, outdir):
     """
     compress a model so it is within the 50mb limit of github pushes
@@ -55,6 +68,15 @@ def compress_model(indir, outdir):
                     chunk = opf.read(chunk_size)  # read the next chunk
                     i += 1
 
+def _7z_read(zfile):
+    targets = zfile.getnames()
+    assert len(targets) == 1
+    factory = InMemoryFactory()
+    zfile.extract(path=None, targets=targets, factory=factory)
+    return factory.files[targets[0]]
+
+
+
 
 def uncompress_model(indir, outdir):
     """
@@ -76,7 +98,7 @@ def uncompress_model(indir, outdir):
             print(f'extracting: {p.name}')
             # simple un compressions
             with py7zr.SevenZipFile(p) as zfile:
-                data = list(zfile.read().values())[0]
+                data = _7z_read(zfile)
             new_file = outdir.joinpath(p.parent.relative_to(indir), p.name.replace('.7z', ''))
             with new_file.open('wb') as f:
                 f.write(data.read())
@@ -94,7 +116,7 @@ def uncompress_model(indir, outdir):
             while zip_path in paths:
                 i += 1
                 with py7zr.SevenZipFile(zip_path) as zfile:
-                    data = list(zfile.read().values())[0]
+                    data = _7z_read(zfile)
                 f.write(data.read())
                 zip_path = fname.parent.joinpath(f'{fname.name}.{i:04d}')
 
