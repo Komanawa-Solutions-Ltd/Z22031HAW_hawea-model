@@ -482,7 +482,7 @@ def make_pdf_of_readmes(outdir): # todo use this
         use_bse = github_path_base + '/1' * (len(f.relative_to(proj_root).parents))
         outname = str(f.relative_to(proj_root)).replace('/', '_').replace('.rst', '.pdf')
         outpath = outdir.joinpath(outname)
-        subprocess.call(['rst2pdf', f"--baseurl={use_bse}",
+        subprocess.call(['rst2pdf', f"--baseurl={use_bse}", "--default-dpi=90",
                          str(f), '-o', str(outpath)])
 
     outpath = outdir.joinpath('final_github_readmes.pdf')
