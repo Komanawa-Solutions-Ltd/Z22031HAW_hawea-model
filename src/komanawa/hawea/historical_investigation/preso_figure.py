@@ -2,11 +2,10 @@
 created matt_dumont 
 on: 21/11/23
 """
-import matplotlib.pyplot as plt
 import datetime
-from historical_investigation.lake_drop_scenarios import *
-from historical_investigation.plot_historical_natualised_model import get_hist_nat_data
-from historical_investigation.simple_smoothing_model import brute_min, simple_smoothing_model, bounds
+from komanawa.hawea.historical_investigation.lake_drop_scenarios import *
+from komanawa.hawea.historical_investigation.plot_historical_natualised_model import get_hist_nat_data
+from komanawa.hawea.historical_investigation.simple_smoothing_model import brute_min, simple_smoothing_model, bounds
 
 def plot_hist_plus_lake_drop(scen, well):
     assert scen in scenarios

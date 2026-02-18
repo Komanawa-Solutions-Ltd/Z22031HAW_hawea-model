@@ -10,10 +10,10 @@ from pathlib import Path
 from scipy.interpolate import interp1d
 import numpy as np
 import geopandas as gpd
-from model_build.supporting_data_analysis import get_lake_heads
-from project_base import historical_data_dir, processed_historical_data_dir, proj_root, historical_figure_dir
-from optimisation.final_opt_models.compress_uncompress_model import uncompress_model
-from model_build.utils import select_resample
+from komanawa.hawea.model_build.supporting_data_analysis import get_lake_heads
+from komanawa.hawea.hawea_base import historical_data_dir, processed_historical_data_dir, proj_root, historical_figure_dir
+from komanawa.hawea.optimisation.final_opt_models.compress_uncompress_model import uncompress_model
+from komanawa.hawea.model_build.utils import select_resample
 
 historical_well_names = (
     'bore_13',
@@ -179,8 +179,8 @@ def get_model_period_hds(site, freq='D', recalc=False):
             compressed_path = proj_root.joinpath('optimisation/final_opt_models/3d_v1d')  # path to the model in the repo
             uncompress_model(compressed_path, tdir)
             import flopy
-            from model_build.project_model_tools import smt
-            from optimisation.optimisation_period import tdis as opt_tdis
+            from komanawa.hawea.model_build.project_model_tools import smt
+            from komanawa.hawea.optimisation.optimisation_period import tdis as opt_tdis
             hds_path = tdir.joinpath('final_opt_model.hds')
             all_hds = flopy.utils.HeadFile(hds_path).get_alldata()
             all_hds[all_hds > 1e20] = np.nan
@@ -227,7 +227,7 @@ def get_historical_data_locs(recalc=False):
     raw_data['name'] = raw_data['Name'].replace(name_mapper)
     raw_data.set_index('name', inplace=True)
     raw_data = raw_data.loc[list(historical_well_names)]
-    from model_build.project_model_tools import smt
+    from komanawa.hawea.model_build.project_model_tools import smt
     row, col = smt.convert_coords_to_matix(raw_data['x'], raw_data['y'])
     raw_data['i'] = row
     raw_data['j'] = col

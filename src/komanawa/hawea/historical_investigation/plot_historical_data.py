@@ -4,20 +4,19 @@ on: 2/11/23
 """
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from pathlib import Path
 
 import pandas as pd
 
-from project_base import proj_root, historical_data_dir, processed_historical_data_dir, historical_figure_dir
-from targets_and_sensitive_sites.head_targets import plot_hds_regular_locator, get_all_hds_targets
-from optimisation.optimisation_period import tdis as tdis_opt
-from targets_and_sensitive_sites.get_raw_target_data import get_high_freq_head_targets
-from model_build.utils import get_colors
-from historical_investigation.get_historical_data import get_historical_well_heads, get_historical_data_locs, \
+from komanawa.hawea.hawea_base import historical_figure_dir
+from komanawa.hawea.targets_and_sensitive_sites import plot_hds_regular_locator
+from komanawa.hawea.optimisation.optimisation_period import tdis as tdis_opt
+from komanawa.hawea.targets_and_sensitive_sites import get_high_freq_head_targets
+from komanawa.hawea.model_build.utils import get_colors
+from komanawa.hawea.historical_investigation.get_historical_data import get_historical_well_heads, get_historical_data_locs, \
     get_historical_lake_heads, historical_well_names, historical_well_colors, get_model_period_hds, \
     historical_time_start, historical_time_end
-from model_build.project_model_tools import smt
-from model_build.supporting_data_analysis import get_lake_heads
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.model_build.supporting_data_analysis import get_lake_heads
 
 
 def get_regular_hds_colors():
@@ -128,7 +127,7 @@ def plot_raw_historic():
 
 
 def plot_lake_v_hds_nearest_modern():
-    from historical_investigation.shift_diff import use_shifts
+    from komanawa.hawea.historical_investigation.shift_diff import use_shifts
     outdir = historical_figure_dir.joinpath('lake_v_hds_nearest_modern')
     outdir.mkdir(exist_ok=True)
     nearest_well = {
@@ -181,7 +180,7 @@ def plot_lake_v_hds_modelled():
     outdir = historical_figure_dir.joinpath('lake_v_hds_modelled')
     outdir.mkdir(exist_ok=True)
     lake_org = get_lake_heads('1976-01-01', tdis_opt.date_limits[-1])
-    from historical_investigation.shift_diff import use_shifts
+    from komanawa.hawea.historical_investigation.shift_diff import use_shifts
     for site in historical_well_names:
         lake = lake_org.copy()
         lake.index = lake.index + pd.Timedelta(days=use_shifts[site])
@@ -223,7 +222,7 @@ def plot_lake_v_hds_historic():
     outdir = historical_figure_dir.joinpath('lake_v_hds_historic_only')
     outdir.mkdir(exist_ok=True)
     lake_org = get_lake_heads('1976-01-01', tdis_opt.date_limits[-1])
-    from historical_investigation.shift_diff import use_shifts
+    from komanawa.hawea.historical_investigation.shift_diff import use_shifts
     for site in historical_well_names:
         lake = lake_org.copy()
         lake.index = lake.index + pd.Timedelta(days=use_shifts[site])

@@ -5,21 +5,20 @@ on: 2/11/23
 
 
 import datetime
-import pandas as pd
+
 try:
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
-    from dummy_packages import TimeDis
-import shutil
+    from komanawa.hawea.dummy_packages import TimeDis
 
 import pandas as pd
 
-from Scenarios.run_flow_scenario import run_scenario
-from Scenarios.boundary_conditions import get_scen_ghb_data, get_scen_well_data, get_scen_str_data, get_scen_rch
-from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
-from Scenarios.scen_period import scen_tdis
-from project_base import unbacked_dir, processed_historical_data_dir
-from historical_investigation.get_historical_data import get_historical_data_locs, historical_well_names, select_resample
+from komanawa.hawea.Scenarios.run_flow_scenario import run_scenario
+from komanawa.hawea.Scenarios.boundary_conditions import get_scen_ghb_data, get_scen_well_data, get_scen_str_data, get_scen_rch
+from komanawa.hawea.model_parameterisation.optimised_parameterisation import get_3d_v1d_params
+from komanawa.hawea.Scenarios.scen_period import scen_tdis
+from komanawa.hawea.hawea_base import unbacked_dir, processed_historical_data_dir
+from komanawa.hawea.historical_investigation.get_historical_data import get_historical_data_locs, historical_well_names, select_resample
 import numpy as np
 import inspect
 
@@ -96,7 +95,6 @@ def get_hist_nat_data(site, recalc=False, freq='D'):
     if t is None:
 
         import flopy
-        from model_build.project_model_tools import smt
         hds_path = base_run_dir.joinpath('long_nat/long_nat.hds')
         all_hds = flopy.utils.HeadFile(hds_path).get_alldata()
         all_hds[all_hds > 1e20] = np.nan

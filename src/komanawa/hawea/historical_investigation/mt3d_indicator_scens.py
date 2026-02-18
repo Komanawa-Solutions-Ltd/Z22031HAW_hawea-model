@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from Scenarios.run_mt3d_scenario import get_default_mt3d_kwargs, create_ssm_data, create_mt3d
-from project_base import unbacked_dir, proj_root
-from model_build.project_model_tools import smt, get_layer_pinchout_area, get_2d_moraine, get_lake_array, get_lake_bar
-from optimisation.optimisation_period import tdis as opt_tdis
-from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
-from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
-from Scenarios.run_flow_scenario import run_scenario
+from komanawa.hawea.Scenarios.run_mt3d_scenario import get_default_mt3d_kwargs, create_ssm_data, create_mt3d
+from komanawa.hawea.hawea_base import unbacked_dir, proj_root
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.optimisation.optimisation_period import tdis as opt_tdis
+from komanawa.hawea.model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
+from komanawa.hawea.model_parameterisation.optimised_parameterisation import get_3d_v1d_params
+from komanawa.hawea.Scenarios.run_flow_scenario import run_scenario
 
 
 base_run_dir = unbacked_dir.joinpath('mt3d_runs')

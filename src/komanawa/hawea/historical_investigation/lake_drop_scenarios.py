@@ -5,12 +5,12 @@ on: 14/11/23
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from historical_investigation.get_historical_data import get_historical_lake_heads, get_historical_well_heads, \
+from komanawa.hawea.historical_investigation.get_historical_data import get_historical_lake_heads, get_historical_well_heads, \
     historical_well_colors, historical_well_names, get_historical_data_locs
-from historical_investigation.plot_historical_data import add_locator_to_ax
+from komanawa.hawea.historical_investigation.plot_historical_data import add_locator_to_ax
 
-from Scenarios.low_lake_scenarios import run_low_lake_scenario, get_lake_hds, low_lake_tdis
-from project_base import unbacked_dir, processed_historical_data_dir, historical_figure_dir
+from komanawa.hawea.Scenarios.low_lake_scenarios import run_low_lake_scenario, get_lake_hds, low_lake_tdis
+from komanawa.hawea.hawea_base import unbacked_dir, processed_historical_data_dir, historical_figure_dir
 
 scenarios = ['lake_drop_320', 'lake_drop_333']
 

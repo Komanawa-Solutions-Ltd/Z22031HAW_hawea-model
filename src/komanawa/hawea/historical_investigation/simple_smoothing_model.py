@@ -7,14 +7,14 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from project_base import processed_historical_data_dir, historical_figure_dir
-from model_build.supporting_data_analysis import get_lake_heads
-from optimisation.manual_optimisations.explore_lake_g40_0415 import _fit_func as simple_smoothing_model
-from optimisation.manual_optimisations.explore_lake_g40_0415 import curve_min as get_simple_smoothing_params
-from historical_investigation.get_historical_data import get_historical_well_heads, get_historical_lake_heads
-from historical_investigation.plot_historical_data import add_locator_to_ax
+from komanawa.hawea.hawea_base import processed_historical_data_dir, historical_figure_dir
+from komanawa.hawea.model_build.supporting_data_analysis import get_lake_heads
+from komanawa.hawea.optimisation.manual_optimisations.explore_lake_g40_0415 import _fit_func as simple_smoothing_model
+from komanawa.hawea.optimisation.manual_optimisations.explore_lake_g40_0415 import curve_min as get_simple_smoothing_params
+from komanawa.hawea.historical_investigation.get_historical_data import get_historical_well_heads, get_historical_lake_heads
+from komanawa.hawea.historical_investigation.plot_historical_data import add_locator_to_ax
 from scipy.optimize import brute
-from historical_investigation.shift_diff import find_peak_lows
+from komanawa.hawea.historical_investigation.shift_diff import find_peak_lows
 
 fit_lim = pd.to_datetime('1979-03-01')
 

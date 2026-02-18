@@ -6,11 +6,10 @@ import numpy as np
 import pandas as pd
 from scipy.signal import argrelmax, argrelmin
 import matplotlib.pyplot as plt
-from historical_investigation.get_historical_data import get_historical_well_heads, get_lake_heads, \
+from komanawa.hawea.historical_investigation.get_historical_data import get_historical_well_heads, get_lake_heads, \
     historical_time_start, historical_time_end, historical_well_colors, historical_well_names
-from model_build.project_model_tools import smt
-from historical_investigation.plot_historical_data import add_locator_to_ax
-from project_base import historical_figure_dir
+from komanawa.hawea.historical_investigation.plot_historical_data import add_locator_to_ax
+from komanawa.hawea.hawea_base import historical_figure_dir
 
 outdir = historical_figure_dir.joinpath('well_lake_extrema')
 outdir.mkdir(exist_ok=True)

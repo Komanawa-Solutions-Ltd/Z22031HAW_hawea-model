@@ -5,11 +5,11 @@ on: 13/11/23
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 import pandas as pd
-from project_base import historical_figure_dir, historical_data_dir
-from historical_investigation.get_historical_data import get_historical_well_heads, get_lake_heads, \
+from komanawa.hawea.hawea_base import historical_figure_dir
+from komanawa.hawea.historical_investigation.get_historical_data import get_historical_well_heads, get_lake_heads, \
     historical_time_start, historical_time_end
-from historical_investigation.plot_historical_data import add_locator_to_ax, historical_well_colors
-from historical_investigation.current_model_prediction import get_hist_nat_data
+from komanawa.hawea.historical_investigation.plot_historical_data import add_locator_to_ax, historical_well_colors
+from komanawa.hawea.historical_investigation.current_model_prediction import get_hist_nat_data
 
 outdir = historical_figure_dir.joinpath('3d_v1d_historical')
 outdir.mkdir(exist_ok=True)
@@ -68,8 +68,8 @@ def plot_histoical_with_modified_lake():
         fig.tight_layout()
         fig.savefig(outdir.joinpath(f'{well}_modelled_lake_mod.png'))
 def plot_regular_v10a():
-    from optimisation.optimisation_period import tdis as opt_tdis
-    from historical_investigation.plot_historical_data import get_regular_hds_colors
+    from komanawa.hawea.optimisation.optimisation_period import tdis as opt_tdis
+    from komanawa.hawea.historical_investigation.plot_historical_data import get_regular_hds_colors
 
     all_out = pd.read_csv(
         '/home/matt_dumont/Hawea_model_unbacked/historical_investigation/results/long_nat_v10a/output_dataset.csv',
@@ -79,9 +79,9 @@ def plot_regular_v10a():
     reg_colors = get_regular_hds_colors()
     use_outdir = outdir.joinpath('reg_opt_period')
     use_outdir.mkdir(exist_ok=True)
-    from optimisation.optimisation_period import tdis as tdis_opt
-    from targets_and_sensitive_sites.get_raw_target_data import get_high_freq_head_targets
-    from targets_and_sensitive_sites.head_targets import plot_hds_regular_locator
+    from komanawa.hawea.optimisation.optimisation_period import tdis as tdis_opt
+    from komanawa.hawea.targets_and_sensitive_sites import get_high_freq_head_targets
+    from komanawa.hawea.targets_and_sensitive_sites import plot_hds_regular_locator
     for well, c in reg_colors.items():
         if f'hds_{well}' not in all_out:
             print(f'skipping: {well}')
