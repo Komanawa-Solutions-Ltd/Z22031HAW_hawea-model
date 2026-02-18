@@ -4,9 +4,9 @@ on: 2/08/22
 """
 import pandas as pd
 import numpy as np
-from project_base import base_model_build_data_dir, processed_model_build_data_dir, modelling_dir, unbacked_dir
-from model_build.project_model_tools import smt
-from model_build.utils import select_resample
+from komanawa.hawea.hawea_base import base_model_build_data_dir, processed_model_build_data_dir, modelling_dir, unbacked_dir
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.model_build.utils import select_resample
 import geopandas as gpd
 import datetime
 import matplotlib.pyplot as plt
@@ -710,9 +710,9 @@ def get_hillside_flows(start_date, end_date, frequency='D',
 
 def plot_hillside_inflows():
 
-    from project_base import proj_root
+    from komanawa.hawea.hawea_base import proj_root
     hill_locs = get_hillside_catchment_locs()
-    from model_build.supporting_data_analysis.river_data import get_river_loc_data
+    from komanawa.hawea.model_build.supporting_data_analysis.river_data import get_river_loc_data
     river_locs = get_river_loc_data()
     fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
     ax.scatter(hill_locs.loc[:, 'mx'], hill_locs.loc[:, 'my'], c='r', label='Hill Inflows (Wel Package)')

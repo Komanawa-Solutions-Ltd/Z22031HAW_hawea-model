@@ -8,14 +8,13 @@ import flopy
 import os
 import pandas as pd
 import numpy as np
-from copy import copy
 
 try:
     from model_tools.regular_modeltools import ModelTools_RegularGrid
     from model_tools.time_discretization import TimeDis
 except ModuleNotFoundError:
-    from dummy_packages import ModelTools_RegularGrid
-    from dummy_packages import TimeDis
+    from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
+    from komanawa.hawea.dummy_packages import TimeDis
 
 
 def build_model(smt, tdis, exe_name, model_name, model_ws,

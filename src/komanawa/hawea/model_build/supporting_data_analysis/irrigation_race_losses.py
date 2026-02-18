@@ -3,9 +3,9 @@ created matt_dumont
 on: 15/08/22
 """
 import pandas as pd
-from project_base import base_model_build_data_dir, processed_model_build_data_dir
-from model_build.project_model_tools import smt
-from model_build.utils import select_resample
+from komanawa.hawea.hawea_base import base_model_build_data_dir, processed_model_build_data_dir
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.model_build.utils import select_resample
 
 default_recalc = False
 race_shp_path = base_model_build_data_dir.joinpath('races.shp')

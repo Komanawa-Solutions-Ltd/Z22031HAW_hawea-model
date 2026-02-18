@@ -9,15 +9,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import netCDF4 as nc
-from project_base import base_model_build_data_dir, processed_model_build_data_dir, modelling_dir
-from model_build.project_model_tools import smt, grid_space
-from model_build.utils import select_resample, get_colors, season_mapper, int_season_mapper
-from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
-from model_build.supporting_data_analysis.get_pumping_data import _load_usage_data
-from model_build.zones import get_model_zones
+from komanawa.hawea.hawea_base import base_model_build_data_dir, processed_model_build_data_dir
+from komanawa.hawea.model_build.project_model_tools import smt, grid_space
+from komanawa.hawea.model_build.utils import select_resample, get_colors, int_season_mapper
+from komanawa.hawea.model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
+from komanawa.hawea.model_build.supporting_data_analysis.get_pumping_data import _load_usage_data
+from komanawa.hawea.model_build.zones import get_model_zones
 from copy import deepcopy
 import gc
-from scipy.stats import linregress
 
 irrigated_area_dir = base_model_build_data_dir.joinpath('irrigated_area')
 irrigated_area_dir.mkdir(exist_ok=True)
@@ -488,7 +487,7 @@ def plot_irrig_area():
                                      legend_loc='lower left', alpha=0.5,
                                      title=f'Mapped {y}',
                                      base_map=True, no_flow_layer=0)
-    from project_base import proj_root
+    from komanawa.hawea.hawea_base import proj_root
     fig.suptitle('Irrigated Area')
     fig.tight_layout()
     fig.savefig(proj_root.joinpath('support_figures', 'irrigated_area.png'))
@@ -586,7 +585,7 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
 
         return dates, data
 
-    from rushton_model.rushton import Rushton  # keynote private repo
+    from komanawa.rushton_model.rushton import Rushton  # keynote private repo
     dates, outdata = [], []
 
     # make static datasets

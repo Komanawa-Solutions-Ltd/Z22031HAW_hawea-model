@@ -2,12 +2,11 @@
 created matt_dumont 
 on: 10/08/22
 """
-import numpy as np
 import pandas as pd
 
-from model_build.project_model_tools import smt, _lake_locs
-from model_build.utils import select_resample
-from project_base import base_model_build_data_dir, processed_model_build_data_dir
+from komanawa.hawea.model_build.project_model_tools import smt, _lake_locs
+from komanawa.hawea.model_build.utils import select_resample
+from komanawa.hawea.hawea_base import base_model_build_data_dir, processed_model_build_data_dir
 
 default_recalc = False
 lakefront_shp_path = base_model_build_data_dir.joinpath('lakefront.shp')

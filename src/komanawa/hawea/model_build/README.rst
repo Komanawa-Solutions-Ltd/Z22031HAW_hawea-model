@@ -9,6 +9,7 @@ Hawea Transient groundwater model (Hawea Model) build methods and results
 
     *Figure: Overview of model boundary conditions*
 
+.. todo update for new pip version
 
 :Author:  Matt Dumont
 :Date:  2023-04-01

@@ -3,17 +3,14 @@ created matt_dumont
 on: 1/08/22
 """
 import pickle
-import time
 
-import numpy as np
-
-from model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
+from komanawa.hawea.model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
     get_river_loc_data, get_lake_hawea_loc, get_lake_heads, get_river_flow_data
-from model_parameterisation.pilot_points import get_spatial_temporal_rch_mult
-from model_parameterisation.static_params import lake_conduct
+from komanawa.hawea.model_parameterisation.pilot_points import get_spatial_temporal_rch_mult
+from komanawa.hawea.model_parameterisation.static_params import lake_conduct
 import flopy
-from project_base import processed_model_build_data_dir
+from komanawa.hawea.hawea_base import processed_model_build_data_dir
 
 
 def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=False):
@@ -167,8 +164,8 @@ def get_str_data(tdis, riv_params):
 
 
 if __name__ == '__main__':
-    from optimisation.optimisation_period import tdis
-    from model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_hillslope_multiplier, \
+    from komanawa.hawea.optimisation.optimisation_period import tdis
+    from komanawa.hawea.model_parameterisation.inital_parametersiation import get_initial_riv_conductance, get_hillslope_multiplier, \
         get_initial_rch_mult
 
     get_str_data(tdis, get_initial_riv_conductance(True))

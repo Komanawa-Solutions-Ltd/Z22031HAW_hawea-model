@@ -2,13 +2,12 @@
 created matt_dumont 
 on: 5/09/22
 """
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from model_build.project_model_tools import smt, get_layer_pinchout_area, get_2d_moraine, get_lake_array
-from model_build.utils import get_colors
-from project_base import processed_model_build_data_dir, base_model_build_data_dir, modelling_dir
-from model_build.supporting_data_analysis.lake_data import get_lake_heads
+from komanawa.hawea.model_build.project_model_tools import smt, get_layer_pinchout_area, get_2d_moraine, get_lake_array
+from komanawa.hawea.model_build.utils import get_colors
+from komanawa.hawea.hawea_base import processed_model_build_data_dir, base_model_build_data_dir, modelling_dir
+from komanawa.hawea.model_build.supporting_data_analysis.lake_data import get_lake_heads
 import rasterio
 
 base_well_path = base_model_build_data_dir.joinpath('Hawea Wellsdata request ZEB.xlsx')

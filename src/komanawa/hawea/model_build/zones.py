@@ -4,8 +4,8 @@ on: 7/09/22
 """
 import numpy as np
 
-from project_base import processed_model_build_data_dir, base_model_build_data_dir
-from model_build.project_model_tools import smt, get_lake_array
+from komanawa.hawea.hawea_base import processed_model_build_data_dir, base_model_build_data_dir
+from komanawa.hawea.model_build.project_model_tools import smt, get_lake_array
 
 
 def get_param_zones(recalc=False):

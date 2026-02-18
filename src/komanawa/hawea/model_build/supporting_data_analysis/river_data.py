@@ -5,10 +5,10 @@ on: 2/08/22
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from model_build.utils import select_resample, get_colors
-from model_build.project_model_tools import smt, _river_locs, get_lake_array
-from project_base import base_model_build_data_dir, processed_model_build_data_dir, proj_root
-from model_build.supporting_data_analysis.hillside_inflows import get_hillside_flows
+from komanawa.hawea.model_build.utils import select_resample, get_colors
+from komanawa.hawea.model_build.project_model_tools import smt, _river_locs, get_lake_array
+from komanawa.hawea.hawea_base import base_model_build_data_dir, processed_model_build_data_dir, proj_root
+from komanawa.hawea.model_build.supporting_data_analysis.hillside_inflows import get_hillside_flows
 
 default_recalc = False
 hawea_shp_path = base_model_build_data_dir.joinpath('hawea_river.shp')

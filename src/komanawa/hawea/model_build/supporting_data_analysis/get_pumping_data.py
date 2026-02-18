@@ -5,11 +5,11 @@ on: 2/08/22
 
 import pandas as pd
 import numpy as np
-from project_base import base_model_build_data_dir, processed_model_build_data_dir
-from model_build.utils import select_resample, get_colors
-from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
-from model_build.zones import get_model_zones
-from model_build.project_model_tools import exclude_near_river_pumping, get_low_cond_array, get_lake_array, \
+from komanawa.hawea.hawea_base import base_model_build_data_dir, processed_model_build_data_dir
+from komanawa.hawea.model_build.utils import select_resample, get_colors
+from komanawa.hawea.model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
+from komanawa.hawea.model_build.zones import get_model_zones
+from komanawa.hawea.model_build.project_model_tools import exclude_near_river_pumping, get_low_cond_array, get_lake_array, \
     get_2d_moraine, smt
 
 default_recalc = False
@@ -239,7 +239,7 @@ def get_pumping_locs(return_raw=False, force_near_river=False):
 
 def data_checks():
     import matplotlib.pyplot as plt
-    from model_build.project_model_tools import smt
+    from komanawa.hawea.model_build.project_model_tools import smt
     pumping_y = get_historical_pumping_data(None, None, 'Y')
     locs = get_pumping_locs(force_near_river=True)
     zones = get_model_zones()

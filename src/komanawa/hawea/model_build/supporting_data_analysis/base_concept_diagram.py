@@ -4,10 +4,10 @@ on: 12/12/22
 """
 import matplotlib.pyplot as plt
 import numpy as np
-from targets_and_sensitive_sites.head_targets import get_high_freq_head_targets
-from model_build.project_model_tools import smt, get_lake_array, get_2d_moraine
-from model_build.supporting_data_analysis import get_all_wells
-from project_base import modelling_dir
+from komanawa.hawea.targets_and_sensitive_sites import get_high_freq_head_targets
+from komanawa.hawea.model_build.project_model_tools import smt, get_lake_array, get_2d_moraine
+from komanawa.hawea.model_build.supporting_data_analysis import get_all_wells
+from komanawa.hawea.hawea_base import modelling_dir
 from pathlib import Path
 
 
