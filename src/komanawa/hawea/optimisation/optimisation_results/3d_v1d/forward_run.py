@@ -10,8 +10,8 @@ sys.path.append(str(t))
 t = Path('/home/matt_dumont/PycharmProjects/modflow_tools_haw_NO_EDIT')
 sys.path.append(str(t))
 print(f'pythonpath: {sys.path}')
-from targets_and_sensitive_sites.model_output import process_model_output
-from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
+from komanawa.hawea.targets_and_sensitive_sites import process_model_output
+from komanawa.hawea.optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 
 if __name__ == '__main__':
     plot = False
