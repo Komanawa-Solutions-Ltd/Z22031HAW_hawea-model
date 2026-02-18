@@ -8,15 +8,14 @@ on: 11/12/25
 import flopy.utils
 import numpy as np
 import pandas as pd
-
-from Scenarios.allocation_zones import get_allo_zones
-from model_build.project_model_tools import smt
-from model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch
-from model_build.supporting_data_analysis import get_hillside_catchment_locs, get_hillside_flows, get_race_locs, \
+from komanawa.hawea.Scenarios.allocation_zones import get_allo_zones
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch
+from komanawa.hawea.model_build.supporting_data_analysis import get_hillside_catchment_locs, get_hillside_flows, get_race_locs, \
     get_race_well_losses, get_river_loc_data, get_lake_hawea_loc
-from model_parameterisation.optimised_parameterisation import get_3d_v1d_params
-from optimisation.final_opt_models.compress_uncompress_model import uncompress_model
-from project_base import proj_root, unbacked_dir
+from komanawa.hawea.model_parameterisation.optimised_parameterisation import get_3d_v1d_params
+from komanawa.hawea.optimisation.final_opt_models.compress_uncompress_model import uncompress_model
+from komanawa.hawea.hawea_base import proj_root, unbacked_dir
 
 
 def get_aq_bounds(recalc=False):
