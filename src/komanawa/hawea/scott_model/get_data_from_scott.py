@@ -6,12 +6,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from project_base import unbacked_dir, base_model_build_data_dir
+from komanawa.hawea.hawea_base import unbacked_dir, base_model_build_data_dir
 
 try:
     from model_tools.regular_modeltools import ModelTools_RegularGrid
 except ModuleNotFoundError:
-    from dummy_packages import ModelTools_RegularGrid
+    from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
 import flopy
 import numpy as np
 
