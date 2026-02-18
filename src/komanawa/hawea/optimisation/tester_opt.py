@@ -4,8 +4,8 @@ on: 27/10/22
 """
 import shutil
 from pathlib import Path
-from project_base import unbacked_dir
-from optimisation.a_build_run_optimisation_version import build_test_model
+from komanawa.hawea.hawea_base import unbacked_dir
+from komanawa.hawea.optimisation.a_build_run_optimisation_version import build_test_model
 
 if __name__ == '__main__':
     mversion = 'test_pest'
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     # build pest
     if build_pest:
-        from optimisation.build_optimisation import raw_pest, BeopestManager # keynote private repo
+        from komanawa.hawea.optimisation.build_optimisation import raw_pest, BeopestManager # keynote private repo
 
         pdir = unbacked_dir.joinpath(mversion, 'Optimisations')
 

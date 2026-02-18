@@ -5,8 +5,6 @@ on: 28/04/23
 import flopy
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import matplotlib.pyplot as plt
 
 
 def make_ss_waterbudget(cbc_file, kstpkper=(0, 0)):
@@ -18,7 +16,7 @@ def make_ss_waterbudget(cbc_file, kstpkper=(0, 0)):
     """
     outdata = pd.DataFrame()
     kstpkper_name = 'kstpkper_{}_{}'.format(*kstpkper)
-    from model_build.get_boundary_condition_data import get_river_loc_data, get_hillside_catchment_locs, \
+    from komanawa.hawea.model_build.get_boundary_condition_data import get_river_loc_data, get_hillside_catchment_locs, \
         get_pumping_locs, get_race_locs
     with flopy.utils.CellBudgetFile(cbc_file) as cbc:
         lake = cbc.get_data(text='HEAD DEP BOUNDS', kstpkper=kstpkper, full3D=True)[0]

@@ -5,9 +5,9 @@ on: 25/11/22
 from pathlib import Path
 import numpy as np
 import shutil
-from targets_and_sensitive_sites.model_output import process_model_output
-from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
-from dummy_packages.run_multiprocess import run_multiprocess
+from komanawa.hawea.targets_and_sensitive_sites import process_model_output
+from komanawa.hawea.optimisation.model_utils_for_forward_run import read_param_data, build_run_model
+from komanawa.hawea.dummy_packages.run_multiprocess import run_multiprocess
 
 
 def _run_model_mp(kwargs):
@@ -66,7 +66,7 @@ def run_opt_step_models(pest_dir, run_dir, num_cores, itters=None, plot=True):
 
 
 if __name__ == '__main__':
-    from optimisation.a_build_run_optimisation_version import unbacked_dir, branch, mversion
+    from komanawa.hawea.optimisation.a_build_run_optimisation_version import unbacked_dir, branch, mversion
 
     pdir = unbacked_dir.joinpath(branch, mversion, 'Optimisations')
     result_dir = pdir.joinpath('all_opt_steps')

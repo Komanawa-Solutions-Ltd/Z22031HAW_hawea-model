@@ -6,8 +6,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from optimisation.model_utils_for_forward_run import read_param_data, _get_param_data
-from model_build.utils import get_colors
+from komanawa.hawea.optimisation.model_utils_for_forward_run import read_param_data, _get_param_data
+from komanawa.hawea.model_build.utils import get_colors
 
 
 def compare_parameterisations(*parfiles, outdir=None):

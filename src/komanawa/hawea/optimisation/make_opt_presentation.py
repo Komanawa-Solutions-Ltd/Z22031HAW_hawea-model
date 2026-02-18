@@ -4,12 +4,11 @@ on: 2/02/23
 """
 from pathlib import Path
 
-import flopy.utils
 import matplotlib.pyplot as plt
 import pandas as pd
-from optimisation.manual_optimisations.manual_optimisation import base_regular_groupnames, tdis, get_colors, \
+from komanawa.hawea.optimisation.manual_optimisations.manual_optimisation import base_regular_groupnames, tdis, get_colors, \
     _plot_regular
-from model_build.project_model_tools import smt
+from komanawa.hawea.model_build.project_model_tools import smt
 from fpdf import FPDF
 from PIL import Image
 

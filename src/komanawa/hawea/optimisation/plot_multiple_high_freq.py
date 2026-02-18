@@ -4,21 +4,12 @@ on: 24/01/23
 """
 from pathlib import Path
 import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.colors import FuncNorm, Normalize
-from matplotlib.colorbar import ColorbarBase
 import pandas as pd
-from model_build.project_model_tools import smt
-from model_build.utils import get_colors
-from targets_and_sensitive_sites.model_output import process_model_output
-from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
+from komanawa.hawea.model_build.utils import get_colors
 from model_tools.plot_optimisation import plot_optimisation_and_extract_info  # keynote private repo
-from model_parameterisation.inital_parametersiation import *
-from model_parameterisation.pilot_points import interpolate_sy_pilot_points, interpolate_kh_pilot_points
 from model_tools.util_functions.list_file_utils import ListSolverInfo  # keynote private repo
-import py7zr
-from targets_and_sensitive_sites.model_output import plot_hds_regular_locator, base_regular_groupnames
-from optimisation.optimisation_period import tdis
+from komanawa.hawea.targets_and_sensitive_sites import plot_hds_regular_locator, base_regular_groupnames
+from komanawa.hawea.optimisation.optimisation_period import tdis
 
 
 def plot_mult_high_freq_heads(obs_files, plot_dir):

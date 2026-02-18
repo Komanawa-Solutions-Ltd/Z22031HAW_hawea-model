@@ -4,13 +4,13 @@ on: 25/10/22
 """
 import time
 import pandas as pd
-from model_build.modflow_model import build_model
-from model_build.project_model_tools import smt, get_starting_heads
-from optimisation.optimisation_period import tdis
-from model_parameterisation.static_params import vka
-from model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points, set_ss_terms
-from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
-from model_parameterisation.inital_parametersiation import *
+from komanawa.hawea.model_build.modflow_model import build_model
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.optimisation.optimisation_period import tdis
+from komanawa.hawea.model_parameterisation.static_params import vka
+from komanawa.hawea.model_parameterisation.pilot_points import interpolate_kh_pilot_points, interpolate_sy_pilot_points, set_ss_terms
+from komanawa.hawea.model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
+from komanawa.hawea.model_parameterisation.inital_parametersiation import *
 
 
 def _get_param_data():

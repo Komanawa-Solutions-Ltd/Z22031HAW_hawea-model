@@ -8,22 +8,20 @@ from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 import pandas as pd
 from pathlib import Path
-from model_build.project_model_tools import smt, get_starting_heads
-from model_build.utils import get_colors
-from model_parameterisation.pilot_points import get_pilot_point_locations, interpolate_kh_pilot_points, \
-    interpolate_kh_pilot_points, get_lake_array
-from model_parameterisation.static_params import *
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.model_build.utils import get_colors
+from komanawa.hawea.model_parameterisation.pilot_points import interpolate_kh_pilot_points
+from komanawa.hawea.model_parameterisation.static_params import *
 from model_tools.model_plotting import plot_spd, first, last, FakePath  # keynote private repo
-from model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_str_data
-from model_parameterisation.inital_parametersiation import *
-from optimisation.optimisation_period import tdis
-from project_base import proj_root, base_model_build_data_dir
-from model_build.supporting_data_analysis import *
-from model_build.zones import get_model_zones
-from targets_and_sensitive_sites.head_targets import plot_head_targets, get_high_freq_head_targets, \
+from komanawa.hawea.model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_str_data
+from komanawa.hawea.model_parameterisation.inital_parametersiation import *
+from komanawa.hawea.optimisation.optimisation_period import tdis
+from komanawa.hawea.hawea_base import proj_root, base_model_build_data_dir
+from komanawa.hawea.model_build.zones import get_model_zones
+from komanawa.hawea.targets_and_sensitive_sites.head_targets import plot_head_targets, get_high_freq_head_targets, \
     get_low_freq_head_targets, get_2011_piezo_survey, get_single_head_targets, get_all_hds_targets
-from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_targets
-from optimisation.determine_opt_start import get_opt_start_stop
+from komanawa.hawea.targets_and_sensitive_sites import get_riv_target_locs, get_hawea_gain_loss_targets
+from komanawa.hawea.optimisation.determine_opt_start import get_opt_start_stop
 
 
 def plot_parameterisation(save=False):
@@ -202,7 +200,7 @@ def plot_thickness_top_bot(save=False):
                                          f'{k}{extension}')
             outpath.parent.mkdir(exist_ok=True)
             fig.savefig(outpath)
-    from model_build.project_model_tools import examine_3d
+    from komanawa.hawea.model_build.project_model_tools import examine_3d
     rt_names, rt_figs = examine_3d(show=False)
     for n, f in zip(rt_names, rt_figs):
         if save:
@@ -564,7 +562,7 @@ def indicative_target_times(save):
     outdir = save_path.joinpath('indicative_target_times')
     outdir.mkdir(exist_ok=True)
     figs, names = [], []
-    from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2, predictive_power_hill_rch
+    from komanawa.hawea.targets_and_sensitive_sites import get_indicative_times_v2, predictive_power_hill_rch
     i, (ifigs, inames) = get_indicative_times_v2(True, True)
     figs.extend(ifigs)
     names.extend(inames)
@@ -664,7 +662,7 @@ def plot_indicative_cross_sections(save):
 def plot_era5_correction_process(save):
     outdir = save_path.joinpath('era5_correction')
     outdir.mkdir(exist_ok=True)
-    from model_build.supporting_data_analysis.recharge_model import get_era5_land, get_corrected_historical_era5_rch
+    from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import get_era5_land, get_corrected_historical_era5_rch
     era5, era_data_fig = get_era5_land(True, True, True)
 
     temp, out_rch, rch_fig = get_corrected_historical_era5_rch(None, None, recalc=True, return_fig=True)
@@ -675,7 +673,7 @@ def plot_era5_correction_process(save):
 
 
 def plot_hillslope_inflow_process(save):
-    from model_build.supporting_data_analysis.hillside_inflows import lindis_correlation_with_malf
+    from komanawa.hawea.model_build.supporting_data_analysis.hillside_inflows import lindis_correlation_with_malf
     outdir = save_path.joinpath('hillslope_inflow_correction')
     outdir.mkdir(exist_ok=True)
     outdata, (figs, names) = lindis_correlation_with_malf(return_figs=True)

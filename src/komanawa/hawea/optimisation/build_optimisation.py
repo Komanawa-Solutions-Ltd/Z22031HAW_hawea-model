@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 import pyemu
 from pathlib import Path
-from optimisation.model_utils_for_forward_run import _get_param_data
-from project_base import proj_root, opt_proj_root, opt_model_tools
+from komanawa.hawea.optimisation.model_utils_for_forward_run import _get_param_data
+from komanawa.hawea.hawea_base import proj_root, opt_proj_root, opt_model_tools
 
 base_pst_data = proj_root.joinpath('optimisation/pest_run_data')
 

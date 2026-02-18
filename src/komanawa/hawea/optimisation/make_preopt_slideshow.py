@@ -2,7 +2,7 @@
 created matt_dumont 
 on: 7/10/22
 """
-from project_base import proj_root
+from komanawa.hawea.hawea_base import proj_root
 from pathlib import Path
 from PyPDF2 import PdfMerger, PdfReader
 

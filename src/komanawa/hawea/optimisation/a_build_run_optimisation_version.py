@@ -7,30 +7,29 @@ on: 1/11/22
 from pathlib import Path
 
 import pandas as pd
-from model_build.project_model_tools import smt
-from optimisation.model_utils_for_forward_run import _get_param_data, read_param_data
-from project_base import unbacked_dir, opt_proj_root, opt_model_tools
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.optimisation.model_utils_for_forward_run import _get_param_data, read_param_data
+from komanawa.hawea.hawea_base import unbacked_dir, opt_proj_root, opt_model_tools
 import shutil
 import matplotlib.pyplot as plt
 
 
 def recalc_model_build(rerun_rushton=False):
-    from model_build.project_model_tools import smt, get_ibound, get_elv_db, \
-        get_lake_array, get_starting_heads, get_2d_moraine, get_layer_pinchout_area, get_xsection_points
-    from model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
-    from model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes, \
+    from komanawa.hawea.model_build.project_model_tools import get_ibound, get_elv_db, \
+        get_lake_array, get_2d_moraine, get_layer_pinchout_area, get_xsection_points
+    from komanawa.hawea.model_build.supporting_data_analysis.river_data import get_river_stage_data, get_river_loc_data
+    from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import get_historical_rch_model_results, get_soil_classes, \
         get_era5_land, get_corrected_historical_era5_rch
-    from model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
-    from model_build.supporting_data_analysis.irrigation_race_losses import get_race_locs
-    from model_build.supporting_data_analysis.hillside_inflows import get_hillside_catchment_locs, get_catchment_areas, \
-        get_luggate_catchment_area, get_hillside_flows
-    from model_build.supporting_data_analysis.get_pumping_data import get_historical_pumping_data
-    from model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
-    from model_build.supporting_data_analysis.all_wells import get_all_wells
-    from model_build.zones import get_param_zones, get_model_zones
-    from model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data, get_str_data
-    from optimisation.optimisation_period import tdis
-    from model_parameterisation.inital_parametersiation import get_initial_rch_mult
+    from komanawa.hawea.model_build.supporting_data_analysis.lake_data import get_lake_hawea_loc
+    from komanawa.hawea.model_build.supporting_data_analysis.irrigation_race_losses import get_race_locs
+    from komanawa.hawea.model_build.supporting_data_analysis.hillside_inflows import get_hillside_catchment_locs, get_hillside_flows
+    from komanawa.hawea.model_build.supporting_data_analysis.get_pumping_data import get_historical_pumping_data
+    from komanawa.hawea.model_build.supporting_data_analysis.map_flowmeter_to_wells import get_well_flowmeter_mapper
+    from komanawa.hawea.model_build.supporting_data_analysis.all_wells import get_all_wells
+    from komanawa.hawea.model_build.zones import get_param_zones, get_model_zones
+    from komanawa.hawea.model_build.get_boundary_condition_data import get_rch_data, get_ghb_data, get_well_data
+    from komanawa.hawea.optimisation.optimisation_period import tdis
+    from komanawa.hawea.model_parameterisation.inital_parametersiation import get_initial_rch_mult
 
     get_ibound(recalc=True)
     get_elv_db(recalc=True)
@@ -65,14 +64,14 @@ def recalc_model_build(rerun_rushton=False):
 
 
 def recalc_param_targets():
-    from model_parameterisation.pilot_points import get_pilot_point_locations, get_spatial_temporal_rch_mult
-    from model_parameterisation.inital_parametersiation import get_initial_rch_mult
-    from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
-    from targets_and_sensitive_sites.head_targets import get_2011_piezo_survey, get_all_hds_targets
-    from targets_and_sensitive_sites.senstive_sites import get_wetlands
-    from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
-    from optimisation.optimisation_period import tdis
-    from model_parameterisation.plot_parameter_names import plot_parameter_locator
+    from komanawa.hawea.model_parameterisation.pilot_points import get_pilot_point_locations, get_spatial_temporal_rch_mult
+    from komanawa.hawea.model_parameterisation.inital_parametersiation import get_initial_rch_mult
+    from komanawa.hawea.targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
+    from komanawa.hawea.targets_and_sensitive_sites.head_targets import get_2011_piezo_survey, get_all_hds_targets
+    from komanawa.hawea.targets_and_sensitive_sites import get_wetlands
+    from komanawa.hawea.targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
+    from komanawa.hawea.optimisation.optimisation_period import tdis
+    from komanawa.hawea.model_parameterisation.plot_parameter_names import plot_parameter_locator
 
     get_riv_target_locs(recalc=True)
     get_hawea_gain_loss_nper(tdis, recalc=True)
@@ -86,8 +85,8 @@ def recalc_param_targets():
 
 
 def build_test_model(model_ws, notes, start_param_vals=None, recalc=True):
-    from targets_and_sensitive_sites.model_output import process_model_output
-    from optimisation.model_utils_for_forward_run import read_param_data, build_run_model
+    from komanawa.hawea.targets_and_sensitive_sites import process_model_output
+    from komanawa.hawea.optimisation.model_utils_for_forward_run import read_param_data, build_run_model
 
     if recalc:
         recalc_param_targets()
@@ -183,7 +182,7 @@ if __name__ == '__main__':
 
     # build pest
     if build_pest:
-        from optimisation.build_optimisation import raw_pest
+        from komanawa.hawea.optimisation.build_optimisation import raw_pest
         from run_managers.beopest_manager import BeopestManager # keynote private repo
 
         pdir = unbacked_dir.joinpath(branch, mversion, 'Optimisations')

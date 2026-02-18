@@ -5,12 +5,11 @@ on: 30/09/22
 import datetime
 import pandas as pd
 import numpy as np
-from model_build.utils import get_colors
+from komanawa.hawea.model_build.utils import get_colors
 import matplotlib.pyplot as plt
 from dateutil.relativedelta import relativedelta
-from targets_and_sensitive_sites.head_targets import get_high_freq_head_targets, get_all_wells, \
-    get_low_freq_head_targets
-from model_build.project_model_tools import smt
+from komanawa.hawea.targets_and_sensitive_sites.head_targets import get_high_freq_head_targets, get_all_wells
+from komanawa.hawea.model_build.project_model_tools import smt
 
 
 def get_opt_start_stop():
