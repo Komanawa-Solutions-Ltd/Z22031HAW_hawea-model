@@ -295,13 +295,13 @@ def examine_sy_interpolation(log_before=False):
 def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
     assert isinstance(tdis, TimeDis)
     assert isinstance(rch_data, dict)
-    save_path = processed_param_dir.joinpath(f'irrigated_area_{tdis.name}.npy')
+    save_path = processed_param_dir.joinpath(f'irrigated_area_{tdis.name}.npz') # transformed to npz 2026
     if save_path.exists() and not recalc:
-        out = np.load(save_path).astype(bool)
+        out = np.load(save_path)['data'].astype(bool)
     else:
         out = np.concatenate(
             [get_irrigation_code(y)[np.newaxis] >= 0 for y in pd.to_datetime(tdis.per_middle_dates).year], axis=0)
-        np.save(save_path, out)
+        np.savez_compressed(save_path, data=out)
     rch_mult = np.full(out.shape, rch_data['all'])
 
     return rch_mult
