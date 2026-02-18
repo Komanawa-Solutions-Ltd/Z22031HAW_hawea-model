@@ -4,8 +4,8 @@ on: 28/11/22
 """
 import itertools
 
-from optimisation.a_build_run_optimisation_version import branch
-from optimisation.manual_optimisations.manual_optimisation import run_manal_opt
+from komanawa.hawea.optimisation.a_build_run_optimisation_version import branch
+from komanawa.hawea.optimisation.manual_optimisations.manual_optimisation import run_manal_opt
 
 import inspect
 

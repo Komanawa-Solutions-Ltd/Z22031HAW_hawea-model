@@ -3,20 +3,21 @@ created matt_dumont
 on: 25/11/22
 """
 from pathlib import Path
-from model_build.project_model_tools import smt
+from komanawa.hawea.model_build.project_model_tools import smt
+import numpy as np
 from copy import deepcopy
 import matplotlib.pyplot as plt
 import pandas as pd
-from targets_and_sensitive_sites.model_output import process_model_output, plot_hds_regular_locator, \
+from komanawa.hawea.targets_and_sensitive_sites import process_model_output, plot_hds_regular_locator, \
     base_regular_groupnames
-from optimisation.model_utils_for_forward_run import build_run_model
-from model_parameterisation.inital_parametersiation import *
-from optimisation.optimisation_period import tdis
-from model_build.utils import get_colors
+from komanawa.hawea.optimisation.model_utils_for_forward_run import build_run_model
+from komanawa.hawea.model_parameterisation.inital_parametersiation import *
+from komanawa.hawea.optimisation.optimisation_period import tdis
+from komanawa.hawea.model_build.utils import get_colors
 import matplotlib.gridspec as gridspec
 from run_managers.ssh_distributor import SshDist # keynote private repo
-from project_base import unbacked_dir
-from optimisation.a_build_run_optimisation_version import opt_model_tools, opt_proj_root, branch
+from komanawa.hawea.hawea_base import unbacked_dir
+from komanawa.hawea.optimisation.a_build_run_optimisation_version import opt_model_tools, opt_proj_root, branch
 
 base_opt_dirs = unbacked_dir.joinpath('manual')
 
@@ -327,7 +328,7 @@ def _plot_regular(scens, max_per_fig, colors, well_name, success, regular_hds, w
         ax.plot([temp2.date.iloc[0]], [temp2.modelled.iloc[0]], color=well_color,
                 label=f'{well_name.capitalize()} modelled')
 
-        from model_build.supporting_data_analysis import get_lake_heads
+        from komanawa.hawea.model_build.supporting_data_analysis import get_lake_heads
         lake = get_lake_heads(temp2.date.min(), temp2.date.max())
         ax_lake.plot(lake.index, lake, label='lake heads')
         ax_lake.set_ylabel('lake heads (m)')

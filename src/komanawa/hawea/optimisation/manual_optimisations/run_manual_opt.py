@@ -8,8 +8,8 @@ print(sys.path)
 from pathlib import Path
 import pickle
 import socket
-from optimisation.manual_optimisations.manual_optimisation import _run_model_mp
-from dummy_packages.run_multiprocess import run_multiprocess
+from komanawa.hawea.optimisation.manual_optimisations.manual_optimisation import _run_model_mp
+from komanawa.hawea.dummy_packages.run_multiprocess import run_multiprocess
 
 if __name__ == '__main__':
     pickle_path = Path(sys.argv[1])

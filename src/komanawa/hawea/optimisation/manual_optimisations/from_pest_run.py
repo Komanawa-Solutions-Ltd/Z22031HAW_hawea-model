@@ -3,12 +3,10 @@ created matt_dumont
 on: 24/01/23
 """
 import itertools
-from optimisation.a_build_run_optimisation_version import branch
-from optimisation.manual_optimisations.manual_optimisation import run_simple_man_opt
+from komanawa.hawea.optimisation.a_build_run_optimisation_version import branch
+from komanawa.hawea.optimisation.manual_optimisations.manual_optimisation import run_simple_man_opt
 import inspect
-import numpy as np
-from copy import deepcopy
-from optimisation.model_utils_for_forward_run import read_param_data
+from komanawa.hawea.optimisation.model_utils_for_forward_run import read_param_data
 
 
 def print_myself():

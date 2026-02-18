@@ -7,13 +7,12 @@ import pickle
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from project_base import processed_target_dir
-from targets_and_sensitive_sites.get_raw_target_data import get_high_freq_head_targets
-from model_build.supporting_data_analysis import get_lake_heads
-from model_build.supporting_data_analysis.lake_data import _read_lake_level
+from komanawa.hawea.hawea_base import processed_target_dir
+from komanawa.hawea.targets_and_sensitive_sites import get_high_freq_head_targets
+from komanawa.hawea.model_build.supporting_data_analysis import get_lake_heads
 from scipy.optimize import curve_fit, minimize, brute
 from copy import deepcopy
-from model_build.utils import get_colors
+from komanawa.hawea.model_build.utils import get_colors
 
 
 def save_min_data():

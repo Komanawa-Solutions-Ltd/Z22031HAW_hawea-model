@@ -3,7 +3,7 @@ created matt_dumont
 on: 4/12/22
 """
 from manual_optimisation import ssh_dist, _plot_high_freq_heads, _plot_success_fail, base_opt_dirs
-from optimisation.a_build_run_optimisation_version import branch
+from komanawa.hawea.optimisation.a_build_run_optimisation_version import branch
 
 if __name__ == '__main__':
     run_name = 'initial_manual2'
