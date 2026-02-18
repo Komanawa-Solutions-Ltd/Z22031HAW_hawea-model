@@ -12,7 +12,8 @@ Hawea Transient groundwater model (Hawea Model)
 :KSL project: Z22031HAW_hawea-model
 :Purpose: This document describes the Hawea Model repo
 :Versions:
-    - 2023-11-24: Final version with peer review
+    - 2026-02-19: Initial pip installable version of the repo (v2.0.0)
+    - 2023-11-24: Final version with peer review (v1.0.0)
     - 2023-11-20: Final version with historical investigation
     - 2023-05-09: Final version
     - 2023-04-01: Initial version

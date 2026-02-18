@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src/"]
+
+[tool.setuptools.package-data]
+"*" = ["*"] # include all files
+
+[project]
+name = "komanawa-hawea"
+dynamic = ["version"] # version set in version.py
+authors = [
+    { name = "Matt Dumont", email = "Matt@komanawa.com" },
+]
+description = "Transient Modflow model for the Hawea Flat aquifer and surrounding areas, Otago, New Zealand."
+readme = "README.rst"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+dependencies = [ # todo update... / add depenencies
+
+
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: Private :: Permission to use this repo must be obtained from Otago Regional Council",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "komanawa.hawea.version.__version__" }
+
+[project.urls]
+Homepage = "https://github.com/Komanawa-Solutions-Ltd/Z22031HAW_hawea-model"
+Issues = "https://github.com/Komanawa-Solutions-Ltd/Z22031HAW_hawea-model/issues"
+Documentation = "https://github.com/Komanawa-Solutions-Ltd/Z22031HAW_hawea-model"

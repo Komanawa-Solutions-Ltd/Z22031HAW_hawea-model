@@ -5,8 +5,8 @@ on: 17/04/23
 import matplotlib.pyplot as plt
 import numpy as np
 
-from project_base import proj_root, base_model_build_data_dir
-from model_build.project_model_tools import smt, elv_calc
+from komanawa.hawea.hawea_base import proj_root, base_model_build_data_dir
+from komanawa.hawea.model_build.project_model_tools import smt, elv_calc
 
 
 def model_2d_structure_plots():
@@ -42,7 +42,7 @@ def model_2d_structure_plots():
 
 
 def boundary_condition_figure():
-    from model_build.get_boundary_condition_data import get_river_loc_data, get_race_locs, get_pumping_locs, \
+    from komanawa.hawea.model_build.get_boundary_condition_data import get_river_loc_data, get_race_locs, get_pumping_locs, \
         get_hillside_catchment_locs, get_lake_hawea_loc
 
     bnd_conditions = smt.get_model_zeros() * np.nan
@@ -83,7 +83,7 @@ def boundary_condition_figure():
 
 
 def geography():
-    from model_build.zones import get_model_zones
+    from komanawa.hawea.model_build.zones import get_model_zones
     legend = {}
     colors = {}
 
@@ -106,7 +106,7 @@ def geography():
         legend[2 + i] = un
         colors[2 + i] = uc
 
-    from Scenarios.allocation_zones import get_allo_zones
+    from komanawa.hawea.Scenarios.allocation_zones import get_allo_zones
     allo_zones, mapper = get_allo_zones()
     mapper = {v: k for k, v in mapper.items()}
     plt_array[allo_zones == 8] = 10
@@ -125,7 +125,7 @@ def geography():
                                                             title='Hawea Aquifer Geography', names=legend,
                                                             legend_loc='lower left', return_handles_labels=True)
 
-    # todo grandview fault (infered)
+    #  grandview fault (infered)
     import geopandas as gpd
     line_path = proj_root.joinpath('support_figures/grandview_fault.shp')
     line_data = gpd.read_file(line_path)
@@ -141,7 +141,7 @@ def geography():
     handles.append(lines[0])
     labels.append('Grandview Fault (inferred)')
     ax.legend(handles, labels, loc='lower left')
-    # todo clutha/hawea river
+    # clutha/hawea river
 
     labels = [
         "Camp Hill",
@@ -170,7 +170,7 @@ def geography():
 
 
 def well_locations():
-    from model_build.supporting_data_analysis import get_pumping_locs
+    from komanawa.hawea.model_build.supporting_data_analysis import get_pumping_locs
     locs = get_pumping_locs()
     locs = smt.io.add_mxmy_to_df(locs)
     fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
@@ -185,7 +185,7 @@ def well_locations():
 
 
 def large_hill_inflows():
-    from model_build.supporting_data_analysis import get_river_flow_data
+    from komanawa.hawea.model_build.supporting_data_analysis import get_river_flow_data
 
     rflows = get_river_flow_data('2015-01-01', None, frequency='W')
 
@@ -202,7 +202,7 @@ def large_hill_inflows():
 
 
 def near_river():
-    from model_build.supporting_data_analysis.get_pumping_data import get_pumping_locs
+    from komanawa.hawea.model_build.supporting_data_analysis.get_pumping_data import get_pumping_locs
     all_locs = get_pumping_locs(force_near_river=True)
     all_locs = smt.io.add_mxmy_to_df(all_locs)
     fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
@@ -217,7 +217,7 @@ def near_river():
 
 
 def plot_all_targets():
-    from optimisation.pre_optimisation_overview import plot_head_targets, get_riv_target_locs, \
+    from komanawa.hawea.targets_and_sensitive_sites import plot_head_targets, get_riv_target_locs, \
         get_hawea_gain_loss_targets
     rt = get_hawea_gain_loss_targets()
     # river targets
@@ -245,7 +245,7 @@ def plot_all_targets():
 
 
 def wetlands():
-    from targets_and_sensitive_sites.senstive_sites import get_wetlands
+    from komanawa.hawea.targets_and_sensitive_sites import get_wetlands
     wet = get_wetlands()
     outdata = smt.get_model_zeros() * np.nan
     for k, v in wet.items():
@@ -268,11 +268,11 @@ import pandas as pd
 
 
 def plot_regular():
-    from targets_and_sensitive_sites.head_targets import base_regular_groupnames, plot_hds_regular_locator
+    from komanawa.hawea.targets_and_sensitive_sites.head_targets import base_regular_groupnames, plot_hds_regular_locator
     hds_groups = ['h_piezo', 'h_single_3', 'h_single_1', 'regular']
     hds_colors = smt.plot.get_colors(hds_groups)
     reg_colormap = 'tab10'
-    from project_base import proj_root
+    from komanawa.hawea.hawea_base import proj_root
     f = proj_root.joinpath('optimisation/optimisation_results/3d_v1d/observations.dat')
     hds_obs = pd.read_csv(f, sep='\t')
     hds_obs.rename(columns={e: e.lower() for e in hds_obs.keys()}, inplace=True)
@@ -295,7 +295,7 @@ def plot_regular():
 
 
 def hill_params():
-    from model_build.get_boundary_condition_data import get_hillside_catchment_locs
+    from komanawa.hawea.model_build.get_boundary_condition_data import get_hillside_catchment_locs
     hill = get_hillside_catchment_locs()
     hill = smt.io.add_mxmy_to_df(hill)
     fig, ax = smt.plot.plt_basemap(no_flow_layer=0)
@@ -312,15 +312,15 @@ def hill_params():
 
 
 def terrace_only_plot():
-    from targets_and_sensitive_sites.head_targets import base_regular_groupnames, plot_hds_regular_locator
-    from model_build.supporting_data_analysis import get_lake_heads
+    from komanawa.hawea.targets_and_sensitive_sites.head_targets import base_regular_groupnames, plot_hds_regular_locator
+    from komanawa.hawea.model_build.supporting_data_analysis import get_lake_heads
     from matplotlib import gridspec
-    from optimisation.optimisation_period import tdis
+    from komanawa.hawea.optimisation.optimisation_period import tdis
     n = 'g40_0366'
     nc = 'red'
     lss = ['dashed', 'solid']
     names = ['terrace_only', '3d_v1d']
-    from project_base import proj_root
+    from komanawa.hawea.hawea_base import proj_root
     f = '/home/matt_dumont/unbacked/hawea/3d_v1d/init_3d_v1d/Optimisations/Final_opt_model/observations.dat'
     hds_obs = pd.read_csv(f, sep='\t')
     hds_obs.rename(columns={e: e.lower() for e in hds_obs.keys()}, inplace=True)
@@ -374,7 +374,7 @@ def terrace_only_plot():
 
 def additional_monitoring():
     import geopandas as gpd
-    from project_base import proj_root
+    from komanawa.hawea.hawea_base import proj_root
     shp_path = proj_root.joinpath('support_figures/additional monitoring.shp')
     data = gpd.read_file(shp_path)
     data.set_index('id', inplace=True)
@@ -392,9 +392,9 @@ def additional_monitoring():
 
 
 def wetland_clipouts():
-    from targets_and_sensitive_sites.senstive_sites import get_wetlands
-    from Scenarios.wetland_setback_butterfield.project_model_tools import smt as but_smt
-    from Scenarios.wetland_setback_campbells.project_model_tools import smt as camp_smt
+    from komanawa.hawea.targets_and_sensitive_sites import get_wetlands
+    from komanawa.hawea.Scenarios.wetland_setback_butterfield.project_model_tools import smt as but_smt
+    from komanawa.hawea.Scenarios.wetland_setback_campbells.project_model_tools import smt as camp_smt
 
     wet = get_wetlands()
     outdata = smt.get_model_zeros() * np.nan
@@ -431,13 +431,12 @@ def wetland_clipouts():
 
 
 def clipout_boundary_conditions():
-    from Scenarios.wetland_setback_butterfield.project_model_tools import smt as but_smt
-    from Scenarios.wetland_setback_campbells.project_model_tools import smt as camp_smt
-    from Scenarios.wetland_setback_butterfield import model_bcs as but_bcs
-    from Scenarios.wetland_setback_campbells import model_bcs as camp_bcs
-    from Scenarios.wetland_setback_butterfield.generate_runs import get_run_locs as get_but_locs
-    from Scenarios.wetland_setback_campbells.generate_runs import get_run_locs as get_camp_locs
-    from matplotlib.patches import Patch
+    from komanawa.hawea.Scenarios.wetland_setback_butterfield.project_model_tools import smt as but_smt
+    from komanawa.hawea.Scenarios.wetland_setback_campbells.project_model_tools import smt as camp_smt
+    from komanawa.hawea.Scenarios.wetland_setback_butterfield import model_bcs as but_bcs
+    from komanawa.hawea.Scenarios.wetland_setback_campbells import model_bcs as camp_bcs
+    from komanawa.hawea.Scenarios.wetland_setback_butterfield.generate_runs import get_run_locs as get_but_locs
+    from komanawa.hawea.Scenarios.wetland_setback_campbells.generate_runs import get_run_locs as get_camp_locs
     fig, axs = plt.subplots(ncols=2, figsize=(14, 8))
 
     for ax, usmt, ubcs, name, ulocs in zip(axs,
@@ -469,7 +468,13 @@ def clipout_boundary_conditions():
     plt.show()
 
 
-def make_pdf_of_readmes(outdir): # todo use this
+def make_pdf_of_readmes(outdir): # keynote use this to make local pdf version of the readmes
+    """
+    make a pdf of all the readmes in the project, and then merge them into one file for easy reference.
+
+    :param outdir: directory to save the pdfs to
+    :return:
+    """
     from pathlib import Path
     outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
