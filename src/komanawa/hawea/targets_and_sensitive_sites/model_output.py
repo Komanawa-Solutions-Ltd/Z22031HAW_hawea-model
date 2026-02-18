@@ -12,13 +12,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from targets_and_sensitive_sites.head_targets import get_all_hds_targets, plot_hds_zone_locator, \
+from komanawa.hawea.targets_and_sensitive_sites.head_targets import get_all_hds_targets, plot_hds_zone_locator, \
     plot_hds_regular_locator, get_annual_mean_head_targets, base_regular_groupnames
-from targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
-from optimisation.optimisation_period import tdis
-from model_build.supporting_data_analysis import get_river_loc_data, get_all_wells
-from model_build.utils import get_colors, plot_1_to_1
-from model_build.project_model_tools import get_ibound, smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
+from komanawa.hawea.targets_and_sensitive_sites.riv_gain_loss_targets import get_riv_target_locs, get_hawea_gain_loss_nper
+from komanawa.hawea.optimisation.optimisation_period import tdis
+from komanawa.hawea.model_build.supporting_data_analysis import get_river_loc_data
+from komanawa.hawea.model_build.utils import get_colors, plot_1_to_1
+from komanawa.hawea.model_build.project_model_tools import get_ibound, smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
     get_xsection_points
 from matplotlib.colors import SymLogNorm
 
@@ -27,7 +27,7 @@ try:
 except ImportError:
     ListSolverInfo = None
 
-from model_build.supporting_data_analysis import get_lake_heads
+from komanawa.hawea.model_build.supporting_data_analysis import get_lake_heads
 import matplotlib.gridspec as gridspec
 
 # thoughts target groups
@@ -645,7 +645,6 @@ def _plot_spatial_hd_misfit(hds_obs, plot_dir):
         ['h_piezo']
     ]
     funcs = ['min', 'mean', 'max', ]
-    from mpl_toolkits.axes_grid1.inset_locator import inset_axes
     all_wells = get_all_hds_targets(tdis).set_index('name')
     i, j = all_wells.loc[hds_obs.name, ['i', 'j']].values.transpose()
     hds_obs.loc[:, 'i'] = i

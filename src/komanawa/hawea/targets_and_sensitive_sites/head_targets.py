@@ -3,23 +3,20 @@ created matt_dumont
 on: 15/08/22
 """
 import pickle
-import time
-import warnings
 
-import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
 import numpy as np
 from dateutil.relativedelta import relativedelta
 import pandas as pd
-from model_build.supporting_data_analysis import get_all_wells
-from model_build.project_model_tools import smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
+from komanawa.hawea.model_build.supporting_data_analysis import get_all_wells
+from komanawa.hawea.model_build.project_model_tools import smt, get_lake_array, get_layer_pinchout_area, get_2d_moraine, \
     get_low_cond_array
-from project_base import processed_target_dir, base_target_dir
-from model_build.utils import get_colors, select_resample
-from targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
-from targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
-from model_build.zones import get_model_zones
+from komanawa.hawea.hawea_base import processed_target_dir, base_target_dir
+from komanawa.hawea.model_build.utils import get_colors, select_resample
+from komanawa.hawea.targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
+from komanawa.hawea.targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2
+from komanawa.hawea.model_build.zones import get_model_zones
 
 base_regular_groupnames = ['h_hf_riv', 'h_hf', 'h_lf']  # ensures coheriance across functions
 
@@ -399,7 +396,7 @@ def get_annual_mean_head_targets(hds_df):
 
 
 if __name__ == '__main__':
-    from optimisation.optimisation_period import tdis
+    from komanawa.hawea.optimisation.optimisation_period import tdis
     t = get_high_freq_head_targets(None, None)
     get_all_hds_targets(tdis, recalc=True)
     raise NotImplementedError

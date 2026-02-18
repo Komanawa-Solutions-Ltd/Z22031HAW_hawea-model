@@ -3,10 +3,10 @@ created matt_dumont
 on: 4/10/22
 """
 import pandas as pd
-from model_build.supporting_data_analysis import get_all_wells
-from model_build.zones import get_param_zones
-from model_build.utils import select_resample
-from project_base import base_target_dir
+from komanawa.hawea.model_build.supporting_data_analysis import get_all_wells
+from komanawa.hawea.model_build.zones import get_param_zones
+from komanawa.hawea.model_build.utils import select_resample
+from komanawa.hawea.hawea_base import base_target_dir
 
 
 def get_single_target_data():

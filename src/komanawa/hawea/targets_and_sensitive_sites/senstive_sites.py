@@ -4,9 +4,8 @@ on: 1/09/22
 """
 import numpy as np
 
-from project_base import processed_target_dir, base_target_dir
-from model_build.project_model_tools import smt
-import geopandas as gpd
+from komanawa.hawea.hawea_base import processed_target_dir, base_target_dir
+from komanawa.hawea.model_build.project_model_tools import smt
 
 
 def get_wetlands(recalc=False):

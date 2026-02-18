@@ -4,12 +4,12 @@ on: 16/11/22
 """
 import matplotlib.pyplot as plt
 import pandas as pd
-from model_build.utils import get_colors
-from model_build.project_model_tools import smt
-from targets_and_sensitive_sites.head_targets import get_high_freq_head_targets, get_low_freq_head_targets, \
+from komanawa.hawea.model_build.utils import get_colors
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.targets_and_sensitive_sites.head_targets import get_high_freq_head_targets, get_low_freq_head_targets, \
     get_all_wells, plot_hds_regular_locator
-from model_build.supporting_data_analysis import get_lake_heads, get_river_stage_data, get_river_loc_data
-from optimisation.optimisation_period import tdis
+from komanawa.hawea.model_build.supporting_data_analysis import get_lake_heads, get_river_stage_data, get_river_loc_data
+from komanawa.hawea.optimisation.optimisation_period import tdis
 
 
 def check_riv_stage_near_g40_0366():

@@ -20,6 +20,7 @@ Index
 =====
 .. contents:: Table of Contents
 
+.. todo update for pipable version
 
 Module Index
 ============

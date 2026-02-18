@@ -7,9 +7,9 @@ import pickle
 import numpy as np
 import pandas as pd
 
-from project_base import processed_target_dir, base_model_build_data_dir
-from model_build.supporting_data_analysis import get_river_loc_data, get_pumping_locs, get_historical_pumping_data
-from model_build.project_model_tools import smt, exclude_near_river_pumping
+from komanawa.hawea.hawea_base import processed_target_dir, base_model_build_data_dir
+from komanawa.hawea.model_build.supporting_data_analysis import get_river_loc_data, get_pumping_locs, get_historical_pumping_data
+from komanawa.hawea.model_build.project_model_tools import smt, exclude_near_river_pumping
 
 
 def get_riv_target_locs(recalc=False):
@@ -88,7 +88,7 @@ def get_hawea_gain_loss_nper(tdis, recalc=False):
 
 
 if __name__ == '__main__':
-    from optimisation.optimisation_period import tdis
+    from komanawa.hawea.optimisation.optimisation_period import tdis
 
     temp = get_hawea_gain_loss_nper(tdis, True)
     loc = get_riv_target_locs()

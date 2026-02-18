@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 from dateutil.relativedelta import relativedelta
 import numpy as np
 import pandas as pd
-from model_build.supporting_data_analysis import get_all_wells, get_hillside_flows, get_lake_heads, get_lake_hawea_loc
-from model_build.project_model_tools import smt
-from model_build.utils import get_colors
-from model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch, get_irrigation_code
-from optimisation.optimisation_period import start, end
-from targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
-from project_base import processed_target_dir
+from komanawa.hawea.model_build.supporting_data_analysis import get_all_wells, get_hillside_flows, get_lake_heads, get_lake_hawea_loc
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.model_build.utils import get_colors
+from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch, get_irrigation_code
+from komanawa.hawea.optimisation.optimisation_period import start, end
+from komanawa.hawea.targets_and_sensitive_sites.get_raw_target_data import get_single_target_data, get_high_freq_head_targets
+from komanawa.hawea.hawea_base import processed_target_dir
 
 
 # targets that occur outside of period.
