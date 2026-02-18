@@ -10,14 +10,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from copy import deepcopy
 import netCDF4 as nc
-from model_build.utils import select_resample
-from model_build.supporting_data_analysis.recharge_model import get_era5_land, _map_from_soil_class, \
+from komanawa.hawea.model_build.utils import select_resample
+from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import get_era5_land, _map_from_soil_class, \
     _map_from_irrig_code, irrig_max_store, get_rch, int_season_mapper, get_weekly_plus_era5_rch
-from model_build.supporting_data_analysis.recharge_model import get_irrigation_code as get_irrigation_code_haw
-from project_base import proj_root, base_model_build_data_dir
+from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import get_irrigation_code as get_irrigation_code_haw
+from komanawa.hawea.hawea_base import proj_root, base_model_build_data_dir
 import gc
 from model_tools.regular_modeltools import ModelTools_RegularGrid
-from model_build.project_model_tools import smt as smt_haw
+from komanawa.hawea.model_build.project_model_tools import smt as smt_haw
 
 boundary_path = proj_root.joinpath('quartz_creek_lsr/results/qtz_domain.shp')
 temp = gpd.read_file(boundary_path)
@@ -476,7 +476,7 @@ def _predict_scenario_data(ibound, regr_irrig, regr_unirrig, dryland=False):
 
 
 def data_checks(save=False):
-    from model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch, get_rch
+    from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import get_corrected_historical_era5_rch, get_rch
     recalc = False
     if save:
         outdir = processed_scen_dir.parent.joinpath('boundary_condition_plots')
@@ -520,7 +520,7 @@ def data_checks(save=False):
     fig.tight_layout()
     if save:
         fig.savefig(outdir.joinpath(f'spatial_rch_hist_comp.png'))
-    from model_build.utils import get_colors
+    from komanawa.hawea.model_build.utils import get_colors
     colors = get_colors(scens, 'tab10')
 
     # look at mean recharge through time
