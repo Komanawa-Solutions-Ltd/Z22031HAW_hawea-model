@@ -2,11 +2,10 @@
 created matt_dumont 
 on: 1/09/22
 """
-import warnings
 
-from project_base import proj_root
-from model_build.project_model_tools import bund_top
-from optimisation.model_utils_for_forward_run import read_param_data
+from komanawa.hawea.hawea_base import proj_root
+from komanawa.hawea.model_build.project_model_tools import bund_top
+from komanawa.hawea.optimisation.model_utils_for_forward_run import read_param_data
 
 
 def get_3d_v1a_params(return_individual=True):

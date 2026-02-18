@@ -2,8 +2,7 @@
 created matt_dumont 
 on: 1/09/22
 """
-from model_parameterisation.pilot_points import get_pilot_point_locations
-import numpy as np
+from komanawa.hawea.model_parameterisation.pilot_points import get_pilot_point_locations
 
 
 # keynote these set initials and bounds

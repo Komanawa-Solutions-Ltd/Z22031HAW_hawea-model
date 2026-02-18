@@ -5,15 +5,15 @@ on: 2/09/22
 import numpy as np
 import pandas as pd
 from scipy.interpolate import RBFInterpolator
-from project_base import base_param_dir, processed_param_dir
-from model_build.zones import get_model_zones
-from model_build.project_model_tools import smt, get_lake_array, get_low_cond_array, get_2d_moraine
-from model_build.supporting_data_analysis import get_irrigation_code
+from komanawa.hawea.hawea_base import base_param_dir, processed_param_dir
+from komanawa.hawea.model_build.zones import get_model_zones
+from komanawa.hawea.model_build.project_model_tools import smt, get_lake_array, get_low_cond_array, get_2d_moraine
+from komanawa.hawea.model_build.supporting_data_analysis import get_irrigation_code
 try:
     from model_tools.time_discretization import TimeDis
 except ModuleNotFoundError:
-    from dummy_packages import TimeDis
-from model_parameterisation.static_params import lake_sy, lake_ss
+    from komanawa.hawea.dummy_packages import TimeDis
+from komanawa.hawea.model_parameterisation.static_params import lake_sy
 import geopandas as gpd
 
 
@@ -308,7 +308,7 @@ def get_spatial_temporal_rch_mult(rch_data, tdis, recalc=False):
 
 
 def check_kh_sy_ss():
-    from model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh
+    from komanawa.hawea.model_parameterisation.inital_parametersiation import get_inital_sy, get_inital_kh
     vas = get_inital_kh(True)
     vas['lake'] = 20
     vas['mor_l0'] = 7

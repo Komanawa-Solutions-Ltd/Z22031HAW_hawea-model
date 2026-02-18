@@ -3,12 +3,12 @@ created matt_dumont
 on: 28/11/22
 """
 import matplotlib.pyplot as plt
-from model_build.project_model_tools import smt
-from model_parameterisation.inital_parametersiation import *
-from model_parameterisation.pilot_points import get_pilot_point_locations
-from targets_and_sensitive_sites.head_targets import plot_hds_regular_locator
+from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.model_parameterisation.inital_parametersiation import *
+from komanawa.hawea.model_parameterisation.pilot_points import get_pilot_point_locations
+from komanawa.hawea.targets_and_sensitive_sites import plot_hds_regular_locator
 from pathlib import Path
-from model_build.utils import get_colors
+from komanawa.hawea.model_build.utils import get_colors
 
 
 def plot_parameter_locator(show=False):
