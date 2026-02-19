@@ -11,14 +11,14 @@ from komanawa.hawea.model_build.project_model_tools import smt
 from komanawa.hawea.model_build.utils import get_colors
 from komanawa.hawea.targets_and_sensitive_sites import process_model_output
 from komanawa.hawea.optimisation.model_utils_for_forward_run import read_param_data, build_run_model
-from model_tools.plot_optimisation import plot_optimisation_and_extract_info # keynote private repo
+from komanawa.modeltools.model_tools.plot_optimisation import plot_optimisation_and_extract_info # keynote private repo
 from komanawa.hawea.model_parameterisation.inital_parametersiation import *
 from komanawa.hawea.model_parameterisation.pilot_points import interpolate_sy_pilot_points, interpolate_kh_pilot_points
-from model_tools.util_functions.list_file_utils import ListSolverInfo # keynote private repo
+from komanawa.modeltools.model_tools.util_functions.list_file_utils import ListSolverInfo # keynote private repo
 import py7zr
 from komanawa.hawea.targets_and_sensitive_sites import plot_hds_regular_locator, base_regular_groupnames
 from komanawa.hawea.optimisation.optimisation_period import tdis
-
+import numpy as np
 
 def plot_opt(pest_dir, replot=False, plot_failure_points=True, check_success=False):
     base_plot_dir = Path(pest_dir).joinpath('Base_Optimisation_plots')
@@ -336,7 +336,7 @@ def _plot_high_freq_heads(pest_dir, plot_dir):
 
 
 if __name__ == '__main__':
-    from komanawa.hawea.project_base import unbacked_dir
+    from komanawa.hawea.hawea_base import unbacked_dir
     from komanawa.hawea.optimisation.a_build_run_optimisation_version import branch
 
     plot_failures = False  # keynote this can take a really long time with a long optimisation

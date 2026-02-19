@@ -10,7 +10,7 @@ from komanawa.hawea.model_build.zones import get_model_zones
 from komanawa.hawea.model_build.project_model_tools import smt, get_lake_array, get_low_cond_array, get_2d_moraine
 from komanawa.hawea.model_build.supporting_data_analysis import get_irrigation_code
 try:
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import TimeDis
 from komanawa.hawea.model_parameterisation.static_params import lake_sy

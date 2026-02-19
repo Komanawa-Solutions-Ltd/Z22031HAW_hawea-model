@@ -8,7 +8,7 @@ from pathlib import Path
 project_name = 'hawea'
 
 try:
-    from kslcore import KslEnv  # package to allow access to internal KSL files.
+    from komanawa.kslcore import KslEnv  # package to allow access to internal KSL files.
 
     project_dir = KslEnv.shared_gdrive.joinpath('YMULT_small_projects/Z22031HAW_hawea-model')
     unbacked_dir = KslEnv.unbacked.joinpath(project_name)

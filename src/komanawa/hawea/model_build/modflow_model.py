@@ -10,8 +10,8 @@ import pandas as pd
 import numpy as np
 
 try:
-    from model_tools.regular_modeltools import ModelTools_RegularGrid
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
     from komanawa.hawea.dummy_packages import TimeDis

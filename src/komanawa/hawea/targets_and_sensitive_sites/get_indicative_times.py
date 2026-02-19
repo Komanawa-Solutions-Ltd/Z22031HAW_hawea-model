@@ -115,8 +115,8 @@ def get_indicative_times_v2(recalc=False, return_figs=False):
             m,
             (datetime.date(2020, m, 1) + relativedelta(months=1)).month,
         ]
-        targ_idx = np.in1d(targ_data.month, [m])
-        period_idx = np.in1d(period_data.month, period_months)
+        targ_idx = np.isin(targ_data.month, [m])
+        period_idx = np.isin(period_data.month, period_months)
 
         rch_dif = (period_data.loc[period_idx].rch.values[:, np.newaxis] - targ_data.loc[targ_idx].rch.values[
                                                                            np.newaxis, :])
@@ -156,8 +156,8 @@ def get_indicative_times_v2(recalc=False, return_figs=False):
             m,
             (datetime.date(2020, m, 1) + relativedelta(months=1)).month,
         ]
-        targ_idx = np.in1d(targ_data.month, [m])
-        period_idx = np.in1d(period_data.month, period_months)
+        targ_idx = np.isin(targ_data.month, [m])
+        period_idx = np.isin(period_data.month, period_months)
         fig, ax = plt.subplots(figsize=(10, 8))
         ax.scatter(period_data.loc[period_idx].rch, period_data.loc[period_idx].hill, c='b', label='Period data')
         for d, r, h, im in period_data.loc[period_idx].itertuples(True, None):

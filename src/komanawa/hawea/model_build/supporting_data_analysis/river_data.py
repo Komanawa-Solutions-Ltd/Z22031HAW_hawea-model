@@ -265,7 +265,7 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False, plot
     outdata.loc[:, clutha_keys] = t
 
     # set john and grandview stage to model top (smoothed)
-    temp = loc_data.loc[np.in1d(loc_data.rname, ['john', 'gview'])]
+    temp = loc_data.loc[np.isin(loc_data.rname, ['john', 'gview'])]
     outdata.loc[:, temp.index] = temp.rtop.values[np.newaxis]
 
     assert np.isclose(outdata.loc[:, temp.index].mean(), temp.rtop).all()
@@ -276,7 +276,7 @@ def get_river_stage_data(start_date, end_date, frequency='D', recalc=False, plot
     k_cs = ['min', '5%', '25%', '50%', '75%', '95%', 'max', ]
     colors = get_colors(k_cs, cmap_name='winter')
 
-    temp_data = loc_data.copy(deep=True).loc[np.in1d(loc_data.rname, ['hawea', 'clutha'])]
+    temp_data = loc_data.copy(deep=True).loc[np.isin(loc_data.rname, ['hawea', 'clutha'])]
     tops = smt.get_tops()[0]
     bottoms = smt.get_bottoms()[0]
     temp_data.loc[:, 'model_top'] = tops[temp_data.loc[:, 'i'], temp_data.loc[:, 'j']]
@@ -325,7 +325,7 @@ def data_checks():
     river_locs.loc[:, 'model_bot'] = bottoms[river_locs.loc[:, 'i'], river_locs.loc[:, 'j']]
     for r in ['clutha', 'hawea', 'Hawea & Clutha rivers']:
         if r == 'Hawea & Clutha rivers':
-            temp_data = river_locs.loc[np.in1d(river_locs.rname, ['hawea', 'clutha'])].copy(deep=True)
+            temp_data = river_locs.loc[np.isin(river_locs.rname, ['hawea', 'clutha'])].copy(deep=True)
             temp_data.loc[temp_data.rname == 'clutha', 'dist'] += temp_data.loc[
                 temp_data.rname == 'hawea', 'dist'].max()
         else:

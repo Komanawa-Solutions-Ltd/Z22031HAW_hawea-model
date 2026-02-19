@@ -6,10 +6,9 @@ import tempfile
 from pathlib import Path
 import numpy as np
 import pandas as pd
-
 try:
-    from model_tools.regular_modeltools import ModelTools_RegularGrid
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid, TimeDis
 from komanawa.hawea.hawea_base import unbacked_dir, base_model_build_data_dir, modelling_dir, butterfield_dir

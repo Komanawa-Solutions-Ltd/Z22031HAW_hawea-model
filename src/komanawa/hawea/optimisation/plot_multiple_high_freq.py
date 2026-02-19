@@ -6,8 +6,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 from komanawa.hawea.model_build.utils import get_colors
-from model_tools.plot_optimisation import plot_optimisation_and_extract_info  # keynote private repo
-from model_tools.util_functions.list_file_utils import ListSolverInfo  # keynote private repo
+from komanawa.modeltools.model_tools.plot_optimisation import plot_optimisation_and_extract_info  # keynote private repo
+from komanawa.modeltools.model_tools.util_functions.list_file_utils import ListSolverInfo  # keynote private repo
 from komanawa.hawea.targets_and_sensitive_sites import plot_hds_regular_locator, base_regular_groupnames
 from komanawa.hawea.optimisation.optimisation_period import tdis
 

@@ -11,7 +11,7 @@ from komanawa.hawea.model_parameterisation.pilot_points import interpolate_kh_pi
 from komanawa.hawea.Scenarios.scenario_outputs import extract_input_data, generate_scenario_outputs, key_input_data_file_name
 from pathlib import Path
 try:
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import TimeDis
 

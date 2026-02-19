@@ -453,9 +453,9 @@ def get_irrig_avaliblity(shape, plot=False):
     colors = get_colors(zone_keys)
     for i, (c, k) in enumerate(zip(colors, zone_keys)):
         if k == 'all':
-            temp = useage_data.loc[np.in1d(useage_data.uid, locations.loc[locations.zone.notna(), 'uid'])]
+            temp = useage_data.loc[np.isin(useage_data.uid, locations.loc[locations.zone.notna(), 'uid'])]
         else:
-            temp = useage_data.loc[np.in1d(useage_data.uid, locations.loc[locations.zone == k, 'uid'])]
+            temp = useage_data.loc[np.isin(useage_data.uid, locations.loc[locations.zone == k, 'uid'])]
         total = temp.groupby('date').sum().loc[:, 'total_allo']
         total *= 1000  # convert from m3/day to mm*m2/day
         total.loc[total.index.year < 2020] *= 1 / irrig_area[k][2015]
@@ -633,6 +633,7 @@ def get_historical_rch_model_results(data_source='historical', limited_irrigatio
             init_near_surface_storage=init_near_surface_storage,
             fracstore=fracstore,
             raw_p=raw_p,
+            raw=None,
             initial_smd=initial_smd,
 
             # single parameters

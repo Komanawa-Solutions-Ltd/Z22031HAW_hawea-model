@@ -445,7 +445,7 @@ def clipout_boundary_conditions():
                                            ['Butterfield', 'Campbells'],
                                            [get_but_locs(), get_camp_locs()]
                                            ):
-        from model_tools.regular_modeltools import ModelTools_RegularGrid
+        from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid
         assert isinstance(usmt, ModelTools_RegularGrid)
         usmt.plot.plt_basemap(ax, no_flow_layer=0)
         wloc = ubcs.get_wetland_loc(0, return_just_kij=False)

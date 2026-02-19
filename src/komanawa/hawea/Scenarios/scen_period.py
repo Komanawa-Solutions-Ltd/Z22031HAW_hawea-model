@@ -5,7 +5,7 @@ on: 24/11/22
 import datetime
 import pandas as pd
 try:
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import TimeDis
 

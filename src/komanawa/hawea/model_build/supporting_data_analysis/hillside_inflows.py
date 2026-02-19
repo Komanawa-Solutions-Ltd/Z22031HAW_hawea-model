@@ -106,9 +106,9 @@ def get_hillside_catchment_locs(recalc=False, show=False, include_hill_str=False
         smt.plot.show()
 
     outdata.reset_index()
-    outdata.loc[np.in1d(outdata.group, ['south_east']), 'param'] = 'se'
-    outdata.loc[np.in1d(outdata.group, ('flat_east', 'terrace_east', 'flat_west')), 'param'] = 'main'
-    outdata.loc[np.in1d(outdata.group, ['maungawera']), 'param'] = 'mang'
+    outdata.loc[np.isin(outdata.group, ['south_east']), 'param'] = 'se'
+    outdata.loc[np.isin(outdata.group, ('flat_east', 'terrace_east', 'flat_west')), 'param'] = 'main'
+    outdata.loc[np.isin(outdata.group, ['maungawera']), 'param'] = 'mang'
 
     outdata = outdata.drop(index='ss22')
 
@@ -132,7 +132,7 @@ def get_catchment_areas(show_plot=False, recalc=False):
     catchment_shapefile_dir = unbacked_dir.joinpath('input_data/hillside_catchments')
     catchment_shapefile_dir.mkdir(exist_ok=True, parents=True)
 
-    from pysheds.grid import Grid
+    from pysheds.grid import Grid  # import here to avoid dependency for other functions (only used if recalc is true)
     grid = Grid.from_raster(str(dem_path))
     dem = grid.read_raster(str(dem_path))
     # Fill pits in DEM
@@ -205,7 +205,7 @@ def get_catchment_areas(show_plot=False, recalc=False):
 
 
 def _write_shapefile(outpath, grid, catch_view):
-    import fiona
+    import fiona # import here to avoid dependency for other functions (only used if recalc is true)
     shapes = grid.polygonize(catch_view.astype(np.uint8))
 
     # Specify schema
@@ -238,7 +238,7 @@ def get_luggate_catchment_area(recalc=False):
     dem_path = modelling_dir.joinpath('input_data/larger_area/8m_dem_luggate.tif')
     catchment_shapefile_dir = unbacked_dir.joinpath('input_data/lindis_luggate_catchments')
     catchment_shapefile_dir.mkdir(exist_ok=True, parents=True)
-    from pysheds.grid import Grid
+    from pysheds.grid import Grid # import here to avoid dependency for other functions (only used if recalc is true)
     grid = Grid.from_raster(str(dem_path))
     dem = grid.read_raster(str(dem_path))
     # Fill pits in DEM
@@ -357,10 +357,10 @@ def compair_lindus_correlations():
         data.loc[:, 'k'] *= 1 / v
 
     data.loc[:, 'month'] = data.index.month
-    data.loc[np.in1d(data.month, [12, 1, 2]), 'season'] = 1  # summer
-    data.loc[np.in1d(data.month, [3, 4, 5]), 'season'] = 2  # atumn
-    data.loc[np.in1d(data.month, [6, 7, 8]), 'season'] = 3  # spring
-    data.loc[np.in1d(data.month, [9, 10, 11]), 'season'] = 4  # winter
+    data.loc[np.isin(data.month, [12, 1, 2]), 'season'] = 1  # summer
+    data.loc[np.isin(data.month, [3, 4, 5]), 'season'] = 2  # atumn
+    data.loc[np.isin(data.month, [6, 7, 8]), 'season'] = 3  # spring
+    data.loc[np.isin(data.month, [9, 10, 11]), 'season'] = 4  # winter
 
     stat_data = []
     predicted_rivers = [

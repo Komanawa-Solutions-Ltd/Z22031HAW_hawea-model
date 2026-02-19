@@ -169,7 +169,9 @@ def get_model_period_hds(site, freq='D', recalc=False):
     key = f'all_modelled_period_hds'
     if not recalc and historical_data_savepath.exists():
         try:
-            t = pd.read_hdf(historical_data_savepath, key=key)[site]
+            t = pd.read_hdf(historical_data_savepath, key=key)
+            assert isinstance(t, pd.DataFrame)
+            t = t[site]
             assert isinstance(t, pd.Series)
         except KeyError:
             pass

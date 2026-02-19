@@ -3,7 +3,6 @@ created matt_dumont
 on: 31/08/22
 """
 import warnings
-
 import numpy as np
 import pandas as pd
 from matplotlib.cm import get_cmap
@@ -149,3 +148,15 @@ season_mapper = {
     10: 'spring',
     11: 'spring',
 }
+
+class FakePath(object):
+    def __init__(self):
+        """
+        fake path object to allow for testing, or where a Pathlib object is expected but should always return None
+        """
+        pass
+
+    @staticmethod
+    def joinpath(*args):
+        return None
+

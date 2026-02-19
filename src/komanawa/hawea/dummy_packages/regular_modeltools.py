@@ -436,11 +436,11 @@ class DummyModelTools_RegularGrid(object):
         :return: bool array (True=out of domain)
         """
 
-        idx = ~np.in1d(i, range(self.rows))
-        jdx = ~np.in1d(j, range(self.cols))
+        idx = ~np.isin(i, range(self.rows))
+        jdx = ~np.isin(j, range(self.cols))
         out = jdx | idx
         if k is not None:
-            kdx = ~np.in1d(k, range(self.layers))
+            kdx = ~np.isin(k, range(self.layers))
             out = out | kdx
         return out
 

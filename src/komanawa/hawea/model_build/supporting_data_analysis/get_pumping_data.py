@@ -58,13 +58,13 @@ def get_most_upto_date_allocation_info(include_near_river=False, recalc=False):
             unique_names = well_names.index[~well_names.loc[:, ['permit_id', 'water_meter_no']].duplicated(keep=False)]
 
             for n in unique_names:
-                idx = np.in1d(pumping_data.loc[:, 'uname'], well_names.loc[n, 'uname'])
+                idx = np.isin(pumping_data.loc[:, 'uname'], well_names.loc[n, 'uname'])
                 temp = pumping_data.loc[idx, ['date', pumping_key]].set_index('date')
                 outdata.loc[temp.index, n] = temp.values[:, 0]
 
             for uname in pd.unique(well_names.loc[duplicated, 'uname']):
-                use_well_names = well_names.index[np.in1d(well_names.uname, uname)]
-                assert not np.in1d(use_well_names, unique_names).any()
+                use_well_names = well_names.index[np.isin(well_names.uname, uname)]
+                assert not np.isin(use_well_names, unique_names).any()
                 temp = pumping_data.loc[pumping_data.uname == uname]
                 temp = temp.groupby('date').sum().loc[:, pumping_key]
                 for n in use_well_names:
@@ -130,13 +130,13 @@ def get_historical_max_allo_pumping_data(start_date, end_date, frequency='D', re
     unique_names = well_names.index[~well_names.loc[:, ['permit_id', 'water_meter_no']].duplicated(keep=False)]
 
     for n in unique_names:
-        idx = np.in1d(pumping_data.loc[:, 'uname'], well_names.loc[n, 'uname'])
+        idx = np.isin(pumping_data.loc[:, 'uname'], well_names.loc[n, 'uname'])
         temp = pumping_data.loc[idx, ['date', pumping_key]].set_index('date')
         outdata.loc[temp.index, n] = temp.values[:, 0]
 
     for uname in pd.unique(well_names.loc[duplicated, 'uname']):
-        use_well_names = well_names.index[np.in1d(well_names.uname, uname)]
-        assert not np.in1d(use_well_names, unique_names).any()
+        use_well_names = well_names.index[np.isin(well_names.uname, uname)]
+        assert not np.isin(use_well_names, unique_names).any()
         temp = pumping_data.loc[pumping_data.uname == uname]
         temp = temp.groupby('date').sum().loc[:, pumping_key]
         for n in use_well_names:
@@ -179,13 +179,13 @@ def get_historical_pumping_data(start_date, end_date, frequency='D', recalc=Fals
     unique_names = well_names.index[~well_names.loc[:, ['permit_id', 'water_meter_no']].duplicated(keep=False)]
 
     for n in unique_names:
-        idx = np.in1d(pumping_data.loc[:, 'uname'], well_names.loc[n, 'uname'])
+        idx = np.isin(pumping_data.loc[:, 'uname'], well_names.loc[n, 'uname'])
         temp = pumping_data.loc[idx, ['date', pumping_key]].set_index('date')
         outdata.loc[temp.index, n] = temp.values[:, 0]
 
     for uname in pd.unique(well_names.loc[duplicated, 'uname']):
-        use_well_names = well_names.index[np.in1d(well_names.uname, uname)]
-        assert not np.in1d(use_well_names, unique_names).any()
+        use_well_names = well_names.index[np.isin(well_names.uname, uname)]
+        assert not np.isin(use_well_names, unique_names).any()
         temp = pumping_data.loc[pumping_data.uname == uname]
         temp = temp.groupby('date').sum().loc[:, pumping_key]
         for n in use_well_names:

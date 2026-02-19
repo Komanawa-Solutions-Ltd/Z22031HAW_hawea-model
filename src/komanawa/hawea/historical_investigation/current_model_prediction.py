@@ -88,7 +88,9 @@ def get_hist_nat_data(site, recalc=False, freq='D'):
     key = f'all_modelled_period_hds'
     if not recalc and savepath.exists():
         try:
-            t = pd.read_hdf(savepath, key=key)[site]
+            t = pd.read_hdf(savepath, key=key)
+            assert isinstance(t, pd.DataFrame)
+            t = t[site]
             assert isinstance(t, pd.Series)
         except KeyError:
             pass

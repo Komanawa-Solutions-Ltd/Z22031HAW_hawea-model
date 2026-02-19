@@ -16,7 +16,10 @@ from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import g
 from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import get_irrigation_code as get_irrigation_code_haw
 from komanawa.hawea.hawea_base import proj_root, base_model_build_data_dir
 import gc
-from model_tools.regular_modeltools import ModelTools_RegularGrid
+try:
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
+except ModuleNotFoundError:
+    from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
 from komanawa.hawea.model_build.project_model_tools import smt as smt_haw
 
 boundary_path = proj_root.joinpath('quartz_creek_lsr/results/qtz_domain.shp')
@@ -135,7 +138,7 @@ def _get_scenario_rch_model_results(from_year=None, to_year=None, dryland=False,
 
         return dates, data
 
-    from rushton_model.rushton import Rushton  # keynote private repo
+    from komanawa.rushton_model.rushton import Rushton  # keynote private repo
     dates, outdata = [], []
 
     # make static datasets
@@ -183,6 +186,7 @@ def _get_scenario_rch_model_results(from_year=None, to_year=None, dryland=False,
             init_near_surface_storage=init_near_surface_storage,
             fracstore=fracstore,
             raw_p=raw_p,
+            raw=None,
             initial_smd=initial_smd,
 
             # single parameters

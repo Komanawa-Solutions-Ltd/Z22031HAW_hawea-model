@@ -318,7 +318,7 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
 
         print('mapping_clutha')
         out_clutha = tdis.map_data_locations(
-            riv_locs.loc[np.in1d(riv_locs.rname, ['clutha'])],
+            riv_locs.loc[np.isin(riv_locs.rname, ['clutha'])],
             {'stage': riv_stage[[e for e in riv_stage.columns if 'clutha' in e]],
              'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'clutha' in e]],
              },
@@ -326,7 +326,7 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
         )
         print('mapping_hawea')
         out_hawea = tdis.map_data_locations(
-            riv_locs.loc[np.in1d(riv_locs.rname, ['hawea'])],
+            riv_locs.loc[np.isin(riv_locs.rname, ['hawea'])],
             {'stage': riv_stage[[e for e in riv_stage.columns if 'hawea' in e]],
              'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'hawea' in e]],
              },
@@ -334,7 +334,7 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
         )
         print('mapping_john')
         out_john = tdis.map_data_locations(
-            riv_locs.loc[np.in1d(riv_locs.rname, ['john'])],
+            riv_locs.loc[np.isin(riv_locs.rname, ['john'])],
             {'stage': riv_stage[[e for e in riv_stage.columns if 'john' in e]],
              'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'john' in e]],
              },
@@ -342,7 +342,7 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
         )
         print('mapping_grandview')
         out_gview = tdis.map_data_locations(
-            riv_locs.loc[np.in1d(riv_locs.rname, ['gview'])],
+            riv_locs.loc[np.isin(riv_locs.rname, ['gview'])],
             {'stage': riv_stage[[e for e in riv_stage.columns if 'gview' in e]],
              'flow': use_riv_flow[[e for e in use_riv_flow.columns if 'gview' in e]],
              },
@@ -390,7 +390,8 @@ def _data_checks(save=False):
     Scenarios.supporting_data_analysis.pumping_data.data_checks
     :return:
     """
-    from model_tools.model_plotting import plot_spd, first, last, FakePath  # keynote private repo
+    from komanawa.modeltools.model_tools.model_plotting import plot_spd, first, last  # keynote private repo
+    from komanawa.hawea.model_build.utils import FakePath
     from komanawa.hawea.model_build.project_model_tools import smt
     from komanawa.hawea.Scenarios.scen_period import scen_tdis
     from komanawa.hawea.model_parameterisation.optimised_parameterisation import get_3d_v1d_params
@@ -482,9 +483,9 @@ def _check_all_in_domain():
     kss = range(smt.layers)
     for k, v in data.items():
         print(k)
-        is_in = np.array([np.in1d(e['i'], iss) for e in v.values()]).flatten()
-        js_in = np.array([np.in1d(e['j'], jss) for e in v.values()]).flatten()
-        ks_in = np.array([np.in1d(e['k'], kss) for e in v.values()]).flatten()
+        is_in = np.array([np.isin(e['i'], iss) for e in v.values()]).flatten()
+        js_in = np.array([np.isin(e['j'], jss) for e in v.values()]).flatten()
+        ks_in = np.array([np.isin(e['k'], kss) for e in v.values()]).flatten()
         assert all(is_in), f'iss out for {k}'
         assert all(js_in), f'jss out for {k}'
         assert all(ks_in), f'kss out for {k}'

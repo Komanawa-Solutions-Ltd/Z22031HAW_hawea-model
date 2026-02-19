@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from komanawa.hawea.hawea_base import base_model_build_data_dir, processed_model_build_data_dir
-from model_tools.plot_borelogs import plot_borelogs, plot_single_log, make_single_log_handles # keynote private repo
+from komanawa.modeltools.model_tools.plot_borelogs import plot_borelogs, plot_single_log, make_single_log_handles # keynote private repo
 from komanawa.hawea.model_build.supporting_data_analysis.all_wells import get_all_wells
 from komanawa.hawea.model_build.project_model_tools import smt, get_2d_moraine, get_lake_array
 
@@ -30,7 +30,7 @@ def read_borelogs_metadata(recalc=False):
     joint_names = list(set(all_wells.index).intersection(bore_logs.well_id))
 
     well_metadata = all_wells.loc[joint_names]
-    bore_logs = bore_logs.loc[np.in1d(bore_logs.well_id, joint_names)]
+    bore_logs = bore_logs.loc[np.isin(bore_logs.well_id, joint_names)]
     bore_logs.loc[:, 'unit'] = bore_logs.loc[:, 'Description'].str[0:20]
     # convert to elevation
     for k in ['top', 'bot']:
@@ -55,7 +55,7 @@ def plot_moraine_wells():
     lake = get_lake_array()
     well_metadata = well_metadata.loc[
         moraine[well_metadata.i, well_metadata.j] | np.isfinite(lake[well_metadata.i, well_metadata.j])]
-    bore_logs = bore_logs.loc[np.in1d(bore_logs.well_id, well_metadata.index)]
+    bore_logs = bore_logs.loc[np.isin(bore_logs.well_id, well_metadata.index)]
 
     # manually add the QLDC water supply bore (missing in database)
     wid = 'scotts_beach'

@@ -9,10 +9,13 @@ from matplotlib.lines import Line2D
 import pandas as pd
 from pathlib import Path
 from komanawa.hawea.model_build.project_model_tools import smt
+from komanawa.hawea.model_build.supporting_data_analysis import get_all_wells, get_pumping_locs, get_race_locs, \
+    get_river_loc_data, get_lake_hawea_loc, get_hillside_catchment_locs, get_river_stage_data
 from komanawa.hawea.model_build.utils import get_colors
 from komanawa.hawea.model_parameterisation.pilot_points import interpolate_kh_pilot_points
 from komanawa.hawea.model_parameterisation.static_params import *
-from model_tools.model_plotting import plot_spd, first, last, FakePath  # keynote private repo
+from komanawa.modeltools.model_tools.model_plotting import plot_spd, first, last  # keynote private repo
+from komanawa.hawea.model_build.utils import FakePath
 from komanawa.hawea.model_build.get_boundary_condition_data import get_well_data, get_rch_data, get_ghb_data, get_str_data
 from komanawa.hawea.model_parameterisation.inital_parametersiation import *
 from komanawa.hawea.optimisation.optimisation_period import tdis
@@ -22,7 +25,7 @@ from komanawa.hawea.targets_and_sensitive_sites.head_targets import plot_head_ta
     get_low_freq_head_targets, get_2011_piezo_survey, get_single_head_targets, get_all_hds_targets
 from komanawa.hawea.targets_and_sensitive_sites import get_riv_target_locs, get_hawea_gain_loss_targets
 from komanawa.hawea.optimisation.determine_opt_start import get_opt_start_stop
-
+import numpy as np
 
 def plot_parameterisation(save=False):
     outdir = save_path.joinpath('parameterisation')
@@ -448,7 +451,6 @@ def plot_targets(save):
     ax1.set_yticks(range(len(targ_names)))
     ax1.set_yticklabels(targ_names)
     ax1.set_ylabel('Well name')
-
     all_wells = get_all_wells().loc[targ_names]
     smt.plot.plt_basemap(ax=ax2, no_flow_layer=0)
 
@@ -562,7 +564,7 @@ def indicative_target_times(save):
     outdir = save_path.joinpath('indicative_target_times')
     outdir.mkdir(exist_ok=True)
     figs, names = [], []
-    from komanawa.hawea.targets_and_sensitive_sites import get_indicative_times_v2, predictive_power_hill_rch
+    from komanawa.hawea.targets_and_sensitive_sites.get_indicative_times import get_indicative_times_v2, predictive_power_hill_rch
     i, (ifigs, inames) = get_indicative_times_v2(True, True)
     figs.extend(ifigs)
     names.extend(inames)

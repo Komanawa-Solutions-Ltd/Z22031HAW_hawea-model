@@ -100,7 +100,7 @@ def get_riv(conductance, recalc=False):
             riv_spd = pickle.load(f)
     else:
         base_locs = get_river_loc_data()
-        base_locs = base_locs.loc[np.in1d(base_locs.rname, ['hawea', 'clutha'])]
+        base_locs = base_locs.loc[np.isin(base_locs.rname, ['hawea', 'clutha'])]
         base_locs = base_locs.reset_index().reset_index()
         riv_loc_array = hawea_smt.io.df_to_array(base_locs, 'level_0', _3d=False)
         with tempfile.TemporaryDirectory() as tdir:
@@ -138,7 +138,7 @@ def get_riv(conductance, recalc=False):
 
 
 def data_checks():
-    from model_tools.model_plotting import plot_spd # keynote private repo
+    from komanawa.modeltools.model_tools.model_plotting import plot_spd # keynote private repo
     rch = get_rch()
     plot_spd(rch, smt, tdis, is_array=True, show=False, func=np.nanmean, title='rch')
     smt.plot.plt_matrix(rch[0], title='rch', no_flow_layer=0, base_map=True)

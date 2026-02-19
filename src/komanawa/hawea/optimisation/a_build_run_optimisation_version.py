@@ -183,7 +183,7 @@ if __name__ == '__main__':
     # build pest
     if build_pest:
         from komanawa.hawea.optimisation.build_optimisation import raw_pest
-        from run_managers.beopest_manager import BeopestManager # keynote private repo
+        from komanawa.modeltools.run_managers.beopest_manager import BeopestManager # keynote private repo
 
         pdir = unbacked_dir.joinpath(branch, mversion, 'Optimisations')
 

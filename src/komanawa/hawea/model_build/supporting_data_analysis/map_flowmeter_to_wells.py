@@ -34,7 +34,7 @@ def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
     unique_flow_data = flow_meter_data[['permit_id', 'water_meter_no']].value_counts()
     unique_flow_data = unique_flow_data.reset_index().drop(columns=0)
     unique_flow_consents = unique_flow_data.loc[:, 'permit_id'].unique()
-    use_consents = consents.loc[np.in1d(consents.ConsentID, unique_flow_consents)]
+    use_consents = consents.loc[np.isin(consents.ConsentID, unique_flow_consents)]
     num_waps = unique_flow_data.groupby('permit_id').count()
     print(num_waps)
     print(num_waps.describe())
@@ -43,15 +43,15 @@ def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
     all_wells = get_all_wells()
     all_well_consents = np.unique(all_wells.loc[:, 'takeconsent'].dropna())
 
-    print('number of flow data consents in consents database:', np.in1d(unique_flow_consents, consents.ConsentID).sum(),
+    print('number of flow data consents in consents database:', np.isin(unique_flow_consents, consents.ConsentID).sum(),
           f'of {len(unique_flow_consents)}')
     print('number of flow data consents missing in consents database:',
-          (~np.in1d(unique_flow_consents, consents.ConsentID)).sum(), f'of {len(unique_flow_consents)}')
+          (~np.isin(unique_flow_consents, consents.ConsentID)).sum(), f'of {len(unique_flow_consents)}')
 
-    print('number of flow data consents in wells database:', np.in1d(unique_flow_consents, all_well_consents).sum(),
+    print('number of flow data consents in wells database:', np.isin(unique_flow_consents, all_well_consents).sum(),
           f'of {len(unique_flow_consents)}')
     print('number of flow data consents missing in wells database',
-          (~np.in1d(unique_flow_consents, all_well_consents)).sum(), f'of {len(unique_flow_consents)}')
+          (~np.isin(unique_flow_consents, all_well_consents)).sum(), f'of {len(unique_flow_consents)}')
 
     use_consents.rename(columns={
         'B1_X_COORD': 'consent_b_x', 'B1_Y_COORD': 'consent_b_y', 'EastingTM': 'consent_x',
@@ -80,34 +80,34 @@ def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
 
     outdata = unique_flow_data.copy(deep=True)
     outdata = pd.merge(outdata,
-                       unique_well_consents.loc[np.in1d(unique_well_consents.ConsentID, matching_single_consents)],
+                       unique_well_consents.loc[np.isin(unique_well_consents.ConsentID, matching_single_consents)],
                        how='left', left_on='permit_id', right_on='ConsentID')
     outdata.drop(columns='ConsentID', inplace=True)
 
     for cid in missing_consents:
-        outdata.loc[np.in1d(outdata.permit_id, [cid]), consent_transfer_keys] = use_consents.loc[
-            np.in1d(use_consents.ConsentID, [cid]), consent_transfer_keys].values
+        outdata.loc[np.isin(outdata.permit_id, [cid]), consent_transfer_keys] = use_consents.loc[
+            np.isin(use_consents.ConsentID, [cid]), consent_transfer_keys].values
 
     # matching_multi_consents
     for cid in matching_mult_consents:
-        outdata.loc[np.in1d(outdata.permit_id, [cid]), consent_transfer_keys] = unique_well_consents.loc[
-            np.in1d(unique_well_consents.ConsentID, [cid]), consent_transfer_keys].values
+        outdata.loc[np.isin(outdata.permit_id, [cid]), consent_transfer_keys] = unique_well_consents.loc[
+            np.isin(unique_well_consents.ConsentID, [cid]), consent_transfer_keys].values
 
     # mismatch consents
     for cid in missmatch_consents:
         nwm, ncons = num_waps.loc[cid]
         if ncons == 1:
-            outdata.loc[np.in1d(outdata.permit_id, [cid]),
+            outdata.loc[np.isin(outdata.permit_id, [cid]),
             consent_transfer_keys] = unique_well_consents.loc[
-                np.in1d(unique_well_consents.ConsentID, [cid]), consent_transfer_keys].values
+                np.isin(unique_well_consents.ConsentID, [cid]), consent_transfer_keys].values
         else:
             # where there are multiple wells but they don't match to the number of consents
             # include multiple runs for all of the data in outdata
-            temp = outdata.loc[np.in1d(outdata.permit_id, [cid])]
-            outdata = outdata.loc[~np.in1d(outdata.permit_id, [cid])]
+            temp = outdata.loc[np.isin(outdata.permit_id, [cid])]
+            outdata = outdata.loc[~np.isin(outdata.permit_id, [cid])]
             temp_outdata = []
             for permit, meter in temp.loc[:, ['permit_id', 'water_meter_no']].itertuples(False, None):
-                t = unique_well_consents.loc[np.in1d(unique_well_consents.ConsentID, [cid]), consent_transfer_keys]
+                t = unique_well_consents.loc[np.isin(unique_well_consents.ConsentID, [cid]), consent_transfer_keys]
                 t.loc[:, 'permit_id'] = permit
                 t.loc[:, 'water_meter_no'] = meter
                 temp_outdata.append(t)
@@ -122,7 +122,7 @@ def get_well_flowmeter_mapper(incl_surface_water=False, recalc=False):
     outdata.loc[:, 'well_name'] = outdata.loc[:, 'WellNumber'].str.replace('/', '_').str.lower()
     idx = outdata.well_name.notna()
     missing_wells = set(np.unique(outdata.well_name[idx])) - set(all_wells.index)
-    idx = idx & ~np.in1d(outdata.well_name, list(missing_wells))
+    idx = idx & ~np.isin(outdata.well_name, list(missing_wells))
     outdata.loc[idx, 'well_x'] = all_wells.loc[outdata.well_name[idx], 'nztmx'].values
     outdata.loc[idx, 'well_y'] = all_wells.loc[outdata.well_name[idx], 'nztmy'].values
 

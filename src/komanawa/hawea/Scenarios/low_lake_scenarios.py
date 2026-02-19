@@ -11,7 +11,7 @@ from komanawa.hawea.hawea_base import proj_root, unbacked_dir
 import pandas as pd
 import datetime
 try:
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import TimeDis
 import inspect
@@ -219,7 +219,7 @@ def run_low_lake_scenario(key, base_run_dir, base_outdir, build_run_model=True, 
             lake[p]['bhead'] = lh
 
     if plot:
-        from model_tools.model_plotting import plot_spd # keynote private repo
+        from komanawa.modeltools.model_tools.model_plotting import plot_spd # keynote private repo
         from komanawa.hawea.model_build.project_model_tools import smt
         plot_spd(lake, smt=smt, tdis=low_lake_tdis, func=np.nansum, key='bhead', title='lake head', tick_per=1,
                  show=True)

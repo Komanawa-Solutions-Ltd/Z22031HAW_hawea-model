@@ -7,7 +7,7 @@ import pandas as pd
 from komanawa.hawea.hawea_base import butterfield_dir, unbacked_dir
 from komanawa.hawea.Scenarios.wetland_setback_butterfield.project_model_tools import smt
 from pathlib import Path
-from model_tools.util_functions.list_file_utils import ListSolverInfo # keynote private repo
+from komanawa.modeltools.model_tools.util_functions.list_file_utils import ListSolverInfo # keynote private repo
 from scipy.interpolate import griddata
 
 

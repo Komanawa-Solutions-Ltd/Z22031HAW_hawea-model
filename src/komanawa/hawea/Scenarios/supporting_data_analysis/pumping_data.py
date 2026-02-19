@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 try:
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import TimeDis
 from komanawa.hawea.model_build.get_boundary_condition_data import get_well_data
@@ -265,7 +265,8 @@ def get_grid_locs(recalc=False):
 def data_checks(save=True):
     from komanawa.hawea.Scenarios.scen_period import scen_tdis
     from komanawa.hawea.model_build.project_model_tools import smt
-    from model_tools.model_plotting import plot_spd, first, last, FakePath # keynote private repo
+    from komanawa.modeltools.model_tools.model_plotting import plot_spd, first, last # keynote private repo
+    from komanawa.hawea.model_build.utils import FakePath
     from komanawa.hawea.model_build.zones import get_model_zones
     zones = get_model_zones()
     tickper = 50

@@ -14,7 +14,7 @@ from komanawa.hawea.model_build.project_model_tools import smt, get_low_cond_arr
 from pathlib import Path
 
 try:
-    from model_tools.time_discretization import TimeDis
+    from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import TimeDis
 from komanawa.hawea.targets_and_sensitive_sites.model_output import plot_list_failures, modflow_converged, \

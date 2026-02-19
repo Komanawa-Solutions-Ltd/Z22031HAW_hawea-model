@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
 try:
-    from model_tools.regular_modeltools import ModelTools_RegularGrid
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
 

@@ -9,7 +9,7 @@ import pandas as pd
 from komanawa.hawea.hawea_base import unbacked_dir, base_model_build_data_dir
 
 try:
-    from model_tools.regular_modeltools import ModelTools_RegularGrid
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
 import flopy

@@ -71,7 +71,7 @@ def _get_scenario_rch_model_results(from_year=None, to_year=None, dryland=False,
 
         return dates, data
 
-    from rushton_model.rushton import Rushton # keynote private repo
+    from komanawa.rushton_model.rushton import Rushton # keynote private repo
     dates, outdata = [], []
 
     # make static datasets

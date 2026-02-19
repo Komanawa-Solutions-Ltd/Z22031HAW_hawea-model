@@ -373,7 +373,7 @@ def get_annual_mean_head_targets(hds_df):
     :return:
     """
     assert isinstance(hds_df, pd.DataFrame)
-    hds_df = hds_df.copy(deep=True).loc[np.in1d(hds_df.group, base_regular_groupnames[0:-1])]
+    hds_df = hds_df.copy(deep=True).loc[np.isin(hds_df.group, base_regular_groupnames[0:-1])]
 
     t = hds_df.name.str.split('_')
     hds_df.loc[:, 'well_name'] = t.str.get(1) + '_' + t.str.get(2)

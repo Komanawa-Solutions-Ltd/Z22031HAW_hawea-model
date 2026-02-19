@@ -656,7 +656,7 @@ def _plot_spatial_hd_misfit(hds_obs, plot_dir):
     norm = CenteredNorm(vcenter=0, halfrange=(np.abs([c1, c2])).max())
 
     for g, ggs in zip(hds_groups, hds_group_groups):
-        temp = hds_obs.loc[np.in1d(hds_obs.group, ggs)]
+        temp = hds_obs.loc[np.isin(hds_obs.group, ggs)]
         grouper = temp.groupby(['i', 'j'])
         fig = plt.figure(figsize=(16, 9))
         gs = fig.add_gridspec(nrows=2, ncols=3, height_ratios=[20, 1])
@@ -716,7 +716,7 @@ def visualise_model(model_ws, all_hds, dry_hds, out_obs, all_riv_obs, flooded_ce
     hds_colors = get_colors(hds_groups)
     reg_colormap = 'tab10'
 
-    hds_obs = out_obs.loc[np.in1d(out_obs.group, hds_groups + base_regular_groupnames)]
+    hds_obs = out_obs.loc[np.isin(out_obs.group, hds_groups + base_regular_groupnames)]
     mapper = {'h_piezo': 'h_piezo',
               'h_single_3': 'h_single_3',
               'h_single_1': 'h_single_1'}
