@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
 try:
-    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid
+    dummy_modeltools=False
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
+    dummy_modeltools = True
 
 from komanawa.hawea.hawea_base import proj_root, modelling_dir, unbacked_dir, base_model_build_data_dir, \
     processed_model_build_data_dir
@@ -46,11 +48,19 @@ layer_type = [1, 0, 0]
 bund_top = 335
 l2_top = 328
 
-temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+if dummy_modeltools:
+    temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,
                                   rotation=0, layer_type=layer_type,
                                   no_flow_calc=None, elv_calculator=None,
                                   base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
+else:
+    temp_smt = ModelTools_RegularGrid(llx=ulx, lly=uly-(grid_space*rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                                      delc=grid_space,
+                                      model_version_name=model_version_name, sdp=sdp,
+                                      rotation=0, layer_type=layer_type,
+                                      no_flow_calc=None, elv_calculator=None,
+                                      base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 
 def simplify_hawea_dem(recalc=False):
@@ -426,13 +436,19 @@ def get_ibound(recalc=False):
     out = np.loadtxt(processed_model_build_data_dir.joinpath('ibound.txt'))
     return np.repeat(out[np.newaxis], 3, axis=0).astype(int)
 
-
-smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+if dummy_modeltools:
+    smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              model_version_name, sdp,
                              rotation=0, layer_type=layer_type,
                              no_flow_calc=get_ibound, elv_calculator=get_elv_db,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
-
+else:
+    smt = ModelTools_RegularGrid(llx=ulx, lly=uly - (grid_space * rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                           delc=grid_space,
+                           model_version_name=model_version_name, sdp=sdp,
+                           rotation=0, layer_type=layer_type,
+                           no_flow_calc=get_ibound, elv_calculator=get_elv_db,
+                           base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 def get_starting_heads(recalc=False):
     raise NotImplementedError('depreciated')
@@ -679,7 +695,32 @@ def plot_3d_structure_spatial():
     return fig, ax
 
 
+def check_old_new_smt():
+    if dummy_modeltools:
+        raise ModuleNotFoundError('requires internal package komanawa-modeltools')
+    from komanawa.hawea.dummy_packages.regular_modeltools import DummyModelTools_RegularGrid
+    from komanawa.modeltools import RectangularModelTools
+    old_smt =  DummyModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+                             model_version_name, sdp,
+                             rotation=0, layer_type=layer_type,
+                             no_flow_calc=get_ibound, elv_calculator=get_elv_db,
+                             base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
+    new_smt = RectangularModelTools(llx=ulx, lly=uly - (grid_space * rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                           delc=grid_space,
+                           model_version_name=model_version_name, sdp=sdp,
+                           rotation=0, layer_type=layer_type,
+                           no_flow_calc=get_ibound, elv_calculator=get_elv_db,
+                           base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
+    assert old_smt.model_shape == new_smt.model_shape
+    xs, ys = old_smt.get_model_x_y()
+    new_x, new_y = new_smt.get_model_x_y()
+    assert np.allclose(xs, new_x)
+    assert np.allclose(ys, new_y)
+
 if __name__ == '__main__':
+    pass
+    check_old_new_smt()
+    raise NotImplementedError
     examine_3d(save=True)
     plot_3d_structure_spatial()
     bots = smt.get_bottoms()

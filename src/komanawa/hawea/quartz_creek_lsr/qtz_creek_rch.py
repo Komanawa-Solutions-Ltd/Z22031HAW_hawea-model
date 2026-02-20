@@ -17,9 +17,11 @@ from komanawa.hawea.model_build.supporting_data_analysis.recharge_model import g
 from komanawa.hawea.hawea_base import proj_root, base_model_build_data_dir
 import gc
 try:
-    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid
+    dummy_modeltools=False
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
+    dummy_modeltools = True
 from komanawa.hawea.model_build.project_model_tools import smt as smt_haw
 
 boundary_path = proj_root.joinpath('quartz_creek_lsr/results/qtz_domain.shp')
@@ -44,12 +46,44 @@ def get_ibound():
         int)
 
 
-smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+if dummy_modeltools:
+    smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              model_version_name, sdp=None,
                              rotation=0, layer_type=layer_type,
                              no_flow_calc=get_ibound, elv_calculator=None,
                              base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
+else:
+    smt = ModelTools_RegularGrid(llx=ulx, lly=uly - (grid_space * rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                           delc=grid_space,
+                           model_version_name=model_version_name, sdp=None,
+                           rotation=0, layer_type=layer_type,
+                           no_flow_calc=get_ibound, elv_calculator=None,
+                           base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
+def check_new_old_modeltools():
+    def check_old_new_smt():
+        if dummy_modeltools:
+            raise ModuleNotFoundError('requires internal package komanawa-modeltools')
+        from komanawa.hawea.dummy_packages.regular_modeltools import DummyModelTools_RegularGrid
+        from komanawa.modeltools import RectangularModelTools
+        old_smt = DummyModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+                                              model_version_name, sdp=None,
+                                              rotation=0, layer_type=layer_type,
+                                              no_flow_calc=get_ibound, elv_calculator=None,
+                                              base_map_path=base_map_path, default_figsize=default_figsize,
+                                              epsg_num=2193)
+        new_smt = RectangularModelTools(llx=ulx, lly=uly - (grid_space * rows), layers=layers, rows=rows, cols=cols,
+                                        delr=grid_space,
+                                        delc=grid_space,
+                                        model_version_name=model_version_name, sdp=None,
+                                        rotation=0, layer_type=layer_type,
+                                        no_flow_calc=get_ibound, elv_calculator=None,
+                                        base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
+        assert old_smt.model_shape == new_smt.model_shape
+        xs, ys = old_smt.get_model_x_y()
+        new_x, new_y = new_smt.get_model_x_y()
+        assert np.allclose(xs, new_x)
+        assert np.allclose(ys, new_y)
 
 def get_irrigation_code(y):
     irrig_codes = smt.get_model_zeros().astype(int) - 1
@@ -594,5 +628,6 @@ def sumerize_plot_rch(): #
 
 
 if __name__ == '__main__':
-    sumerize_plot_rch()
-    smt.plot.show()
+    check_new_old_modeltools()
+    # sumerize_plot_rch()
+    # smt.plot.show()

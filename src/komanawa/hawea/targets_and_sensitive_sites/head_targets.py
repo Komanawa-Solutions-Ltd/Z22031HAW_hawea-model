@@ -2,7 +2,7 @@
 created matt_dumont 
 on: 15/08/22
 """
-import pickle
+import pickle # todo rm pickle...
 
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch

@@ -18,7 +18,7 @@ from komanawa.hawea.model_build.supporting_data_analysis import get_river_loc_da
     get_lake_hawea_loc
 
 try:
-    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
 from pathlib import Path

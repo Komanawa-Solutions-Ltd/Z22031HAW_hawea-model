@@ -2,7 +2,7 @@
 created matt_dumont 
 on: 9/02/23
 """
-import pickle
+import pickle # todo rm pickle...
 
 import flopy.modflow
 import matplotlib.pyplot as plt

@@ -10,7 +10,7 @@ project_name = 'hawea'
 try:
     from komanawa.kslcore import KslEnv  # package to allow access to internal KSL files.
 
-    project_dir = KslEnv.shared_gdrive.joinpath('YMULT_small_projects/Z22031HAW_hawea-model')
+    project_dir = KslEnv.shared_drive('YMULT_small_projects').joinpath('Z22031HAW_hawea-model')
     unbacked_dir = KslEnv.unbacked.joinpath(project_name)
     modelling_dir = project_dir.joinpath('Modelling')
 

@@ -186,8 +186,8 @@ def example():
 
 
 if __name__ == '__main__':
-    # todo modify or follow format to uncompress the 3d_v1d model
+    # help modify or follow format to uncompress the 3d_v1d model
     from komanawa.hawea.hawea_base import proj_root
     compressed_path = proj_root.joinpath('optimisation/final_opt_models/3d_v1d') # path to the model in the repo
-    out_path = None # todo fill with the path to write the uncompresssed model to
+    out_path = None # help fill with the path to write the uncompresssed model to
     uncompress_model(compressed_path, out_path)

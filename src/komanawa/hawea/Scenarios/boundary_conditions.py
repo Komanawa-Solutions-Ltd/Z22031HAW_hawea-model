@@ -9,7 +9,7 @@ import pandas as pd
 
 from komanawa.hawea.hawea_base import processed_scen_dir
 import flopy
-import pickle
+import pickle # todo rm pickle...
 from komanawa.hawea.model_parameterisation.pilot_points import get_spatial_temporal_rch_mult
 from komanawa.hawea.Scenarios.supporting_data_analysis.scenario_recharge import get_corrected_scenario_era5_rch
 from komanawa.hawea.model_build.supporting_data_analysis import get_race_locs, get_hillside_catchment_locs, get_hillside_flows, \

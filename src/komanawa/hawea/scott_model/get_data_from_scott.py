@@ -9,9 +9,11 @@ import pandas as pd
 from komanawa.hawea.hawea_base import unbacked_dir, base_model_build_data_dir
 
 try:
-    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid
+    dummy_modeltools = False
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
+    dummy_modeltools = True
 import flopy
 import numpy as np
 
@@ -41,13 +43,19 @@ def ibound_calc():
     ibnd = convert_scott_array_to_reg_grid(m.bas6.ibound.array[0])
     return ibnd[np.newaxis].astype(float)
 
-
-smt_scott = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+if dummy_modeltools:
+    smt_scott = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                    model_version_name, sdp,
                                    rotation=0, layer_type=layer_type,
                                    no_flow_calc=ibound_calc, elv_calculator=None,
                                    base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
-
+else:
+    smt_scott = ModelTools_RegularGrid(llx=ulx, lly=uly-(grid_space*rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                                       delc=grid_space,
+                                       model_version_name=model_version_name, sdp=sdp,
+                                       rotation=0, layer_type=layer_type,
+                                       no_flow_calc=ibound_calc, elv_calculator=None,
+                                       base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
 
 def get_full_scott_model():
     t = flopy.modflow.Modflow.load(base_scott_dir.joinpath('gv10.nam'))
@@ -113,8 +121,32 @@ def plot_riv_conductances():
     smt_scott.plot.plt_matrix(np.log10(riv_data), base_map=True, title='log river conductance')
     print(np.unique(riv_data))
 
+def check_old_new_smt():
+    if dummy_modeltools:
+        raise ModuleNotFoundError('requires internal package komanawa-modeltools')
+    from komanawa.hawea.dummy_packages.regular_modeltools import DummyModelTools_RegularGrid
+    from komanawa.modeltools import RectangularModelTools
+    old_smt =  DummyModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+                             model_version_name, sdp,
+                             rotation=0, layer_type=layer_type,
+                             no_flow_calc=ibound_calc, elv_calculator=None,
+                             base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
+    new_smt = RectangularModelTools(llx=ulx, lly=uly - (grid_space * rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                           delc=grid_space,
+                           model_version_name=model_version_name, sdp=sdp,
+                           rotation=0, layer_type=layer_type,
+                           no_flow_calc=ibound_calc, elv_calculator=None,
+                           base_map_path=base_map_path, default_figsize=default_figsize, epsg_num=2193)
+    assert old_smt.model_shape == new_smt.model_shape
+    xs, ys = old_smt.get_model_x_y()
+    new_x, new_y = new_smt.get_model_x_y()
+    assert np.allclose(xs, new_x)
+    assert np.allclose(ys, new_y)
+
 
 if __name__ == '__main__':
+    check_old_new_smt()
+    raise NotImplementedError # this is just to stop the other code from running
     plot_hk()
     smt_scott.plot.show()
     get_scott_hds()

@@ -8,10 +8,12 @@ import numpy as np
 import pandas as pd
 
 try:
-    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid # todo does this need to be adjusted?
+    from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid
     from komanawa.modeltools import TimeDis
+    dummy_modeltools = False
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid, TimeDis
+    dummy_modeltools = True
 from komanawa.hawea.hawea_base import unbacked_dir, base_model_build_data_dir, modelling_dir, campbells_dir
 import geopandas as gpd
 
@@ -37,12 +39,19 @@ rows = int((uly - lry) // grid_space) + 1
 layers = 1
 layer_type = 1
 
-temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+if dummy_modeltools:
+    temp_smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                                   model_version_name, sdp,
                                   rotation=0, layer_type=None,
                                   no_flow_calc=None, elv_calculator=None,
                                   base_map_path=base_map_path, default_figsize=(8, 7), epsg_num=2193)
-
+else:
+    temp_smt = ModelTools_RegularGrid(llx=ulx, lly=uly-(grid_space*rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                                      delc=grid_space,
+                                      model_version_name=model_version_name, sdp=sdp,
+                                      rotation=0, layer_type=layer_type,
+                                      no_flow_calc=None, elv_calculator=None,
+                                      base_map_path=base_map_path, default_figsize=(8, 7), epsg_num=2193)
 
 def no_flow(recalc=False):
     save_path = campbells_dir.joinpath('processed_input_data', 'ibound.npy')
@@ -116,12 +125,20 @@ def elv_calc():
         _get_bot_array()[np.newaxis]
     ), axis=0)
 
-
-smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+if dummy_modeltools:
+    smt = ModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
                              model_version_name, sdp,
                              rotation=0, layer_type=layer_type,
                              no_flow_calc=no_flow, elv_calculator=elv_calc,
                              base_map_path=base_map_path, default_figsize=(8, 7), epsg_num=2193)
+else:
+    smt = ModelTools_RegularGrid(llx=ulx, lly=uly - (grid_space * rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                           delc=grid_space,
+                           model_version_name=model_version_name, sdp=sdp,
+                           rotation=0, layer_type=layer_type,
+                           no_flow_calc=no_flow, elv_calculator=elv_calc,
+                           base_map_path=base_map_path, default_figsize=(8, 7), epsg_num=2193)
+
 ss_dates = ('2001-07-01', '2002-06-30')
 trans_dates = pd.date_range('2002-07-01', '2003-06-30', freq='W')
 
@@ -135,7 +152,32 @@ tdis = TimeDis(
     dates=use_dates,
     nstp=nstp
 )
+
+def check_old_new_smt():
+    if dummy_modeltools:
+        raise ModuleNotFoundError('requires internal package komanawa-modeltools')
+    from komanawa.hawea.dummy_packages.regular_modeltools import DummyModelTools_RegularGrid
+    from komanawa.modeltools import RectangularModelTools
+    old_smt =  DummyModelTools_RegularGrid(ulx, uly, layers, rows, cols, grid_space,
+                             model_version_name, sdp,
+                             rotation=0, layer_type=layer_type,
+                             no_flow_calc=no_flow, elv_calculator=elv_calc,
+                             base_map_path=base_map_path, default_figsize=(8, 7), epsg_num=2193)
+    new_smt = RectangularModelTools(llx=ulx, lly=uly - (grid_space * rows), layers=layers, rows=rows, cols=cols, delr=grid_space,
+                           delc=grid_space,
+                           model_version_name=model_version_name, sdp=sdp,
+                           rotation=0, layer_type=layer_type,
+                           no_flow_calc=no_flow, elv_calculator=elv_calc,
+                           base_map_path=base_map_path, default_figsize=(8, 7), epsg_num=2193)
+    assert old_smt.model_shape == new_smt.model_shape
+    xs, ys = old_smt.get_model_x_y()
+    new_x, new_y = new_smt.get_model_x_y()
+    assert np.allclose(xs, new_x)
+    assert np.allclose(ys, new_y)
+
 if __name__ == '__main__':
+    check_old_new_smt()
+    raise NotImplementedError # this is just to stop the other code
     nf = no_flow(True)[0]
     smt.plot.plt_matrix(nf, title='no flow', base_map=True)
     top, idx = _get_top_array(True, True)
