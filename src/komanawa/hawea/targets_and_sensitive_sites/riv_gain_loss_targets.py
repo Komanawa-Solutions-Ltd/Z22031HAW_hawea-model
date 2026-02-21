@@ -51,7 +51,7 @@ def get_hawea_gain_loss_targets():
 
 
 def get_hawea_gain_loss_nper(tdis, recalc=False):
-    save_path = processed_target_dir.joinpath(f'hawea_r_targets-{tdis.name}.p')
+    save_path = processed_target_dir.joinpath(f'hawea_r_targets-{tdis.name}.p') # todo bad file need to address specifically
 
     if save_path.exists() and not recalc:
         return pickle.load(open(save_path, 'rb'))
