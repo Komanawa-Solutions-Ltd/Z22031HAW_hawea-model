@@ -4,6 +4,7 @@ on: 1/08/22
 """
 import pickle # todo rm pickle...
 
+from komanawa.hawea.io_utils import read_npz_spd, save_npz_spd
 from komanawa.hawea.model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
     get_river_loc_data, get_lake_hawea_loc, get_lake_heads, get_river_flow_data
@@ -23,7 +24,7 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
                               different data.
     :return:
     """
-    save_path = processed_model_build_data_dir.joinpath(f'well_stress_period_data-{tdis.name}.p')
+    save_path = processed_model_build_data_dir.joinpath(f'well_stress_period_data-{tdis.name}.p')  # todo bad file need to address specifically
     if save_path.exists() and not recalc:
         (race_spd, hill_spd, pumping_spd) = pickle.load(open(save_path, 'rb'))
     else:
@@ -101,14 +102,14 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
 
 
 def get_rch_data(tdis, rch_param, recalc=False):
-    save_path = processed_model_build_data_dir.joinpath(f'rch_stress_period_data-{tdis.name}.p')
+    save_path = processed_model_build_data_dir.joinpath(f'rch_stress_period_data-{tdis.name}.npz')
     if save_path.exists() and not recalc:
-        out = pickle.load(open(save_path, 'rb'))
+        out = read_npz_spd(save_path)
     else:
         rch_dates, rch_raw = get_rch(*tdis.date_limits, frequency='d')  # tdis manges this
         rch_raw *= 1 / 1000  # convert from mm/day to m/day
         out = tdis.map_array_to_spd(rch_dates, rch_raw)
-        pickle.dump(out, open(save_path, 'wb'))
+        save_npz_spd(out, save_path)
 
     # add rch mult
     rch_mult = get_spatial_temporal_rch_mult(rch_param, tdis)
@@ -118,9 +119,9 @@ def get_rch_data(tdis, rch_param, recalc=False):
 
 
 def get_ghb_data(tdis, recalc=False):
-    save_path = processed_model_build_data_dir.joinpath(f'ghb_stress_period_data-{tdis.name}.p')
+    save_path = processed_model_build_data_dir.joinpath(f'ghb_stress_period_data-{tdis.name}.npz')
     if save_path.exists() and not recalc:
-        out = pickle.load(open(save_path, 'rb'))
+        out = read_npz_spd(save_path)
         return out
     lake_locs = get_lake_hawea_loc()
     lake_locs.loc[:, 'cond'] = lake_conduct
@@ -132,7 +133,7 @@ def get_ghb_data(tdis, recalc=False):
     out = tdis.map_data_locations(lake_locs, {'bhead': lake_hds},
                                   flopy.modflow.ModflowGhb.get_default_dtype(), apply_to_all=True)
 
-    pickle.dump(out, open(save_path, 'wb'))
+    save_npz_spd(out, save_path)
     return out
 
 
