@@ -266,7 +266,7 @@ def _get_str_stage_flow(start_date, end_date, frequency='W'):
 
 
 def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, return_unique=False, recalc=False,
-                      fill_na=False): # todo check
+                      fill_na=False):
     """
     get stream data.  Stream flow and stage data are set from weekly averages during the inflow period
     :param tdis: time discritsiation class
