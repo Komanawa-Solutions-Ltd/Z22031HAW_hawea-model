@@ -16,7 +16,7 @@ from komanawa.hawea.model_build.utils import get_colors
 
 
 def save_min_data():
-    data_path = processed_target_dir.joinpath('lake_g40_0415_curve_data.p')
+    data_path = processed_target_dir.joinpath('lake_g40_0415_curve_data.p') # todo bad file need to address specifically
     high_freq = get_high_freq_head_targets(None, None).loc[:, 'g40_0415'].dropna()
     lake = get_lake_heads('2015', None)
     high_freq = high_freq.loc[high_freq.index <= lake.index.max()]
@@ -25,7 +25,7 @@ def save_min_data():
 
 
 def brute_min(recalc=False):
-    save_path = processed_target_dir.joinpath('min_fit_lake_g40_0415_curve_brute.p')
+    save_path = processed_target_dir.joinpath('min_fit_lake_g40_0415_curve_brute.p') # todo bad file need to address specifically
 
     if not recalc and save_path.exists():
         with save_path.open('rb') as f:
@@ -49,7 +49,7 @@ def brute_min(recalc=False):
 
 
 def curve_min(recalc=False):
-    save_path = processed_target_dir.joinpath('min_fit_lake_g40_0415_curve.p')
+    save_path = processed_target_dir.joinpath('min_fit_lake_g40_0415_curve.p') # todo bad file need to address specifically
 
     if not recalc and save_path.exists():
         with save_path.open('rb') as f:
@@ -75,7 +75,7 @@ def curve_min(recalc=False):
 
 
 def get_simple_curve_fit(recalc=False):
-    save_path = processed_target_dir.joinpath('simple_fit_lake_g40_0415_curve.p')
+    save_path = processed_target_dir.joinpath('simple_fit_lake_g40_0415_curve.p') # todo bad file need to address specifically
     high_freq = get_high_freq_head_targets(None, None).loc[:, 'g40_0415'].dropna()
     lake = get_lake_heads('2015', None)
     high_freq = high_freq.loc[high_freq.index <= lake.index.max()]
@@ -108,7 +108,7 @@ def get_simple_curve_fit(recalc=False):
 
 def _minimize_func(params):
     step, lag, amplitude, smooth = params
-    data_path = processed_target_dir.joinpath('lake_g40_0415_curve_data.p')
+    data_path = processed_target_dir.joinpath('lake_g40_0415_curve_data.p') # todo bad file need to address specifically
     with data_path.open('rb') as f:
         high_freq, lake = pickle.load(f)
     fit = _fit_func(lake, step, lag, amplitude, smooth)
