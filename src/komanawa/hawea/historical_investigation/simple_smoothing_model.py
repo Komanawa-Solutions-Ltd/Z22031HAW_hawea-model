@@ -86,17 +86,13 @@ bounds = {
 
 
 def brute_min(well, recalc=False):
-    save_path = processed_historical_data_dir.joinpath(f'min_fit_lake_{well}_curve.p')
+    save_path = processed_historical_data_dir.joinpath(f'min_fit_lake_{well}_curve.p') # todo bad file... address specifically
 
     if not recalc and save_path.exists():
         with save_path.open('rb') as f:
             out = pickle.load(f)
         return out
 
-    if not recalc and save_path.exists():
-        with save_path.open('rb') as f:
-            out = pickle.load(f)
-        return out
     else:
         use_bounds = np.array([bounds[well][e] for e in ['step', 'lag', 'amplitude', 'smooth']])
 
