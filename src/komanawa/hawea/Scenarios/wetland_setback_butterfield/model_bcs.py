@@ -2,9 +2,9 @@
 created matt_dumont 
 on: 19/07/22
 """
-import pickle # todo rm pickle...
 import tempfile
 from pathlib import Path
+from komanawa.hawea.io_utils import read_npz_spd, save_npz_spd
 from komanawa.hawea.model_build.project_model_tools import smt as hawea_smt
 from komanawa.hawea.hawea_base import butterfield_dir
 from komanawa.hawea.Scenarios.wetland_setback_butterfield.project_model_tools import smt, tdis
@@ -54,10 +54,9 @@ def get_wells(locs, max_pumping_rate):
 
 
 def get_rch(recalc=False):
-    save_path = butterfield_dir.joinpath('processed_input_data', 'rch_data.p')
+    save_path = butterfield_dir.joinpath('processed_input_data', 'rch_data.npz')
     if save_path.exists() and not recalc:
-        with save_path.open('rb') as f:
-            out = pickle.load(f)
+        out = read_npz_spd(save_path)
         return out
     kh_param, sy_param, riv_params, hill_param, race_param, rch_param = get_3d_v1d_params()
     scen_rch = get_scen_rch(scen_tdis, rch_param)
@@ -67,16 +66,14 @@ def get_rch(recalc=False):
         hawea_smt.io.array_to_raster(tdir.joinpath('temp.tif'), use_rch)
         rch = smt.io.raster_to_array(tdir.joinpath('temp.tif'), 'mean')
     out_spd = {i: rch for i in tdis.pers}
-    with save_path.open('wb') as f:
-        pickle.dump(out_spd, f)
+    save_npz_spd(out_spd, save_path)
     return out_spd
 
 
 def get_riv(conductance, recalc=False):
-    save_path = butterfield_dir.joinpath('processed_input_data', 'riv_data.p')
+    save_path = butterfield_dir.joinpath('processed_input_data', 'riv_data.npz')
     if save_path.exists() and not recalc:
-        with save_path.open('rb') as f:
-            riv_spd = pickle.load(f)
+        riv_spd = read_npz_spd(save_path)
     else:
         base_locs = get_river_loc_data()
         base_locs = base_locs.loc[np.isin(base_locs.rname, ['hawea', 'clutha'])]
@@ -106,8 +103,7 @@ def get_riv(conductance, recalc=False):
                                           datatype=flopy.modflow.ModflowRiv.get_default_dtype(),
                                           loc_duplicate_action='map'
                                           )
-        with save_path.open('wb') as f:
-            pickle.dump(riv_spd, f)
+        save_npz_spd(riv_spd, save_path)
 
     # manage conuctange
     for k, v in riv_spd.items():
