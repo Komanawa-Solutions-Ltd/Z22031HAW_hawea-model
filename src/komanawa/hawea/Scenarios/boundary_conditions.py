@@ -10,6 +10,8 @@ import pandas as pd
 from komanawa.hawea.hawea_base import processed_scen_dir
 import flopy
 import pickle # todo rm pickle...
+
+from komanawa.hawea.io_utils import read_npz_spd, save_npz_spd
 from komanawa.hawea.model_parameterisation.pilot_points import get_spatial_temporal_rch_mult
 from komanawa.hawea.Scenarios.supporting_data_analysis.scenario_recharge import get_corrected_scenario_era5_rch
 from komanawa.hawea.model_build.supporting_data_analysis import get_race_locs, get_hillside_catchment_locs, get_hillside_flows, \
@@ -64,8 +66,8 @@ def _get_scen_hill_race_data(tdis, recalc, fillna=False):
     :param recalc: bool recalc from original data
     :return:
     """
-    save_path_race = processed_scen_dir.joinpath(f'race_stress_period_data-{tdis.name}.p')
-    save_path_hill = processed_scen_dir.joinpath(f'hill_stress_period_data-{tdis.name}.p')
+    save_path_race = processed_scen_dir.joinpath(f'race_stress_period_data-{tdis.name}.p') # todo bad files need to adjust specifically
+    save_path_hill = processed_scen_dir.joinpath(f'hill_stress_period_data-{tdis.name}.p') # todo bad files need to adjust specifically
     if save_path_race.exists() and save_path_hill.exists() and not recalc:
         race_spd = pickle.load(open(save_path_race, 'rb'))
         hill_spd = pickle.load(open(save_path_hill, 'rb'))
@@ -140,7 +142,7 @@ def get_scen_well_data(pump_name, tdis, hill_param, race_param, return_unique_sp
             idx = d.param == k
             d.loc[idx, 'flux'] *= v
 
-    # convert to numpy arrays (well is done before pickle)
+    # convert to numpy arrays (well is done before serializing)
     race_spd = tdis.manage_dtypes(race_spd, flopy.modflow.ModflowWel.get_default_dtype(),
                                   group_cells=True,
                                   grouper='sum', )
@@ -186,7 +188,7 @@ def get_grid_pump_scen_well_data(idx_array: np.ndarray, total_increase, tdis, hi
             idx = d.param == k
             d.loc[idx, 'flux'] *= v
 
-    # convert to numpy arrays (well is done before pickle)
+    # convert to numpy arrays (well is done before serializing)
     race_spd = tdis.manage_dtypes(race_spd, flopy.modflow.ModflowWel.get_default_dtype(),
                                   group_cells=True,
                                   grouper='sum', )
@@ -213,11 +215,11 @@ def get_scen_ghb_data(tdis, recalc=False):
     :return:
     """
     nfiles = 6
-    save_paths = [processed_scen_dir.joinpath(f'ghb_stress_period_data-{tdis.name}-{i}.p') for i in range(nfiles)]
+    save_paths = [processed_scen_dir.joinpath(f'ghb_stress_period_data-{tdis.name}-{i}.npz') for i in range(nfiles)]
     if all([s.exists() for s in save_paths]) and not recalc:
         out = {}
         for s in save_paths:
-            out.update(pickle.load(open(s, 'rb')))
+            out.update(read_npz_spd(s))
         return out
     lake_locs = get_lake_hawea_loc()
     lake_locs.loc[:, 'cond'] = lake_conduct
@@ -240,7 +242,7 @@ def get_scen_ghb_data(tdis, recalc=False):
     groups = list(smt.grouper(len(out.keys()) // 6 + 1, list(out.keys()), None))
     assert len(groups) == len(save_paths)
     for g, p in zip(groups, save_paths):
-        pickle.dump({k: out[k] for k in g if k is not None}, open(p, 'wb'))
+        save_npz_spd({k: out[k] for k in g if k is not None}, p)
     return out
 
 
@@ -264,7 +266,7 @@ def _get_str_stage_flow(start_date, end_date, frequency='W'):
 
 
 def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, return_unique=False, recalc=False,
-                      fill_na=False):
+                      fill_na=False): # todo check
     """
     get stream data.  Stream flow and stage data are set from weekly averages during the inflow period
     :param tdis: time discritsiation class
@@ -276,11 +278,11 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
     """
     param_mapper = {'h1': -1, 'h2': -2, 'h3': -3, 'c1': -4, 'gview': -5, 'john': -6}
     streams = ['gview', 'john', 'hawea', 'clutha']
-    pickle_paths = [processed_scen_dir.joinpath(f'stream_spd_{s}_{tdis.name}.p') for s in streams]
+    saved_paths = [processed_scen_dir.joinpath(f'stream_spd_{s}_{tdis.name}.npz') for s in streams]
     spd_dtype, seg_dtype = flopy.modflow.ModflowStr.get_default_dtype()
 
-    if all([p.exists() for p in pickle_paths]) and not recalc:
-        data = {s: pickle.load(p.open('rb')) for s, p in zip(streams, pickle_paths)}
+    if all([p.exists() for p in saved_paths]) and not recalc:
+        data = {s: read_npz_spd(p) for s, p in zip(streams, saved_paths)}
     else:
         riv_locs = get_river_loc_data()
         # add conductance value
@@ -354,8 +356,8 @@ def get_scen_str_data(tdis, riv_params, big_static=False, small_static=False, re
             'hawea': out_hawea,
             'clutha': out_clutha,
         }
-        for s, p in zip(streams, pickle_paths):
-            pickle.dump(data[s], p.open('wb'))
+        for s, p in zip(streams, saved_paths):
+            save_npz_spd(data[s], p)
 
     # manage parameter data!
     use_riv_params = {v: riv_params[k] for k, v in param_mapper.items()}

@@ -2,13 +2,13 @@
 created matt_dumont 
 on: 9/02/23
 """
-import pickle # todo rm pickle...
-
 import flopy.modflow
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+from komanawa.hawea.io_utils import read_npz_spd, save_npz_spd
+
 try:
     from komanawa.modeltools import TimeDis
 except ModuleNotFoundError:
@@ -66,10 +66,9 @@ def get_scen_pumping_data(pump_name, tdis, recalc=False):
 
 def _get_iso_week_max_allo_pumping_pc(tdis, recalc):
     assert isinstance(tdis, TimeDis)
-    save_path = processed_scen_dir.joinpath(f'iso_week_max_allo_pc_{tdis.name}.p')
+    save_path = processed_scen_dir.joinpath(f'iso_week_max_allo_pc_{tdis.name}.npz')
     if save_path.exists() and not recalc:
-        with save_path.open('rb') as f:
-            data = pickle.load(f)
+        data = read_npz_spd(save_path)
         return data
     historical_data = make_long_weekly_mean(get_historical_max_allo_pumping_data(*opt_tdis.date_limits),
                                             *tdis.date_limits,
@@ -86,17 +85,15 @@ def _get_iso_week_max_allo_pumping_pc(tdis, recalc):
     outdata = tdis.map_data_locations(loc_data=pumping_locs, transient_data_dict=dict(flux=historical_data),
                                       datatype=flopy.modflow.ModflowWel.get_default_dtype(),
                                       group_cells=True, grouper=np.nansum)
-    with save_path.open('wb') as f:
-        pickle.dump(outdata, f)
+    save_npz_spd(outdata, save_path)
     return outdata
 
 
 def _get_iso_week_normal_pumping(tids, recalc):
     assert isinstance(tids, TimeDis)
-    save_path = processed_scen_dir.joinpath(f'iso_week_pump_{tids.name}.p')
+    save_path = processed_scen_dir.joinpath(f'iso_week_pump_{tids.name}.npz')
     if save_path.exists() and not recalc:
-        with save_path.open('rb') as f:
-            data = pickle.load(f)
+        data = read_npz_spd(save_path)
         return data
     historical_data = make_long_weekly_mean(get_historical_pumping_data(*opt_tdis.date_limits), *tids.date_limits,
                                             only_where_na=False)
@@ -107,8 +104,7 @@ def _get_iso_week_normal_pumping(tids, recalc):
     outdata = tids.map_data_locations(loc_data=pumping_locs, transient_data_dict=dict(flux=historical_data),
                                       datatype=flopy.modflow.ModflowWel.get_default_dtype(),
                                       group_cells=True, grouper=np.nansum)
-    with save_path.open('wb') as f:
-        pickle.dump(outdata, f)
+    save_npz_spd(outdata, save_path)
     return outdata
 
 
@@ -120,10 +116,9 @@ def _get_iso_week_full_allo_pumping(tids, recalc):
     :return:
     """
     assert isinstance(tids, TimeDis)
-    save_path = processed_scen_dir.joinpath(f'iso_week_pump_full_allo_{tids.name}.p')
+    save_path = processed_scen_dir.joinpath(f'iso_week_pump_full_allo_{tids.name}.npz')
     if save_path.exists() and not recalc:
-        with save_path.open('rb') as f:
-            data = pickle.load(f)
+        data = read_npz_spd(save_path)
         return data
 
     historical_data = make_long_weekly_mean(get_historical_pumping_data(*opt_tdis.date_limits),
@@ -142,13 +137,11 @@ def _get_iso_week_full_allo_pumping(tids, recalc):
     outdata = tids.map_data_locations(loc_data=pumping_locs, transient_data_dict=dict(flux=use_data),
                                       datatype=flopy.modflow.ModflowWel.get_default_dtype(),
                                       group_cells=True, grouper=np.nansum)
-    with save_path.open('wb') as f:
-        pickle.dump(outdata, f)
+    save_npz_spd(outdata, save_path)
     return outdata
 
 
-def _get_iso_week_max_allo_pumping(tids,
-                                   recalc):
+def _get_iso_week_max_allo_pumping(tids, recalc):
     """
     maximum daily allocation (mike's gw_allo field)
     :param tids:
@@ -156,10 +149,9 @@ def _get_iso_week_max_allo_pumping(tids,
     :return:
     """
     assert isinstance(tids, TimeDis)
-    save_path = processed_scen_dir.joinpath(f'iso_week_pump_max_allo_{tids.name}.p')
+    save_path = processed_scen_dir.joinpath(f'iso_week_pump_max_allo_{tids.name}.npz')
     if save_path.exists() and not recalc:
-        with save_path.open('rb') as f:
-            data = pickle.load(f)
+        data = read_npz_spd(save_path)
         return data
 
     historical_data = make_long_weekly_mean(get_historical_max_allo_pumping_data(*opt_tdis.date_limits),
@@ -172,8 +164,7 @@ def _get_iso_week_max_allo_pumping(tids,
     outdata = tids.map_data_locations(loc_data=pumping_locs, transient_data_dict=dict(flux=historical_data),
                                       datatype=flopy.modflow.ModflowWel.get_default_dtype(),
                                       group_cells=True, grouper=np.nansum)
-    with save_path.open('wb') as f:
-        pickle.dump(outdata, f)
+    save_npz_spd(outdata, save_path)
     return outdata
 
 
