@@ -28,10 +28,8 @@ def convert_pickle_to_npz(pickle_path, reconvert=False):
 
 
 # problem paths  # todo work through these
-# targets_and_sensitive_sites/processed_data/hawea_r_targets-optimisation_period.p, skipping. Error: Expected data to be a dictionary, got <class 'pandas.core.frame.DataFrame'>
-# Scenarios/processed_input_data/hill_stress_period_data-hist_lows.p, skipping. Error: Value for key 0 is not a numpy array: <class 'pandas.core.frame.DataFrame'>
-# Scenarios/processed_input_data/hill_stress_period_data-scenario_period.p, skipping. Error: Value for key 0 is not a numpy array: <class 'pandas.core.frame.DataFrame'>
 
+# ### broken by pandas 2.0 update ###
 # Scenarios/processed_input_data/race_stress_period_data-scenario_period.p, skipping. Error: No module named # 'pandas.core.indexes.numeric'
 # Scenarios/processed_input_data/race_stress_period_data-hist_lows.p, skipping. Error: No module named 'pandas.core.indexes.numeric'
 # model_build/processed_input_data/well_stress_period_data-optimisation_period.p, skipping. Error: No module named 'pandas.core.indexes.numeric'

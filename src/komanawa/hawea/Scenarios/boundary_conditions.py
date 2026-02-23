@@ -67,10 +67,12 @@ def _get_scen_hill_race_data(tdis, recalc, fillna=False):
     :return:
     """
     save_path_race = processed_scen_dir.joinpath(f'race_stress_period_data-{tdis.name}.p') # todo bad files need to adjust specifically
-    save_path_hill = processed_scen_dir.joinpath(f'hill_stress_period_data-{tdis.name}.p') # todo bad files need to adjust specifically
+    save_path_hill = processed_scen_dir.joinpath(f'hill_stress_period_data-{tdis.name}.hdf')
     if save_path_race.exists() and save_path_hill.exists() and not recalc:
         race_spd = pickle.load(open(save_path_race, 'rb'))
-        hill_spd = pickle.load(open(save_path_hill, 'rb'))
+
+        raw_hill_spd = pd.read_hdf(save_path_hill, key='data').groupby('per')
+        hill_spd = {k: raw_hill_spd.get_group(k) for k in range(max(raw_hill_spd.groups.keys()+1))}
     else:
         # race data
         race_locs = get_race_locs()
@@ -112,8 +114,14 @@ def _get_scen_hill_race_data(tdis, recalc, fillna=False):
                                            manage_datatypes=False,
                                            loc_duplicate_action='apportion'
                                            )
+        savedata_hill = []
+        for k, v in hill_spd.items():
+            v['per'] = k
+            savedata_hill.append(v)
+        savedata_hill = pd.concat(savedata_hill)
+        savedata_hill.to_hdf(save_path_hill.with_suffix('.hdf'), key='data', complib='zlib', complevel=4)
+
         pickle.dump(race_spd, open(save_path_race, 'wb'))
-        pickle.dump(hill_spd, open(save_path_hill, 'wb'))
     return race_spd, hill_spd
 
 

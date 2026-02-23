@@ -5,6 +5,7 @@ on: 2/23/26
 import pickle
 from komanawa.hawea.hawea_base import proj_root
 import numpy as np
+import pandas as pd
 
 
 def convert_pickle_historical(): # done
@@ -29,6 +30,26 @@ def convert_pickle_historical(): # done
             npz_path = p.with_suffix('.npz')
             np.savez_compressed(npz_path, **save_data)
 
+def convert_dict_df_pickles(): # done
+    paths = [
+        'Scenarios/processed_input_data/hill_stress_period_data-hist_lows.p',
+        'Scenarios/processed_input_data/hill_stress_period_data-scenario_period.p',
+    ]
+    paths = [proj_root.joinpath(p) for p in paths]
+    for p in paths:
+        with p.open('rb') as f:
+            data = pickle.load(f)
+            assert isinstance(data, dict)
+            for k, v in data.items():
+                assert isinstance(v, pd.DataFrame)
+            savedata = []
+            for k,v in data.items():
+                v['per'] = k
+                savedata.append(v)
+            savedata = pd.concat(savedata)
+            savedata.to_hdf(p.with_suffix('.hdf'), key='data', complib='zlib', complevel=4)
+
 if __name__ == '__main__':
-    convert_pickle_historical()
+    # convert_pickle_historical()
+    # convert_dict_df_pickles()
     pass

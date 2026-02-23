@@ -3,7 +3,6 @@ created matt_dumont
 on: 2/11/23
 """
 import datetime
-import pickle # todo rm pickle...
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd

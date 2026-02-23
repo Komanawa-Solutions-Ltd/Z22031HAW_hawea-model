@@ -51,10 +51,12 @@ def get_hawea_gain_loss_targets():
 
 
 def get_hawea_gain_loss_nper(tdis, recalc=False):
-    save_path = processed_target_dir.joinpath(f'hawea_r_targets-{tdis.name}.p') # todo bad file need to address specifically
+    save_path = processed_target_dir.joinpath(f'hawea_r_targets-{tdis.name}.hdf')
 
     if save_path.exists() and not recalc:
-        return pickle.load(open(save_path, 'rb'))
+        out = pd.read_hdf(save_path, key='data')
+        assert isinstance(out, pd.DataFrame)
+        return out
 
     targets = get_hawea_gain_loss_targets()
     if exclude_near_river_pumping:
@@ -83,7 +85,7 @@ def get_hawea_gain_loss_nper(tdis, recalc=False):
                 targets.loc[idx, 'target_val'] += pumping_data.loc[pd.to_datetime(date), pump_keys].sum()
 
     targets = tdis.add_nstp_nper_to_df(targets, action_on_duplicates='last')
-    pickle.dump(targets, open(save_path, 'wb'))
+    targets.to_hdf(save_path, key='data', complib='zlib', complevel=4)
     return targets
 
 
