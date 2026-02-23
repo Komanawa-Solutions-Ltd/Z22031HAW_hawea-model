@@ -15,8 +15,8 @@ from copy import deepcopy
 from komanawa.hawea.model_build.utils import get_colors
 
 
-def save_min_data():
-    data_path = processed_target_dir.joinpath('lake_g40_0415_curve_data.p') # todo bad file need to address specifically
+def save_min_data():  # this is a speedup so have not converted back from pickle
+    data_path = processed_target_dir.joinpath('lake_g40_0415_curve_data.p')
     high_freq = get_high_freq_head_targets(None, None).loc[:, 'g40_0415'].dropna()
     lake = get_lake_heads('2015', None)
     high_freq = high_freq.loc[high_freq.index <= lake.index.max()]
@@ -25,11 +25,11 @@ def save_min_data():
 
 
 def brute_min(recalc=False):
-    save_path = processed_target_dir.joinpath('min_fit_lake_g40_0415_curve_brute.p') # todo bad file need to address specifically
+    save_path = processed_target_dir.joinpath('min_fit_lake_g40_0415_curve_brute.npz')
 
     if not recalc and save_path.exists():
-        with save_path.open('rb') as f:
-            out = pickle.load(f)
+        with np.load(save_path) as data:
+            out = tuple([data[str(i)] for i in range(4)])
         return out
     else:
         bounds = np.array([
@@ -42,19 +42,16 @@ def brute_min(recalc=False):
 
         out = brute(_minimize_func, full_output=True, ranges=bounds, workers=-1, disp=True)
 
-        with save_path.open('wb') as f:
-            pickle.dump(out, f)
+        save_data = {str(i): v for i, v in enumerate(out)}
+        np.savez_compressed(save_path, **save_data)
 
         return out
 
 
 def curve_min(recalc=False):
-    save_path = processed_target_dir.joinpath('min_fit_lake_g40_0415_curve.p') # todo bad file need to address specifically
 
-    if not recalc and save_path.exists():
-        with save_path.open('rb') as f:
-            out = pickle.load(f)
-        return out
+    if not recalc:
+        return [-1.281e+01,  0.000e+00,  1.000e+00,  6.000e+01]  # saved...
     else:
         bounds = np.array([
             [-13, -7],  # step
@@ -68,47 +65,39 @@ def curve_min(recalc=False):
         out = minimize(_minimize_func, x0=inits, args=(), method=None,
                        bounds=bounds, tol=1e-15, callback=None, options=dict(disp=True))
 
-        with save_path.open('wb') as f:
-            pickle.dump(out, f)
+        print(out.x)
 
-        return out
+        return out.x
 
 
 def get_simple_curve_fit(recalc=False):
-    save_path = processed_target_dir.joinpath('simple_fit_lake_g40_0415_curve.p') # todo bad file need to address specifically
     high_freq = get_high_freq_head_targets(None, None).loc[:, 'g40_0415'].dropna()
     lake = get_lake_heads('2015', None)
     high_freq = high_freq.loc[high_freq.index <= lake.index.max()]
-    if not recalc and save_path.exists():
-        with save_path.open('rb') as f:
-            out = pickle.load(f)
-        return out
-    else:
-        bounds = np.array([
-            [-20, 10],  # step
-            [0, 150],  # lag
-            [0.5, 2],  # amplitude
-            [0, 150],  # smooth
-        ]).transpose()
+    bounds = np.array([
+        [-20, 10],  # step
+        [0, 150],  # lag
+        [0.5, 2],  # amplitude
+        [0, 150],  # smooth
+    ]).transpose()
 
-        inits = [
-            -10,  # step
-            20,  # lag
-            1,  # amplitude
-            3,  # smooth
-        ]
+    inits = [
+        -10,  # step
+        20,  # lag
+        1,  # amplitude
+        3,  # smooth
+    ]
 
-        out = curve_fit(_fit_func, lake, high_freq, inits,
-                        bounds=bounds, full_output=True, method='dogbox')
-        with save_path.open('wb') as f:
-            pickle.dump(out, f)
+    out = curve_fit(_fit_func, lake, high_freq, inits,
+                    bounds=bounds, full_output=True, method='dogbox')
 
     return out
 
 
 def _minimize_func(params):
     step, lag, amplitude, smooth = params
-    data_path = processed_target_dir.joinpath('lake_g40_0415_curve_data.p') # todo bad file need to address specifically
+    # this is a speedup so have not converted back from pickle (see save_min_data above)
+    data_path = processed_target_dir.joinpath('lake_g40_0415_curve_data.p')
     with data_path.open('rb') as f:
         high_freq, lake = pickle.load(f)
     fit = _fit_func(lake, step, lag, amplitude, smooth)
@@ -179,7 +168,6 @@ def plot_lake_well(inc_fit=True):
     vals = [lake, high_freq]
     if inc_fit:
         out = curve_min()
-        out = out.x
         names.append('fit')
         vals.append(_fit_func(lake, *out))
         names.extend([f'{n}: {round(x, 2)}' for n, x in zip(['step', 'lag', 'amplitude', 'smooth'], out)])

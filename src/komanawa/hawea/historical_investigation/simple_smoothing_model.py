@@ -86,11 +86,11 @@ bounds = {
 
 
 def brute_min(well, recalc=False):
-    save_path = processed_historical_data_dir.joinpath(f'min_fit_lake_{well}_curve.p') # todo bad file... address specifically
+    save_path = processed_historical_data_dir.joinpath(f'min_fit_lake_{well}_curve.npz')
 
     if not recalc and save_path.exists():
-        with save_path.open('rb') as f:
-            out = pickle.load(f)
+        with np.load(save_path) as data:
+            out = tuple([data[str(i)] for i in range(4)])
         return out
 
     else:
@@ -100,8 +100,8 @@ def brute_min(well, recalc=False):
 
         out = brute(bounds[well]['func'], full_output=True, ranges=use_bounds, workers=-1, disp=True)
 
-        with save_path.open('wb') as f:
-            pickle.dump(out, f)
+        save_data = {str(i): v for i, v in enumerate(out)}
+        np.savez_compressed(save_path, **save_data)
 
         return out
 

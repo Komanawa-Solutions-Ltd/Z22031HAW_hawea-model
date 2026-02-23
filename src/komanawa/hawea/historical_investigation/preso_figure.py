@@ -11,7 +11,6 @@ def plot_hist_plus_lake_drop(scen, well):
     assert scen in scenarios
     assert well in historical_well_names
     measured = get_historical_well_heads(well)
-    modelled = get_extract_historical(scen)[well]
     modelled_nat = get_hist_nat_data(well)
     hist_lake = get_historical_lake_heads()
 
@@ -26,8 +25,6 @@ def plot_hist_plus_lake_drop(scen, well):
     ax_loc = fig.add_subplot(gs[:, 1])
     add_locator_to_ax(ax_loc, [well], False)
     ax.plot(measured.index, measured, label='Measured: historical', color=historical_well_colors[well])
-    ax.plot(np.array(low_lake_tdis.per_middle_dates[1:]) + tdis_to_lake_date, modelled[1:], label='Modelled: lake drop',
-            color=historical_well_colors[well], ls=':')
     ax.plot(modelled_nat.index, modelled_nat, label='Modelled: historical', color=historical_well_colors[well], ls='--')
     ax.plot(hist_lake.index, temp.values, label='Simple Smoothing Model', color='fuchsia', ls='--', alpha=0.5)
     ax_lake.plot(hist_lake.index, hist_lake, label='Measured: historical', c='b')

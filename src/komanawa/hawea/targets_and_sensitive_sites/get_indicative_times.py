@@ -4,7 +4,7 @@ on: 4/10/22
 """
 import itertools
 import datetime
-from ppscore import score as ppscore
+
 from sklearn.feature_selection import mutual_info_regression
 import matplotlib.pyplot as plt
 from dateutil.relativedelta import relativedelta
@@ -277,6 +277,7 @@ def get_indicative_times():
 
 
 def predictive_power_hill_rch():
+    from ppscore import score as ppscore
     freq = 'M'
     figs, names = [], []
     targs = get_high_freq_head_targets(None, None, freq=freq)
