@@ -6,11 +6,8 @@ import itertools
 
 import numpy as np
 import pandas as pd
-
 from komanawa.hawea.hawea_base import processed_scen_dir
 import flopy
-import pickle # todo rm pickle...
-
 from komanawa.hawea.io_utils import read_npz_spd, save_npz_spd
 from komanawa.hawea.model_parameterisation.pilot_points import get_spatial_temporal_rch_mult
 from komanawa.hawea.Scenarios.supporting_data_analysis.scenario_recharge import get_corrected_scenario_era5_rch
@@ -66,13 +63,14 @@ def _get_scen_hill_race_data(tdis, recalc, fillna=False):
     :param recalc: bool recalc from original data
     :return:
     """
-    save_path_race = processed_scen_dir.joinpath(f'race_stress_period_data-{tdis.name}.p') # todo bad files need to adjust specifically
+    save_path_race = processed_scen_dir.joinpath(f'race_stress_period_data-{tdis.name}.hdf')
     save_path_hill = processed_scen_dir.joinpath(f'hill_stress_period_data-{tdis.name}.hdf')
     if save_path_race.exists() and save_path_hill.exists() and not recalc:
-        race_spd = pickle.load(open(save_path_race, 'rb'))
+        raw_race_spd = pd.read_hdf(save_path_race, key='data').groupby('per')
+        race_spd = {k: raw_race_spd.get_group(k) for k in range(max(raw_race_spd.groups.keys())+1)}
 
         raw_hill_spd = pd.read_hdf(save_path_hill, key='data').groupby('per')
-        hill_spd = {k: raw_hill_spd.get_group(k) for k in range(max(raw_hill_spd.groups.keys()+1))}
+        hill_spd = {k: raw_hill_spd.get_group(k) for k in range(max(raw_hill_spd.groups.keys())+1)}
     else:
         # race data
         race_locs = get_race_locs()
@@ -121,7 +119,12 @@ def _get_scen_hill_race_data(tdis, recalc, fillna=False):
         savedata_hill = pd.concat(savedata_hill)
         savedata_hill.to_hdf(save_path_hill.with_suffix('.hdf'), key='data', complib='zlib', complevel=4)
 
-        pickle.dump(race_spd, open(save_path_race, 'wb'))
+        save_race = []
+        for k, v in race_spd.items():
+            v['per'] = k
+            save_race.append(v)
+        save_race = pd.concat(save_race)
+        save_race.to_hdf(save_path_race.with_suffix('.hdf'), key='data', complib='zlib', complevel=4)
     return race_spd, hill_spd
 
 

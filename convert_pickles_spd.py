@@ -27,14 +27,6 @@ def convert_pickle_to_npz(pickle_path, reconvert=False):
     np.savez_compressed(npz_path, **save_data)
 
 
-# problem paths  # todo work through these
-
-# ### broken by pandas 2.0 update ###
-# Scenarios/processed_input_data/race_stress_period_data-scenario_period.p, skipping. Error: No module named # 'pandas.core.indexes.numeric'
-# Scenarios/processed_input_data/race_stress_period_data-hist_lows.p, skipping. Error: No module named 'pandas.core.indexes.numeric'
-# model_build/processed_input_data/well_stress_period_data-optimisation_period.p, skipping. Error: No module named 'pandas.core.indexes.numeric'
-# targets_and_sensitive_sites/processed_data/optimisation_hds_targets-optimisation_period.p, skipping. Error: No module named 'pandas.core.indexes.numeric'
-
 
 def check_data_spd(pickle_path):
     pickle_path = Path(pickle_path)

@@ -2,8 +2,6 @@
 created matt_dumont 
 on: 15/08/22
 """
-import pickle # todo rm pickle...
-
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
 import numpy as np
@@ -240,9 +238,10 @@ def export_incl_head_target_locs():
 
 
 def get_all_hds_targets(tdis, recalc=False):
-    save_path = processed_target_dir.joinpath(f'optimisation_hds_targets-{tdis.name}.p') # todo bad file... address specifically
+    save_path = processed_target_dir.joinpath(f'optimisation_hds_targets-{tdis.name}.hdf')
     if save_path.exists() and not recalc:
-        out = pickle.load(open(save_path, 'rb'))
+        out = pd.read_hdf(save_path, key='data')
+        assert isinstance(out, pd.DataFrame)
         return out
 
     need_keys = ['k', 'i', 'j', 'use_datetime', 'head', 'group', 'name']
@@ -313,7 +312,7 @@ def get_all_hds_targets(tdis, recalc=False):
         idx = idx[all_head_targets.i, all_head_targets.j]
         all_head_targets.loc[idx, 'zone'] = z
 
-    pickle.dump(all_head_targets, open(save_path, 'wb'))
+    all_head_targets.to_hdf(save_path, key='data', mode='w')
     return all_head_targets
 
 

@@ -2,11 +2,8 @@
 created matt_dumont 
 on: 15/08/22
 """
-import pickle # todo rm pickle...
-
 import numpy as np
 import pandas as pd
-
 from komanawa.hawea.hawea_base import processed_target_dir, base_model_build_data_dir
 from komanawa.hawea.model_build.supporting_data_analysis import get_river_loc_data, get_pumping_locs, get_historical_pumping_data
 from komanawa.hawea.model_build.project_model_tools import smt, exclude_near_river_pumping

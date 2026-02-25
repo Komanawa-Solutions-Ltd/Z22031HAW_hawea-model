@@ -2,7 +2,6 @@
 created matt_dumont 
 on: 1/08/22
 """
-import pickle # todo rm pickle...
 
 from komanawa.hawea.io_utils import read_npz_spd, save_npz_spd
 from komanawa.hawea.model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
@@ -12,6 +11,7 @@ from komanawa.hawea.model_parameterisation.pilot_points import get_spatial_tempo
 from komanawa.hawea.model_parameterisation.static_params import lake_conduct
 import flopy
 from komanawa.hawea.hawea_base import processed_model_build_data_dir
+import pandas as pd
 
 
 def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=False):
@@ -24,9 +24,19 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
                               different data.
     :return:
     """
-    save_path = processed_model_build_data_dir.joinpath(f'well_stress_period_data-{tdis.name}.p')  # todo bad file need to address specifically
-    if save_path.exists() and not recalc:
-        (race_spd, hill_spd, pumping_spd) = pickle.load(open(save_path, 'rb'))
+    save_path_race = processed_model_build_data_dir.joinpath(f'well_stress_period_data_race_spd-{tdis.name}.hdf')
+    save_path_hill = processed_model_build_data_dir.joinpath(f'well_stress_period_data_hill_spd-{tdis.name}.hdf')
+    save_path_pump = processed_model_build_data_dir.joinpath(f'well_stress_period_data_pumping_spd-{tdis.name}.hdf')
+
+    path_exists = all([p.exists() for p in (save_path_race, save_path_hill, save_path_pump)])
+
+    if path_exists and not recalc:
+        raw_race_spd = pd.read_hdf(save_path_race, key='data').groupby('per')
+        raw_hill_spd = pd.read_hdf(save_path_hill, key='data').groupby('per')
+        raw_pump_spd = pd.read_hdf(save_path_pump, key='data').groupby('per')
+        race_spd = {k: raw_race_spd.get_group(k) for k in range(max(raw_race_spd.groups.keys())+1)}
+        hill_spd = {k: raw_hill_spd.get_group(k) for k in range(max(raw_hill_spd.groups.keys())+1)}
+        pumping_spd = {k: raw_pump_spd.get_group(k) for k in range(max(raw_pump_spd.groups.keys())+1)}
     else:
         # race data
         race_locs = get_race_locs()
@@ -71,7 +81,27 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
                                               grouper='sum',
                                               manage_datatypes=True
                                               )
-        pickle.dump((race_spd, hill_spd, pumping_spd), open(save_path, 'wb'))
+        pumping_spd = {per: pd.DataFrame(d) for per, d in pumping_spd.items()}  # convert to dataframes for saving
+        # save to hdf
+        save_race_data = []
+        save_hill_data = []
+        save_pump_data = []
+        for k in race_spd.keys():
+            tr = race_spd[k].copy(deep=True)
+            tr.loc[:, 'per'] = k
+            save_race_data.append(tr)
+            th = hill_spd[k].copy(deep=True)
+            th.loc[:, 'per'] = k
+            save_hill_data.append(th)
+            tp = pumping_spd[k].copy(deep=True)
+            tp.loc[:, 'per'] = k
+            save_pump_data.append(tp)
+        save_race_data = pd.concat(save_race_data)
+        save_hill_data = pd.concat(save_hill_data)
+        save_pump_data = pd.concat(save_pump_data)
+        save_race_data.to_hdf(save_path_race, key='data', mode='w', complib='zlib', complevel=4)
+        save_hill_data.to_hdf(save_path_hill, key='data', mode='w', complib='zlib', complevel=4)
+        save_pump_data.to_hdf(save_path_pump, key='data', mode='w', complib='zlib', complevel=4)
 
     # manage parameters
     for p, d in race_spd.items():
@@ -82,7 +112,11 @@ def get_well_data(tdis, hill_param, race_param, return_unique_spd=False, recalc=
             idx = d.param == k
             d.loc[idx, 'flux'] *= v
 
-    # convert to numpy arrays (well is done before pickle)
+    # convert to numpy arrays
+    pumping_spd = tdis.manage_dtypes(pumping_spd, flopy.modflow.ModflowWel.get_default_dtype(),
+                                    group_cells=True,
+                                    grouper='sum', )
+
     race_spd = tdis.manage_dtypes(race_spd, flopy.modflow.ModflowWel.get_default_dtype(),
                                   group_cells=True,
                                   grouper='sum', )
