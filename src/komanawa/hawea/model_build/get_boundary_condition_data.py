@@ -2,7 +2,7 @@
 created matt_dumont 
 on: 1/08/22
 """
-
+import numpy as np
 from komanawa.hawea.io_utils import read_npz_spd, save_npz_spd
 from komanawa.hawea.model_build.supporting_data_analysis import get_rch, get_hillside_catchment_locs, get_hillside_flows, \
     get_pumping_locs, get_historical_pumping_data, get_race_locs, get_race_well_losses, get_river_stage_data, \
@@ -156,6 +156,7 @@ def get_ghb_data(tdis, recalc=False):
     save_path = processed_model_build_data_dir.joinpath(f'ghb_stress_period_data-{tdis.name}.npz')
     if save_path.exists() and not recalc:
         out = read_npz_spd(save_path)
+        out = {k: v.view(np.recarray) for k, v in out.items()}  # convert to recarrays for use in flopy
         return out
     lake_locs = get_lake_hawea_loc()
     lake_locs.loc[:, 'cond'] = lake_conduct

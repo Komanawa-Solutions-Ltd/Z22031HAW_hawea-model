@@ -12,9 +12,11 @@ import numpy as np
 try:
     from komanawa.modeltools import RectangularModelTools as ModelTools_RegularGrid
     from komanawa.modeltools import TimeDis
+    dummy_modeltools = False
 except ModuleNotFoundError:
     from komanawa.hawea.dummy_packages import ModelTools_RegularGrid
     from komanawa.hawea.dummy_packages import TimeDis
+    dummy_modeltools = True
 
 
 def build_model(smt, tdis, exe_name, model_name, model_ws,
@@ -142,8 +144,13 @@ def build_model(smt, tdis, exe_name, model_name, model_ws,
         if verbose:
             print(f'took {time.time() - t}s to run the model in modflow')
 
-        out = 'model: {}, converged: {}'.format(model_name,
+        if dummy_modeltools:
+            out = 'model: {}, converged: {}'.format(model_name,
                                                 smt.modelchecks.modflow_converged(
+                                                    os.path.join(model_ws, '{}.list'.format(model_name))))
+        else:
+            out = 'model: {}, converged: {}'.format(model_name,
+                                                smt.utils.modflow_converged(
                                                     os.path.join(model_ws, '{}.list'.format(model_name))))
         return out
     else:
@@ -158,6 +165,13 @@ def _create_dis_package(m, smt, tdis):
     """
     assert isinstance(tdis, TimeDis)
     elv_db = smt.get_elv_db()
+    if dummy_modeltools:
+        xul = smt.ulx
+        yul = smt.uly
+    else:
+        (x_min, x_max), (y_min, y_max) = smt.get_xlim_ylim()
+        xul = x_min
+        yul = y_max
     dis = flopy.modflow.mfdis.ModflowDis(m,
                                          nlay=smt.layers,
                                          nrow=smt.rows,
@@ -175,8 +189,8 @@ def _create_dis_package(m, smt, tdis):
                                          itmuni=tdis.mftunit,  # days
                                          lenuni=2,  # meters
                                          unitnumber=719,
-                                         xul=smt.ulx,
-                                         yul=smt.uly,
+                                         xul=xul,
+                                         yul=yul,
                                          rotation=smt.rotation,
                                          proj4_str=f'EPSG:{smt.epsg}')
 
