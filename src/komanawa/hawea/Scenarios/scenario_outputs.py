@@ -15,7 +15,9 @@ from pathlib import Path
 
 try:
     from komanawa.modeltools import TimeDis
+    dummy_modeltools = False
 except ModuleNotFoundError:
+    dummy_modeltools = True
     from komanawa.hawea.dummy_packages import TimeDis
 from komanawa.hawea.targets_and_sensitive_sites.model_output import plot_list_failures, modflow_converged, \
     plot_lake_moraine_smoothed_areas
@@ -688,7 +690,10 @@ def extract_input_data(ghb_data, rch_data, well_data, tdis):
         temp = hill_locs.loc[hill_locs.group == g]
         temp = smt.io.df_to_array(temp, 'i', True, duplicate_action=np.nansum)
         temp = np.isfinite(temp)
-        use_data = [smt.io.select_df_from_idx_array(pd.DataFrame(well_data[p]), temp, ).flux.sum() for p in tdis.pers]
+        if dummy_modeltools:
+            use_data = [smt.io.select_df_from_idx_array(pd.DataFrame(well_data[p]), temp, ).flux.sum() for p in tdis.pers]
+        else:
+            use_data = [smt.utils.select_df_from_idx_array(pd.DataFrame(well_data[p]), temp, ).flux.sum() for p in tdis.pers]
         outdata.loc[:, f'hill_{g}'] = use_data
         hill_names.append(f'hill_{g}')
     outdata.loc[:, 'hill_total'] = outdata.loc[:, hill_names].sum(axis=1)

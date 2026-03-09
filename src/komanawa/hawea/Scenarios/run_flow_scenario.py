@@ -4,6 +4,7 @@ on: 13/02/23
 """
 import time
 import traceback
+import numpy as np
 from komanawa.hawea.model_build.modflow_model import build_model
 from komanawa.hawea.model_build.project_model_tools import smt
 from komanawa.hawea.model_parameterisation.static_params import vka
@@ -18,7 +19,7 @@ except ModuleNotFoundError:
 
 def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_spd, str_spd, well_spd, outdir,
                  build_run_model=True, process_results=True, stress_periods=None, tickper=100, save_hds=True,
-                 plot_data=True, make_ftl=False, nwt_kwargs=None, save_list=False):
+                 plot_data=True, make_ftl=False, nwt_kwargs=None, save_list=False, oc_spd=None):
     """
     run the scenario model
     :param model_name: model name.
@@ -36,6 +37,7 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     :param stress_periods: None or a list of stress periods to run (in order)
     :param tickper: ticks every x weeks on plots
     :param save_hds: bool if true save compressed (and split) hds files.
+    :param oc_spd: None (default step 4 assumes 7 steps per week) or dict of oc stress period data to use instead of default (save every 4th stress period)
     :return: 
     """
     if nwt_kwargs is None:
@@ -61,7 +63,7 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
             check_dates_in_order=False
         )
         well_spd = {i: well_spd[k] for i, k in enumerate(stress_periods)}
-        ghb_spd = {i: ghb_spd[k] for i, k in enumerate(stress_periods)}
+        ghb_spd = {i: ghb_spd[k].view(np.recarray) for i, k in enumerate(stress_periods)}
         rch_data = {i: rch_data[k] for i, k in enumerate(stress_periods)}
     else:
         use_tdis = tdis
@@ -69,9 +71,9 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     # save input data (here yes)
     key_input_data = extract_input_data(ghb_data=ghb_spd, rch_data=rch_data, well_data=well_spd, tdis=use_tdis)
     key_input_data.to_csv(Path(model_ws).joinpath(key_input_data_file_name))
-
-    oc_spd = {(0, 0): ['save head', 'save budget']}
-    oc_spd.update({(p, 4): ['save head', 'save budget'] for p in
+    if oc_spd is None:
+        oc_spd = {(0, 0): ['save head', 'save budget']}
+        oc_spd.update({(p, 4): ['save head', 'save budget'] for p in
                    use_tdis.pers[1:]})  # keynote in future could make the oc data to save every step then mean of all
     # keynote other steps if I end up with them
     sy = interpolate_sy_pilot_points(sy_param)
@@ -103,7 +105,7 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
                           t=t,
                           noprint=True,
                           make_ftl=make_ftl)
-        print(out)
+        return out
     if process_results:
         generate_scenario_outputs(model_ws=model_ws, model_name=model_name, outdir=outdir, tdis=use_tdis,
                                   tickper=tickper, save_hds=save_hds, plot_data=plot_data,
