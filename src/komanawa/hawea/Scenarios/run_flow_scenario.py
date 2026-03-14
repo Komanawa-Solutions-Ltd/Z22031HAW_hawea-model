@@ -19,7 +19,7 @@ except ModuleNotFoundError:
 
 def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_spd, str_spd, well_spd, outdir,
                  build_run_model=True, process_results=True, stress_periods=None, tickper=100, save_hds=True,
-                 plot_data=True, make_ftl=False, nwt_kwargs=None, save_list=False, oc_spd=None):
+                 plot_data=True, make_ftl=False, nwt_kwargs=None, save_list=False, oc_spd=None, strt=None):
     """
     run the scenario model
     :param model_name: model name.
@@ -38,6 +38,7 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     :param tickper: ticks every x weeks on plots
     :param save_hds: bool if true save compressed (and split) hds files.
     :param oc_spd: None (default step 4 assumes 7 steps per week) or dict of oc stress period data to use instead of default (save every 4th stress period)
+    :param strt: None (assume starting heads are top of model) or starting heads
     :return: 
     """
     if nwt_kwargs is None:
@@ -78,6 +79,11 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     # keynote other steps if I end up with them
     sy = interpolate_sy_pilot_points(sy_param)
     ss = set_ss_terms(sy_param)
+
+    if strt is None:
+        strt = smt.get_tops()
+    else:
+        assert strt.shape == smt.model_shape
     if build_run_model:
         out = build_model(smt=smt,
                           tdis=use_tdis,
@@ -90,7 +96,7 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
                           layer_avg=0,
                           ss=ss,
                           sy=sy,
-                          strt=smt.get_tops(),
+                          strt=strt,
                           chani=1,
                           rch=rch_data,
                           ghb_spd=ghb_spd,
