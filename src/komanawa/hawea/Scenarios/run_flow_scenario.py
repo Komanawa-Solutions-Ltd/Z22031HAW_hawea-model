@@ -19,7 +19,8 @@ except ModuleNotFoundError:
 
 def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_spd, str_spd, well_spd, outdir,
                  build_run_model=True, process_results=True, stress_periods=None, tickper=100, save_hds=True,
-                 plot_data=True, make_ftl=False, nwt_kwargs=None, save_list=False, oc_spd=None, strt=None):
+                 plot_data=True, make_ftl=False, nwt_kwargs=None, save_list=False, oc_spd=None, strt=None,
+                 save_key_input_data=True):
     """
     run the scenario model
     :param model_name: model name.
@@ -39,6 +40,7 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     :param save_hds: bool if true save compressed (and split) hds files.
     :param oc_spd: None (default step 4 assumes 7 steps per week) or dict of oc stress period data to use instead of default (save every 4th stress period)
     :param strt: None (assume starting heads are top of model) or starting heads
+    :param save_key_input_data: bool save key input data (rch etc), may cause problems with non-typical scenarios.
     :return: 
     """
     if nwt_kwargs is None:
@@ -69,9 +71,10 @@ def run_scenario(model_name, model_ws, tdis, sy_param, kh_param, rch_data, ghb_s
     else:
         use_tdis = tdis
 
-    # save input data (here yes)
-    key_input_data = extract_input_data(ghb_data=ghb_spd, rch_data=rch_data, well_data=well_spd, tdis=use_tdis)
-    key_input_data.to_csv(Path(model_ws).joinpath(key_input_data_file_name))
+    if save_key_input_data:
+        # save input data (here yes)
+        key_input_data = extract_input_data(ghb_data=ghb_spd, rch_data=rch_data, well_data=well_spd, tdis=use_tdis)
+        key_input_data.to_csv(Path(model_ws).joinpath(key_input_data_file_name))
     if oc_spd is None:
         oc_spd = {(0, 0): ['save head', 'save budget']}
         oc_spd.update({(p, 4): ['save head', 'save budget'] for p in
